@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIP SMOOK - متجر التبغ والمشروبات والحلويات</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-black/80 backdrop-blur border-b border-gold-500/30 sticky top-0 z-50 p-4">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-extrabold text-yellow-500 tracking-wider">VIP SMOOK</h1>
+      <div class="flex items-center space-x-4 space-x-reverse">
+        <button id="cartBtn" onclick="toggleCart()" class="relative p-2 bg-yellow-500 text-black rounded-full font-bold">
+          <i class="fas fa-shopping-cart text-lg"></i>
+          <span id="cartCount" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">0</span>
+        </button>
+        <button onclick="toggleAdminModal()" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs border border-yellow-500/40 rounded-lg text-yellow-400">
+          <i class="fas fa-user-shield ml-1"></i> لوحة التحكم
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto p-4 flex-grow w-full">
+    <!-- Hero / Categories -->
+    <div class="mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <button onclick="filterCategory('all')" class="cat-btn px-4 py-2 bg-yellow-500 text-black rounded-xl font-bold whitespace-nowrap">الكل</button>
+      <button onclick="filterCategory('tobacco')" class="cat-btn px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl whitespace-nowrap">سجائر وتبغ</button>
+      <button onclick="filterCategory('drinks')" class="cat-btn px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl whitespace-nowrap">مشروبات</button>
+      <button onclick="filterCategory('sweets')" class="cat-btn px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl whitespace-nowrap">حلويات ومقرمشات</button>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <p class="text-gray-400 col-span-full text-center py-10">جاري تحميل المنتجات...</p>
+    </div>
+  </main>
+
+  <!-- Cart Drawer -->
+  <div id="cartDrawer" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex justify-end">
+    <div class="bg-gray-900 w-full max-w-md h-full p-6 flex flex-col justify-between border-r border-gray-800">
+      <div>
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-bold text-yellow-500"><i class="fas fa-shopping-bag ml-2"></i>سلة الشراء</h2>
+          <button onclick="toggleCart()" class="text-gray-400 hover:text-white text-xl"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="cartItems" class="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+          <p class="text-gray-500 text-center py-8">السلة فارغة حالياً</p>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-4">
+        <div class="flex justify-between text-lg font-bold mb-4">
+          <span>المجموع:</span>
+          <span id="cartTotal" class="text-yellow-500">0 د.ج</span>
+        </div>
+        <button onclick="checkoutWhatsApp()" class="w-full py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl flex items-center justify-center gap-2">
+          <i class="fab fa-whatsapp text-xl"></i> إرسال الطلب عبر واتساب
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Modal -->
+  <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-gray-800 border border-yellow-500/30 p-6 rounded-2xl w-full max-w-md">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-yellow-500">لوحة تحكم المدير</h3>
+        <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+      </div>
+      
+      <!-- Login Form -->
+      <div id="adminLoginForm" class="space-y-4">
+        <input type="password" id="adminPass" placeholder="كلمة المرور" class="w-full p-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-yellow-500">
+        <button onclick="loginAdmin()" class="w-full py-3 bg-yellow-500 text-black font-bold rounded-xl">تسجيل الدخول</button>
+      </div>
+
+      <!-- Add Product Form (Hidden by default) -->
+      <div id="adminPanel" class="space-y-3 hidden">
+        <h4 class="text-sm font-semibold text-gray-300">إضافة منتج جديد</h4>
+        <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
+        <input type="number" id="pPrice" placeholder="السعر (د.ج)" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
+        <select id="pCategory" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
+          <option value="tobacco">سجائر وتبغ</option>
+          <option value="drinks">مشروبات</option>
+          <option value="sweets">حلويات ومقرمشات</option>
+        </select>
+        <input type="text" id="pImg" placeholder="رابط صورة المنتج (URL)" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
+        <button onclick="addProduct()" class="w-full py-2.5 bg-green-600 text-white font-bold rounded-xl text-sm">+ إضافة المنتج</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAoQYEGn60",
+      authDomain: "vip-smook.firebaseapp.com",
+      projectId: "vip-smook",
+      storageBucket: "vip-smook.appspot.com",
+      messagingSenderId: "1029384756",
+      appId: "1:1029384756:web:abcdef"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    let products = [];
+    let cart = [];
+    let currentCategory = 'all';
+
+    // Fetch Products Real-time
+    db.collection('products').onSnapshot(snapshot => {
+      products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderProducts();
+    });
+
+    function renderProducts() {
+      const grid = document.getElementById('productsGrid');
+      const filtered = currentCategory === 'all' ? products : products.filter(p => p.category === currentCategory);
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<p class="text-gray-500 col-span-full text-center py-10">لا توجد منتجات في هذه الفئة حالياً</p>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(p => `
+        <div class="bg-gray-800/80 border border-gray-700/50 rounded-2xl p-3 flex flex-col justify-between">
+          <img src="${p.image || 'https://via.placeholder.com/150'}" alt="${p.name}" class="w-full h-32 object-cover rounded-xl mb-2">
+          <div>
+            <h3 class="font-bold text-sm text-gray-100">${p.name}</h3>
+            <p class="text-yellow-500 font-extrabold text-sm mt-1">${p.price} د.ج</p>
+          </div>
+          <button onclick="addToCart('${p.id}')" class="mt-3 w-full py-2 bg-yellow-500 hover:bg-yellow-400 text-black text-xs font-bold rounded-lg transition">
+            + إضافة للسلة
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function filterCategory(cat) {
+      currentCategory = cat;
+      renderProducts();
+    }
+
+    function addToCart(id) {
+      const prod = products.find(p => p.id === id);
+      const item = cart.find(c => c.id === id);
+      if (item) item.qty++;
+      else cart.push({ ...prod, qty: 1 });
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      document.getElementById('cartCount').innerText = cart.reduce((acc, item) => acc + item.qty, 0);
+      const cartItemsDiv = document.getElementById('cartItems');
+      const totalSpan = document.getElementById('cartTotal');
+
+      if (cart.length === 0) {
+        cartItemsDiv.innerHTML = `<p class="text-gray-500 text-center py-8">السلة فارغة حالياً</p>`;
+        totalSpan.innerText = '0 د.ج';
+        return;
+      }
+
+      let total = 0;
+      cartItemsDiv.innerHTML = cart.map(item => {
+        total += item.price * item.qty;
+        return `
+          <div class="flex justify-between items-center bg-gray-800 p-3 rounded-xl border border-gray-700">
+            <div>
+              <h4 class="font-bold text-sm">${item.name}</h4>
+              <p class="text-xs text-yellow-500">${item.price} × ${item.qty}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="changeQty('${item.id}', -1)" class="w-6 h-6 bg-gray-700 text-white rounded">-</button>
+              <span class="text-sm">${item.qty}</span>
+              <button onclick="changeQty('${item.id}', 1)" class="w-6 h-6 bg-gray-700 text-white rounded">+</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      totalSpan.innerText = total + ' د.ج';
+    }
+
+    function changeQty(id, delta) {
+      const item = cart.find(c => c.id === id);
+      if (item) {
+        item.qty += delta;
+        if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+      }
+      updateCartUI();
+    }
+
+    function toggleCart() {
+      document.getElementById('cartDrawer').classList.toggle('hidden');
+    }
+
+    function toggleAdminModal() {
+      document.getElementById('adminModal').classList.toggle('hidden');
+    }
+
+    function loginAdmin() {
+      const pass = document.getElementById('adminPass').value;
+      if (pass === 'Yassinehlmhlm1#') {
+        document.getElementById('adminLoginForm').classList.add('hidden');
+        document.getElementById('adminPanel').classList.remove('hidden');
+      } else {
+        alert('كلمة المرور غير صحيحة!');
+      }
+    }
+
+    function addProduct() {
+      const name = document.getElementById('pName').value;
+      const price = Number(document.getElementById('pPrice').value);
+      const category = document.getElementById('pCategory').value;
+      const image = document.getElementById('pImg').value;
+
+      if (!name || !price) return alert('الرجاء إدخال الاسم والسعر');
+
+      db.collection('products').add({ name, price, category, image })
+        .then(() => {
+          alert('تمت إضافة المنتج بنجاح!');
+          document.getElementById('pName').value = '';
+          document.getElementById('pPrice').value = '';
+          document.getElementById('pImg').value = '';
+        });
+    }
+
+    function checkoutWhatsApp() {
+      if (cart.length === 0) return alert('السلة فارغة!');
+      let msg = "طلب جديد من VIP SMOOK:%0A";
+      let total = 0;
+      cart.forEach(item => {
+        msg += `- ${item.name} (${item.qty}) : ${item.price * item.qty} د.ج%0A`;
+        total += item.price * item.qty;
+      });
+      msg += `%0Aالمجموع الكلي: ${total} د.ج`;
+      window.open(`https://wa.me/?text=${msg}`, '_blank');
+    }
+  </script>
+</body>
+</html>
