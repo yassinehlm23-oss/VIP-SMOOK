@@ -16,7 +16,7 @@
   <!-- Header -->
   <header class="bg-black/90 backdrop-blur border-b border-yellow-500/30 sticky top-0 z-40 p-4">
     <div class="max-w-6xl mx-auto flex justify-between items-center gap-2">
-      <h1 class="text-xl md:text-2xl font-extrabold text-yellow-500 tracking-wider">VIP SMOOK</h1>
+      <h1 class="text-xl md:text-2xl font-extrabold text-yellow-500 tracking-wider cursor-pointer" onclick="filterCategory('all', document.querySelector('.cat-btn'))">VIP SMOOK</h1>
       
       <!-- شريط البحث -->
       <div class="flex-1 max-w-xs mx-2">
@@ -34,7 +34,7 @@
           <i class="fas fa-user ml-1"></i> <span id="userAuthLabel">دخول</span>
         </button>
 
-        <!-- السلة -->
+        <!-- السلة (متاحة للجميع دائماً) -->
         <button id="cartBtn" onclick="toggleCart()" class="relative p-2 bg-yellow-500 text-black rounded-full font-bold hover:bg-yellow-400">
           <i class="fas fa-shopping-cart text-base"></i>
           <span id="cartCount" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">0</span>
@@ -66,7 +66,7 @@
 
   <!-- User Auth Modal (Login / Register) -->
   <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-gray-800 border border-yellow-500/30 p-6 rounded-2xl w-full max-w-sm">
+    <div class="bg-gray-800 border border-yellow-500/30 p-6 rounded-2xl w-full max-w-sm relative">
       <div class="flex justify-between items-center mb-4">
         <h3 id="authTitle" class="text-lg font-bold text-yellow-500">تسجيل الدخول</h3>
         <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
@@ -134,6 +134,36 @@
     </div>
   </div>
 
+  <!-- Edit Product Modal (نافذة تعديل المنتج للمدير) -->
+  <div id="editProductModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-gray-800 border border-yellow-500/30 p-6 rounded-2xl w-full max-w-md space-y-3">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="text-lg font-bold text-yellow-500">تعديل بيانات المنتج</h3>
+        <button onclick="closeEditModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+      </div>
+      <input type="hidden" id="editPId">
+      <input type="text" id="editPName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
+      <div class="grid grid-cols-2 gap-2">
+        <input type="number" id="editPPrice" placeholder="السعر" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
+        <input type="number" id="editPStock" placeholder="المخزون" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
+      </div>
+      <select id="editPCategory" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-300">
+        <option value="tobacco">سجائر وتبغ</option>
+        <option value="drinks">مشروبات</option>
+        <option value="sweets">حلويات ومقرمشات</option>
+      </select>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">تغيير صورة المنتج (اختياري):</label>
+        <input type="file" id="editPImgFile" accept="image/*" capture="environment" onchange="handleEditImageUpload(event)" class="w-full text-xs text-gray-400 bg-gray-900 p-2 rounded-xl border border-gray-700">
+        <input type="hidden" id="editPImgBase64">
+        <div id="editImgPreviewContainer" class="mt-2">
+          <img id="editImgPreview" class="w-20 h-20 object-cover rounded-lg border border-yellow-500">
+        </div>
+      </div>
+      <button onclick="saveProductEdits()" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-sm">حفظ التعديلات</button>
+    </div>
+  </div>
+
   <!-- Admin Modal -->
   <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-gray-800 border border-yellow-500/30 p-6 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -152,11 +182,11 @@
       <div id="adminPanel" class="space-y-6 hidden">
         
         <!-- Tabs for Admin -->
-        <div class="flex border-b border-gray-700 gap-2 pb-2">
-          <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="px-3 py-1.5 bg-yellow-500 text-black font-bold rounded-lg text-xs">الطلبات الواردة</button>
-          <button onclick="switchAdminTab('add')" id="tabAddBtn" class="px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs">+ إضافة منتج</button>
-          <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs">إدارة المنتجات والمخزون</button>
-          <button onclick="switchAdminTab('settings')" id="tabSettingsBtn" class="px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs">إعدادات المدير</button>
+        <div class="flex border-b border-gray-700 gap-2 pb-2 overflow-x-auto">
+          <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="px-3 py-1.5 bg-yellow-500 text-black font-bold rounded-lg text-xs whitespace-nowrap">الطلبات الواردة</button>
+          <button onclick="switchAdminTab('add')" id="tabAddBtn" class="px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs whitespace-nowrap">+ إضافة منتج</button>
+          <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs whitespace-nowrap">إدارة المنتجات والمخزون</button>
+          <button onclick="switchAdminTab('settings')" id="tabSettingsBtn" class="px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs whitespace-nowrap">إعدادات المدير</button>
         </div>
 
         <!-- Section 1: Orders -->
@@ -183,7 +213,7 @@
 
           <!-- Capture Image / Upload Image -->
           <div>
-            <label class="block text-xs text-gray-400 mb-1">صورة المنتج (يمكنك تصويره بالكاميرا أو اختيار صورة):</label>
+            <label class="block text-xs text-gray-400 mb-1">صورة المنتج (تصوير أو اختيار صورة):</label>
             <input type="file" id="pImgFile" accept="image/*" capture="environment" onchange="handleImageUpload(event)" class="w-full text-xs text-gray-400 bg-gray-900 p-2 rounded-xl border border-gray-700">
             <input type="hidden" id="pImgBase64">
             <div id="imgPreviewContainer" class="mt-2 hidden">
@@ -202,7 +232,7 @@
 
         <!-- Section 4: Admin Settings -->
         <div id="adminTabSettings" class="space-y-3 hidden bg-gray-900/50 p-4 rounded-xl border border-gray-700">
-          <h4 class="text-sm font-semibold text-yellow-400">تعديل بيانيات حساب المدير</h4>
+          <h4 class="text-sm font-semibold text-yellow-400">تعديل بيانات حساب المدير</h4>
           <div>
             <label class="text-xs text-gray-400">رقم هاتف المدير:</label>
             <input type="tel" id="adminPhoneSetting" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1">
@@ -331,6 +361,10 @@
     }
 
     // --- Cart Actions ---
+    function toggleCart() {
+      document.getElementById('cartDrawer').classList.toggle('hidden');
+    }
+
     function addToCart(id) {
       const prod = products.find(p => p.id === id);
       const qtyInput = document.getElementById(`qty_input_${id}`);
@@ -410,14 +444,14 @@
 
     // --- Submit Order To Admin ---
     function submitOrderToAdmin() {
+      if (cart.length === 0) return alert('السلة فارغة!');
+
       if (!currentUser) {
         alert("يرجى تسجيل الدخول أو إنشاء حساب لكي نتمكن من إرسال الطلب لمدير المتجر");
         toggleCart();
         toggleAuthModal();
         return;
       }
-
-      if (cart.length === 0) return alert('السلة فارغة!');
 
       let totalAmount = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
@@ -560,21 +594,53 @@
     function switchAdminTab(tab) {
       ['Orders', 'Add', 'Manage', 'Settings'].forEach(t => {
         document.getElementById(`adminTab${t}`).classList.add('hidden');
+        document.getElementById(`tab${t}Btn`).className = "px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs whitespace-nowrap";
       });
-      document.getElementById(`adminTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.remove('hidden');
+      const activeCap = tab.charAt(0).toUpperCase() + tab.slice(1);
+      document.getElementById(`adminTab${activeCap}`).classList.remove('hidden');
+      document.getElementById(`tab${activeCap}Btn`).className = "px-3 py-1.5 bg-yellow-500 text-black font-bold rounded-lg text-xs whitespace-nowrap";
     }
 
-    // Image Upload Converter
+    // Image Helper (Converts file to resized Base64 to save storage space)
+    function processImageFile(file, callback) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 500; // تقليل أبعاد الصورة لضمان وسرعة تخزينها
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          callback(dataUrl);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
     function handleImageUpload(event) {
       const file = event.target.files[0];
       if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById('pImgBase64').value = e.target.result;
-          document.getElementById('imgPreview').src = e.target.result;
+        processImageFile(file, function(base64) {
+          document.getElementById('pImgBase64').value = base64;
+          document.getElementById('imgPreview').src = base64;
           document.getElementById('imgPreviewContainer').classList.remove('hidden');
-        }
-        reader.readAsDataURL(file);
+        });
       }
     }
 
@@ -594,6 +660,7 @@
           document.getElementById('pPrice').value = '';
           document.getElementById('pStock').value = '';
           document.getElementById('pImgBase64').value = '';
+          document.getElementById('pImgFile').value = '';
           document.getElementById('imgPreviewContainer').classList.add('hidden');
         });
     }
@@ -608,27 +675,66 @@
       list.innerHTML = products.map(p => `
         <div class="flex justify-between items-center bg-gray-900 p-2 rounded-lg border border-gray-800 text-xs">
           <div class="flex items-center gap-2">
-            <img src="${p.image || 'https://via.placeholder.com/40'}" class="w-8 h-8 rounded object-cover">
+            <img src="${p.image || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded object-cover border border-gray-700">
             <div>
               <p class="font-bold">${p.name}</p>
               <p class="text-yellow-500">${p.price} د.ج | <span class="text-gray-300">المخزون: ${p.stock || 0}</span></p>
             </div>
           </div>
           <div class="flex items-center gap-1">
-            <button onclick="updateStockDirect('${p.id}', ${p.stock || 0})" class="px-2 py-1 bg-gray-800 text-yellow-400 rounded">تعديل المخزون</button>
-            <button onclick="deleteProduct('${p.id}')" class="text-red-500 p-1"><i class="fas fa-trash-alt"></i></button>
+            <button onclick="openEditModal('${p.id}')" class="px-2 py-1 bg-yellow-500 text-black font-bold rounded hover:bg-yellow-400">تعديل كامل</button>
+            <button onclick="deleteProduct('${p.id}')" class="text-red-500 p-1 hover:text-red-400"><i class="fas fa-trash-alt"></i></button>
           </div>
         </div>
       `).join('');
     }
 
-    function updateStockDirect(id, oldStock) {
-      const newStock = prompt("أدخل الكمية الجديدة للمخزون:", oldStock);
-      if (newStock !== null && newStock !== "") {
-        db.collection('products').doc(id).update({ stock: Number(newStock) }).then(() => {
-          alert("تم تحديث المخزون بنجاح!");
+    // --- Product Edit Actions (تعديل المنتجات المضافة سابقاً) ---
+    function openEditModal(id) {
+      const p = products.find(item => item.id === id);
+      if (!p) return;
+
+      document.getElementById('editPId').value = p.id;
+      document.getElementById('editPName').value = p.name;
+      document.getElementById('editPPrice').value = p.price;
+      document.getElementById('editPStock').value = p.stock || 0;
+      document.getElementById('editPCategory').value = p.category || 'tobacco';
+      document.getElementById('editPImgBase64').value = p.image || '';
+      document.getElementById('editImgPreview').src = p.image || 'https://via.placeholder.com/150';
+
+      document.getElementById('editProductModal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editProductModal').classList.add('hidden');
+    }
+
+    function handleEditImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        processImageFile(file, function(base64) {
+          document.getElementById('editPImgBase64').value = base64;
+          document.getElementById('editImgPreview').src = base64;
         });
       }
+    }
+
+    function saveProductEdits() {
+      const id = document.getElementById('editPId').value;
+      const name = document.getElementById('editPName').value.trim();
+      const price = Number(document.getElementById('editPPrice').value);
+      const stock = Number(document.getElementById('editPStock').value);
+      const category = document.getElementById('editPCategory').value;
+      const image = document.getElementById('editPImgBase64').value;
+
+      if (!name || isNaN(price)) return alert("يرجى التأكد من كتابة الاسم والسعر الصحيح");
+
+      db.collection('products').doc(id).update({
+        name, price, stock, category, image
+      }).then(() => {
+        alert("تم تحديث بيانات المنتج بنجاح!");
+        closeEditModal();
+      });
     }
 
     function deleteProduct(id) {
@@ -681,7 +787,7 @@
       document.querySelectorAll('.cat-btn').forEach(b => {
         b.className = "cat-btn px-4 py-2 bg-gray-800 text-gray-300 hover:bg-gray-700 rounded-xl whitespace-nowrap";
       });
-      btn.className = "cat-btn px-4 py-2 bg-yellow-500 text-black rounded-xl font-bold whitespace-nowrap";
+      if(btn) btn.className = "cat-btn px-4 py-2 bg-yellow-500 text-black rounded-xl font-bold whitespace-nowrap";
       renderProducts();
     }
 
