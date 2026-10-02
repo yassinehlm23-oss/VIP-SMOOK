@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VIP SMOOK - متجر التبغ والمشروبات والحلويات</title>
+
+  <!-- Monetag Ad Script & Service Worker Setup -->
+  <script>
+    self.options = {
+        "domain": "5gvci.com",
+        "zoneId": 11943413
+    };
+    self.lary = "";
+  </script>
+  <script src="https://5gvci.com/act/files/service-worker.min.js?r=sw" async></script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
@@ -48,6 +59,13 @@
     </div>
   </header>
 
+  <!-- Top Banner Ad Slot -->
+  <div class="max-w-6xl mx-auto w-full px-4 pt-4 text-center">
+    <div id="monetag-banner-top" class="my-2 min-h-[60px] flex items-center justify-center bg-gray-800/40 rounded-xl border border-gray-800">
+      <!-- سيتم عرض إعلان البانر العلوي هنا -->
+    </div>
+  </div>
+
   <!-- Main Content -->
   <main class="max-w-6xl mx-auto p-4 flex-grow w-full">
     <!-- Categories -->
@@ -63,6 +81,13 @@
       <p class="text-gray-400 col-span-full text-center py-10">جاري تحميل المنتجات...</p>
     </div>
   </main>
+
+  <!-- Bottom Banner Ad Slot -->
+  <div class="max-w-6xl mx-auto w-full p-4 text-center">
+    <div id="monetag-banner-bottom" class="my-2 min-h-[60px] flex items-center justify-center bg-gray-800/40 rounded-xl border border-gray-800">
+      <!-- سيتم عرض إعلان البانر السفلي هنا -->
+    </div>
+  </div>
 
   <!-- User Auth Modal (Login / Register) -->
   <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -611,7 +636,7 @@
           const canvas = document.createElement('canvas');
           let width = img.width;
           let height = img.height;
-          const maxDim = 500; // تقليل أبعاد الصورة لضمان وسرعة تخزينها
+          const maxDim = 500;
           if (width > maxDim || height > maxDim) {
             if (width > height) {
               height = Math.round((height * maxDim) / width);
@@ -689,7 +714,7 @@
       `).join('');
     }
 
-    // --- Product Edit Actions (تعديل المنتجات المضافة سابقاً) ---
+    // --- Product Edit Actions ---
     function openEditModal(id) {
       const p = products.find(item => item.id === id);
       if (!p) return;
