@@ -78,11 +78,6 @@
 
       <!-- Desktop Nav Buttons -->
       <div class="hidden md:flex items-center gap-2">
-        <!-- زر تحميل التطبيق من ميديافاير -->
-        <a href="رابط_ميديافاير_هنا" target="_blank" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow-md shadow-emerald-600/20">
-          <i class="fas fa-download"></i> تحميل التطبيق
-        </a>
-
         <button id="myOrdersBtn" onclick="toggleMyOrders()" class="hidden px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition">
           <i class="fas fa-box-archive text-yellow-500 ml-1"></i> طلباتي
         </button>
@@ -113,13 +108,10 @@
     <div>
       <span class="px-2.5 py-1 bg-yellow-500/10 text-yellow-400 text-[10px] font-bold rounded-full border border-yellow-500/30">المتجر الرسمي</span>
       <h1 class="text-lg md:text-2xl font-black text-white mt-2">عروض وأسعار محدّثة باستمرار</h1>
-      <p class="text-xs text-gray-400 mt-1">حمل تطبيق الهاتف الآن لتجربة أسرع وأسهل!</p>
+      <p class="text-xs text-gray-400 mt-1">شاركونا رأيكم في أسعار المنتجات عبر التقييم المباشر!</p>
     </div>
-    <div class="flex items-center gap-2 flex-wrap">
-      <a href="رابط_ميديافاير_هنا" target="_blank" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
-        <i class="fas fa-cloud-arrow-down text-sm"></i> تحميل التطبيق (APK)
-      </a>
-      <button onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="px-4 py-2 bg-yellow-500 text-black font-bold text-xs rounded-xl hover:bg-yellow-400 transition">استكشف المنتجات</button>
+    <div class="flex items-center gap-2">
+      <button onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="px-4 py-2 bg-yellow-500 text-black font-bold text-xs rounded-xl hover:bg-yellow-400 transition">استكشف كافة المنتجات</button>
     </div>
   </section>
 
@@ -166,11 +158,6 @@
     <span>السلة</span>
     <span id="mobileCartBadge" class="absolute -top-1 -right-1 bg-amber-500 text-black text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
   </button>
-  <!-- زر تحميل التطبيق للجوال -->
-  <a href="رابط_ميديافاير_هنا" target="_blank" class="flex flex-col items-center gap-1 text-emerald-400 font-bold">
-    <i class="fas fa-download text-base"></i>
-    <span>تحميل</span>
-  </a>
   <button id="mobileOrdersBtn" onclick="toggleMyOrders()" class="flex flex-col items-center gap-1">
     <i class="fas fa-box text-base"></i>
     <span>طلباتي</span>
@@ -190,11 +177,6 @@
   <div class="max-w-6xl mx-auto px-4 space-y-2">
     <p class="font-bold text-yellow-500/80">VIP SMOOK © <span id="year"></span></p>
     <p class="text-[11px] text-gray-400">جميع الحقوق محفوظة - متجر إلكتروني رسمي.</p>
-    <div class="pt-2">
-      <a href="رابط_ميديافاير_هنا" target="_blank" class="text-emerald-400 hover:underline font-semibold text-[11px]">
-        <i class="fas fa-cloud-arrow-down ml-1"></i> رابط تحميل تطبيق Android (MediaFire)
-      </a>
-    </div>
   </div>
 </footer>
 
