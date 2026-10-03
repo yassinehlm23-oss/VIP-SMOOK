@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0b0f19">
-  <meta name="description" content="VIP SMOOK - متجر إلكتروني فاخر. البيع والتسليم وفق القوانين المحلية لمن هم في السن القانوني.">
+  <meta name="description" content="VIP SMOOK - متجر إلكتروني فاخر للبيع والتسليم المباشر.">
   <title>VIP SMOOK | المتجر الرسمي</title>
 
   <!-- Tailwind CSS & FontAwesome Icons -->
@@ -31,7 +31,7 @@
 
 <body class="bg-[#070a12] text-gray-100 min-h-screen pb-16 md:pb-0">
 
-<!-- Legal / Age Gate -->
+<!-- Legal Gate -->
 <div id="legalGate" class="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4">
   <div class="w-full max-w-md bg-gray-900 border border-yellow-500/40 rounded-3xl p-6 text-center shadow-2xl relative overflow-hidden">
     <div class="w-16 h-16 mx-auto rounded-2xl bg-yellow-500/10 text-yellow-500 border border-yellow-500/30 flex items-center justify-center text-3xl mb-4">
@@ -39,8 +39,7 @@
     </div>
     <h2 class="text-2xl font-black text-yellow-400 tracking-wide">تأكيد الأهلية والقانونية</h2>
     <p class="text-gray-300 text-xs leading-6 mt-3">
-      مرحباً بك في <span class="text-yellow-400 font-bold">VIP SMOOK</span>. يعرض هذا المتجر منتجات خاضعة للشروط والقيود العمرية المحلية.
-      بالاستمرار، تؤكد أنك بلغتم السن القانونية المسموح بها في منطقتكم.
+      مرحباً بك في <span class="text-yellow-400 font-bold">VIP SMOOK</span>. بالاستمرار، تؤكد أنك بلغت السن القانونية المسموح بها في منطقتك.
     </p>
     <div class="mt-6 space-y-2.5">
       <button onclick="acceptLegalGate()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition shadow-lg shadow-amber-500/20 active:scale-95">
@@ -58,7 +57,7 @@
   <div id="toastInner" class="glass border rounded-2xl px-5 py-3.5 shadow-2xl text-xs font-medium flex items-center gap-2"></div>
 </div>
 
-<!-- Header / Navigation -->
+<!-- Header -->
 <header class="sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md border-b border-yellow-500/20">
   <div class="max-w-6xl mx-auto px-4 py-3">
     <div class="flex items-center justify-between gap-3">
@@ -104,19 +103,19 @@
 <!-- Main Container -->
 <main class="max-w-6xl mx-auto px-4 py-6 min-h-[80vh] safe-bottom">
 
-  <!-- Banners / Announcements -->
+  <!-- Banners / Announcement -->
   <section class="mb-6 rounded-2xl bg-gradient-to-r from-amber-950/40 via-gray-900 to-amber-900/20 border border-yellow-500/20 p-4 md:p-6 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4">
     <div>
-      <span class="px-2.5 py-1 bg-yellow-500/10 text-yellow-400 text-[10px] font-bold rounded-full border border-yellow-500/30">المتجر المعتمد</span>
-      <h1 class="text-lg md:text-2xl font-black text-white mt-2">تسوق أفضل المنتجات بكل سهولة وسرعة</h1>
-      <p class="text-xs text-gray-400 mt-1">خدمة توصيل سريعة ومضمونة مع التأكد التام من الجودة.</p>
+      <span class="px-2.5 py-1 bg-yellow-500/10 text-yellow-400 text-[10px] font-bold rounded-full border border-yellow-500/30">المتجر الرسمي</span>
+      <h1 class="text-lg md:text-2xl font-black text-white mt-2">عروض وأسعار محدّثة باستمرار</h1>
+      <p class="text-xs text-gray-400 mt-1">شاركونا رأيكم في أسعار المنتجات عبر التقييم المباشر!</p>
     </div>
     <div class="flex items-center gap-2">
-      <button onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="px-4 py-2 bg-yellow-500 text-black font-bold text-xs rounded-xl hover:bg-yellow-400 transition">استكشف المنتجات</button>
+      <button onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="px-4 py-2 bg-yellow-500 text-black font-bold text-xs rounded-xl hover:bg-yellow-400 transition">استكشف كافة المنتجات</button>
     </div>
   </section>
 
-  <!-- Category Selection -->
+  <!-- Categories -->
   <section class="mb-6">
     <div class="flex items-center justify-between gap-3 mb-3">
       <h2 class="text-base md:text-lg font-black text-gray-100 flex items-center gap-2">
@@ -148,7 +147,7 @@
   </div>
 </main>
 
-<!-- Mobile Bottom Navigation Bar -->
+<!-- Mobile Navigation -->
 <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-gray-950/95 border-t border-gray-800 backdrop-blur-lg px-2 py-2 flex justify-around items-center text-[10px] text-gray-400">
   <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center gap-1 text-yellow-400">
     <i class="fas fa-store text-base"></i>
@@ -177,7 +176,7 @@
 <footer class="border-t border-gray-900 bg-black/40 py-8 text-center text-xs text-gray-400">
   <div class="max-w-6xl mx-auto px-4 space-y-2">
     <p class="font-bold text-yellow-500/80">VIP SMOOK © <span id="year"></span></p>
-    <p class="text-[11px] text-gray-400">جميع الحقوق محفوظة - البيع والتوصيل يخضعان للقوانين الشروط والشروط المحلية.</p>
+    <p class="text-[11px] text-gray-400">جميع الحقوق محفوظة - متجر إلكتروني رسمي.</p>
   </div>
 </footer>
 
@@ -218,7 +217,7 @@
   </div>
 </div>
 
-<!-- Cart & Checkout Drawer -->
+<!-- Cart Drawer -->
 <div id="cartDrawer" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden justify-end">
   <div class="bg-gray-950 w-full max-w-md h-full p-5 flex flex-col justify-between border-r border-gray-800 safe-bottom">
     <div>
@@ -235,7 +234,7 @@
       </div>
     </div>
 
-    <!-- Order / Delivery Info Form -->
+    <!-- Order Info Form -->
     <div class="border-t border-gray-900 pt-4 space-y-3 bg-gray-950">
       <div class="space-y-2">
         <h4 class="text-xs font-bold text-yellow-400">معلومات التوصيل:</h4>
@@ -250,9 +249,14 @@
         <span id="cartTotal" class="text-yellow-400">0 د.ج</span>
       </div>
 
-      <button onclick="submitOrderToAdmin()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20">
-        <i class="fas fa-paper-plane"></i> إرسال الطلب الآن
-      </button>
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="submitOrderToAdmin()" class="py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/20">
+          <i class="fas fa-paper-plane"></i> إرسال الطلب
+        </button>
+        <button onclick="checkoutViaWhatsApp()" class="py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl transition text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/20">
+          <i class="fab fa-whatsapp text-sm"></i> طلب عبر واتساب
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -305,14 +309,14 @@
       </select>
     </div>
 
-    <!-- Image Option: URL or File -->
+    <!-- Image Selection -->
     <div class="space-y-2">
-      <label class="text-[11px] text-gray-400 block">صورة المنتج (رابط مباشر أو رفع ملف)</label>
+      <label class="text-[11px] text-gray-400 block">صورة المنتج (رابط مباشر أو رفع ملف من الهاتف)</label>
       <input type="url" id="editPImgUrl" placeholder="https://example.com/image.jpg"
         oninput="handleEditImageUrlInput(this.value)"
         class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
 
-      <div class="text-center text-[10px] text-gray-400">أو اختيار صورة من جهازك:</div>
+      <div class="text-center text-[10px] text-gray-400">أو رفع صورة من هاتفك:</div>
 
       <input type="file" id="editPImgFile" accept="image/*" onchange="handleEditImageUpload(event)"
         class="w-full text-[11px] text-gray-400 bg-gray-950 p-2 rounded-xl border border-gray-800">
@@ -321,7 +325,7 @@
 
     <div class="flex items-center gap-3">
       <img id="editImgPreview" class="w-20 h-20 object-cover rounded-xl border border-yellow-500/40 bg-gray-950">
-      <span class="text-[11px] text-gray-400">معاينة الصورة الحالية للمنتج</span>
+      <span class="text-[11px] text-gray-400">معاينة صورة المنتج</span>
     </div>
 
     <button onclick="saveProductEdits()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs shadow-md">
@@ -332,11 +336,11 @@
 
 <!-- Admin Dashboard Modal -->
 <div id="adminModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] hidden items-center justify-center p-4">
-  <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-3xl modal-scroll">
+  <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-4xl modal-scroll">
     <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
       <div>
-        <h3 class="text-base font-bold text-yellow-400 flex items-center gap-2"><i class="fas fa-user-shield"></i> لوحة التحكم والإدارة</h3>
-        <p class="text-[10px] text-gray-400">إدارة المنتجات والطلبات والإعدادات</p>
+        <h3 class="text-base font-bold text-yellow-400 flex items-center gap-2"><i class="fas fa-user-shield"></i> لوحة التحكم والإدارة الاحترافية</h3>
+        <p class="text-[10px] text-gray-400">إدارة المبيعات والمنتجات وإحصائيات المتجر</p>
       </div>
       <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
     </div>
@@ -359,6 +363,22 @@
         <button onclick="logoutAdmin()" class="px-3 py-1 bg-red-950 text-red-400 hover:bg-red-900 rounded-lg text-[11px]">خروج</button>
       </div>
 
+      <!-- Quick Stats Dashboard -->
+      <div class="grid grid-cols-3 gap-3 text-center">
+        <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
+          <span class="text-[10px] text-gray-400 block">إجمالي المنتجات</span>
+          <span id="statTotalProducts" class="text-base font-black text-yellow-400">0</span>
+        </div>
+        <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
+          <span class="text-[10px] text-gray-400 block">طلبات جديدة</span>
+          <span id="statPendingOrders" class="text-base font-black text-amber-400">0</span>
+        </div>
+        <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
+          <span class="text-[10px] text-gray-400 block">منتجات متبقية أقل من 3</span>
+          <span id="statLowStock" class="text-base font-black text-red-400">0</span>
+        </div>
+      </div>
+
       <!-- Admin Nav Tabs -->
       <div class="flex border-b border-gray-800 gap-2 pb-2 overflow-x-auto no-scrollbar">
         <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap">الطلبات الواردة</button>
@@ -370,7 +390,14 @@
       <!-- Orders Tab -->
       <div id="adminTabOrders" class="space-y-3">
         <div class="flex justify-between items-center">
-          <h4 class="text-xs font-bold text-gray-300">طلبات الزبائن الأخيرة</h4>
+          <div class="flex items-center gap-2">
+            <h4 class="text-xs font-bold text-gray-300">قائمة الطلبات:</h4>
+            <select id="adminOrderFilter" onchange="loadOrdersOnce()" class="bg-gray-950 border border-gray-800 rounded-lg text-[11px] p-1 text-gray-300">
+              <option value="all">كل الطلبات</option>
+              <option value="جديد">الجديدة فقط</option>
+              <option value="مكتمل">المكتملة</option>
+            </select>
+          </div>
           <button onclick="loadOrdersOnce()" class="text-xs text-yellow-400 flex items-center gap-1"><i class="fas fa-rotate"></i> تحديث</button>
         </div>
         <div id="adminOrdersList" class="space-y-3">
@@ -392,7 +419,7 @@
         <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
 
         <div class="grid grid-cols-2 gap-2">
-          <input type="number" min="0" id="pPrice" placeholder="السعر (د.ج)" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
+          <input type="number" min="0" id="pPrice" placeholder="السعر الحالي (د.ج)" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <input type="number" min="0" id="pStock" placeholder="الكمية المتوفرة" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
         </div>
 
@@ -403,6 +430,7 @@
         </select>
 
         <div class="space-y-2">
+          <label class="text-[11px] text-gray-400 block">صورة المنتج (رابط أو ملف من الجهاز):</label>
           <input type="url" id="pImgUrl" placeholder="رابط صورة مباشر (اختياري)" oninput="handleImageUrlInput(this.value)"
             class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <input type="file" id="pImgFile" accept="image/*" onchange="handleImageUpload(event)"
@@ -438,7 +466,7 @@
   </div>
 </div>
 
-<!-- Application Logic -->
+<!-- Application Script -->
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyC0SNi-uPVJ_voLCcu3_M898Il0gyEbmsM",
@@ -557,6 +585,7 @@ async function initApp() {
       renderProducts();
       renderAdminProducts();
       syncCartWithStock();
+      updateAdminDashboardStats();
     },
     err => {
       console.error(err);
@@ -605,37 +634,98 @@ function renderProducts() {
     const lowStock = stock > 0 && stock <= 3;
     const image = p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
 
+    // 1. Price Trend Calculation (Up / Down)
+    let trendHtml = "";
+    const price = Number(p.price || 0);
+    const prevPrice = Number(p.previousPrice || 0);
+
+    if (prevPrice > 0 && prevPrice !== price) {
+      if (price < prevPrice) {
+        trendHtml = `<span class="text-emerald-400 text-[10px] font-bold flex items-center gap-0.5" title="السعر السابق: ${prevPrice}"><i class="fas fa-arrow-down"></i> انخفض</span>`;
+      } else if (price > prevPrice) {
+        trendHtml = `<span class="text-red-400 text-[10px] font-bold flex items-center gap-0.5" title="السعر السابق: ${prevPrice}"><i class="fas fa-arrow-up"></i> ارتفع</span>`;
+      }
+    }
+
+    // 2. Likes & Dislikes Counters
+    const likes = Number(p.likesCount || 0);
+    const dislikes = Number(p.dislikesCount || 0);
+
     return `
       <article class="card-hover bg-gray-900/90 border border-gray-800 rounded-2xl p-3 flex flex-col justify-between overflow-hidden relative group">
-        <div class="relative overflow-hidden rounded-xl mb-2.5 bg-gray-950 aspect-square">
-          <img src="${esc(image)}" alt="${esc(p.name)}" loading="lazy"
-               onerror="this.src='https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80'"
-               class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-          
-          <div class="absolute top-2 right-2">
-            ${out ? `<span class="px-2 py-0.5 bg-red-950/90 border border-red-800 text-red-300 text-[9px] font-bold rounded-md">نفد المخزون</span>` : 
-              lowStock ? `<span class="px-2 py-0.5 bg-amber-950/90 border border-amber-700 text-amber-300 text-[9px] font-bold rounded-md">كمية محدودة</span>` :
-              `<span class="px-2 py-0.5 bg-emerald-950/90 border border-emerald-800 text-emerald-300 text-[9px] font-bold rounded-md">متوفر</span>`}
+        <div>
+          <div class="relative overflow-hidden rounded-xl mb-2.5 bg-gray-950 aspect-square">
+            <img src="${esc(image)}" alt="${esc(p.name)}" loading="lazy"
+                 onerror="this.src='https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80'"
+                 class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            
+            <div class="absolute top-2 right-2">
+              ${out ? `<span class="px-2 py-0.5 bg-red-950/90 border border-red-800 text-red-300 text-[9px] font-bold rounded-md">نفد المخزون</span>` : 
+                lowStock ? `<span class="px-2 py-0.5 bg-amber-950/90 border border-amber-700 text-amber-300 text-[9px] font-bold rounded-md">بقي ${stock} فقط</span>` :
+                `<span class="px-2 py-0.5 bg-emerald-950/90 border border-emerald-800 text-emerald-300 text-[9px] font-bold rounded-md">متوفر</span>`}
+            </div>
+          </div>
+
+          <div class="flex-1">
+            <h3 class="font-bold text-xs text-gray-100 line-clamp-1">${esc(p.name)}</h3>
+            <div class="flex items-center gap-2 mt-1">
+              <p class="text-amber-400 font-extrabold text-xs">${money(p.price)}</p>
+              ${trendHtml}
+            </div>
           </div>
         </div>
 
-        <div class="flex-1">
-          <h3 class="font-bold text-xs text-gray-100 line-clamp-1">${esc(p.name)}</h3>
-          <p class="text-amber-400 font-extrabold text-xs mt-1">${money(p.price)}</p>
-        </div>
+        <div>
+          <!-- Likes & Dislikes Section -->
+          <div class="flex items-center justify-between border-t border-gray-800/60 pt-2 mt-2 text-[10px]">
+            <span class="text-gray-400">تقييم السعر:</span>
+            <div class="flex items-center gap-2">
+              <button onclick="votePrice('${esc(p.id)}', 'like')" class="flex items-center gap-1 text-gray-300 hover:text-emerald-400 transition" title="سعر ممتاز">
+                <i class="fas fa-thumbs-up"></i>
+                <span>${likes}</span>
+              </button>
+              <button onclick="votePrice('${esc(p.id)}', 'dislike')" class="flex items-center gap-1 text-gray-300 hover:text-red-400 transition" title="سعر مرتفع">
+                <i class="fas fa-thumbs-down"></i>
+                <span>${dislikes}</span>
+              </button>
+            </div>
+          </div>
 
-        <div class="mt-3 pt-2 border-t border-gray-800/80">
-          <div class="flex gap-1.5">
-            <input id="qty_input_${esc(p.id)}" type="number" min="1" max="${stock}" value="1" ${out ? "disabled" : ""}
-              class="w-12 p-1.5 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
-            <button onclick="addToCart('${esc(p.id)}')" ${out ? "disabled" : ""}
-              class="flex-1 py-1.5 ${out ? "bg-gray-800 text-gray-400 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-400 text-black"} text-[11px] font-bold rounded-lg transition">
-              ${out ? "غير متوفر" : "إضافة +"}
-            </button>
+          <div class="mt-2 pt-2 border-t border-gray-800/80">
+            <div class="flex gap-1.5">
+              <input id="qty_input_${esc(p.id)}" type="number" min="1" max="${stock}" value="1" ${out ? "disabled" : ""}
+                class="w-12 p-1.5 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
+              <button onclick="addToCart('${esc(p.id)}')" ${out ? "disabled" : ""}
+                class="flex-1 py-1.5 ${out ? "bg-gray-800 text-gray-400 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-400 text-black"} text-[11px] font-bold rounded-lg transition">
+                ${out ? "غير متوفر" : "إضافة +"}
+              </button>
+            </div>
           </div>
         </div>
       </article>`;
   }).join("");
+}
+
+/* Price Likes / Dislikes Action */
+async function votePrice(id, type) {
+  if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
+
+  const storageKey = `voted_${id}`;
+  if (localStorage.getItem(storageKey)) {
+    return toast("لقد قمت بتقييم سعر هذا المنتج مسبقاً!", "error");
+  }
+
+  try {
+    const field = type === "like" ? "likesCount" : "dislikesCount";
+    await db.collection("products").doc(id).update({
+      [field]: firebase.firestore.FieldValue.increment(1)
+    });
+    localStorage.setItem(storageKey, type);
+    toast("شكراً لتقييمك السعر!", "success");
+  } catch (e) {
+    console.error(e);
+    toast("تعذر تسحيل التقييم.", "error");
+  }
 }
 
 function filterCategory(cat, btn) {
@@ -848,7 +938,7 @@ function updateUserUI() {
   }
 }
 
-/* Submitting Orders with Customer Contact Info */
+/* Submitting Orders */
 async function submitOrderToAdmin() {
   if (!state.cart.length) return toast("السلة فارغة.", "error");
 
@@ -915,6 +1005,32 @@ async function submitOrderToAdmin() {
     console.error(e);
     toast("تعذر إرسال الطلب، تأكد من المخزون.", "error");
   }
+}
+
+/* Feature 4: WhatsApp Direct Checkout Idea */
+function checkoutViaWhatsApp() {
+  if (!state.cart.length) return toast("السلة فارغة.", "error");
+  const phone = document.getElementById("checkoutPhone").value.trim();
+  const address = document.getElementById("checkoutAddress").value.trim();
+
+  let text = `*طلب جديد من VIP SMOOK*\n`;
+  if (state.customer) text += `الزبون: ${state.customer.username}\n`;
+  if (phone) text += `الهاتف: ${phone}\n`;
+  if (address) text += `العنوان: ${address}\n`;
+  text += `--------------------------\n`;
+
+  let total = 0;
+  state.cart.forEach(item => {
+    const sub = item.price * item.qty;
+    total += sub;
+    text += `• ${item.name} (عدد ${item.qty}) = ${sub} د.ج\n`;
+  });
+  text += `--------------------------\n`;
+  text += `*الإجمالي النهائي:* ${total} د.ج`;
+
+  const adminPhone = state.adminCredentials.username || "213781896750";
+  const url = `https://wa.me/${adminPhone}?text=${encodeURIComponent(text)}`;
+  window.open(url, "_blank");
 }
 
 function toggleMyOrders() {
@@ -987,6 +1103,7 @@ function toggleAdminModal() {
     document.getElementById("adminPanel").classList.remove("hidden");
     document.getElementById("adminSignedInAs").textContent = `مدير المتجر: ${state.adminCredentials.username}`;
     loadOrdersOnce();
+    updateAdminDashboardStats();
   } else {
     document.getElementById("adminLoginForm").classList.remove("hidden");
     document.getElementById("adminPanel").classList.add("hidden");
@@ -1007,6 +1124,7 @@ async function loginAdmin() {
     document.getElementById("adminSignedInAs").textContent = `مدير المتجر: ${user}`;
     toast("مرحباً بك في لوحة الإدارة.", "success");
     loadOrdersOnce();
+    updateAdminDashboardStats();
   } else {
     toast("بيانات الدخول غير صحيحة.", "error");
   }
@@ -1018,6 +1136,12 @@ function logoutAdmin() {
   document.getElementById("adminLoginForm").classList.remove("hidden");
   document.getElementById("adminPanel").classList.add("hidden");
   toast("تم الخروج من لوحة التحكم.");
+}
+
+function updateAdminDashboardStats() {
+  document.getElementById("statTotalProducts").textContent = state.products.length;
+  const lowCount = state.products.filter(p => Number(p.stock || 0) <= 3).length;
+  document.getElementById("statLowStock").textContent = lowCount;
 }
 
 function switchAdminTab(tab) {
@@ -1064,12 +1188,21 @@ async function loadOrdersOnce() {
       .map(d => ({ id: d.id, ...d.data() }))
       .sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
-    if (!state.orders.length) {
-      list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">لا توجد طلبات جارية.</p>`;
+    const filterStatus = document.getElementById("adminOrderFilter")?.value || "all";
+    let filteredOrders = state.orders;
+    if (filterStatus !== "all") {
+      filteredOrders = filteredOrders.filter(o => o.status === filterStatus);
+    }
+
+    const pending = state.orders.filter(o => o.status !== "مكتمل").length;
+    document.getElementById("statPendingOrders").textContent = pending;
+
+    if (!filteredOrders.length) {
+      list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">لا توجد طلبات جارية لهذا الفلتر.</p>`;
       return;
     }
 
-    list.innerHTML = state.orders.map(o => `
+    list.innerHTML = filteredOrders.map(o => `
       <div class="bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs space-y-2">
         <div class="flex justify-between items-start font-bold border-b border-gray-800 pb-2">
           <div>
@@ -1114,30 +1247,45 @@ async function markOrderComplete(id) {
   }
 }
 
-/* Image Handling (Files & External URLs) */
-function processImageFile(file, callback) {
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      let w = img.width;
-      let h = img.height;
-      const max = 600;
-      if (w > max || h > max) {
-        if (w > h) { h = Math.round((h * max) / w); w = max; }
-        else { w = Math.round((w * max) / h); h = max; }
-      }
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, w, h);
-      callback(canvas.toDataURL("image/jpeg", 0.75));
+/* Feature 3 FIX: Robust High-Quality Image Compressor for Mobile Photos */
+function compressAndConvertImage(file, maxWidth = 500, quality = 0.65) {
+  return new Promise((resolve, reject) => {
+    if (!file) return reject("الملف غير موجود");
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = event => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let w = img.width;
+        let h = img.height;
+
+        if (w > h) {
+          if (w > maxWidth) {
+            h = Math.round((h * maxWidth) / w);
+            w = maxWidth;
+          }
+        } else {
+          if (h > maxWidth) {
+            w = Math.round((w * maxWidth) / h);
+            h = maxWidth;
+          }
+        }
+
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+
+        const compressedBase64 = canvas.toDataURL("image/jpeg", quality);
+        resolve(compressedBase64);
+      };
+      img.onerror = err => reject("تعذر معالجة صورة الهاتف.");
     };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
+    reader.onerror = err => reject("تعذر قراءة الملف.");
+  });
 }
 
 function handleImageUrlInput(url) {
@@ -1153,23 +1301,33 @@ function handleEditImageUrlInput(url) {
   document.getElementById("editImgPreview").src = url.trim();
 }
 
-function handleImageUpload(e) {
+async function handleImageUpload(e) {
   const f = e.target.files[0];
   if (!f) return;
-  processImageFile(f, b64 => {
+  try {
+    toast("جاري ضغط ومعالجة الصورة...", "normal");
+    const b64 = await compressAndConvertImage(f);
     document.getElementById("pImgBase64").value = b64;
     document.getElementById("imgPreview").src = b64;
     document.getElementById("imgPreviewContainer").classList.remove("hidden");
-  });
+    toast("تمت جاهزية الصورة للرفع!", "success");
+  } catch (err) {
+    toast("فشل تحميل الصورة من جهازك، حاول مجدداً.", "error");
+  }
 }
 
-function handleEditImageUpload(e) {
+async function handleEditImageUpload(e) {
   const f = e.target.files[0];
   if (!f) return;
-  processImageFile(f, b64 => {
+  try {
+    toast("جاري ضغط ومعالجة الصورة...", "normal");
+    const b64 = await compressAndConvertImage(f);
     document.getElementById("editPImgBase64").value = b64;
     document.getElementById("editImgPreview").src = b64;
-  });
+    toast("تمت جاهزية الصورة للرفع!", "success");
+  } catch (err) {
+    toast("فشل تحميل الصورة من جهازك.", "error");
+  }
 }
 
 /* Adding & Editing Products */
@@ -1188,7 +1346,14 @@ async function addProduct() {
 
   try {
     await db.collection("products").add({
-      name, price, stock, category, image,
+      name,
+      price,
+      previousPrice: price, // Initial price set
+      stock,
+      category,
+      image,
+      likesCount: 0,
+      dislikesCount: 0,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
@@ -1274,17 +1439,35 @@ async function saveProductEdits() {
 
   const id = document.getElementById("editPId").value;
   const name = document.getElementById("editPName").value.trim();
-  const price = Number(document.getElementById("editPPrice").value);
+  const newPrice = Number(document.getElementById("editPPrice").value);
   const stock = Number(document.getElementById("editPStock").value);
   const category = document.getElementById("editPCategory").value;
   const image = document.getElementById("editPImgBase64").value;
 
-  if (!id || !name || isNaN(price) || price < 0 || isNaN(stock) || stock < 0) {
+  const currentProduct = state.products.find(x => x.id === id);
+  if (!currentProduct) return toast("المنتج غير موجود.", "error");
+
+  if (!id || !name || isNaN(newPrice) || newPrice < 0 || isNaN(stock) || stock < 0) {
     return toast("يرجى مراجعة البيانات المدخلة.", "error");
   }
 
+  // Feature 1: Automatically track price changes
+  const oldPrice = Number(currentProduct.price || 0);
+  let previousPrice = Number(currentProduct.previousPrice || oldPrice);
+
+  if (oldPrice !== newPrice) {
+    previousPrice = oldPrice; // Save the last price before change
+  }
+
   try {
-    await db.collection("products").doc(id).update({ name, price, stock, category, image });
+    await db.collection("products").doc(id).update({
+      name,
+      price: newPrice,
+      previousPrice: previousPrice,
+      stock,
+      category,
+      image
+    });
     toast("تم تحديث بيانات وسعر المنتج بنجاح.", "success");
     closeEditModal();
   } catch (e) {
