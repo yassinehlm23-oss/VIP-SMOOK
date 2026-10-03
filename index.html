@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0b0f19">
+  <meta name="theme-color" content="#070a12">
   <meta name="description" content="VIP SMOOK - متجر إلكتروني فاخر للبيع والتسليم المباشر.">
   <title>VIP SMOOK | المتجر الرسمي</title>
 
@@ -18,18 +18,18 @@
   <style>
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { background: #070a12; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: #070a12; font-family: system-ui, -apple-system, sans-serif; color: #f3f4f6; }
     .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); }
     .card-hover { transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
-    .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(234, 179, 8, 0.12); }
+    .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(234, 179, 8, 0.15); border-color: rgba(234, 179, 8, 0.4); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 4rem); }
+    .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 5rem); }
     .modal-scroll { max-height: calc(90vh - 2rem); overflow-y: auto; }
   </style>
 </head>
 
-<body class="bg-[#070a12] text-gray-100 min-h-screen pb-16 md:pb-0">
+<body class="bg-[#070a12] text-gray-100 min-h-screen pb-20 md:pb-0">
 
 <!-- Legal Gate -->
 <div id="legalGate" class="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4">
@@ -57,33 +57,43 @@
   <div id="toastInner" class="glass border rounded-2xl px-5 py-3.5 shadow-2xl text-xs font-medium flex items-center gap-2"></div>
 </div>
 
+<!-- Announcement Bar -->
+<div class="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black text-[11px] font-extrabold py-2 px-4 text-center tracking-wide overflow-hidden whitespace-nowrap">
+  ✨ أهلاً بكم في متجر VIP SMOOK الفاخر | توصيل سريع ودفع عند الاستلام ✨
+</div>
+
 <!-- Header -->
 <header class="sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md border-b border-yellow-500/20">
   <div class="max-w-6xl mx-auto px-4 py-3">
     <div class="flex items-center justify-between gap-3">
       <!-- Logo -->
-      <button onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="text-right">
+      <button onclick="switchTab('store')" class="text-right">
         <span class="font-black text-xl md:text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">
           VIP SMOOK
         </span>
-        <span class="block text-[9px] text-gray-400 tracking-widest font-semibold uppercase">Exclusive Store</span>
+        <span class="block text-[9px] text-gray-400 tracking-widest font-semibold uppercase">VIP Exclusive Store</span>
       </button>
 
       <!-- Search Bar -->
       <div class="flex-1 max-w-md mx-2 relative">
         <i class="fas fa-search absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
-        <input id="searchInput" oninput="searchProducts()" type="search" placeholder="ابحث عن منتج..."
+        <input id="searchInput" oninput="handleSearchInput()" type="search" placeholder="ابحث بالاسم، الوصف، أو النوع..."
           class="w-full pr-9 pl-3 py-2 bg-gray-900/80 border border-gray-800 rounded-xl text-xs text-gray-200 focus:outline-none focus:border-yellow-500/60 transition">
       </div>
 
       <!-- Desktop Nav Buttons -->
       <div class="hidden md:flex items-center gap-2">
-        <button id="myOrdersBtn" onclick="toggleMyOrders()" class="hidden px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition">
-          <i class="fas fa-box-archive text-yellow-500 ml-1"></i> طلباتي
+        <button onclick="switchTab('favorites')" class="relative px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition flex items-center gap-1.5">
+          <i class="fas fa-heart text-red-500"></i> المفضلة
+          <span id="desktopFavCount" class="bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
         </button>
 
-        <button id="userAuthBtn" onclick="toggleAuthModal()" class="px-3.5 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-yellow-500/30 rounded-xl text-yellow-400 transition font-medium">
-          <i class="fas fa-user-circle ml-1"></i> <span id="userAuthLabel">دخول</span>
+        <button onclick="switchTab('orders')" id="myOrdersBtn" class="hidden px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition">
+          <i class="fas fa-box-archive text-yellow-500 ml-1"></i> طلباتي وتتبعي
+        </button>
+
+        <button onclick="toggleAuthModal()" class="px-3.5 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-yellow-500/30 rounded-xl text-yellow-400 transition font-medium">
+          <i class="fas fa-user-circle ml-1"></i> <span id="userAuthLabel">حسابي</span>
         </button>
 
         <button onclick="toggleCart()" class="relative px-4 py-2 bg-amber-500 text-black font-bold rounded-xl hover:bg-amber-400 transition text-xs flex items-center gap-1.5 shadow-md shadow-amber-500/20">
@@ -103,62 +113,133 @@
 <!-- Main Container -->
 <main class="max-w-6xl mx-auto px-4 py-6 min-h-[80vh] safe-bottom">
 
-  <!-- Banners / Announcement -->
-  <section class="mb-6 rounded-2xl bg-gradient-to-r from-amber-950/40 via-gray-900 to-amber-900/20 border border-yellow-500/20 p-4 md:p-6 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4">
-    <div>
-      <span class="px-2.5 py-1 bg-yellow-500/10 text-yellow-400 text-[10px] font-bold rounded-full border border-yellow-500/30">المتجر الرسمي</span>
-      <h1 class="text-lg md:text-2xl font-black text-white mt-2">عروض وأسعار محدّثة باستمرار</h1>
-      <p class="text-xs text-gray-400 mt-1">شاركونا رأيكم في أسعار المنتجات عبر التقييم المباشر!</p>
-    </div>
-    <div class="flex items-center gap-2">
-      <button onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="px-4 py-2 bg-yellow-500 text-black font-bold text-xs rounded-xl hover:bg-yellow-400 transition">استكشف كافة المنتجات</button>
-    </div>
-  </section>
+  <!-- TAB: STORE (Default) -->
+  <div id="tabStore" class="space-y-6">
 
-  <!-- Categories -->
-  <section class="mb-6">
-    <div class="flex items-center justify-between gap-3 mb-3">
-      <h2 class="text-base md:text-lg font-black text-gray-100 flex items-center gap-2">
-        <i class="fas fa-layer-group text-yellow-500 text-sm"></i> الأقسام والمنتجات
+    <!-- Hero Section -->
+    <section class="rounded-3xl bg-gradient-to-r from-amber-950/40 via-gray-900 to-amber-900/20 border border-yellow-500/20 p-5 md:p-8 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+      <div class="space-y-2 text-right">
+        <span class="px-3 py-1 bg-yellow-500/10 text-yellow-400 text-[10px] font-bold rounded-full border border-yellow-500/30">VIP SMOOK EXCLUSIVE</span>
+        <h1 class="text-xl md:text-3xl font-black text-white tracking-wide">تجربة تسوق فاخرة وعروض مميزة</h1>
+        <p class="text-xs text-gray-400 max-w-lg leading-relaxed">تصفح أقسامنا المتنوعة، وتمتع بأحدث المنتجات والأسعار التنافسية مع توصيل سريع حتى باب منزلك.</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="px-5 py-3 bg-yellow-500 text-black font-black text-xs rounded-2xl hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/20">تصفح المنتجات</button>
+      </div>
+    </section>
+
+    <!-- Categories & Sorting Bar -->
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <!-- Categories -->
+      <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1 w-full md:w-auto">
+        <button onclick="filterCategory('all', this)" class="cat-btn px-4 py-2.5 bg-yellow-500 text-black rounded-xl font-bold text-xs whitespace-nowrap transition shadow-md shadow-yellow-500/20">الكل</button>
+        <button onclick="filterCategory('tobacco', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">سجائر وتبغ</button>
+        <button onclick="filterCategory('drinks', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">مشروبات</button>
+        <button onclick="filterCategory('sweets', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">حلويات ومقرمشات</button>
+      </div>
+
+      <!-- Sorting Options -->
+      <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+        <label class="text-[11px] text-gray-400 whitespace-nowrap"><i class="fas fa-arrow-down-wide-short text-yellow-500 ml-1"></i> ترتيب حسب:</label>
+        <select id="sortSelect" onchange="renderProducts()" class="bg-gray-900 border border-gray-800 text-xs text-gray-200 rounded-xl p-2.5 focus:outline-none focus:border-yellow-500">
+          <option value="default">الافتراضي</option>
+          <option value="newest">الأحدث</option>
+          <option value="price_asc">السعر من الأقل للأعلى</option>
+          <option value="price_desc">السعر من الأعلى للأقل</option>
+          <option value="popular">الأكثر تفاعلاً</option>
+          <option value="discount">أعلى نسبة خصم</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Error Alerts -->
+    <div id="firebaseError" class="hidden bg-red-950/40 border border-red-800/60 text-red-300 rounded-2xl p-4 text-xs flex items-center gap-3">
+      <i class="fas fa-exclamation-triangle text-base text-red-400"></i>
+      <span id="firebaseErrorText">تعذر الاتصال بقاعدة البيانات.</span>
+    </div>
+
+    <!-- Featured Products Section ⭐ -->
+    <div id="featuredSectionContainer" class="hidden space-y-3">
+      <div class="flex items-center gap-2 border-b border-yellow-500/20 pb-2">
+        <i class="fas fa-star text-yellow-400"></i>
+        <h2 class="text-sm md:text-base font-black text-yellow-400">المنتجات المميزة ⭐</h2>
+      </div>
+      <div id="featuredProductsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 md:gap-5"></div>
+    </div>
+
+    <!-- New Products Section 🆕 -->
+    <div id="newSectionContainer" class="hidden space-y-3">
+      <div class="flex items-center gap-2 border-b border-amber-500/20 pb-2">
+        <i class="fas fa-bolt text-amber-400"></i>
+        <h2 class="text-sm md:text-base font-black text-amber-400">أحدث المنتجات المضافة 🆕</h2>
+      </div>
+      <div id="newProductsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 md:gap-5"></div>
+    </div>
+
+    <!-- All Products Grid -->
+    <div class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm md:text-base font-black text-gray-100 flex items-center gap-2">
+          <i class="fas fa-layer-group text-yellow-500"></i> جميع المنتجات
+        </h2>
+        <span id="productCount" class="text-xs text-gray-400 font-medium"></span>
+      </div>
+
+      <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 md:gap-5">
+        <div class="col-span-full text-center py-20 text-gray-400 text-xs flex flex-col items-center gap-3">
+          <i class="fas fa-circle-notch fa-spin text-2xl text-yellow-500"></i>
+          <span>جاري جلب المنتجات والمخزون...</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TAB: FAVORITES ❤️ -->
+  <div id="tabFavorites" class="hidden space-y-4">
+    <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+      <h2 class="text-lg font-black text-yellow-400 flex items-center gap-2">
+        <i class="fas fa-heart text-red-500"></i> المنتجات المفضلة ❤️
       </h2>
-      <span id="productCount" class="text-xs text-gray-400 font-medium"></span>
+      <span id="favCountBadge" class="text-xs text-gray-400">0 منتج</span>
     </div>
-
-    <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-      <button onclick="filterCategory('all', this)" class="cat-btn px-4 py-2.5 bg-yellow-500 text-black rounded-xl font-bold text-xs whitespace-nowrap transition shadow-md shadow-yellow-500/20">الكل</button>
-      <button onclick="filterCategory('tobacco', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">سجائر وتبغ</button>
-      <button onclick="filterCategory('drinks', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">مشروبات</button>
-      <button onclick="filterCategory('sweets', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">حلويات ومقرمشات</button>
-    </div>
-  </section>
-
-  <!-- Error Alerts -->
-  <div id="firebaseError" class="hidden mb-6 bg-red-950/40 border border-red-800/60 text-red-300 rounded-2xl p-4 text-xs flex items-center gap-3">
-    <i class="fas fa-exclamation-triangle text-base text-red-400"></i>
-    <span id="firebaseErrorText">تعذر الاتصال بقاعدة البيانات.</span>
-  </div>
-
-  <!-- Products Grid -->
-  <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 md:gap-5">
-    <div class="col-span-full text-center py-20 text-gray-400 text-xs flex flex-col items-center gap-3">
-      <i class="fas fa-circle-notch fa-spin text-2xl text-yellow-500"></i>
-      <span>جاري جلب المنتجات والمخزون...</span>
+    <div id="favoritesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 md:gap-5">
+      <p class="col-span-full text-center text-gray-400 text-xs py-16">ليس لديك أي منتجات في المفضلة حالياً.</p>
     </div>
   </div>
+
+  <!-- TAB: ORDERS & TRACKING 📦 -->
+  <div id="tabOrders" class="hidden space-y-4">
+    <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+      <h2 class="text-lg font-black text-yellow-400 flex items-center gap-2">
+        <i class="fas fa-box-archive text-yellow-500"></i> طلباتي وتتبع المراحل 🚚
+      </h2>
+      <button onclick="renderMyOrders()" class="text-xs text-yellow-400"><i class="fas fa-rotate"></i> تحديث</button>
+    </div>
+    <div id="myOrdersList" class="space-y-3">
+      <p class="text-gray-400 text-center py-12 text-xs">قم بتسجيل الدخول للاطلاع على طلباتك وسير مراحلها.</p>
+    </div>
+  </div>
+
 </main>
 
-<!-- Mobile Navigation -->
+<!-- Mobile Navigation Bar 📱 -->
 <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-gray-950/95 border-t border-gray-800 backdrop-blur-lg px-2 py-2 flex justify-around items-center text-[10px] text-gray-400">
-  <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center gap-1 text-yellow-400">
+  <button onclick="switchTab('store')" id="mobNavStore" class="flex flex-col items-center gap-1 text-yellow-400">
     <i class="fas fa-store text-base"></i>
     <span>الرئيسية</span>
+  </button>
+  <button onclick="switchTab('favorites')" id="mobNavFav" class="flex flex-col items-center gap-1 relative">
+    <i class="fas fa-heart text-base"></i>
+    <span>المفضلة</span>
+    <span id="mobileFavBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
   </button>
   <button onclick="toggleCart()" class="flex flex-col items-center gap-1 relative">
     <i class="fas fa-shopping-bag text-base"></i>
     <span>السلة</span>
     <span id="mobileCartBadge" class="absolute -top-1 -right-1 bg-amber-500 text-black text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
   </button>
-  <button id="mobileOrdersBtn" onclick="toggleMyOrders()" class="flex flex-col items-center gap-1">
+  <button onclick="switchTab('orders')" id="mobNavOrders" class="flex flex-col items-center gap-1">
     <i class="fas fa-box text-base"></i>
     <span>طلباتي</span>
   </button>
@@ -166,19 +247,28 @@
     <i class="fas fa-user-circle text-base"></i>
     <span id="mobileAuthLabel">حسابي</span>
   </button>
-  <button onclick="toggleAdminModal()" class="flex flex-col items-center gap-1">
-    <i class="fas fa-user-shield text-base"></i>
-    <span>الإدارة</span>
-  </button>
 </div>
 
 <!-- Footer -->
-<footer class="border-t border-gray-900 bg-black/40 py-8 text-center text-xs text-gray-400">
+<footer class="border-t border-gray-900 bg-black/60 py-8 text-center text-xs text-gray-400">
   <div class="max-w-6xl mx-auto px-4 space-y-2">
-    <p class="font-bold text-yellow-500/80">VIP SMOOK © <span id="year"></span></p>
-    <p class="text-[11px] text-gray-400">جميع الحقوق محفوظة - متجر إلكتروني رسمي.</p>
+    <p class="font-bold text-yellow-500/90">VIP SMOOK © <span id="year"></span></p>
+    <p class="text-[11px] text-gray-400">جميع الحقوق محفوظة - متجر إلكتروني رسمي بنظام Dark Luxury.</p>
   </div>
 </footer>
+
+<!-- Product Details Modal 🛍️ -->
+<div id="productDetailsModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-4">
+  <div class="bg-gray-900 border border-yellow-500/40 p-5 md:p-6 rounded-3xl w-full max-w-lg modal-scroll space-y-4 relative">
+    <div class="flex justify-between items-center pb-3 border-b border-gray-800">
+      <h3 class="text-base font-extrabold text-yellow-400"><i class="fas fa-circle-info ml-1"></i> تفاصيل المنتج</h3>
+      <button onclick="closeProductDetails()" class="text-gray-400 hover:text-white text-lg"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div id="modalDetailsContent" class="space-y-4 text-xs">
+      <!-- Dynamic Details -->
+    </div>
+  </div>
+</div>
 
 <!-- Authentication Modal -->
 <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
@@ -217,7 +307,7 @@
   </div>
 </div>
 
-<!-- Cart Drawer -->
+<!-- Cart Drawer 🛒 -->
 <div id="cartDrawer" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden justify-end">
   <div class="bg-gray-950 w-full max-w-md h-full p-5 flex flex-col justify-between border-r border-gray-800 safe-bottom">
     <div>
@@ -229,7 +319,7 @@
       </div>
 
       <!-- Items List -->
-      <div id="cartItems" class="space-y-3 max-h-[48vh] overflow-y-auto pl-1 no-scrollbar">
+      <div id="cartItems" class="space-y-3 max-h-[46vh] overflow-y-auto pl-1 no-scrollbar">
         <p class="text-gray-400 text-center py-10 text-xs">السلة فارغة حالياً</p>
       </div>
     </div>
@@ -258,19 +348,6 @@
   </div>
 </div>
 
-<!-- Customer Orders Modal -->
-<div id="myOrdersModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-  <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-lg modal-scroll">
-    <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
-      <h3 class="text-base font-extrabold text-yellow-400 flex items-center gap-2"><i class="fas fa-clock-rotate-left"></i> سجل طلباتي</h3>
-      <button onclick="toggleMyOrders()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
-    </div>
-    <div id="myOrdersList" class="space-y-3">
-      <p class="text-gray-400 text-center py-8 text-xs">قم بتسجيل الدخول للاطلاع على طلباتك السابقة.</p>
-    </div>
-  </div>
-</div>
-
 <!-- Edit Product Modal (Admin) -->
 <div id="editProductModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[80] hidden items-center justify-center p-4">
   <div class="bg-gray-900 border border-yellow-500/40 p-6 rounded-3xl w-full max-w-md modal-scroll space-y-4">
@@ -288,41 +365,55 @@
 
     <div class="grid grid-cols-2 gap-2">
       <div>
-        <label class="text-[11px] text-gray-400 block mb-1">السعر (د.ج)</label>
+        <label class="text-[11px] text-gray-400 block mb-1">السعر الحالي (د.ج)</label>
         <input type="number" min="0" id="editPPrice" placeholder="السعر" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
       </div>
+      <div>
+        <label class="text-[11px] text-gray-400 block mb-1">السعر السابق (اختياري للخصم)</label>
+        <input type="number" min="0" id="editPPrevPrice" placeholder="السعر السابق" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-2">
       <div>
         <label class="text-[11px] text-gray-400 block mb-1">المخزون المتوفر</label>
         <input type="number" min="0" id="editPStock" placeholder="الكمية" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
       </div>
+      <div>
+        <label class="text-[11px] text-gray-400 block mb-1">القسم / النوع</label>
+        <select id="editPCategory" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-gray-200">
+          <option value="tobacco">سجائر وتبغ</option>
+          <option value="drinks">مشروبات</option>
+          <option value="sweets">حلويات ومقرمشات</option>
+        </select>
+      </div>
     </div>
 
     <div>
-      <label class="text-[11px] text-gray-400 block mb-1">القسم</label>
-      <select id="editPCategory" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-gray-200">
-        <option value="tobacco">سجائر وتبغ</option>
-        <option value="drinks">مشروبات</option>
-        <option value="sweets">حلويات ومقرمشات</option>
-      </select>
+      <label class="text-[11px] text-gray-400 block mb-1">وصف المنتج</label>
+      <textarea id="editPDesc" rows="2" placeholder="وصف تفصيلي..." class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white"></textarea>
+    </div>
+
+    <!-- Featured Checkbox -->
+    <div class="flex items-center gap-2 bg-gray-950 p-3 rounded-xl border border-gray-800">
+      <input type="checkbox" id="editPIsFeatured" class="w-4 h-4 accent-amber-500 rounded">
+      <label for="editPIsFeatured" class="text-xs text-gray-200 font-bold">تمييز المنتج (عرضه في قسم المميزة ⭐)</label>
     </div>
 
     <!-- Image Selection -->
     <div class="space-y-2">
-      <label class="text-[11px] text-gray-400 block">صورة المنتج (رابط مباشر أو رفع ملف من الهاتف)</label>
+      <label class="text-[11px] text-gray-400 block">صورة المنتج (رابط مباشر أو رفع ملف من الهاتف مع ضغط تلقائي)</label>
       <input type="url" id="editPImgUrl" placeholder="https://example.com/image.jpg"
         oninput="handleEditImageUrlInput(this.value)"
         class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-
-      <div class="text-center text-[10px] text-gray-400">أو رفع صورة من هاتفك:</div>
-
       <input type="file" id="editPImgFile" accept="image/*" onchange="handleEditImageUpload(event)"
         class="w-full text-[11px] text-gray-400 bg-gray-950 p-2 rounded-xl border border-gray-800">
       <input type="hidden" id="editPImgBase64">
     </div>
 
     <div class="flex items-center gap-3">
-      <img id="editImgPreview" class="w-20 h-20 object-cover rounded-xl border border-yellow-500/40 bg-gray-950">
-      <span class="text-[11px] text-gray-400">معاينة صورة المنتج</span>
+      <img id="editImgPreview" class="w-16 h-16 object-cover rounded-xl border border-yellow-500/40 bg-gray-950">
+      <span class="text-[11px] text-gray-400">معاينة الصورة</span>
     </div>
 
     <button onclick="saveProductEdits()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs shadow-md">
@@ -331,13 +422,13 @@
   </div>
 </div>
 
-<!-- Admin Dashboard Modal -->
+<!-- Admin Dashboard Modal 📊 -->
 <div id="adminModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] hidden items-center justify-center p-4">
   <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-4xl modal-scroll">
     <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
       <div>
-        <h3 class="text-base font-bold text-yellow-400 flex items-center gap-2"><i class="fas fa-user-shield"></i> لوحة التحكم والإدارة الاحترافية</h3>
-        <p class="text-[10px] text-gray-400">إدارة المبيعات والمنتجات وإحصائيات المتجر</p>
+        <h3 class="text-base font-bold text-yellow-400 flex items-center gap-2"><i class="fas fa-user-shield"></i> لوحة الإدارة والإحصائيات 📊</h3>
+        <p class="text-[10px] text-gray-400">متابعة المبيعات، الطلبات، المخزون، والتنبيهات</p>
       </div>
       <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
     </div>
@@ -360,39 +451,51 @@
         <button onclick="logoutAdmin()" class="px-3 py-1 bg-red-950 text-red-400 hover:bg-red-900 rounded-lg text-[11px]">خروج</button>
       </div>
 
-      <!-- Quick Stats Dashboard -->
-      <div class="grid grid-cols-3 gap-3 text-center">
+      <!-- Quick Statistics Grid 📊 -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-2.5 text-center">
         <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
-          <span class="text-[10px] text-gray-400 block">إجمالي المنتجات</span>
+          <span class="text-[10px] text-gray-400 block">عدد المنتجات</span>
           <span id="statTotalProducts" class="text-base font-black text-yellow-400">0</span>
         </div>
         <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
-          <span class="text-[10px] text-gray-400 block">طلبات جديدة</span>
-          <span id="statPendingOrders" class="text-base font-black text-amber-400">0</span>
+          <span class="text-[10px] text-gray-400 block">إجمالي الطلبات</span>
+          <span id="statTotalOrders" class="text-base font-black text-amber-400">0</span>
         </div>
         <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
-          <span class="text-[10px] text-gray-400 block">منتجات متبقية أقل من 3</span>
+          <span class="text-[10px] text-gray-400 block">قيد المعالجة</span>
+          <span id="statProcessingOrders" class="text-base font-black text-blue-400">0</span>
+        </div>
+        <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
+          <span class="text-[10px] text-gray-400 block">إجمالي المبيعات</span>
+          <span id="statTotalSales" class="text-xs font-black text-emerald-400">0 د.ج</span>
+        </div>
+        <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
+          <span class="text-[10px] text-gray-400 block">مخزون منخفض ⚠️</span>
           <span id="statLowStock" class="text-base font-black text-red-400">0</span>
         </div>
       </div>
 
       <!-- Admin Nav Tabs -->
       <div class="flex border-b border-gray-800 gap-2 pb-2 overflow-x-auto no-scrollbar">
-        <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap">الطلبات الواردة</button>
-        <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">إدارة وتعديل المخزون</button>
+        <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap">الطلبات الواردة والحالات</button>
+        <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">إدارة المنتجات والمخزون</button>
         <button onclick="switchAdminTab('add')" id="tabAddBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">+ إضافة منتج جديد</button>
         <button onclick="switchAdminTab('settings')" id="tabSettingsBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">إعدادات الدخول</button>
       </div>
 
-      <!-- Orders Tab -->
+      <!-- Orders Tab with Status Management 📦 -->
       <div id="adminTabOrders" class="space-y-3">
         <div class="flex justify-between items-center">
           <div class="flex items-center gap-2">
-            <h4 class="text-xs font-bold text-gray-300">قائمة الطلبات:</h4>
+            <h4 class="text-xs font-bold text-gray-300">فلترة الطلبات:</h4>
             <select id="adminOrderFilter" onchange="loadOrdersOnce()" class="bg-gray-950 border border-gray-800 rounded-lg text-[11px] p-1 text-gray-300">
               <option value="all">كل الطلبات</option>
-              <option value="جديد">الجديدة فقط</option>
-              <option value="مكتمل">المكتملة</option>
+              <option value="جديد">جديد</option>
+              <option value="قيد المعالجة">قيد المعالجة</option>
+              <option value="خرج للتوصيل">خرج للتوصيل</option>
+              <option value="تم التسليم">تم التسليم</option>
+              <option value="مكتمل">مكتمل (متوافق)</option>
+              <option value="ملغي">ملغي</option>
             </select>
           </div>
           <button onclick="loadOrdersOnce()" class="text-xs text-yellow-400 flex items-center gap-1"><i class="fas fa-rotate"></i> تحديث</button>
@@ -417,17 +520,27 @@
 
         <div class="grid grid-cols-2 gap-2">
           <input type="number" min="0" id="pPrice" placeholder="السعر الحالي (د.ج)" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
-          <input type="number" min="0" id="pStock" placeholder="الكمية المتوفرة" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
+          <input type="number" min="0" id="pPrevPrice" placeholder="السعر السابق (اختياري للخصم)" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
         </div>
 
-        <select id="pCategory" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-gray-300">
-          <option value="tobacco">سجائر وتبغ</option>
-          <option value="drinks">مشروبات</option>
-          <option value="sweets">حلويات ومقرمشات</option>
-        </select>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="number" min="0" id="pStock" placeholder="الكمية المتوفرة" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
+          <select id="pCategory" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-gray-300">
+            <option value="tobacco">سجائر وتبغ</option>
+            <option value="drinks">مشروبات</option>
+            <option value="sweets">حلويات ومقرمشات</option>
+          </select>
+        </div>
+
+        <textarea id="pDesc" rows="2" placeholder="وصف المنتج..." class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white"></textarea>
+
+        <div class="flex items-center gap-2 bg-gray-900 p-2.5 rounded-xl border border-gray-800">
+          <input type="checkbox" id="pIsFeatured" class="w-4 h-4 accent-amber-500 rounded">
+          <label for="pIsFeatured" class="text-xs text-gray-200 font-bold">منتج مميز ⭐</label>
+        </div>
 
         <div class="space-y-2">
-          <label class="text-[11px] text-gray-400 block">صورة المنتج (رابط أو ملف من الجهاز):</label>
+          <label class="text-[11px] text-gray-400 block">صورة المنتج (رابط أو ملف مع ضغط تلقائي):</label>
           <input type="url" id="pImgUrl" placeholder="رابط صورة مباشر (اختياري)" oninput="handleImageUrlInput(this.value)"
             class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <input type="file" id="pImgFile" accept="image/*" onchange="handleImageUpload(event)"
@@ -436,7 +549,7 @@
         </div>
 
         <div id="imgPreviewContainer" class="hidden">
-          <img id="imgPreview" class="w-20 h-20 object-cover rounded-xl border border-yellow-500/40">
+          <img id="imgPreview" class="w-16 h-16 object-cover rounded-xl border border-yellow-500/40">
         </div>
 
         <button onclick="addProduct()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs transition">
@@ -455,7 +568,7 @@
           <label class="text-[11px] text-gray-400 block mb-1">كلمة المرور الجديدة</label>
           <input type="password" id="newAdminPass" placeholder="******" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
         </div>
-        <button onclick="updateAdminCredentials()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition">
+        <button onclick="updateAdminCredentials()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs">
           تحديث وحفظ
         </button>
       </div>
@@ -492,12 +605,14 @@ const state = {
   products: [],
   orders: [],
   cart: JSON.parse(localStorage.getItem("vip_cart") || "[]"),
+  favorites: JSON.parse(localStorage.getItem("vip_favorites") || "[]"),
   currentCategory: "all",
   searchQuery: "",
   customer: JSON.parse(localStorage.getItem("vip_user") || "null"),
   registerMode: false,
   isAdminLoggedIn: sessionStorage.getItem("vip_admin_auth") === "true",
-  adminCredentials: { username: "0781896750", pass: "1234567a" }
+  adminCredentials: { username: "0781896750", pass: "1234567a" },
+  currentTab: "store"
 };
 
 document.getElementById("year").textContent = new Date().getFullYear();
@@ -561,11 +676,17 @@ function persistCart() {
   localStorage.setItem("vip_cart", JSON.stringify(state.cart));
 }
 
+function persistFavorites() {
+  localStorage.setItem("vip_favorites", JSON.stringify(state.favorites));
+  updateFavoritesUI();
+}
+
 initApp();
 
 async function initApp() {
   updateUserUI();
   updateCartUI();
+  updateFavoritesUI();
 
   if (!firebaseReady) {
     showFirebaseError("تعذر الاتصال بالسيرفر، جاري العرض أوفلاين.");
@@ -605,141 +726,178 @@ async function syncAdminCredentials() {
   }
 }
 
+function switchTab(tab) {
+  state.currentTab = tab;
+  document.getElementById("tabStore").classList.add("hidden");
+  document.getElementById("tabFavorites").classList.add("hidden");
+  document.getElementById("tabOrders").classList.add("hidden");
+
+  if (tab === 'store') {
+    document.getElementById("tabStore").classList.remove("hidden");
+  } else if (tab === 'favorites') {
+    document.getElementById("tabFavorites").classList.remove("hidden");
+    renderFavorites();
+  } else if (tab === 'orders') {
+    document.getElementById("tabOrders").classList.remove("hidden");
+    renderMyOrders();
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* Rendering Products with Search & Sorting */
 function renderProducts() {
   const grid = document.getElementById("productsGrid");
+  const featContainer = document.getElementById("featuredSectionContainer");
+  const featGrid = document.getElementById("featuredProductsGrid");
+  const newContainer = document.getElementById("newSectionContainer");
+  const newGrid = document.getElementById("newProductsGrid");
+
   let filtered = [...state.products];
 
+  // 1. Category Filter
   if (state.currentCategory !== "all") {
     filtered = filtered.filter(p => p.category === state.currentCategory);
   }
 
+  // 2. Enhanced Search (Name, Description, Category)
   if (state.searchQuery.trim()) {
     const q = state.searchQuery.trim().toLowerCase();
-    filtered = filtered.filter(p => String(p.name || "").toLowerCase().includes(q));
+    filtered = filtered.filter(p => 
+      String(p.name || "").toLowerCase().includes(q) ||
+      String(p.description || "").toLowerCase().includes(q) ||
+      String(p.category || "").toLowerCase().includes(q)
+    );
+  }
+
+  // 3. Sorting Options
+  const sortOpt = document.getElementById("sortSelect")?.value || "default";
+  if (sortOpt === "newest") {
+    filtered.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+  } else if (sortOpt === "price_asc") {
+    filtered.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+  } else if (sortOpt === "price_desc") {
+    filtered.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
+  } else if (sortOpt === "popular") {
+    filtered.sort((a, b) => Number(b.likesCount || 0) - Number(a.likesCount || 0));
+  } else if (sortOpt === "discount") {
+    filtered.sort((a, b) => {
+      const discA = Number(a.previousPrice || a.price) > Number(a.price) ? (1 - Number(a.price) / Number(a.previousPrice)) : 0;
+      const discB = Number(b.previousPrice || b.price) > Number(b.price) ? (1 - Number(b.price) / Number(b.previousPrice)) : 0;
+      return discB - discA;
+    });
   }
 
   document.getElementById("productCount").textContent = `${filtered.length} منتج`;
+
+  // Featured Section ⭐
+  const featuredProds = state.products.filter(p => p.isFeatured);
+  const fallbackPopular = [...state.products].sort((a, b) => Number(b.likesCount || 0) - Number(a.likesCount || 0)).slice(0, 4);
+  const showFeatured = featuredProds.length > 0 ? featuredProds : fallbackPopular;
+
+  if (showFeatured.length > 0 && !state.searchQuery && state.currentCategory === 'all') {
+    featContainer.classList.remove("hidden");
+    featGrid.innerHTML = showFeatured.map(p => buildProductCard(p)).join("");
+  } else {
+    featContainer.classList.add("hidden");
+  }
+
+  // New Products Section 🆕
+  const newProds = [...state.products].sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).slice(0, 4);
+  if (newProds.length > 0 && !state.searchQuery && state.currentCategory === 'all') {
+    newContainer.classList.remove("hidden");
+    newGrid.innerHTML = newProds.map(p => buildProductCard(p)).join("");
+  } else {
+    newContainer.classList.add("hidden");
+  }
 
   if (!filtered.length) {
     grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400 text-xs">لا توجد منتجات متطابقة حالياً.</div>`;
     return;
   }
 
-  grid.innerHTML = filtered.map(p => {
-    const stock = Math.max(0, Number(p.stock || 0));
-    const out = stock <= 0;
-    const lowStock = stock > 0 && stock <= 3;
-    const image = p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
-
-    // 1. Price Trend Calculation (Up / Down)
-    let trendHtml = "";
-    const price = Number(p.price || 0);
-    const prevPrice = Number(p.previousPrice || 0);
-
-    if (prevPrice > 0 && prevPrice !== price) {
-      if (price < prevPrice) {
-        trendHtml = `<span class="text-emerald-400 text-[10px] font-bold flex items-center gap-0.5" title="السعر السابق: ${prevPrice}"><i class="fas fa-arrow-down"></i> انخفض</span>`;
-      } else if (price > prevPrice) {
-        trendHtml = `<span class="text-red-400 text-[10px] font-bold flex items-center gap-0.5" title="السعر السابق: ${prevPrice}"><i class="fas fa-arrow-up"></i> ارتفع</span>`;
-      }
-    }
-
-    // 2. Likes & Dislikes Counters and Active Colors
-    const likes = Number(p.likesCount || 0);
-    const dislikes = Number(p.dislikesCount || 0);
-    const userVote = localStorage.getItem(`voted_${p.id}`);
-
-    const likeClass = userVote === "like" ? "text-emerald-400 font-bold" : "text-gray-400 hover:text-emerald-400";
-    const dislikeClass = userVote === "dislike" ? "text-red-400 font-bold" : "text-gray-400 hover:text-red-400";
-
-    return `
-      <article class="card-hover bg-gray-900/90 border border-gray-800 rounded-2xl p-3 flex flex-col justify-between overflow-hidden relative group">
-        <div>
-          <div class="relative overflow-hidden rounded-xl mb-2.5 bg-gray-950 aspect-square">
-            <img src="${esc(image)}" alt="${esc(p.name)}" loading="lazy"
-                 onerror="this.src='https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80'"
-                 class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-            
-            <div class="absolute top-2 right-2">
-              ${out ? `<span class="px-2 py-0.5 bg-red-950/90 border border-red-800 text-red-300 text-[9px] font-bold rounded-md">نفد المخزون</span>` : 
-                lowStock ? `<span class="px-2 py-0.5 bg-amber-950/90 border border-amber-700 text-amber-300 text-[9px] font-bold rounded-md">بقي ${stock} فقط</span>` :
-                `<span class="px-2 py-0.5 bg-emerald-950/90 border border-emerald-800 text-emerald-300 text-[9px] font-bold rounded-md">متوفر</span>`}
-            </div>
-          </div>
-
-          <div class="flex-1">
-            <h3 class="font-bold text-xs text-gray-100 line-clamp-1">${esc(p.name)}</h3>
-            <div class="flex items-center gap-2 mt-1">
-              <p class="text-amber-400 font-extrabold text-xs">${money(p.price)}</p>
-              ${trendHtml}
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <!-- Likes & Dislikes Section with Toggle/Cancel Ability -->
-          <div class="flex items-center justify-between border-t border-gray-800/60 pt-2 mt-2 text-[10px]">
-            <span class="text-gray-400">تقييم السعر:</span>
-            <div class="flex items-center gap-2.5">
-              <button onclick="votePrice('${esc(p.id)}', 'like')" class="flex items-center gap-1 ${likeClass} transition" title="سعر ممتاز">
-                <i class="fas fa-thumbs-up"></i>
-                <span>${likes}</span>
-              </button>
-              <button onclick="votePrice('${esc(p.id)}', 'dislike')" class="flex items-center gap-1 ${dislikeClass} transition" title="سعر مرتفع">
-                <i class="fas fa-thumbs-down"></i>
-                <span>${dislikes}</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="mt-2 pt-2 border-t border-gray-800/80">
-            <div class="flex gap-1.5">
-              <input id="qty_input_${esc(p.id)}" type="number" min="1" max="${stock}" value="1" ${out ? "disabled" : ""}
-                class="w-12 p-1.5 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
-              <button onclick="addToCart('${esc(p.id)}')" ${out ? "disabled" : ""}
-                class="flex-1 py-1.5 ${out ? "bg-gray-800 text-gray-400 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-400 text-black"} text-[11px] font-bold rounded-lg transition">
-                ${out ? "غير متوفر" : "إضافة +"}
-              </button>
-            </div>
-          </div>
-        </div>
-      </article>`;
-  }).join("");
+  grid.innerHTML = filtered.map(p => buildProductCard(p)).join("");
 }
 
-/* Enhanced Voting Logic (Allows Un-voting / Toggling) */
-async function votePrice(id, newVote) {
-  if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
+function buildProductCard(p) {
+  const stock = Math.max(0, Number(p.stock || 0));
+  const out = stock <= 0;
+  const lowStock = stock > 0 && stock <= 5;
+  const image = p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
 
-  const storageKey = `voted_${id}`;
-  const currentVote = localStorage.getItem(storageKey); // null, 'like', or 'dislike'
+  const price = Number(p.price || 0);
+  const prevPrice = Number(p.previousPrice || 0);
 
-  const updates = {};
-
-  if (currentVote === newVote) {
-    // 1. Clicked the same button again -> CANCEL VOTE
-    updates[newVote === "like" ? "likesCount" : "dislikesCount"] = firebase.firestore.FieldValue.increment(-1);
-    localStorage.removeItem(storageKey);
-    toast("تم إلغاء تقييمك.", "normal");
-  } else if (currentVote) {
-    // 2. Switching vote from Like to Dislike or vice-versa
-    updates[currentVote === "like" ? "likesCount" : "dislikesCount"] = firebase.firestore.FieldValue.increment(-1);
-    updates[newVote === "like" ? "likesCount" : "dislikesCount"] = firebase.firestore.FieldValue.increment(1);
-    localStorage.setItem(storageKey, newVote);
-    toast("تم تغيير تقييمك بنجاح!", "success");
-  } else {
-    // 3. New vote
-    updates[newVote === "like" ? "likesCount" : "dislikesCount"] = firebase.firestore.FieldValue.increment(1);
-    localStorage.setItem(storageKey, newVote);
-    toast("شكراً لتقييمك السعر!", "success");
+  // Discount Calculation 🏷️
+  let discountBadge = "";
+  if (prevPrice > price) {
+    const discPercent = Math.round(((prevPrice - price) / prevPrice) * 100);
+    discountBadge = `<span class="px-2 py-0.5 bg-amber-500 text-black text-[9px] font-black rounded-md shadow">-${discPercent}%</span>`;
   }
 
-  try {
-    await db.collection("products").doc(id).update(updates);
-  } catch (e) {
-    console.error(e);
-    toast("تعذر تحديث التقييم.", "error");
-  }
+  const isFav = state.favorites.includes(p.id);
+  const favIconClass = isFav ? "fas fa-heart text-red-500 text-sm" : "far fa-heart text-gray-300 text-sm hover:text-red-500";
+
+  const likes = Number(p.likesCount || 0);
+  const userVote = localStorage.getItem(`voted_${p.id}`);
+  const likeClass = userVote === "like" ? "text-emerald-400 font-bold" : "text-gray-400 hover:text-emerald-400";
+
+  return `
+    <article class="card-hover bg-gray-900/90 border border-gray-800 rounded-2xl p-3 flex flex-col justify-between overflow-hidden relative group">
+      <div>
+        <div class="relative overflow-hidden rounded-xl mb-2.5 bg-gray-950 aspect-square">
+          <img src="${esc(image)}" alt="${esc(p.name)}" loading="lazy"
+               onerror="this.src='https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80'"
+               class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+          
+          <!-- Badges -->
+          <div class="absolute top-2 right-2 flex flex-col gap-1 items-end">
+            ${discountBadge}
+            ${out ? `<span class="px-2 py-0.5 bg-red-950/90 border border-red-800 text-red-300 text-[9px] font-bold rounded-md">نفد المخزون</span>` : 
+              lowStock ? `<span class="px-2 py-0.5 bg-amber-950/90 border border-amber-700 text-amber-300 text-[9px] font-bold rounded-md">مخزون منخفض (${stock})</span>` :
+              `<span class="px-2 py-0.5 bg-emerald-950/90 border border-emerald-800 text-emerald-300 text-[9px] font-bold rounded-md">متوفر</span>`}
+          </div>
+
+          <!-- Favorite Button ❤️ -->
+          <button onclick="toggleFavorite('${esc(p.id)}')" class="absolute top-2 left-2 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center transition hover:scale-110">
+            <i class="${favIconClass}"></i>
+          </button>
+        </div>
+
+        <div class="space-y-1">
+          <span class="text-[10px] text-yellow-500/80 font-semibold">${esc(p.category || "عام")}</span>
+          <h3 class="font-bold text-xs text-gray-100 line-clamp-1">${esc(p.name)}</h3>
+          
+          <div class="flex items-center gap-2 flex-wrap">
+            <p class="text-amber-400 font-extrabold text-sm">${money(price)}</p>
+            ${prevPrice > price ? `<p class="text-gray-500 text-[11px] line-through">${money(prevPrice)}</p>` : ""}
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3 pt-2 border-t border-gray-800/80 space-y-2">
+        <div class="flex items-center justify-between text-[10px] text-gray-400">
+          <span>التفاعل: <strong class="text-gray-200">${likes}</strong></span>
+          <button onclick="openProductDetails('${esc(p.id)}')" class="text-yellow-400 hover:underline font-bold">التفاصيل 🛍️</button>
+        </div>
+
+        <div class="flex gap-1.5">
+          <input id="qty_input_${esc(p.id)}" type="number" min="1" max="${stock}" value="1" ${out ? "disabled" : ""}
+            class="w-12 p-1.5 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
+          <button onclick="addToCart('${esc(p.id)}')" ${out ? "disabled" : ""}
+            class="flex-1 py-1.5 ${out ? "bg-gray-800 text-gray-400 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-400 text-black"} text-[11px] font-bold rounded-lg transition">
+            ${out ? "نفد" : "سلة 🛒"}
+          </button>
+          <button onclick="shareProduct('${esc(p.id)}')" title="مشاركة المنتج" class="px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-xs transition">
+            <i class="fas fa-share-nodes"></i>
+          </button>
+        </div>
+      </div>
+    </article>`;
+}
+
+function handleSearchInput() {
+  state.searchQuery = document.getElementById("searchInput").value;
+  renderProducts();
 }
 
 function filterCategory(cat, btn) {
@@ -751,9 +909,134 @@ function filterCategory(cat, btn) {
   renderProducts();
 }
 
-function searchProducts() {
-  state.searchQuery = document.getElementById("searchInput").value;
+/* Favorites System ❤️ */
+function toggleFavorite(id) {
+  const index = state.favorites.indexOf(id);
+  if (index > -1) {
+    state.favorites.splice(index, 1);
+    toast("تمت إزالة المنتج من المفضلة.");
+  } else {
+    state.favorites.push(id);
+    toast("تمت إضافة المنتج إلى المفضلة ❤️", "success");
+  }
+  persistFavorites();
   renderProducts();
+  if (state.currentTab === 'favorites') renderFavorites();
+}
+
+function updateFavoritesUI() {
+  const count = state.favorites.length;
+  document.getElementById("desktopFavCount").textContent = count;
+  document.getElementById("mobileFavBadge").textContent = count;
+}
+
+function renderFavorites() {
+  const grid = document.getElementById("favoritesGrid");
+  document.getElementById("favCountBadge").textContent = `${state.favorites.length} منتج`;
+
+  const favProducts = state.products.filter(p => state.favorites.includes(p.id));
+  if (!favProducts.length) {
+    grid.innerHTML = `<p class="col-span-full text-center text-gray-400 text-xs py-16">ليس لديك أي منتجات في المفضلة حالياً.</p>`;
+    return;
+  }
+  grid.innerHTML = favProducts.map(p => buildProductCard(p)).join("");
+}
+
+/* Product Details Modal 🛍️ */
+function openProductDetails(id) {
+  const p = state.products.find(x => x.id === id);
+  if (!p) return;
+
+  const stock = Number(p.stock || 0);
+  const out = stock <= 0;
+  const image = p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
+  const isFav = state.favorites.includes(p.id);
+
+  document.getElementById("modalDetailsContent").innerHTML = `
+    <div class="space-y-3">
+      <div class="relative aspect-video rounded-2xl overflow-hidden bg-gray-950 border border-gray-800">
+        <img src="${esc(image)}" class="w-full h-full object-cover">
+      </div>
+      <div class="space-y-1">
+        <span class="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 text-[10px] font-bold rounded">${esc(p.category || "عام")}</span>
+        <h2 class="text-base font-black text-white">${esc(p.name)}</h2>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 bg-gray-950 p-3 rounded-2xl border border-gray-800">
+        <div>
+          <span class="text-gray-400 text-[10px] block">السعر الحالي:</span>
+          <span class="text-amber-400 font-black text-sm">${money(p.price)}</span>
+        </div>
+        ${p.previousPrice && p.previousPrice > p.price ? `
+          <div>
+            <span class="text-gray-400 text-[10px] block">السعر القديم:</span>
+            <span class="text-gray-500 line-through text-xs">${money(p.previousPrice)}</span>
+          </div>` : ""}
+        <div>
+          <span class="text-gray-400 text-[10px] block">المخزون المتوفر:</span>
+          <span class="${stock <= 5 ? "text-red-400 font-bold" : "text-emerald-400 font-bold"}">${stock} قطعة</span>
+        </div>
+        <div>
+          <span class="text-gray-400 text-[10px] block">الإعجابات والتفاعل:</span>
+          <span class="text-yellow-400 font-bold">${p.likesCount || 0}</span>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-gray-300 font-bold mb-1">وصف المنتج:</h4>
+        <p class="text-gray-400 leading-relaxed bg-gray-950 p-3 rounded-xl border border-gray-800">${esc(p.description || "لا يوجد وصف إضافي لهذا المنتج.")}</p>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="toggleFavorite('${esc(p.id)}'); openProductDetails('${esc(p.id)}');" class="px-4 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-bold flex items-center gap-1.5 transition">
+          <i class="${isFav ? "fas fa-heart text-red-500" : "far fa-heart"}"></i> المفضلة
+        </button>
+        <button onclick="shareProduct('${esc(p.id)}')" class="px-4 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-bold flex items-center gap-1.5 transition">
+          <i class="fas fa-share-nodes"></i> مشاركة
+        </button>
+        <button onclick="addToCart('${esc(p.id)}'); closeProductDetails();" ${out ? "disabled" : ""} class="flex-1 py-3 ${out ? "bg-gray-800 text-gray-500" : "bg-amber-500 hover:bg-amber-400 text-black font-black"} rounded-xl transition">
+          ${out ? "غير متوفر" : "إضافة إلى السلة 🛒"}
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("productDetailsModal").classList.remove("hidden");
+  document.getElementById("productDetailsModal").classList.add("flex");
+}
+
+function closeProductDetails() {
+  document.getElementById("productDetailsModal").classList.add("hidden");
+  document.getElementById("productDetailsModal").classList.remove("flex");
+}
+
+/* Sharing Products 📤 */
+async function shareProduct(id) {
+  const p = state.products.find(x => x.id === id);
+  if (!p) return;
+
+  const shareData = {
+    title: p.name,
+    text: `تسوق ${p.name} بسعر ${money(p.price)} من متجر VIP SMOOK`,
+    url: window.location.href
+  };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      return;
+    } catch (e) {
+      // Fallback to clipboard
+    }
+  }
+
+  // Copy link fallback
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+    toast("تم نسخ رابط المنتج إلى الحافظة 📤", "success");
+  } catch (e) {
+    toast("تعذر مشاركة المنتج.", "error");
+  }
 }
 
 function toggleCart() {
@@ -784,7 +1067,7 @@ function addToCart(id) {
 
   persistCart();
   updateCartUI();
-  toast(`تمت إضافة ${qty} من ${p.name} للسلة.`, "success");
+  toast(`تمت إضافة المنتج إلى السلة 🛒`, "success");
 }
 
 function syncCartWithStock() {
@@ -827,11 +1110,10 @@ function updateCartUI() {
           </button>
         </div>
         <div class="flex items-center justify-between pt-2 border-t border-gray-800">
-          <div class="flex items-center gap-2">
-            <span class="text-[10px] text-gray-400">الكمية:</span>
-            <input type="number" min="1" value="${item.qty}"
-              onchange="updateCartQtyDirect('${esc(item.id)}', this.value)"
-              class="w-14 p-1 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
+          <div class="flex items-center gap-1.5">
+            <button onclick="adjustCartQty('${esc(item.id)}', -1)" class="w-6 h-6 bg-gray-800 rounded flex items-center justify-center text-xs">-</button>
+            <span class="text-xs font-bold px-2">${item.qty}</span>
+            <button onclick="adjustCartQty('${esc(item.id)}', 1)" class="w-6 h-6 bg-gray-800 rounded flex items-center justify-center text-xs">+</button>
           </div>
           <span class="text-xs font-bold text-amber-400">${money(item.price * item.qty)}</span>
         </div>
@@ -841,18 +1123,21 @@ function updateCartUI() {
   document.getElementById("cartTotal").textContent = money(total);
 }
 
-function updateCartQtyDirect(id, value) {
+function adjustCartQty(id, delta) {
   const item = state.cart.find(x => x.id === id);
   const p = state.products.find(x => x.id === id);
   if (!item || !p) return;
 
-  let qty = Math.floor(Number(value));
   const stock = Number(p.stock || 0);
+  const newQty = item.qty + delta;
 
-  if (!Number.isInteger(qty) || qty <= 0) return removeFromCart(id);
-  qty = Math.min(qty, stock);
+  if (newQty <= 0) {
+    removeFromCart(id);
+    return;
+  }
+  if (newQty > stock) return toast(`المخزون الأقصى المتاح هو ${stock}.`, "error");
 
-  item.qty = qty;
+  item.qty = newQty;
   persistCart();
   updateCartUI();
 }
@@ -861,6 +1146,7 @@ function removeFromCart(id) {
   state.cart = state.cart.filter(x => x.id !== id);
   persistCart();
   updateCartUI();
+  toast("تم حذف المنتج من السلة.");
 }
 
 /* User Auth Functions */
@@ -921,7 +1207,6 @@ async function handleAuth() {
 
     updateUserUI();
     toggleAuthModal();
-    renderMyOrders();
   } catch (e) {
     console.error(e);
     toast("حدث خطأ في الاتصال.", "error");
@@ -946,13 +1231,13 @@ function updateUserUI() {
     mobileLabel.textContent = state.customer.username;
     ordersBtn.classList.remove("hidden");
   } else {
-    label.textContent = "دخول";
+    label.textContent = "حسابي";
     mobileLabel.textContent = "حسابي";
     ordersBtn.classList.add("hidden");
   }
 }
 
-/* Submitting Orders Direct to DB */
+/* Submitting Orders & Customer Tracking 📦 */
 async function submitOrderToAdmin() {
   if (!state.cart.length) return toast("السلة فارغة.", "error");
 
@@ -1013,30 +1298,23 @@ async function submitOrderToAdmin() {
     persistCart();
     updateCartUI();
     toggleCart();
-    toast("تم إرسال طلبك بنجاح! سنتصل بك قريباً.", "success");
-    renderMyOrders();
+    toast("تم إرسال طلبك بنجاح! سنتصل بك قريباً 🚀", "success");
+    switchTab('orders');
   } catch (e) {
     console.error(e);
     toast("تعذر إرسال الطلب، تأكد من المخزون.", "error");
   }
 }
 
-function toggleMyOrders() {
-  const el = document.getElementById("myOrdersModal");
-  el.classList.toggle("hidden");
-  el.classList.toggle("flex");
-  if (!el.classList.contains("hidden")) renderMyOrders();
-}
-
 async function renderMyOrders() {
   const container = document.getElementById("myOrdersList");
   if (!state.customer) {
-    container.innerHTML = `<p class="text-gray-400 text-center py-6 text-xs">سجّل الدخول لمشاهدة طلباتك.</p>`;
+    container.innerHTML = `<p class="text-gray-400 text-center py-8 text-xs">سجّل الدخول لمشاهدة وتتبع طلباتك السابقة.</p>`;
     return;
   }
 
   if (!firebaseReady) {
-    container.innerHTML = `<p class="text-red-400 text-center py-6 text-xs">السيرفر غير متصل.</p>`;
+    container.innerHTML = `<p class="text-red-400 text-center py-8 text-xs">السيرفر غير متصل.</p>`;
     return;
   }
 
@@ -1050,37 +1328,67 @@ async function renderMyOrders() {
       .sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
     if (!list.length) {
-      container.innerHTML = `<p class="text-gray-400 text-center py-6 text-xs">لا توجد طلبات سابقة في حسابك.</p>`;
+      container.innerHTML = `<p class="text-gray-400 text-center py-8 text-xs">لا توجد طلبات سابقة في حسابك.</p>`;
       return;
     }
 
-    container.innerHTML = list.map(o => `
-      <div class="bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs space-y-2">
-        <div class="flex justify-between items-center text-gray-400 border-b border-gray-800 pb-2">
-          <span>طلب #${esc(o.id.slice(0, 6))}</span>
-          <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${o.status === "مكتمل" ? "bg-emerald-950 text-emerald-300 border border-emerald-800" : "bg-amber-950 text-amber-300 border border-amber-800"}">
-            ${esc(o.status || "جديد")}
-          </span>
-        </div>
-        <div class="space-y-1">
-          ${(o.items || []).map(i => `
-            <div class="flex justify-between text-gray-300">
-              <span>${esc(i.name)} ×${i.qty}</span>
-              <span>${money(i.price * i.qty)}</span>
-            </div>`).join("")}
-        </div>
-        <div class="flex justify-between pt-2 border-t border-gray-800 font-extrabold text-amber-400">
-          <span>المجموع الكلي:</span>
-          <span>${money(o.total)}</span>
-        </div>
-      </div>`).join("");
+    container.innerHTML = list.map(o => {
+      const status = o.status || "جديد";
+      const isCancelled = status === "ملغي";
+
+      // Tracking Steps Visualizer 🚚
+      const steps = ["جديد", "قيد المعالجة", "خرج للتوصيل", "تم التسليم"];
+      let currentStepIdx = steps.indexOf(status);
+      if (status === "مكتمل") currentStepIdx = 3; // Backward compatibility
+
+      let trackingHtml = "";
+      if (isCancelled) {
+        trackingHtml = `<div class="p-3 bg-red-950/40 border border-red-800 rounded-xl text-red-300 text-center font-bold text-xs">طلب ملغي ❌</div>`;
+      } else {
+        trackingHtml = `
+          <div class="flex items-center justify-between py-2 text-[10px]">
+            ${steps.map((step, idx) => {
+              const active = idx <= currentStepIdx;
+              return `
+                <div class="flex flex-col items-center flex-1">
+                  <div class="w-6 h-6 rounded-full flex items-center justify-center font-bold ${active ? "bg-amber-500 text-black" : "bg-gray-800 text-gray-500"}">
+                    ${idx + 1}
+                  </div>
+                  <span class="mt-1 text-center ${active ? "text-amber-400 font-bold" : "text-gray-500"}">${step}</span>
+                </div>`;
+            }).join('<div class="h-0.5 bg-gray-800 flex-1 -mt-4"></div>')}
+          </div>`;
+      }
+
+      return `
+        <div class="bg-gray-950 p-4 rounded-2xl border border-gray-800 text-xs space-y-3">
+          <div class="flex justify-between items-center text-gray-400 border-b border-gray-800 pb-2">
+            <span>طلب #${esc(o.id.slice(0, 6))}</span>
+            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800">${esc(status)}</span>
+          </div>
+
+          ${trackingHtml}
+
+          <div class="space-y-1 pt-2 border-t border-gray-900">
+            ${(o.items || []).map(i => `
+              <div class="flex justify-between text-gray-300">
+                <span>${esc(i.name)} ×${i.qty}</span>
+                <span>${money(i.price * i.qty)}</span>
+              </div>`).join("")}
+          </div>
+          <div class="flex justify-between pt-2 border-t border-gray-900 font-extrabold text-amber-400">
+            <span>المجموع الكلي:</span>
+            <span>${money(o.total)}</span>
+          </div>
+        </div>`;
+    }).join("");
   } catch (e) {
     console.error(e);
     container.innerHTML = `<p class="text-red-400 text-center py-6 text-xs">تعذر جلب سجل الطلبات.</p>`;
   }
 }
 
-/* Admin Dashboard Methods */
+/* Admin Dashboard & Statistics 📊 */
 function toggleAdminModal() {
   const el = document.getElementById("adminModal");
   el.classList.toggle("hidden");
@@ -1110,7 +1418,7 @@ async function loginAdmin() {
     document.getElementById("adminLoginForm").classList.add("hidden");
     document.getElementById("adminPanel").classList.remove("hidden");
     document.getElementById("adminSignedInAs").textContent = `مدير المتجر: ${user}`;
-    toast("مرحباً بك في لوحة الإدارة.", "success");
+    toast("مرحباً بك في لوحة الإدارة 📊", "success");
     loadOrdersOnce();
     updateAdminDashboardStats();
   } else {
@@ -1126,10 +1434,26 @@ function logoutAdmin() {
   toast("تم الخروج من لوحة التحكم.");
 }
 
-function updateAdminDashboardStats() {
+async function updateAdminDashboardStats() {
   document.getElementById("statTotalProducts").textContent = state.products.length;
-  const lowCount = state.products.filter(p => Number(p.stock || 0) <= 3).length;
+  const lowCount = state.products.filter(p => Number(p.stock || 0) <= 5).length;
   document.getElementById("statLowStock").textContent = lowCount;
+
+  if (firebaseReady) {
+    try {
+      const snap = await db.collection("orders").get();
+      const orders = snap.docs.map(d => d.data());
+      document.getElementById("statTotalOrders").textContent = orders.length;
+      document.getElementById("statProcessingOrders").textContent = orders.filter(o => o.status === "قيد المعالجة" || o.status === "جديد").length;
+      
+      const deliveredSales = orders
+        .filter(o => o.status === "تم التسليم" || o.status === "مكتمل")
+        .reduce((sum, o) => sum + Number(o.total || 0), 0);
+      document.getElementById("statTotalSales").textContent = money(deliveredSales);
+    } catch (e) {
+      console.error(e);
+    }
+  }
 }
 
 function switchAdminTab(tab) {
@@ -1182,11 +1506,8 @@ async function loadOrdersOnce() {
       filteredOrders = filteredOrders.filter(o => o.status === filterStatus);
     }
 
-    const pending = state.orders.filter(o => o.status !== "مكتمل").length;
-    document.getElementById("statPendingOrders").textContent = pending;
-
     if (!filteredOrders.length) {
-      list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">لا توجد طلبات جارية لهذا الفلتر.</p>`;
+      list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">لا توجد طلبات مطابقة لهذا الفلتر.</p>`;
       return;
     }
 
@@ -1198,7 +1519,7 @@ async function loadOrdersOnce() {
             <span class="text-gray-400 text-[11px] block font-normal">هاتف: ${esc(o.phone || "غير محدد")}</span>
             <span class="text-gray-400 text-[11px] block font-normal">العنوان: ${esc(o.address || "غير محدد")}</span>
           </div>
-          <span class="px-2 py-0.5 rounded text-[10px] ${o.status === "مكتمل" ? "bg-emerald-950 text-emerald-300" : "bg-amber-950 text-amber-300"}">
+          <span class="px-2 py-0.5 rounded text-[10px] bg-amber-950 text-amber-300">
             ${esc(o.status || "جديد")}
           </span>
         </div>
@@ -1209,13 +1530,19 @@ async function loadOrdersOnce() {
               <span>${money(i.price * i.qty)}</span>
             </div>`).join("")}
         </div>
-        <div class="flex justify-between items-center pt-2 border-t border-gray-800 font-bold">
-          <span>المجموع: ${money(o.total)}</span>
-          ${o.status !== "مكتمل" ? `
-            <button onclick="markOrderComplete('${esc(o.id)}')"
-              class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[11px] font-bold transition">
-              تأكيد الإكتمال والتسليم
-            </button>` : `<span class="text-emerald-400 text-[11px]">مكتمل ✅</span>`}
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center pt-2 border-t border-gray-800 gap-2">
+          <span class="font-bold">المجموع: ${money(o.total)}</span>
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <select onchange="updateOrderStatus('${esc(o.id)}', this.value)" class="bg-gray-900 border border-gray-800 rounded-lg text-[11px] p-1 text-yellow-400 font-bold">
+              <option value="" disabled selected>تغيير الحالة...</option>
+              <option value="جديد">جديد</option>
+              <option value="قيد المعالجة">قيد المعالجة</option>
+              <option value="خرج للتوصيل">خرج للتوصيل</option>
+              <option value="تم التسليم">تم التسليم</option>
+              <option value="مكتمل">مكتمل</option>
+              <option value="ملغي">ملغي</option>
+            </select>
+          </div>
         </div>
       </div>`).join("");
   } catch (e) {
@@ -1224,18 +1551,19 @@ async function loadOrdersOnce() {
   }
 }
 
-async function markOrderComplete(id) {
+async function updateOrderStatus(id, newStatus) {
   try {
-    await db.collection("orders").doc(id).update({ status: "مكتمل" });
-    toast("تم تحديث حالة الطلب إلى مكتمل.", "success");
+    await db.collection("orders").doc(id).update({ status: newStatus });
+    toast(`تم تحديث حالة الطلب إلى: ${newStatus}`, "success");
     loadOrdersOnce();
+    updateAdminDashboardStats();
   } catch (e) {
     console.error(e);
-    toast("تعذر تحديث الطلب.", "error");
+    toast("تعذر تحديث حالة الطلب.", "error");
   }
 }
 
-/* Image Compressor for Mobile Photos */
+/* Image Compressor for Mobile Photos 🖼️ */
 function compressAndConvertImage(file, maxWidth = 500, quality = 0.65) {
   return new Promise((resolve, reject) => {
     if (!file) return reject("الملف غير موجود");
@@ -1270,9 +1598,9 @@ function compressAndConvertImage(file, maxWidth = 500, quality = 0.65) {
         const compressedBase64 = canvas.toDataURL("image/jpeg", quality);
         resolve(compressedBase64);
       };
-      img.onerror = err => reject("تعذر معالجة صورة الهاتف.");
+      img.onerror = () => reject("تعذر معالجة صورة الهاتف.");
     };
-    reader.onerror = err => reject("تعذر قراءة الملف.");
+    reader.onerror = () => reject("تعذر قراءة الملف.");
   });
 }
 
@@ -1298,7 +1626,7 @@ async function handleImageUpload(e) {
     document.getElementById("pImgBase64").value = b64;
     document.getElementById("imgPreview").src = b64;
     document.getElementById("imgPreviewContainer").classList.remove("hidden");
-    toast("تمت جاهزية الصورة للرفع!", "success");
+    toast("تمت معالجة وضغط الصورة بنجاح!", "success");
   } catch (err) {
     toast("فشل تحميل الصورة من جهازك، حاول مجدداً.", "error");
   }
@@ -1312,7 +1640,7 @@ async function handleEditImageUpload(e) {
     const b64 = await compressAndConvertImage(f);
     document.getElementById("editPImgBase64").value = b64;
     document.getElementById("editImgPreview").src = b64;
-    toast("تمت جاهزية الصورة للرفع!", "success");
+    toast("تمت معالجة وضغط الصورة بنجاح!", "success");
   } catch (err) {
     toast("فشل تحميل الصورة من جهازك.", "error");
   }
@@ -1324,8 +1652,11 @@ async function addProduct() {
 
   const name = document.getElementById("pName").value.trim();
   const price = Number(document.getElementById("pPrice").value);
+  const previousPrice = Number(document.getElementById("pPrevPrice").value || price);
   const stock = Number(document.getElementById("pStock").value);
   const category = document.getElementById("pCategory").value;
+  const description = document.getElementById("pDesc").value.trim();
+  const isFeatured = document.getElementById("pIsFeatured").checked;
   const image = document.getElementById("pImgBase64").value;
 
   if (!name || isNaN(price) || price < 0 || isNaN(stock) || stock < 0) {
@@ -1336,18 +1667,22 @@ async function addProduct() {
     await db.collection("products").add({
       name,
       price,
-      previousPrice: price,
+      previousPrice,
       stock,
       category,
+      description,
+      isFeatured,
       image,
       likesCount: 0,
-      dislikesCount: 0,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     document.getElementById("pName").value = "";
     document.getElementById("pPrice").value = "";
+    document.getElementById("pPrevPrice").value = "";
     document.getElementById("pStock").value = "";
+    document.getElementById("pDesc").value = "";
+    document.getElementById("pIsFeatured").checked = false;
     document.getElementById("pImgUrl").value = "";
     document.getElementById("pImgBase64").value = "";
     document.getElementById("pImgFile").value = "";
@@ -1380,22 +1715,27 @@ function filterAdminProductsList() {
     return;
   }
 
-  list.innerHTML = filtered.map(p => `
-    <div class="flex justify-between items-center bg-gray-950 p-2.5 rounded-2xl border border-gray-800 text-xs">
-      <div class="flex items-center gap-2.5 overflow-hidden">
-        <img src="${esc(p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80")}" class="w-10 h-10 rounded-xl object-cover border border-gray-800">
-        <div class="truncate">
-          <p class="font-bold text-gray-200 truncate">${esc(p.name)}</p>
-          <p class="text-gray-400 text-[11px] mt-0.5">${money(p.price)} | المتوفر: <span class="font-bold text-amber-400">${p.stock || 0}</span></p>
+  list.innerHTML = filtered.map(p => {
+    const stock = Number(p.stock || 0);
+    const lowStockWarning = stock <= 5 ? `<span class="text-red-400 font-bold ml-1">⚠️ مخزون منخفض</span>` : "";
+
+    return `
+      <div class="flex justify-between items-center bg-gray-950 p-2.5 rounded-2xl border border-gray-800 text-xs">
+        <div class="flex items-center gap-2.5 overflow-hidden">
+          <img src="${esc(p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80")}" class="w-10 h-10 rounded-xl object-cover border border-gray-800">
+          <div class="truncate">
+            <p class="font-bold text-gray-200 truncate">${esc(p.name)} ${lowStockWarning}</p>
+            <p class="text-gray-400 text-[11px] mt-0.5">${money(p.price)} | المتوفر: <span class="font-bold text-amber-400">${stock}</span></p>
+          </div>
         </div>
-      </div>
-      <div class="flex items-center gap-1.5 shrink-0">
-        <button onclick="openEditModal('${esc(p.id)}')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-[11px]">
-          تعديل
-        </button>
-        <button onclick="deleteProduct('${esc(p.id)}')" class="p-1.5 text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
-      </div>
-    </div>`).join("");
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button onclick="openEditModal('${esc(p.id)}')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-[11px]">
+            تعديل
+          </button>
+          <button onclick="deleteProduct('${esc(p.id)}')" class="p-1.5 text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>`;
+  }).join("");
 }
 
 function openEditModal(id) {
@@ -1405,8 +1745,11 @@ function openEditModal(id) {
   document.getElementById("editPId").value = p.id;
   document.getElementById("editPName").value = p.name || "";
   document.getElementById("editPPrice").value = p.price || 0;
+  document.getElementById("editPPrevPrice").value = p.previousPrice || p.price || 0;
   document.getElementById("editPStock").value = p.stock || 0;
   document.getElementById("editPCategory").value = p.category || "tobacco";
+  document.getElementById("editPDesc").value = p.description || "";
+  document.getElementById("editPIsFeatured").checked = !!p.isFeatured;
   document.getElementById("editPImgUrl").value = p.image?.startsWith("http") ? p.image : "";
   document.getElementById("editPImgBase64").value = p.image || "";
   document.getElementById("editImgPreview").src = p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
@@ -1427,35 +1770,30 @@ async function saveProductEdits() {
 
   const id = document.getElementById("editPId").value;
   const name = document.getElementById("editPName").value.trim();
-  const newPrice = Number(document.getElementById("editPPrice").value);
+  const price = Number(document.getElementById("editPPrice").value);
+  const previousPrice = Number(document.getElementById("editPPrevPrice").value || price);
   const stock = Number(document.getElementById("editPStock").value);
   const category = document.getElementById("editPCategory").value;
+  const description = document.getElementById("editPDesc").value.trim();
+  const isFeatured = document.getElementById("editPIsFeatured").checked;
   const image = document.getElementById("editPImgBase64").value;
 
-  const currentProduct = state.products.find(x => x.id === id);
-  if (!currentProduct) return toast("المنتج غير موجود.", "error");
-
-  if (!id || !name || isNaN(newPrice) || newPrice < 0 || isNaN(stock) || stock < 0) {
+  if (!id || !name || isNaN(price) || price < 0 || isNaN(stock) || stock < 0) {
     return toast("يرجى مراجعة البيانات المدخلة.", "error");
-  }
-
-  const oldPrice = Number(currentProduct.price || 0);
-  let previousPrice = Number(currentProduct.previousPrice || oldPrice);
-
-  if (oldPrice !== newPrice) {
-    previousPrice = oldPrice;
   }
 
   try {
     await db.collection("products").doc(id).update({
       name,
-      price: newPrice,
-      previousPrice: previousPrice,
+      price,
+      previousPrice,
       stock,
       category,
+      description,
+      isFeatured,
       image
     });
-    toast("تم تحديث بيانات وسعر المنتج بنجاح.", "success");
+    toast("تم تحديث بيانات المنتج بنجاح.", "success");
     closeEditModal();
   } catch (e) {
     console.error(e);
