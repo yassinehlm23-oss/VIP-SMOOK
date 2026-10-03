@@ -313,15 +313,15 @@
 /* =========================
    1) Firebase configuration
    =========================
-   استبدل هذه القيم بقيم مشروعك من Firebase Console.
+   ضع قيم مشروعك هنا بدلاً من النصوص المؤقتة
 */
 const firebaseConfig = {
-  apiKey: "ضع_هنا_YOUR_API_KEY",
+  apiKey: "ضع_هنا_API_KEY_الحقيقي",
   authDomain: "vip-smook.firebaseapp.com",
   projectId: "vip-smook",
   storageBucket: "vip-smook.appspot.com",
-  messagingSenderId: "ضع_هنا_MESSAGING_SENDER_ID",
-  appId: "ضع_هنا_YOUR_APP_ID"
+  messagingSenderId: "ضع_هنا_SENDER_ID_الحقيقي",
+  appId: "ضع_هنا_APP_ID_الحقيقي"
 };
 
 let firebaseReady = false;
@@ -329,7 +329,7 @@ let db = null;
 let auth = null;
 
 try {
-  if (!firebaseConfig.apiKey.startsWith("ضع_هنا")) {
+  if (firebaseConfig.apiKey && !firebaseConfig.apiKey.startsWith("ضع_هنا")) {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
     auth = firebase.auth();
@@ -427,7 +427,7 @@ function initApp() {
   updateCartUI();
 
   if (!firebaseReady) {
-    showFirebaseError("لم يتم وضع Firebase Config بعد. افتح الملف واستبدل القيم في firebaseConfig ثم أعد النشر.");
+    showFirebaseError("لم يتم إضافة المفاتيح الحقيقية في firebaseConfig بعد. يرجى استبدال القيم الحافظة للمكان للمتابعة.");
     renderProducts();
     return;
   }
@@ -449,7 +449,7 @@ function initApp() {
     },
     err => {
       console.error(err);
-      showFirebaseError("تعذر تحميل المنتجات. تحقق من Firestore Security Rules وإعداد Firebase.");
+      showFirebaseError("تعذر تحميل المنتجات. تحقق من قواعد الحماية (Firestore Security Rules).");
     }
   );
 }
@@ -634,10 +634,7 @@ function removeFromCart(id) {
 
 /* =========================
    7) Customer authentication
-   =========================
-   Firebase Auth handles the password.
-   Firestore stores only profile/order information.
-*/
+   ========================= */
 function toggleAuthModal() {
   const el = document.getElementById("authModal");
   if (state.customer) {
@@ -747,7 +744,6 @@ async function submitOrderToAdmin() {
 
   if (!firebaseReady) return toast("Firebase غير مهيأ.", "error");
 
-  // Fresh stock check before creating the order.
   const verifiedItems = [];
   for (const item of state.cart) {
     const snap = await db.collection("products").doc(item.id).get();
