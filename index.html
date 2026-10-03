@@ -249,12 +249,9 @@
         <span id="cartTotal" class="text-yellow-400">0 د.ج</span>
       </div>
 
-      <div class="grid grid-cols-2 gap-2">
-        <button onclick="submitOrderToAdmin()" class="py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/20">
-          <i class="fas fa-paper-plane"></i> إرسال الطلب
-        </button>
-        <button onclick="checkoutViaWhatsApp()" class="py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl transition text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/20">
-          <i class="fab fa-whatsapp text-sm"></i> طلب عبر واتساب
+      <div>
+        <button onclick="submitOrderToAdmin()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/20">
+          <i class="fas fa-paper-plane"></i> إرسال الطلب للمتجر
         </button>
       </div>
     </div>
@@ -647,9 +644,13 @@ function renderProducts() {
       }
     }
 
-    // 2. Likes & Dislikes Counters
+    // 2. Likes & Dislikes Counters and Active Colors
     const likes = Number(p.likesCount || 0);
     const dislikes = Number(p.dislikesCount || 0);
+    const userVote = localStorage.getItem(`voted_${p.id}`);
+
+    const likeClass = userVote === "like" ? "text-emerald-400 font-bold" : "text-gray-400 hover:text-emerald-400";
+    const dislikeClass = userVote === "dislike" ? "text-red-400 font-bold" : "text-gray-400 hover:text-red-400";
 
     return `
       <article class="card-hover bg-gray-900/90 border border-gray-800 rounded-2xl p-3 flex flex-col justify-between overflow-hidden relative group">
@@ -676,15 +677,15 @@ function renderProducts() {
         </div>
 
         <div>
-          <!-- Likes & Dislikes Section -->
+          <!-- Likes & Dislikes Section with Toggle/Cancel Ability -->
           <div class="flex items-center justify-between border-t border-gray-800/60 pt-2 mt-2 text-[10px]">
             <span class="text-gray-400">تقييم السعر:</span>
-            <div class="flex items-center gap-2">
-              <button onclick="votePrice('${esc(p.id)}', 'like')" class="flex items-center gap-1 text-gray-300 hover:text-emerald-400 transition" title="سعر ممتاز">
+            <div class="flex items-center gap-2.5">
+              <button onclick="votePrice('${esc(p.id)}', 'like')" class="flex items-center gap-1 ${likeClass} transition" title="سعر ممتاز">
                 <i class="fas fa-thumbs-up"></i>
                 <span>${likes}</span>
               </button>
-              <button onclick="votePrice('${esc(p.id)}', 'dislike')" class="flex items-center gap-1 text-gray-300 hover:text-red-400 transition" title="سعر مرتفع">
+              <button onclick="votePrice('${esc(p.id)}', 'dislike')" class="flex items-center gap-1 ${dislikeClass} transition" title="سعر مرتفع">
                 <i class="fas fa-thumbs-down"></i>
                 <span>${dislikes}</span>
               </button>
@@ -706,25 +707,38 @@ function renderProducts() {
   }).join("");
 }
 
-/* Price Likes / Dislikes Action */
-async function votePrice(id, type) {
+/* Enhanced Voting Logic (Allows Un-voting / Toggling) */
+async function votePrice(id, newVote) {
   if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
 
   const storageKey = `voted_${id}`;
-  if (localStorage.getItem(storageKey)) {
-    return toast("لقد قمت بتقييم سعر هذا المنتج مسبقاً!", "error");
+  const currentVote = localStorage.getItem(storageKey); // null, 'like', or 'dislike'
+
+  const updates = {};
+
+  if (currentVote === newVote) {
+    // 1. Clicked the same button again -> CANCEL VOTE
+    updates[newVote === "like" ? "likesCount" : "dislikesCount"] = firebase.firestore.FieldValue.increment(-1);
+    localStorage.removeItem(storageKey);
+    toast("تم إلغاء تقييمك.", "normal");
+  } else if (currentVote) {
+    // 2. Switching vote from Like to Dislike or vice-versa
+    updates[currentVote === "like" ? "likesCount" : "dislikesCount"] = firebase.firestore.FieldValue.increment(-1);
+    updates[newVote === "like" ? "likesCount" : "dislikesCount"] = firebase.firestore.FieldValue.increment(1);
+    localStorage.setItem(storageKey, newVote);
+    toast("تم تغيير تقييمك بنجاح!", "success");
+  } else {
+    // 3. New vote
+    updates[newVote === "like" ? "likesCount" : "dislikesCount"] = firebase.firestore.FieldValue.increment(1);
+    localStorage.setItem(storageKey, newVote);
+    toast("شكراً لتقييمك السعر!", "success");
   }
 
   try {
-    const field = type === "like" ? "likesCount" : "dislikesCount";
-    await db.collection("products").doc(id).update({
-      [field]: firebase.firestore.FieldValue.increment(1)
-    });
-    localStorage.setItem(storageKey, type);
-    toast("شكراً لتقييمك السعر!", "success");
+    await db.collection("products").doc(id).update(updates);
   } catch (e) {
     console.error(e);
-    toast("تعذر تسحيل التقييم.", "error");
+    toast("تعذر تحديث التقييم.", "error");
   }
 }
 
@@ -938,7 +952,7 @@ function updateUserUI() {
   }
 }
 
-/* Submitting Orders */
+/* Submitting Orders Direct to DB */
 async function submitOrderToAdmin() {
   if (!state.cart.length) return toast("السلة فارغة.", "error");
 
@@ -1005,32 +1019,6 @@ async function submitOrderToAdmin() {
     console.error(e);
     toast("تعذر إرسال الطلب، تأكد من المخزون.", "error");
   }
-}
-
-/* Feature 4: WhatsApp Direct Checkout Idea */
-function checkoutViaWhatsApp() {
-  if (!state.cart.length) return toast("السلة فارغة.", "error");
-  const phone = document.getElementById("checkoutPhone").value.trim();
-  const address = document.getElementById("checkoutAddress").value.trim();
-
-  let text = `*طلب جديد من VIP SMOOK*\n`;
-  if (state.customer) text += `الزبون: ${state.customer.username}\n`;
-  if (phone) text += `الهاتف: ${phone}\n`;
-  if (address) text += `العنوان: ${address}\n`;
-  text += `--------------------------\n`;
-
-  let total = 0;
-  state.cart.forEach(item => {
-    const sub = item.price * item.qty;
-    total += sub;
-    text += `• ${item.name} (عدد ${item.qty}) = ${sub} د.ج\n`;
-  });
-  text += `--------------------------\n`;
-  text += `*الإجمالي النهائي:* ${total} د.ج`;
-
-  const adminPhone = state.adminCredentials.username || "213781896750";
-  const url = `https://wa.me/${adminPhone}?text=${encodeURIComponent(text)}`;
-  window.open(url, "_blank");
 }
 
 function toggleMyOrders() {
@@ -1247,7 +1235,7 @@ async function markOrderComplete(id) {
   }
 }
 
-/* Feature 3 FIX: Robust High-Quality Image Compressor for Mobile Photos */
+/* Image Compressor for Mobile Photos */
 function compressAndConvertImage(file, maxWidth = 500, quality = 0.65) {
   return new Promise((resolve, reject) => {
     if (!file) return reject("الملف غير موجود");
@@ -1348,7 +1336,7 @@ async function addProduct() {
     await db.collection("products").add({
       name,
       price,
-      previousPrice: price, // Initial price set
+      previousPrice: price,
       stock,
       category,
       image,
@@ -1451,12 +1439,11 @@ async function saveProductEdits() {
     return toast("يرجى مراجعة البيانات المدخلة.", "error");
   }
 
-  // Feature 1: Automatically track price changes
   const oldPrice = Number(currentProduct.price || 0);
   let previousPrice = Number(currentProduct.previousPrice || oldPrice);
 
   if (oldPrice !== newPrice) {
-    previousPrice = oldPrice; // Save the last price before change
+    previousPrice = oldPrice;
   }
 
   try {
@@ -1491,4 +1478,4 @@ async function deleteProduct(id) {
 </script>
 
 </body>
-  </html>
+</html>
