@@ -13,6 +13,10 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <style>
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col relative">
 
@@ -50,22 +54,22 @@
       <div class="flex items-center space-x-2 space-x-reverse">
         <!-- زر الطلبات -->
         <button id="myOrdersBtn" onclick="toggleMyOrders()" class="hidden px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs border border-gray-700 rounded-lg text-gray-300">
-          <i class="fas fa-box"></i> طلباتي
+          <i class="fas fa-box"></i> <span class="hidden sm:inline">طلباتي</span>
         </button>
 
         <!-- زر الحساب/الدخول/الخروج -->
-        <button id="userAuthBtn" onclick="handleAuthBtnClick()" class="px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs border border-yellow-500/40 rounded-lg text-yellow-400">
+        <button id="userAuthBtn" onclick="handleAuthBtnClick()" class="px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs border border-yellow-500/40 rounded-lg text-yellow-400 flex items-center">
           <i class="fas fa-user ml-1"></i> <span id="userAuthLabel">دخول</span>
         </button>
 
         <!-- السلة -->
-        <button id="cartBtn" onclick="toggleCart()" class="relative p-2 bg-yellow-500 text-black rounded-full font-bold hover:bg-yellow-400">
+        <button id="cartBtn" onclick="toggleCart()" class="relative p-2 bg-yellow-500 text-black rounded-full font-bold hover:bg-yellow-400 flex items-center justify-center">
           <i class="fas fa-shopping-cart text-base"></i>
           <span id="cartCount" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">0</span>
         </button>
 
         <!-- لوحة التحكم -->
-        <button id="adminTriggerBtn" onclick="toggleAdminModal()" class="p-2 bg-gray-800 hover:bg-gray-700 text-xs border border-yellow-500/40 rounded-full text-yellow-400" title="لوحة التحكم">
+        <button id="adminTriggerBtn" onclick="toggleAdminModal()" class="hidden p-2 bg-gray-800 hover:bg-gray-700 text-xs border border-yellow-500/40 rounded-full text-yellow-400" title="لوحة التحكم">
           <i class="fas fa-user-shield"></i>
         </button>
       </div>
@@ -100,22 +104,22 @@
       <div class="space-y-3">
         <div id="nameField" class="hidden">
           <label class="text-xs text-gray-400">الاسم الكامل:</label>
-          <input type="text" id="custName" placeholder="أدخل اسمك" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1">
+          <input type="text" id="custName" placeholder="أدخل اسمك" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1 text-white">
         </div>
         <div>
           <label class="text-xs text-gray-400">البريد الإلكتروني:</label>
-          <input type="email" id="custEmail" placeholder="example@domain.com" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1">
+          <input type="email" id="custEmail" placeholder="example@domain.com" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1 text-white">
         </div>
         <div>
           <label class="text-xs text-gray-400">رقم الهاتف:</label>
-          <input type="tel" id="custPhone" placeholder="06XXXXXXXX" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1">
+          <input type="tel" id="custPhone" placeholder="06XXXXXXXX" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1 text-white">
         </div>
         <div>
           <label class="text-xs text-gray-400">كلمة السر:</label>
-          <input type="password" id="custPass" placeholder="******" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1">
+          <input type="password" id="custPass" placeholder="******" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1 text-white">
         </div>
 
-        <button id="authSubmitBtn" onclick="handleAuth()" class="w-full py-3 bg-yellow-500 text-black font-bold rounded-xl mt-2">دخول</button>
+        <button id="authSubmitBtn" onclick="handleAuth()" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl mt-2 transition">دخول</button>
         
         <p class="text-xs text-center text-gray-400 mt-2">
           <span id="authToggleText">ليس لديك حساب؟</span>
@@ -142,7 +146,7 @@
           <span>المجموع:</span>
           <span id="cartTotal" class="text-yellow-500">0 د.ج</span>
         </div>
-        <button id="submitOrderBtn" onclick="submitOrderToAdmin()" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl flex items-center justify-center gap-2">
+        <button id="submitOrderBtn" onclick="submitOrderToAdmin()" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl flex items-center justify-center gap-2 transition">
           <i class="fas fa-paper-plane"></i> تأكيد وإرسال الطلب للمتجر
         </button>
       </div>
@@ -170,10 +174,10 @@
         <button onclick="closeEditModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
       </div>
       <input type="hidden" id="editPId">
-      <input type="text" id="editPName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
+      <input type="text" id="editPName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-white">
       <div class="grid grid-cols-2 gap-2">
-        <input type="number" id="editPPrice" placeholder="السعر" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
-        <input type="number" id="editPStock" placeholder="المخزون" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
+        <input type="number" id="editPPrice" placeholder="السعر" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-white">
+        <input type="number" id="editPStock" placeholder="المخزون" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-white">
       </div>
       <select id="editPCategory" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-300">
         <option value="tobacco">سجائر وتبغ</option>
@@ -188,7 +192,7 @@
           <img id="editImgPreview" class="w-20 h-20 object-cover rounded-lg border border-yellow-500">
         </div>
       </div>
-      <button onclick="saveProductEdits()" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-sm">حفظ التعديلات</button>
+      <button onclick="saveProductEdits()" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-sm transition">حفظ التعديلات</button>
     </div>
   </div>
 
@@ -219,10 +223,10 @@
         <!-- Section 2: Add Product -->
         <div id="adminTabAdd" class="space-y-3 hidden bg-gray-900/50 p-4 rounded-xl border border-gray-700">
           <h4 class="text-sm font-semibold text-yellow-400">+ إضافة منتج جديد</h4>
-          <input type="text" id="pName" placeholder="اسم المنتج (مثال: LD أزرق)" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
+          <input type="text" id="pName" placeholder="اسم المنتج (مثال: LD أزرق)" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-white">
           <div class="grid grid-cols-2 gap-2">
-            <input type="number" id="pPrice" placeholder="السعر للعلبة (د.ج)" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
-            <input type="number" id="pStock" placeholder="الكمية المتوفرة في المخزن" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm">
+            <input type="number" id="pPrice" placeholder="السعر للعلبة (د.ج)" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-white">
+            <input type="number" id="pStock" placeholder="الكمية المتوفرة في المخزن" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-white">
           </div>
           <select id="pCategory" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm text-gray-300">
             <option value="tobacco">سجائر وتبغ</option>
@@ -239,7 +243,7 @@
             </div>
           </div>
 
-          <button onclick="addProduct()" class="w-full py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl text-sm">+ حفظ المنتج</button>
+          <button onclick="addProduct()" class="w-full py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl text-sm transition">+ حفظ المنتج</button>
         </div>
 
         <!-- Section 3: Manage Products & Stock -->
@@ -253,7 +257,7 @@
   </div>
 
   <script>
-    // ⚠️ استبدل القيم أدناه بالمفاتيح الحقيقية الخاصة بمشروعك من Firebase Console
+    // ⚠️ أضف إعدادات Firebase الخاصة بمشروعك هنا
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "vip-smook.firebaseapp.com",
@@ -328,7 +332,7 @@
               userProfile = userDoc.data();
               isAdmin = userProfile.role === 'admin';
             } else {
-              userProfile = { name: user.email.split('@')[0], phone: '', role: 'customer' };
+              userProfile = { name: user.email ? user.email.split('@')[0] : 'زبون', phone: '', role: 'customer' };
               isAdmin = false;
             }
           } catch(e) {
@@ -359,8 +363,10 @@
       if (!currentUser) return;
 
       if (isAdmin) {
-        db.collection('orders').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-          orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        db.collection('orders').onSnapshot(snapshot => {
+          let docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          docs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+          orders = docs;
           renderAdminOrders();
           renderMyOrders();
         }, err => console.error("Admin orders error:", err));
@@ -368,8 +374,8 @@
         db.collection('orders')
           .where('customerUid', '==', currentUser.uid)
           .onSnapshot(snapshot => {
-            const myDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            myDocs.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+            let myDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            myDocs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
             orders = myDocs;
             renderMyOrders();
           }, err => console.error("Customer orders error:", err));
@@ -390,7 +396,7 @@
       let filtered = currentCategory === 'all' ? products : products.filter(p => p.category === currentCategory);
 
       if (searchQuery.trim() !== '') {
-        filtered = filtered.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+        filtered = filtered.filter(p => p.name && p.name.toLowerCase().includes(searchQuery.toLowerCase()));
       }
 
       if (filtered.length === 0) {
@@ -401,13 +407,14 @@
       grid.innerHTML = filtered.map(p => {
         const stock = p.stock !== undefined ? Number(p.stock) : 0;
         const isOutOfStock = stock <= 0;
+        const imgUrl = p.image && p.image.trim() !== '' ? p.image : 'https://via.placeholder.com/150';
 
         return `
           <div class="bg-gray-800/80 border border-gray-700/50 rounded-2xl p-3 flex flex-col justify-between hover:border-yellow-500/50 transition">
-            <img src="${esc(p.image) || 'https://via.placeholder.com/150'}" alt="${esc(p.name)}" class="w-full h-32 object-cover rounded-xl mb-2">
+            <img src="${esc(imgUrl)}" alt="${esc(p.name)}" class="w-full h-32 object-cover rounded-xl mb-2">
             <div>
               <h3 class="font-bold text-sm text-gray-100">${esc(p.name)}</h3>
-              <p class="text-yellow-500 font-extrabold text-sm mt-1">${p.price} د.ج</p>
+              <p class="text-yellow-500 font-extrabold text-sm mt-1">${p.price || 0} د.ج</p>
               <p class="text-[11px] ${isOutOfStock ? 'text-red-400' : 'text-gray-400'} mt-0.5">
                 ${isOutOfStock ? 'غير متوفر حالياً' : 'المتوفر في المخزن: ' + stock}
               </p>
@@ -499,7 +506,7 @@
 
       if (!item) return;
 
-      if (newQty <= 0) {
+      if (isNaN(newQty) || newQty <= 0) {
         removeFromCart(id);
         return;
       }
@@ -537,13 +544,15 @@
 
       try {
         await db.runTransaction(async (transaction) => {
-          // 1. Check all stocks first
+          // 1. Read product stocks
           const productReads = [];
           for (const item of cart) {
             const pRef = db.collection('products').doc(item.id);
-            productReads.push({ ref: pRef, item: item, doc: await transaction.get(pRef) });
+            const doc = await transaction.get(pRef);
+            productReads.push({ ref: pRef, item: item, doc: doc });
           }
 
+          // 2. Validate stock availability
           for (const pRead of productReads) {
             if (!pRead.doc.exists) {
               throw new Error(`المنتج ${pRead.item.name} لم يعد متوفراً!`);
@@ -554,7 +563,7 @@
             }
           }
 
-          // 2. Deduct stock and prepare order
+          // 3. Update stock & Record Order
           let totalAmount = 0;
           const orderItems = [];
 
@@ -575,7 +584,7 @@
           const newOrderRef = db.collection('orders').doc();
           transaction.set(newOrderRef, {
             customerUid: currentUser.uid,
-            customerName: userProfile?.name || currentUser.email.split('@')[0],
+            customerName: userProfile?.name || (currentUser.email ? currentUser.email.split('@')[0] : 'زبون'),
             customerPhone: userProfile?.phone || '',
             items: orderItems,
             total: totalAmount,
@@ -591,7 +600,7 @@
         toggleCart();
       } catch (err) {
         showToast(err.message || "حدث خطأ أثناء إرسال الطلب", "error");
-      } finally {
+      } fontFinally: {
         submitBtn.disabled = false;
         submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> تأكيد وإرسال الطلب للمتجر`;
       }
@@ -652,7 +661,7 @@
       const adminBtn = document.getElementById('adminTriggerBtn');
 
       if (currentUser) {
-        label.innerText = userProfile?.name || currentUser.email.split('@')[0];
+        label.innerText = userProfile?.name || (currentUser.email ? currentUser.email.split('@')[0] : 'حسابي');
         ordersBtn.classList.remove('hidden');
         if (isAdmin) {
           adminBtn.classList.remove('hidden');
@@ -772,7 +781,7 @@
       const category = document.getElementById('pCategory').value;
       const image = document.getElementById('pImgBase64').value;
 
-      if (!name || !price) return showToast('الرجاء إدخال الاسم والسعر', "error");
+      if (!name || isNaN(price) || price <= 0) return showToast('الرجاء إدخال الاسم والسعر الصحيح', "error");
 
       try {
         await db.collection('products').add({ name, price, stock, category, image });
@@ -895,13 +904,13 @@
           </div>
 
           <div class="space-y-1">
-            ${o.items.map(i => `<div class="flex justify-between text-gray-300"><span>• ${esc(i.name)} (x${i.qty})</span><span>${i.price * i.qty} د.ج</span></div>`).join('')}
+            ${o.items ? o.items.map(i => `<div class="flex justify-between text-gray-300"><span>• ${esc(i.name)} (x${i.qty})</span><span>${i.price * i.qty} د.ج</span></div>`).join('') : ''}
           </div>
 
           <div class="flex justify-between items-center border-t border-gray-800 pt-2 font-bold">
             <span>المجموع الكلي: ${o.total} د.ج</span>
             ${o.status !== 'جاهز للتسليم' ? `
-              <button onclick="markOrderReady('${o.id}')" class="px-3 py-1 bg-green-600 hover:bg-green-500 text-white rounded-lg">
+              <button onclick="markOrderReady('${o.id}')" class="px-3 py-1 bg-green-600 hover:bg-green-500 text-white rounded-lg transition">
                 <i class="fas fa-check ml-1"></i> تأكيد تجهيز الطلبية
               </button>
             ` : '<span class="text-green-400">تم تجهيز هذه الطلبية</span>'}
