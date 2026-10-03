@@ -28,9 +28,6 @@
       <p class="text-xs text-gray-300 leading-relaxed">
         تحتوي بعض المنتجات المعروضة في هذا المتجر على منتجات التبغ والتبغ البديل. يرجى التأكد من أنك تبلغ السن القانونية للشراء وفق التشريعات المحلية.
       </p>
-      <p class="text-[10px] text-gray-400 bg-gray-900 p-2 rounded-lg border border-gray-700">
-        تنبيه: هذه النافذة للتذكير والتأكيد الرقمي فقط، ولا تعفي من التحقق التنظيمي والقانوني الفعلي من الهوية والعمر عند الاستلام أو التوصيل.
-      </p>
       <div class="flex gap-2 pt-2">
         <button onclick="acceptAgeGate()" class="flex-1 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl text-xs">أؤكد أنني بالسن القانونية</button>
         <button onclick="rejectAgeGate()" class="flex-1 py-2.5 bg-gray-700 hover:bg-gray-600 text-gray-300 font-bold rounded-xl text-xs">مغادرة المتجر</button>
@@ -52,6 +49,11 @@
       </div>
 
       <div class="flex items-center space-x-2 space-x-reverse">
+        <!-- زر لوحة المدير المباشر -->
+        <button onclick="toggleAdminModal()" class="px-2.5 py-1.5 bg-red-600 hover:bg-red-500 text-xs font-bold rounded-lg text-white flex items-center gap-1 shadow">
+          <i class="fas fa-user-shield"></i> <span>لوحة المدير</span>
+        </button>
+
         <!-- زر الطلبات -->
         <button id="myOrdersBtn" onclick="toggleMyOrders()" class="hidden px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs border border-gray-700 rounded-lg text-gray-300">
           <i class="fas fa-box"></i> <span class="hidden sm:inline">طلباتي</span>
@@ -66,11 +68,6 @@
         <button id="cartBtn" onclick="toggleCart()" class="relative p-2 bg-yellow-500 text-black rounded-full font-bold hover:bg-yellow-400 flex items-center justify-center">
           <i class="fas fa-shopping-cart text-base"></i>
           <span id="cartCount" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">0</span>
-        </button>
-
-        <!-- لوحة التحكم -->
-        <button id="adminTriggerBtn" onclick="toggleAdminModal()" class="hidden p-2 bg-gray-800 hover:bg-gray-700 text-xs border border-yellow-500/40 rounded-full text-yellow-400" title="لوحة التحكم">
-          <i class="fas fa-user-shield"></i>
         </button>
       </div>
     </div>
@@ -92,39 +89,26 @@
     </div>
   </main>
 
-  <!-- User Auth Modal (Login / Register) -->
+  <!-- Simple Customer Auth Modal (Name + Password) -->
   <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-gray-800 border border-yellow-500/30 p-6 rounded-2xl w-full max-w-sm relative">
       <div class="flex justify-between items-center mb-4">
-        <h3 id="authTitle" class="text-lg font-bold text-yellow-500">تسجيل الدخول</h3>
+        <h3 id="authTitle" class="text-lg font-bold text-yellow-500">تسجيل الدخول للزبون</h3>
         <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
       </div>
 
-      <!-- Form Inputs -->
       <div class="space-y-3">
-        <div id="nameField" class="hidden">
-          <label class="text-xs text-gray-400">الاسم الكامل:</label>
+        <div>
+          <label class="text-xs text-gray-400">اسم المستخدم:</label>
           <input type="text" id="custName" placeholder="أدخل اسمك" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1 text-white">
-        </div>
-        <div>
-          <label class="text-xs text-gray-400">البريد الإلكتروني:</label>
-          <input type="email" id="custEmail" placeholder="example@domain.com" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1 text-white">
-        </div>
-        <div>
-          <label class="text-xs text-gray-400">رقم الهاتف:</label>
-          <input type="tel" id="custPhone" placeholder="06XXXXXXXX" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1 text-white">
         </div>
         <div>
           <label class="text-xs text-gray-400">كلمة السر:</label>
           <input type="password" id="custPass" placeholder="******" class="w-full p-2.5 bg-gray-900 border border-gray-700 rounded-xl text-sm mt-1 text-white">
         </div>
 
-        <button id="authSubmitBtn" onclick="handleAuth()" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl mt-2 transition">دخول</button>
-        
-        <p class="text-xs text-center text-gray-400 mt-2">
-          <span id="authToggleText">ليس لديك حساب؟</span>
-          <button onclick="switchAuthMode()" id="authToggleBtn" class="text-yellow-500 font-bold underline mr-1">إنشاء حساب جديد</button>
-        </p>
+        <button id="authSubmitBtn" onclick="handleAuth()" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl mt-2 transition">دخول / تسجيل</button>
+        <p class="text-[11px] text-gray-400 text-center">إذا لم يكن لديك حساب، سيتم إنشاؤه تلقائياً باسمك وكلمة سرك.</p>
       </div>
     </div>
   </div>
@@ -196,11 +180,11 @@
     </div>
   </div>
 
-  <!-- Admin Modal -->
+  <!-- Admin Modal (لوحة مدير المتجر) -->
   <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-gray-800 border border-yellow-500/30 p-6 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-yellow-500">لوحة تحكم مدير المتجر</h3>
+        <h3 class="text-lg font-bold text-yellow-500"><i class="fas fa-user-shield ml-2"></i>لوحة تحكم مدير المتجر</h3>
         <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
       </div>
       
@@ -208,7 +192,7 @@
       <div id="adminPanel" class="space-y-6">
         <div class="flex border-b border-gray-700 gap-2 pb-2 overflow-x-auto">
           <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="px-3 py-1.5 bg-yellow-500 text-black font-bold rounded-lg text-xs whitespace-nowrap">الطلبات الواردة</button>
-          <button onclick="switchAdminTab('add')" id="tabAddBtn" class="px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs whitespace-nowrap">+ إضافة منتج</button>
+          <button onclick="switchAdminTab('add')" id="tabAddBtn" class="px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs whitespace-nowrap">+ إضافة منتج جديد</button>
           <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs whitespace-nowrap">إدارة المنتجات والمخزون</button>
         </div>
 
@@ -257,7 +241,7 @@
   </div>
 
   <script>
-    // ⚠️ أضف إعدادات Firebase الخاصة بمشروعك هنا
+    // ⚠️ ضع هنا إعدادات مشروع Firebase الخاص بك
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "vip-smook.firebaseapp.com",
@@ -276,13 +260,9 @@
     let cart = [];
     let orders = [];
     let currentUser = null;
-    let userProfile = null;
-    let isAdmin = false;
     let currentCategory = 'all';
     let searchQuery = '';
-    let isRegisterMode = false;
 
-    // Security Helper: Escape HTML
     function esc(str) {
       if (!str) return '';
       return String(str)
@@ -293,7 +273,6 @@
         .replace(/'/g, '&#039;');
     }
 
-    // UI Toast System
     function showToast(msg, type = 'info') {
       const toast = document.createElement('div');
       const colors = {
@@ -311,37 +290,20 @@
       }, 3000);
     }
 
-    // Initial Load & Auth Listener
     initApp();
 
     function initApp() {
-      // LocalStorage Cart Recovery
       try {
         const savedCart = localStorage.getItem('vip_cart');
         if (savedCart) cart = JSON.parse(savedCart);
       } catch(e) { cart = []; }
       updateCartUI();
 
-      // Monitor Auth State
       auth.onAuthStateChanged(async (user) => {
         currentUser = user;
         if (user) {
-          try {
-            const userDoc = await db.collection('users').doc(user.uid).get();
-            if (userDoc.exists) {
-              userProfile = userDoc.data();
-              isAdmin = userProfile.role === 'admin';
-            } else {
-              userProfile = { name: user.email ? user.email.split('@')[0] : 'زبون', phone: '', role: 'customer' };
-              isAdmin = false;
-            }
-          } catch(e) {
-            console.error("Error fetching user profile:", e);
-          }
           listenToOrders();
         } else {
-          userProfile = null;
-          isAdmin = false;
           orders = [];
           renderMyOrders();
           renderAdminOrders();
@@ -349,7 +311,6 @@
         updateUserUI();
       });
 
-      // Listen to Products (Public Read)
       db.collection('products').onSnapshot(snapshot => {
         products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderProducts();
@@ -360,29 +321,16 @@
     }
 
     function listenToOrders() {
-      if (!currentUser) return;
-
-      if (isAdmin) {
-        db.collection('orders').onSnapshot(snapshot => {
-          let docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          docs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-          orders = docs;
-          renderAdminOrders();
-          renderMyOrders();
-        }, err => console.error("Admin orders error:", err));
-      } else {
-        db.collection('orders')
-          .where('customerUid', '==', currentUser.uid)
-          .onSnapshot(snapshot => {
-            let myDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            myDocs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-            orders = myDocs;
-            renderMyOrders();
-          }, err => console.error("Customer orders error:", err));
-      }
+      // جلب جميع الطلبيات لعرضها في لوحة المدير وعرض طلبات الزبون
+      db.collection('orders').onSnapshot(snapshot => {
+        let docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        docs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        orders = docs;
+        renderAdminOrders();
+        renderMyOrders();
+      }, err => console.error("Orders listener error:", err));
     }
 
-    // Age Gate Functions
     function acceptAgeGate() {
       document.getElementById('ageGateModal').classList.add('hidden');
     }
@@ -527,12 +475,12 @@
       updateCartUI();
     }
 
-    // --- Submit Order To Admin (Atomically via Firestore Transaction) ---
+    // --- Submit Order ---
     async function submitOrderToAdmin() {
       if (cart.length === 0) return showToast('السلة فارغة!', "error");
 
       if (!currentUser) {
-        showToast("يرجى تسجيل الدخول أو إنشاء حساب لإرسال الطلب", "info");
+        showToast("يرجى إدخال اسمك وكلمة السر أولاً لإرسال الطلب", "info");
         toggleCart();
         toggleAuthModal();
         return;
@@ -544,7 +492,6 @@
 
       try {
         await db.runTransaction(async (transaction) => {
-          // 1. Read product stocks
           const productReads = [];
           for (const item of cart) {
             const pRef = db.collection('products').doc(item.id);
@@ -552,7 +499,6 @@
             productReads.push({ ref: pRef, item: item, doc: doc });
           }
 
-          // 2. Validate stock availability
           for (const pRead of productReads) {
             if (!pRead.doc.exists) {
               throw new Error(`المنتج ${pRead.item.name} لم يعد متوفراً!`);
@@ -563,7 +509,6 @@
             }
           }
 
-          // 3. Update stock & Record Order
           let totalAmount = 0;
           const orderItems = [];
 
@@ -581,11 +526,11 @@
             });
           }
 
+          const userName = localStorage.getItem('vipsmook_user_name') || 'زبون';
           const newOrderRef = db.collection('orders').doc();
           transaction.set(newOrderRef, {
             customerUid: currentUser.uid,
-            customerName: userProfile?.name || (currentUser.email ? currentUser.email.split('@')[0] : 'زبون'),
-            customerPhone: userProfile?.phone || '',
+            customerName: userName,
             items: orderItems,
             total: totalAmount,
             status: 'جديد',
@@ -600,78 +545,65 @@
         toggleCart();
       } catch (err) {
         showToast(err.message || "حدث خطأ أثناء إرسال الطلب", "error");
-      } fontFinally: {
+      } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> تأكيد وإرسال الطلب للمتجر`;
       }
     }
 
-    // --- User Auth System ---
+    // --- Simple Authentication Handler (Name & Pass Only) ---
     function handleAuthBtnClick() {
       if (currentUser) {
         if (confirm("هل ترغب في تسجيل الخروج؟")) {
-          auth.signOut().then(() => showToast("تم تسجيل الخروج بنجاح", "info"));
+          auth.signOut().then(() => {
+            localStorage.removeItem('vipsmook_user_name');
+            showToast("تم تسجيل الخروج بنجاح", "info");
+          });
         }
       } else {
         toggleAuthModal();
       }
     }
 
-    function switchAuthMode() {
-      isRegisterMode = !isRegisterMode;
-      document.getElementById('authTitle').innerText = isRegisterMode ? 'إنشاء حساب جديد' : 'تسجيل الدخول';
-      document.getElementById('authSubmitBtn').innerText = isRegisterMode ? 'تسجيل الحساب' : 'دخول';
-      document.getElementById('nameField').classList.toggle('hidden', !isRegisterMode);
-      document.getElementById('authToggleText').innerText = isRegisterMode ? 'لديك حساب بالفعل؟' : 'ليس لديك حساب؟';
-      document.getElementById('authToggleBtn').innerText = isRegisterMode ? 'تسجيل الدخول' : 'إنشاء حساب جديد';
-    }
-
     async function handleAuth() {
-      const email = document.getElementById('custEmail').value.trim();
-      const pass = document.getElementById('custPass').value.trim();
-      const phone = document.getElementById('custPhone').value.trim();
       const name = document.getElementById('custName').value.trim();
+      const pass = document.getElementById('custPass').value.trim();
 
-      if (!email || !pass) return showToast("يرجى إدخال البريد الإلكتروني وكلمة السر", "error");
+      if (!name || !pass) return showToast("يرجى كتابة الاسم وكلمة السر", "error");
+
+      // تحويل الاسم إلى إيميل فرضي بسيط ليتوافق مع نظام أمان Firebase
+      const fakeEmail = `${name.toLowerCase().replace(/\s+/g, '_')}@vipsmook.local`;
 
       try {
-        if (isRegisterMode) {
-          if (!name || !phone) return showToast("يرجى إدخال كافة البيانات المطلوب تسجيلها", "error");
-          const cred = await auth.createUserWithEmailAndPassword(email, pass);
-          await db.collection('users').doc(cred.user.uid).set({
-            name,
-            phone,
-            role: 'customer',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          showToast("تم إنشاء حسابك بنجاح!", "success");
-        } else {
-          await auth.signInWithEmailAndPassword(email, pass);
-          showToast("تم تسجيل الدخول بنجاح", "success");
-        }
+        // محاولة تسجيل الدخول
+        await auth.signInWithEmailAndPassword(fakeEmail, pass);
+        localStorage.setItem('vipsmook_user_name', name);
+        showToast(`أهلاً بك مجدداً ${name}`, "success");
         toggleAuthModal();
       } catch (err) {
-        showToast(err.message || "حدث خطأ في عملية التسجيل", "error");
+        // إذا لم يكن الحساب موجوداً، أنشئ حساباً جديداً فوراً بنفس الاسم
+        try {
+          await auth.createUserWithEmailAndPassword(fakeEmail, pass);
+          localStorage.setItem('vipsmook_user_name', name);
+          showToast(`تم إنشاء حساب جديد باسم: ${name}`, "success");
+          toggleAuthModal();
+        } catch (createErr) {
+          showToast("كلمة السر خاطئة لهذا الاسم، أو تعذر تسجيل الحساب", "error");
+        }
       }
     }
 
     function updateUserUI() {
       const label = document.getElementById('userAuthLabel');
       const ordersBtn = document.getElementById('myOrdersBtn');
-      const adminBtn = document.getElementById('adminTriggerBtn');
+      const storedName = localStorage.getItem('vipsmook_user_name');
 
       if (currentUser) {
-        label.innerText = userProfile?.name || (currentUser.email ? currentUser.email.split('@')[0] : 'حسابي');
+        label.innerText = storedName || 'حسابي';
         ordersBtn.classList.remove('hidden');
-        if (isAdmin) {
-          adminBtn.classList.remove('hidden');
-        } else {
-          adminBtn.classList.add('hidden');
-        }
       } else {
         label.innerText = "دخول";
         ordersBtn.classList.add('hidden');
-        adminBtn.classList.add('hidden');
       }
     }
 
@@ -687,12 +619,14 @@
       const container = document.getElementById('myOrdersList');
       if (!currentUser) return;
 
-      if (orders.length === 0) {
+      const myOrders = orders.filter(o => o.customerUid === currentUser.uid);
+
+      if (myOrders.length === 0) {
         container.innerHTML = `<p class="text-gray-500 text-center py-6">ليس لديك أي طلبات سابقة</p>`;
         return;
       }
 
-      container.innerHTML = orders.map(o => `
+      container.innerHTML = myOrders.map(o => `
         <div class="bg-gray-900 p-3 rounded-xl border border-gray-700">
           <div class="flex justify-between items-center mb-2">
             <span class="text-xs text-gray-400">إجمالي: ${o.total} د.ج</span>
@@ -707,12 +641,8 @@
       `).join('');
     }
 
-    // --- Admin Dashboard Actions ---
+    // --- Admin Dashboard Modal Actions ---
     function toggleAdminModal() {
-      if (!isAdmin) {
-        showToast("هذه اللوحة مخصصة للمدير فقط بعد تسجيل الدخول بحساب الإدارة", "error");
-        return;
-      }
       document.getElementById('adminModal').classList.toggle('hidden');
     }
 
@@ -773,8 +703,6 @@
     }
 
     async function addProduct() {
-      if (!isAdmin) return showToast("غير مصرح بالعملية", "error");
-
       const name = document.getElementById('pName').value.trim();
       const price = Number(document.getElementById('pPrice').value);
       const stock = Number(document.getElementById('pStock').value) || 0;
@@ -851,8 +779,6 @@
     }
 
     async function saveProductEdits() {
-      if (!isAdmin) return showToast("غير مصرح بالعملية", "error");
-
       const id = document.getElementById('editPId').value;
       const name = document.getElementById('editPName').value.trim();
       const price = Number(document.getElementById('editPPrice').value);
@@ -874,7 +800,6 @@
     }
 
     async function deleteProduct(id) {
-      if (!isAdmin) return showToast("غير مصرح بالعملية", "error");
       if (confirm("هل أنت تأكد من رغبتك في حذف هذا المنتج؟")) {
         try {
           await db.collection('products').doc(id).delete();
@@ -897,7 +822,7 @@
       container.innerHTML = orders.map(o => `
         <div class="bg-gray-900 p-3 rounded-xl border border-gray-700 text-xs space-y-2">
           <div class="flex justify-between items-center font-bold border-b border-gray-800 pb-2">
-            <span class="text-yellow-400">الزبون: ${esc(o.customerName)} (${esc(o.customerPhone)})</span>
+            <span class="text-yellow-400">الزبون: ${esc(o.customerName)}</span>
             <span class="px-2 py-0.5 rounded text-[10px] ${o.status === 'جاهز للتسليم' ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}">
               ${esc(o.status) || 'جديد'}
             </span>
@@ -920,7 +845,6 @@
     }
 
     async function markOrderReady(orderId) {
-      if (!isAdmin) return showToast("غير مصرح بالعملية", "error");
       try {
         await db.collection('orders').doc(orderId).update({ status: 'جاهز للتسليم' });
         showToast("تم تعديل حالة الطلبية إلى جاهزة للتسليم!", "success");
