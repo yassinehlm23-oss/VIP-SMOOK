@@ -13,7 +13,6 @@
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
 
   <style>
     * { box-sizing: border-box; }
@@ -140,26 +139,15 @@
     </div>
 
     <div class="space-y-3">
-      <div id="nameField" class="hidden">
-        <label class="text-xs text-gray-400">الاسم الكامل</label>
-        <input id="custName" type="text" autocomplete="name" class="w-full p-2.5 bg-gray-950 border border-gray-700 rounded-xl text-sm mt-1">
-      </div>
-
       <div>
-        <label class="text-xs text-gray-400">البريد الإلكتروني</label>
-        <input id="custEmail" type="email" autocomplete="email" placeholder="example@email.com"
-          class="w-full p-2.5 bg-gray-950 border border-gray-700 rounded-xl text-sm mt-1">
-      </div>
-
-      <div>
-        <label class="text-xs text-gray-400">رقم الهاتف</label>
-        <input id="custPhone" type="tel" autocomplete="tel" placeholder="06XXXXXXXX"
+        <label class="text-xs text-gray-400">اسم المستخدم</label>
+        <input id="custUsername" type="text" placeholder="اسم المستخدم"
           class="w-full p-2.5 bg-gray-950 border border-gray-700 rounded-xl text-sm mt-1">
       </div>
 
       <div>
         <label class="text-xs text-gray-400">كلمة المرور</label>
-        <input id="custPass" type="password" autocomplete="current-password"
+        <input id="custPass" type="password" placeholder="******"
           class="w-full p-2.5 bg-gray-950 border border-gray-700 rounded-xl text-sm mt-1">
       </div>
 
@@ -246,22 +234,22 @@
     <div class="flex justify-between items-center mb-4">
       <div>
         <h3 class="text-lg font-bold text-yellow-400">لوحة الإدارة</h3>
-        <p class="text-[11px] text-gray-500 mt-1">تسجيل المدير يتم عبر Firebase Authentication.</p>
+        <p class="text-[11px] text-gray-500 mt-1">خاصة بمدير المتجر فقط</p>
       </div>
       <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
     </div>
 
     <div id="adminLoginForm" class="space-y-3">
-      <input type="email" id="adminEmailInput" placeholder="بريد المدير في Firebase Auth"
+      <input type="text" id="adminUserInput" placeholder="رقم المدير / اسم المستخدم"
         class="w-full p-3 bg-gray-950 border border-gray-700 rounded-xl text-sm">
-      <input type="password" id="adminPassInput" placeholder="كلمة مرور المدير"
+      <input type="password" id="adminPassInput" placeholder="كلمة المرور"
         class="w-full p-3 bg-gray-950 border border-gray-700 rounded-xl text-sm">
       <button onclick="loginAdmin()" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl">دخول المدير</button>
     </div>
 
     <div id="adminPanel" class="hidden space-y-5">
       <div class="flex items-center justify-between gap-2">
-        <span id="adminSignedInAs" class="text-xs text-gray-400"></span>
+        <span id="adminSignedInAs" class="text-xs text-gray-400">مرحباً بالمدير</span>
         <button onclick="logoutAdmin()" class="px-3 py-1.5 bg-red-900/60 text-red-300 rounded-lg text-xs">خروج</button>
       </div>
 
@@ -269,6 +257,7 @@
         <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="admin-tab px-3 py-1.5 bg-yellow-500 text-black font-bold rounded-lg text-xs whitespace-nowrap">الطلبات</button>
         <button onclick="switchAdminTab('add')" id="tabAddBtn" class="admin-tab px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs whitespace-nowrap">+ منتج</button>
         <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="admin-tab px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs whitespace-nowrap">المخزون</button>
+        <button onclick="switchAdminTab('settings')" id="tabSettingsBtn" class="admin-tab px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs whitespace-nowrap">إعدادات الإدارة</button>
       </div>
 
       <div id="adminTabOrders" class="space-y-3">
@@ -277,7 +266,7 @@
           <button onclick="loadOrdersOnce()" class="text-xs text-yellow-400"><i class="fas fa-rotate"></i> تحديث</button>
         </div>
         <div id="adminOrdersList" class="space-y-3">
-          <p class="text-xs text-gray-500 text-center">سجّل دخول المدير لعرض الطلبات.</p>
+          <p class="text-xs text-gray-500 text-center">جاري جلب الطلبات...</p>
         </div>
       </div>
 
@@ -305,15 +294,25 @@
         <h4 class="text-sm font-semibold">المنتجات والمخزون</h4>
         <div id="adminProductsList" class="space-y-2"></div>
       </div>
+
+      <div id="adminTabSettings" class="hidden space-y-3 bg-gray-950/70 p-4 rounded-xl border border-gray-800">
+        <h4 class="text-sm font-semibold text-yellow-400 border-b border-gray-800 pb-2">تغيير بيانات دخول المدير</h4>
+        <div>
+          <label class="text-xs text-gray-400">اسم المستخدم/رقم الهاتف الجديد</label>
+          <input type="text" id="newAdminUser" placeholder="0781896750" class="w-full p-2.5 bg-gray-950 border border-gray-700 rounded-xl text-sm mt-1">
+        </div>
+        <div>
+          <label class="text-xs text-gray-400">كلمة المرور الجديدة</label>
+          <input type="password" id="newAdminPass" placeholder="******" class="w-full p-2.5 bg-gray-950 border border-gray-700 rounded-xl text-sm mt-1">
+        </div>
+        <button onclick="updateAdminCredentials()" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl">حفظ البيانات الجديدة</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-/* =========================
-   1) Firebase configuration
-   =========================
-*/
+/* Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyC0SNi-uPVJ_voLCcu3_M898Il0gyEbmsM",
   authDomain: "vip-smook.firebaseapp.com",
@@ -326,13 +325,11 @@ const firebaseConfig = {
 
 let firebaseReady = false;
 let db = null;
-let auth = null;
 
 try {
-  if (firebaseConfig.apiKey && !firebaseConfig.apiKey.startsWith("ضع_هنا")) {
+  if (firebaseConfig.apiKey) {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
-    auth = firebase.auth();
     firebaseReady = true;
   }
 } catch (e) {
@@ -347,14 +344,12 @@ const state = {
   searchQuery: "",
   customer: JSON.parse(localStorage.getItem("vip_user") || "null"),
   registerMode: false,
-  adminUser: null
+  isAdminLoggedIn: sessionStorage.getItem("vip_admin_auth") === "true",
+  adminCredentials: { username: "0781896750", pass: "1234567a" }
 };
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
-/* =========================
-   2) Legal gate
-   ========================= */
 function acceptLegalGate() {
   localStorage.setItem("vip_legal_gate", "accepted");
   document.getElementById("legalGate").classList.add("hidden");
@@ -374,9 +369,6 @@ if (localStorage.getItem("vip_legal_gate") === "accepted") {
   document.getElementById("legalGate").classList.add("hidden");
 }
 
-/* =========================
-   3) Helpers
-   ========================= */
 function esc(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -417,28 +409,20 @@ function persistCart() {
   localStorage.setItem("vip_cart", JSON.stringify(state.cart));
 }
 
-/* =========================
-   4) Startup
-   ========================= */
 initApp();
 
-function initApp() {
+async function initApp() {
   updateUserUI();
   updateCartUI();
 
   if (!firebaseReady) {
-    showFirebaseError("لم يتم إضافة المفاتيح الحقيقية في firebaseConfig بعد. يرجى استبدال القيم الحافظة للمكان للمتابعة.");
+    showFirebaseError("تعذر الاتصال بقاعدة البيانات.");
     renderProducts();
     return;
   }
 
   hideFirebaseError();
-
-  auth.onAuthStateChanged(async (user) => {
-    if (user) {
-      state.adminUser = user;
-    }
-  });
+  await syncAdminCredentials();
 
   db.collection("products").orderBy("name").onSnapshot(
     snap => {
@@ -449,14 +433,25 @@ function initApp() {
     },
     err => {
       console.error(err);
-      showFirebaseError("تعذر تحميل المنتجات. تحقق من قواعد الحماية (Firestore Security Rules).");
+      showFirebaseError("تعذر تحميل المنتجات.");
     }
   );
 }
 
-/* =========================
-   5) Products
-   ========================= */
+async function syncAdminCredentials() {
+  if (!firebaseReady) return;
+  try {
+    const doc = await db.collection("settings").doc("admin").get();
+    if (doc.exists) {
+      state.adminCredentials = doc.data();
+    } else {
+      await db.collection("settings").doc("admin").set(state.adminCredentials);
+    }
+  } catch (e) {
+    console.error("Admin credentials fetch fallback", e);
+  }
+}
+
 function renderProducts() {
   const grid = document.getElementById("productsGrid");
   let filtered = [...state.products];
@@ -524,9 +519,6 @@ function searchProducts() {
   renderProducts();
 }
 
-/* =========================
-   6) Cart
-   ========================= */
 function toggleCart() {
   const el = document.getElementById("cartDrawer");
   el.classList.toggle("hidden");
@@ -632,28 +624,24 @@ function removeFromCart(id) {
   updateCartUI();
 }
 
-/* =========================
-   7) Customer authentication
-   ========================= */
+/* User Auth - Username & Password Only */
 function toggleAuthModal() {
   const el = document.getElementById("authModal");
   if (state.customer) {
-    document.getElementById("nameField").classList.add("hidden");
     document.getElementById("authTitle").textContent = "حسابي";
     document.getElementById("authSubmitBtn").classList.add("hidden");
     document.getElementById("authToggleText").parentElement.classList.add("hidden");
     document.getElementById("logoutBtn").classList.remove("hidden");
-    document.getElementById("custName").value = state.customer.name || "";
-    document.getElementById("custEmail").value = state.customer.email || "";
-    document.getElementById("custPhone").value = state.customer.phone || "";
-    document.getElementById("custEmail").disabled = true;
-    document.getElementById("custPhone").disabled = true;
+    document.getElementById("custUsername").value = state.customer.username || "";
+    document.getElementById("custUsername").disabled = true;
+    document.getElementById("custPass").value = "";
+    document.getElementById("custPass").disabled = true;
   } else {
     document.getElementById("authSubmitBtn").classList.remove("hidden");
     document.getElementById("logoutBtn").classList.add("hidden");
     document.getElementById("authToggleText").parentElement.classList.remove("hidden");
-    document.getElementById("custEmail").disabled = false;
-    document.getElementById("custPhone").disabled = false;
+    document.getElementById("custUsername").disabled = false;
+    document.getElementById("custPass").disabled = false;
   }
   el.classList.toggle("hidden");
   el.classList.toggle("flex");
@@ -661,41 +649,43 @@ function toggleAuthModal() {
 
 function switchAuthMode() {
   state.registerMode = !state.registerMode;
-  document.getElementById("authTitle").textContent = state.registerMode ? "إنشاء حساب" : "تسجيل الدخول";
+  document.getElementById("authTitle").textContent = state.registerMode ? "إنشاء حساب جديد" : "تسجيل الدخول";
   document.getElementById("authSubmitBtn").textContent = state.registerMode ? "إنشاء الحساب" : "دخول";
-  document.getElementById("nameField").classList.toggle("hidden", !state.registerMode);
-  document.getElementById("authToggleText").textContent = state.registerMode ? "لديك حساب؟" : "ليس لديك حساب؟";
+  document.getElementById("authToggleText").textContent = state.registerMode ? "لديك حساب بالفعل؟" : "ليس لديك حساب؟";
   document.getElementById("authToggleBtn").textContent = state.registerMode ? "تسجيل الدخول" : "إنشاء حساب جديد";
 }
 
 async function handleAuth() {
-  if (!firebaseReady) return toast("Firebase غير مهيأ بعد.", "error");
+  if (!firebaseReady) return toast("الخدمة غير متاحة حالياً.", "error");
 
-  const email = document.getElementById("custEmail").value.trim();
-  const pass = document.getElementById("custPass").value;
-  const name = document.getElementById("custName").value.trim();
-  const phone = document.getElementById("custPhone").value.trim();
+  const username = document.getElementById("custUsername").value.trim().toLowerCase();
+  const pass = document.getElementById("custPass").value.trim();
 
-  if (!email || !pass) return toast("أدخل البريد الإلكتروني وكلمة المرور.", "error");
-  if (state.registerMode && !name) return toast("أدخل اسمك.", "error");
+  if (!username || !pass) return toast("يرجى كتابة اسم المستخدم وكلمة المرور.", "error");
 
   try {
+    const userRef = db.collection("store_users").doc(username);
+    const doc = await userRef.get();
+
     if (state.registerMode) {
-      const cred = await auth.createUserWithEmailAndPassword(email, pass);
-      await db.collection("users").doc(cred.user.uid).set({
-        name, email, phone,
+      if (doc.exists) {
+        return toast("اسم المستخدم هذا حُجز مسبقاً، اختر اسماً آخر.", "error");
+      }
+      await userRef.set({
+        username,
+        pass,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      state.customer = { uid: cred.user.uid, name, email, phone };
+      state.customer = { username };
       localStorage.setItem("vip_user", JSON.stringify(state.customer));
-      toast("تم إنشاء الحساب.", "success");
+      toast("تم إنشاء حسابك بنجاح.", "success");
     } else {
-      const cred = await auth.signInWithEmailAndPassword(email, pass);
-      const snap = await db.collection("users").doc(cred.user.uid).get();
-      const profile = snap.exists ? snap.data() : { name: cred.user.email, email: cred.user.email, phone: "" };
-      state.customer = { uid: cred.user.uid, ...profile };
+      if (!doc.exists || doc.data().pass !== pass) {
+        return toast("اسم المستخدم أو كلمة المرور غير صحيحة.", "error");
+      }
+      state.customer = { username };
       localStorage.setItem("vip_user", JSON.stringify(state.customer));
-      toast("تم تسجيل الدخول.", "success");
+      toast("تم تسجيل الدخول بنجاح.", "success");
     }
 
     updateUserUI();
@@ -704,18 +694,11 @@ async function handleAuth() {
     renderMyOrders();
   } catch (e) {
     console.error(e);
-    const msg = {
-      "auth/email-already-in-use": "هذا البريد مستخدم بالفعل.",
-      "auth/invalid-email": "البريد الإلكتروني غير صحيح.",
-      "auth/weak-password": "كلمة المرور ضعيفة.",
-      "auth/invalid-credential": "بيانات الدخول غير صحيحة."
-    }[e.code] || "تعذر تنفيذ العملية. تحقق من إعدادات Firebase Authentication.";
-    toast(msg, "error");
+    toast("حدث خطأ أثناء الاتصال.", "error");
   }
 }
 
-async function logoutCustomer() {
-  try { if (auth) await auth.signOut(); } catch (e) {}
+function logoutCustomer() {
   state.customer = null;
   localStorage.removeItem("vip_user");
   updateUserUI();
@@ -726,23 +709,21 @@ async function logoutCustomer() {
 function updateUserUI() {
   const label = document.getElementById("userAuthLabel");
   const ordersBtn = document.getElementById("myOrdersBtn");
-  label.textContent = state.customer ? (state.customer.name || "حسابي") : "دخول";
+  label.textContent = state.customer ? state.customer.username : "دخول";
   ordersBtn.classList.toggle("hidden", !state.customer);
 }
 
-/* =========================
-   8) Orders
-   ========================= */
+/* Orders System */
 async function submitOrderToAdmin() {
   if (!state.cart.length) return toast("السلة فارغة.", "error");
 
   if (!state.customer) {
     toggleCart();
     toggleAuthModal();
-    return toast("سجّل الدخول أولاً لإرسال الطلب.", "error");
+    return toast("سجّل الدخول برقمك/اسمك لتأكيد الطلب.", "error");
   }
 
-  if (!firebaseReady) return toast("Firebase غير مهيأ.", "error");
+  if (!firebaseReady) return toast("الخدمة غير متصلة.", "error");
 
   const verifiedItems = [];
   for (const item of state.cart) {
@@ -777,10 +758,7 @@ async function submitOrderToAdmin() {
 
       const orderRef = db.collection("orders").doc();
       tx.set(orderRef, {
-        customerUid: state.customer.uid || "",
-        customerName: state.customer.name || "",
-        customerEmail: state.customer.email || "",
-        customerPhone: state.customer.phone || "",
+        customerUsername: state.customer.username,
         items: verifiedItems,
         total,
         status: "جديد",
@@ -796,7 +774,7 @@ async function submitOrderToAdmin() {
     renderMyOrders();
   } catch (e) {
     console.error(e);
-    toast("تعذر إرسال الطلب، تحقق من المخزون وقواعد Firestore.", "error");
+    toast("تعذر إرسال الطلب، تحقق من المخزون.", "error");
   }
 }
 
@@ -815,13 +793,13 @@ async function renderMyOrders() {
   }
 
   if (!firebaseReady) {
-    container.innerHTML = `<p class="text-red-400 text-center py-6">Firebase غير متصل.</p>`;
+    container.innerHTML = `<p class="text-red-400 text-center py-6">الخدمة غير متصلة.</p>`;
     return;
   }
 
   try {
     const snap = await db.collection("orders")
-      .where("customerUid", "==", state.customer.uid)
+      .where("customerUsername", "==", state.customer.username)
       .get();
 
     const list = snap.docs
@@ -859,18 +837,16 @@ async function renderMyOrders() {
   }
 }
 
-/* =========================
-   9) Admin panel
-   ========================= */
+/* Admin Panel */
 function toggleAdminModal() {
   const el = document.getElementById("adminModal");
   el.classList.toggle("hidden");
   el.classList.toggle("flex");
 
-  if (auth && auth.currentUser && !auth.currentUser.isAnonymous) {
+  if (state.isAdminLoggedIn) {
     document.getElementById("adminLoginForm").classList.add("hidden");
     document.getElementById("adminPanel").classList.remove("hidden");
-    document.getElementById("adminSignedInAs").textContent = `مسجل كـ: ${auth.currentUser.email}`;
+    document.getElementById("adminSignedInAs").textContent = `مدير المتجر الحالي: ${state.adminCredentials.username}`;
     loadOrdersOnce();
   } else {
     document.getElementById("adminLoginForm").classList.remove("hidden");
@@ -879,39 +855,39 @@ function toggleAdminModal() {
 }
 
 async function loginAdmin() {
-  if (!firebaseReady) return toast("Firebase غير مهيأ.", "error");
+  const user = document.getElementById("adminUserInput").value.trim();
+  const pass = document.getElementById("adminPassInput").value.trim();
 
-  const email = document.getElementById("adminEmailInput").value.trim();
-  const pass = document.getElementById("adminPassInput").value;
+  await syncAdminCredentials();
 
-  if (!email || !pass) return toast("أدخل بريد وكلمة مرور المدير.", "error");
-
-  try {
-    await auth.signInWithEmailAndPassword(email, pass);
+  if (user === state.adminCredentials.username && pass === state.adminCredentials.pass) {
+    state.isAdminLoggedIn = true;
+    sessionStorage.setItem("vip_admin_auth", "true");
     document.getElementById("adminLoginForm").classList.add("hidden");
     document.getElementById("adminPanel").classList.remove("hidden");
-    document.getElementById("adminSignedInAs").textContent = `مسجل كـ: ${email}`;
-    toast("تم دخول المدير.", "success");
+    document.getElementById("adminSignedInAs").textContent = `مدير المتجر: ${user}`;
+    toast("أهلاً بك في لوحة الإدارة.", "success");
     loadOrdersOnce();
-  } catch (e) {
-    console.error(e);
-    toast("خطأ في بيانات دخول المدير.", "error");
+  } else {
+    toast("بيانات الدخول غير صحيحة.", "error");
   }
 }
 
-async function logoutAdmin() {
-  try { await auth.signOut(); } catch (e) {}
+function logoutAdmin() {
+  state.isAdminLoggedIn = false;
+  sessionStorage.removeItem("vip_admin_auth");
   document.getElementById("adminLoginForm").classList.remove("hidden");
   document.getElementById("adminPanel").classList.add("hidden");
-  toast("تم خروج المدير.");
+  toast("تم الخروج من لوحة الإدارة.");
 }
 
 function switchAdminTab(tab) {
   document.querySelectorAll(".admin-tab").forEach(b => {
     b.className = "admin-tab px-3 py-1.5 bg-gray-700 text-gray-300 font-bold rounded-lg text-xs whitespace-nowrap";
   });
-  ["orders", "add", "manage"].forEach(t => {
-    document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add("hidden");
+  ["orders", "add", "manage", "settings"].forEach(t => {
+    const el = document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+    if(el) el.classList.add("hidden");
   });
 
   const cap = tab.charAt(0).toUpperCase() + tab.slice(1);
@@ -919,8 +895,30 @@ function switchAdminTab(tab) {
   document.getElementById(`adminTab${cap}`).classList.remove("hidden");
 }
 
+async function updateAdminCredentials() {
+  const newUser = document.getElementById("newAdminUser").value.trim();
+  const newPass = document.getElementById("newAdminPass").value.trim();
+
+  if (!newUser || !newPass) return toast("يرجى ملء الحقلين باسم المستخدم وكلمة السر الجديدة.", "error");
+
+  try {
+    await db.collection("settings").doc("admin").set({
+      username: newUser,
+      pass: newPass
+    });
+    state.adminCredentials = { username: newUser, pass: newPass };
+    document.getElementById("adminSignedInAs").textContent = `مدير المتجر: ${newUser}`;
+    document.getElementById("newAdminUser").value = "";
+    document.getElementById("newAdminPass").value = "";
+    toast("تم تحديث بيانات المدير بنجاح.", "success");
+  } catch (e) {
+    console.error(e);
+    toast("تعذر تحديث البيانات.", "error");
+  }
+}
+
 async function loadOrdersOnce() {
-  if (!firebaseReady || !auth.currentUser) return;
+  if (!firebaseReady || !state.isAdminLoggedIn) return;
   const list = document.getElementById("adminOrdersList");
   list.innerHTML = `<p class="text-xs text-gray-500 text-center py-4">جاري تحميل الطلبات...</p>`;
 
@@ -938,12 +936,11 @@ async function loadOrdersOnce() {
     list.innerHTML = state.orders.map(o => `
       <div class="bg-gray-950 p-3 rounded-xl border border-gray-800 text-xs space-y-2">
         <div class="flex justify-between font-bold border-b border-gray-800 pb-2">
-          <span class="text-yellow-400">${esc(o.customerName || "عميل")} (${esc(o.customerPhone || "بدون هاتف")})</span>
+          <span class="text-yellow-400">الزبون: ${esc(o.customerUsername || "غير معروف")}</span>
           <span class="px-2 py-0.5 rounded text-[10px] ${o.status === "مكتمل" ? "bg-green-900 text-green-300" : "bg-yellow-900 text-yellow-300"}">
             ${esc(o.status || "جديد")}
           </span>
         </div>
-        <div class="text-gray-400 text-[11px]">${esc(o.customerEmail || "")}</div>
         <div class="space-y-1">
           ${(o.items || []).map(i => `
             <div class="flex justify-between text-gray-300">
@@ -962,7 +959,7 @@ async function loadOrdersOnce() {
       </div>`).join("");
   } catch (e) {
     console.error(e);
-    list.innerHTML = `<p class="text-xs text-red-400 text-center py-4">تعذر تحميل الطلبات. تأكد أن حسابك مدير مسموح له بالوصول.</p>`;
+    list.innerHTML = `<p class="text-xs text-red-400 text-center py-4">تعذر تحميل الطلبات.</p>`;
   }
 }
 
@@ -977,7 +974,6 @@ async function markOrderComplete(id) {
   }
 }
 
-/* Base64 image compression */
 function processImageFile(file, callback) {
   if (!file) return;
   const reader = new FileReader();
@@ -1023,7 +1019,7 @@ function handleEditImageUpload(e) {
 }
 
 async function addProduct() {
-  if (!firebaseReady) return toast("Firebase غير مهيأ.", "error");
+  if (!firebaseReady) return toast("الخدمة غير متصلة.", "error");
 
   const name = document.getElementById("pName").value.trim();
   const price = Number(document.getElementById("pPrice").value);
@@ -1051,7 +1047,7 @@ async function addProduct() {
     toast("تمت إضافة المنتج بنجاح.", "success");
   } catch (e) {
     console.error(e);
-    toast("تعذر إضافة المنتج. تحقق من الصلاحيات.", "error");
+    toast("تعذر إضافة المنتج.", "error");
   }
 }
 
@@ -1104,7 +1100,7 @@ function closeEditModal() {
 }
 
 async function saveProductEdits() {
-  if (!firebaseReady) return toast("Firebase غير مهيأ.", "error");
+  if (!firebaseReady) return toast("الخدمة غير متصلة.", "error");
 
   const id = document.getElementById("editPId").value;
   const name = document.getElementById("editPName").value.trim();
@@ -1128,7 +1124,7 @@ async function saveProductEdits() {
 }
 
 async function deleteProduct(id) {
-  if (!firebaseReady) return toast("Firebase غير مهيأ.", "error");
+  if (!firebaseReady) return toast("الخدمة غير متصلة.", "error");
   if (!confirm("هل أنت متأكد من حذف هذا المنتج؟")) return;
 
   try {
