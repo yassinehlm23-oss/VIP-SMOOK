@@ -7,9 +7,6 @@
   <meta name="description" content="VIP SMOOK - متجر إلكتروني فاخر للبيع والتسليم المباشر.">
   <title>VIP SMOOK | المتجر الرسمي</title>
 
-  <!-- كود الإعلانات المضاف حديثاً -->
-  <script src="https://quge5.com/88/tag.min.js" data-zone="290491" async data-cfasync="false"></script>
-
   <!-- Tailwind CSS & FontAwesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -590,6 +587,7 @@
       hideFirebaseError();
       await syncAdminCredentials();
 
+      // Update customer last active timestamp if logged in
       if (state.customer && state.customer.phone) {
         db.collection("store_users").doc(state.customer.phone).update({
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
@@ -866,6 +864,7 @@
       updateCartUI();
     }
 
+    /* Customer Phone Auth & Profile Management */
     function toggleAuthModal() {
       const el = document.getElementById("authModal");
       el.classList.toggle("hidden");
@@ -921,6 +920,7 @@
           const data = doc.data();
           if (data.pass !== hashedPass) return toast("كلمة السر غير صحيحة.", "error");
           
+          // Update last seen
           await userRef.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
           state.customer = data;
           toast("مرحباً بك مجدداً!", "success");
@@ -1012,6 +1012,7 @@
       }
     }
 
+    /* Submitting Orders (Automatically using profile info) */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
@@ -1134,6 +1135,7 @@
       }
     }
 
+    /* Secret Admin Trigger via Double-Click on Store Logo */
     function triggerAdminSecret() {
       toggleAdminModal();
     }
@@ -1205,6 +1207,7 @@
       document.getElementById(`adminTab${cap}`).classList.remove("hidden");
     }
 
+    /* Admin Customers Management Tab (View last seen & delete unwanted accounts) */
     async function loadAdminCustomers() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const list = document.getElementById("adminCustomersList");
@@ -1353,6 +1356,7 @@
       }
     }
 
+    /* Image Compressor */
     function compressAndConvertImage(file, maxWidth = 500, quality = 0.65) {
       return new Promise((resolve, reject) => {
         if (!file) return reject("الملف غير موجود");
@@ -1522,14 +1526,14 @@
       const image = document.getElementById("editPImgBase64").value;
 
       const currentProduct = state.products.find(x => x.id === id);
-      if (!currentProduct) return toast("قم باختيار منتج صحيح.", "error");
+      if (!currentProduct) return toast("المنتج غير موجود.", "error");
 
       if (!id || !name || isNaN(newPrice) || newPrice < 0 || isNaN(stock) || stock < 0) {
         return toast("يرجى مراجعة البيانات المدخلة.", "error");
       }
 
       const oldPrice = Number(currentProduct.price || 0);
-      let previousPrice = Number(currentProduct.previousPage || oldPrice);
+      let previousPrice = Number(currentProduct.previousPrice || oldPrice);
       if (oldPrice !== newPrice) previousPrice = oldPrice;
 
       try {
