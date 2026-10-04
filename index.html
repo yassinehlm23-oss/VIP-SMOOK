@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0b0f19">
   <meta name="description" content="VIP SMOOK - متجر إلكتروني فاخر للبيع والتسليم المباشر.">
+  <meta name="monetag" content="c066cfd62723f289c0084ecb64fb2e6f">
   <title>VIP SMOOK | المتجر الرسمي</title>
 
   <!-- Tailwind CSS & FontAwesome Icons -->
@@ -587,7 +588,6 @@
       hideFirebaseError();
       await syncAdminCredentials();
 
-      // Update customer last active timestamp if logged in
       if (state.customer && state.customer.phone) {
         db.collection("store_users").doc(state.customer.phone).update({
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
@@ -864,7 +864,6 @@
       updateCartUI();
     }
 
-    /* Customer Phone Auth & Profile Management */
     function toggleAuthModal() {
       const el = document.getElementById("authModal");
       el.classList.toggle("hidden");
@@ -920,7 +919,6 @@
           const data = doc.data();
           if (data.pass !== hashedPass) return toast("كلمة السر غير صحيحة.", "error");
           
-          // Update last seen
           await userRef.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
           state.customer = data;
           toast("مرحباً بك مجدداً!", "success");
@@ -1012,7 +1010,6 @@
       }
     }
 
-    /* Submitting Orders (Automatically using profile info) */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
@@ -1135,7 +1132,6 @@
       }
     }
 
-    /* Secret Admin Trigger via Double-Click on Store Logo */
     function triggerAdminSecret() {
       toggleAdminModal();
     }
@@ -1189,8 +1185,6 @@
     function updateAdminDashboardStats() {
       document.getElementById("statTotalProducts").textContent = state.products.length;
       document.getElementById("statTotalCustomers").textContent = state.customers.length;
-      const lowCount = state.products.filter(p => Number(p.stock || 0) <= 3).length;
-      document.getElementById("statLowStock").textContent = lowCount;
     }
 
     function switchAdminTab(tab) {
@@ -1207,7 +1201,6 @@
       document.getElementById(`adminTab${cap}`).classList.remove("hidden");
     }
 
-    /* Admin Customers Management Tab (View last seen & delete unwanted accounts) */
     async function loadAdminCustomers() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const list = document.getElementById("adminCustomersList");
@@ -1356,7 +1349,6 @@
       }
     }
 
-    /* Image Compressor */
     function compressAndConvertImage(file, maxWidth = 500, quality = 0.65) {
       return new Promise((resolve, reject) => {
         if (!file) return reject("الملف غير موجود");
