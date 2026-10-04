@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0b0f19">
   <meta name="description" content="VIP SMOOK - متجر إلكتروني فاخر للبيع والتسليم المباشر.">
-  <meta name="monetag" content="c066cfd62723f289c0084ecb64fb2e6f">
   <title>VIP SMOOK | المتجر الرسمي</title>
 
-  <!-- Monetag & External Tags -->
+  <!-- كود الإعلانات المضاف حديثاً -->
   <script src="https://quge5.com/88/tag.min.js" data-zone="290491" async data-cfasync="false"></script>
 
   <!-- Tailwind CSS & FontAwesome Icons -->
@@ -1188,6 +1187,8 @@
     function updateAdminDashboardStats() {
       document.getElementById("statTotalProducts").textContent = state.products.length;
       document.getElementById("statTotalCustomers").textContent = state.customers.length;
+      const lowCount = state.products.filter(p => Number(p.stock || 0) <= 3).length;
+      document.getElementById("statLowStock").textContent = lowCount;
     }
 
     function switchAdminTab(tab) {
@@ -1521,14 +1522,14 @@
       const image = document.getElementById("editPImgBase64").value;
 
       const currentProduct = state.products.find(x => x.id === id);
-      if (!currentProduct) return toast("المنتج غير موجود.", "error");
+      if (!currentProduct) return toast("قم باختيار منتج صحيح.", "error");
 
       if (!id || !name || isNaN(newPrice) || newPrice < 0 || isNaN(stock) || stock < 0) {
         return toast("يرجى مراجعة البيانات المدخلة.", "error");
       }
 
       const oldPrice = Number(currentProduct.price || 0);
-      let previousPrice = Number(currentProduct.previousPrice || oldPrice);
+      let previousPrice = Number(currentProduct.previousPage || oldPrice);
       if (oldPrice !== newPrice) previousPrice = oldPrice;
 
       try {
