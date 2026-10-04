@@ -255,12 +255,10 @@
       </div>
 
       <div class="border-t border-gray-900 pt-4 space-y-3 bg-gray-950">
-        <div class="space-y-2">
-          <h4 class="text-xs font-bold text-yellow-400">معلومات التوصيل:</h4>
-          <input id="checkoutPhone" type="tel" placeholder="رقم الهاتف"
-            class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
-          <input id="checkoutAddress" type="text" placeholder="الولاية / المدينة / العنوان الكامل"
-            class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
+        <!-- Delivery info note (Auto filled from profile) -->
+        <div class="bg-gray-900/80 p-2.5 rounded-xl border border-gray-800 text-[11px] text-gray-300 flex items-center justify-between">
+          <span><i class="fas fa-circle-check text-emerald-400 ml-1"></i> معلومات التوصيل مسجلة من حسابك</span>
+          <button onclick="toggleCart(); toggleAuthModal();" class="text-yellow-400 font-bold underline">تعديل</button>
         </div>
 
         <div class="flex justify-between text-base font-black pt-2 border-t border-gray-900">
@@ -342,7 +340,7 @@
       <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
         <div>
           <h3 class="text-base font-bold text-yellow-400 flex items-center gap-2"><i class="fas fa-user-shield"></i> لوحة التحكم والإدارة الاحترافية</h3>
-          <p class="text-[10px] text-gray-400">إدارة المبيعات والمنتجات وإحصائيات المتجر</p>
+          <p class="text-[10px] text-gray-400">إدارة المبيعات والمنتجات والزبائن المسجلين</p>
         </div>
         <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
       </div>
@@ -375,18 +373,20 @@
             <span id="statPendingOrders" class="text-base font-black text-amber-400">0</span>
           </div>
           <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
-            <span class="text-[10px] text-gray-400 block">منخفضة المخزون</span>
-            <span id="statLowStock" class="text-base font-black text-red-400">0</span>
+            <span class="text-[10px] text-gray-400 block">الزبائن المسجلون</span>
+            <span id="statTotalCustomers" class="text-base font-black text-emerald-400">0</span>
           </div>
         </div>
 
         <div class="flex border-b border-gray-800 gap-2 pb-2 overflow-x-auto no-scrollbar">
           <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap">الطلبات الواردة</button>
+          <button onclick="switchAdminTab('customers')" id="tabCustomersBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الزبائن المسجلون</button>
           <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">إدارة وتعديل المخزون</button>
-          <button onclick="switchAdminTab('add')" id="tabAddBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">+ إضافة منتج جديد</button>
-          <button onclick="switchAdminTab('settings')" id="tabSettingsBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">إعدادات الدخول</button>
+          <button onclick="switchAdminTab('add')" id="tabAddBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">+ إضافة منتج</button>
+          <button onclick="switchAdminTab('settings')" id="tabSettingsBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الإعدادات</button>
         </div>
 
+        <!-- Orders Tab -->
         <div id="adminTabOrders" class="space-y-3">
           <div class="flex justify-between items-center">
             <div class="flex items-center gap-2">
@@ -404,12 +404,25 @@
           </div>
         </div>
 
+        <!-- Customers Tab (New for Admin) -->
+        <div id="adminTabCustomers" class="hidden space-y-3">
+          <div class="flex justify-between items-center">
+            <h4 class="text-xs font-bold text-gray-300">قائمة الزبائن المسجلين ونشاطهم:</h4>
+            <button onclick="loadAdminCustomers()" class="text-xs text-yellow-400 flex items-center gap-1"><i class="fas fa-rotate"></i> تحديث</button>
+          </div>
+          <div id="adminCustomersList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+            <p class="text-xs text-gray-400 text-center py-6">جاري جلب قائمة الزبائن...</p>
+          </div>
+        </div>
+
+        <!-- Manage Stock Tab -->
         <div id="adminTabManage" class="hidden space-y-3">
           <input id="adminStockSearch" oninput="filterAdminProductsList()" type="search" placeholder="ابحث عن منتج لتعديله..."
             class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
           <div id="adminProductsList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
+        <!-- Add Product Tab -->
         <div id="adminTabAdd" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <div class="grid grid-cols-2 gap-2">
@@ -435,6 +448,7 @@
           </button>
         </div>
 
+        <!-- Settings Tab -->
         <div id="adminTabSettings" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <h4 class="text-xs font-bold text-yellow-400 border-b border-gray-800 pb-2">تحديث بيانات حساب المدير</h4>
           <div>
@@ -481,6 +495,7 @@
     const state = {
       products: [],
       orders: [],
+      customers: [],
       cart: JSON.parse(localStorage.getItem("vip_cart") || "[]"),
       currentCategory: "all",
       searchQuery: "",
@@ -550,7 +565,6 @@
       localStorage.setItem("vip_cart", JSON.stringify(state.cart));
     }
 
-    // Simple secure hashing for passwords using browser crypto
     async function hashPassword(str) {
       const msgBuffer = new TextEncoder().encode(str);
       const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -572,6 +586,13 @@
 
       hideFirebaseError();
       await syncAdminCredentials();
+
+      // Update customer last active timestamp if logged in
+      if (state.customer && state.customer.phone) {
+        db.collection("store_users").doc(state.customer.phone).update({
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(() => {});
+      }
 
       db.collection("products").orderBy("name").onSnapshot(
         snap => {
@@ -744,15 +765,6 @@
       const el = document.getElementById("cartDrawer");
       el.classList.toggle("hidden");
       el.classList.toggle("flex");
-      // Auto fill phone and address if customer is logged in
-      if (state.customer) {
-        if (!document.getElementById("checkoutPhone").value) {
-          document.getElementById("checkoutPhone").value = state.customer.phone || "";
-        }
-        if (!document.getElementById("checkoutAddress").value) {
-          document.getElementById("checkoutAddress").value = state.customer.address || "";
-        }
-      }
     }
 
     function addToCart(id) {
@@ -863,7 +875,6 @@
         document.getElementById("authFormContainer").classList.add("hidden");
         document.getElementById("customerProfileContainer").classList.remove("hidden");
         
-        // Fill profile data
         document.getElementById("profilePhoneDisplay").textContent = state.customer.phone || "";
         document.getElementById("profileName").value = state.customer.name || "";
         document.getElementById("profileAddress").value = state.customer.address || "";
@@ -893,14 +904,24 @@
         const doc = await userRef.get();
 
         if (!doc.exists) {
-          // Register new user automatically
-          const newUserData = { phone, pass: hashedPass, name: "", address: "", image: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+          const newUserData = { 
+            phone, 
+            pass: hashedPass, 
+            name: "", 
+            address: "", 
+            image: "", 
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+          };
           await userRef.set(newUserData);
           state.customer = newUserData;
           toast("تم إنشاء حسابك الجديد برقم هاتفك بنجاح!", "success");
         } else {
           const data = doc.data();
           if (data.pass !== hashedPass) return toast("كلمة السر غير صحيحة.", "error");
+          
+          // Update last seen
+          await userRef.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
           state.customer = data;
           toast("مرحباً بك مجدداً!", "success");
         }
@@ -940,6 +961,10 @@
       const name = document.getElementById("profileName").value.trim();
       const address = document.getElementById("profileAddress").value.trim();
       const image = document.getElementById("profileImgBase64").value.trim();
+
+      if (!name || !address) {
+        return toast("يرجى ملء الاسم والعنوان لتسهيل توصيل الطلبات.", "error");
+      }
 
       try {
         const userRef = db.collection("store_users").doc(state.customer.phone);
@@ -987,20 +1012,19 @@
       }
     }
 
-    /* Submitting Orders */
+    /* Submitting Orders (Automatically using profile info) */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
         toggleCart();
         toggleAuthModal();
-        return toast("يرجى تسجيل الدخول برقم هاتفك لتأكيد الطلب.", "error");
+        return toast("يرجى تسجيل الدخول برقم هاتفك وحسابك لتأكيد الطلب.", "error");
       }
 
-      const phone = document.getElementById("checkoutPhone").value.trim() || state.customer.phone;
-      const address = document.getElementById("checkoutAddress").value.trim() || state.customer.address;
-
-      if (!phone || !address) {
-        return toast("يرجى إدخال رقم الهاتف وعنوان التوصيل.", "error");
+      if (!state.customer.name || !state.customer.address) {
+        toggleCart();
+        toggleAuthModal();
+        return toast("يرجى إكمال اسمك وعنوان التوصيل في ملفك الشخصي أولاً.", "error");
       }
 
       if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
@@ -1034,9 +1058,9 @@
           const orderRef = db.collection("orders").doc();
           tx.set(orderRef, {
             customerPhone: state.customer.phone,
-            customerName: state.customer.name || "زائر",
-            phone,
-            address,
+            customerName: state.customer.name,
+            phone: state.customer.phone,
+            address: state.customer.address,
             items: verifiedItems,
             total,
             status: "جديد",
@@ -1052,7 +1076,7 @@
         renderMyOrders();
       } catch (e) {
         console.error(e);
-        toast("تعذر إرسال الطلب، تأكد من المخزون.", "error");
+        toast("تعذر إرسال الطلب، تأكد من توفر المخزون.", "error");
       }
     }
 
@@ -1126,6 +1150,7 @@
         document.getElementById("adminPanel").classList.remove("hidden");
         document.getElementById("adminSignedInAs").textContent = `مدير المتجر: ${state.adminCredentials.username}`;
         loadOrdersOnce();
+        loadAdminCustomers();
         updateAdminDashboardStats();
       } else {
         document.getElementById("adminLoginForm").classList.remove("hidden");
@@ -1146,6 +1171,7 @@
         document.getElementById("adminSignedInAs").textContent = `مدير المتجر: ${user}`;
         toast("مرحباً بك في لوحة الإدارة.", "success");
         loadOrdersOnce();
+        loadAdminCustomers();
         updateAdminDashboardStats();
       } else {
         toast("بيانات الدخول غير صحيحة.", "error");
@@ -1162,6 +1188,7 @@
 
     function updateAdminDashboardStats() {
       document.getElementById("statTotalProducts").textContent = state.products.length;
+      document.getElementById("statTotalCustomers").textContent = state.customers.length;
       const lowCount = state.products.filter(p => Number(p.stock || 0) <= 3).length;
       document.getElementById("statLowStock").textContent = lowCount;
     }
@@ -1170,7 +1197,7 @@
       document.querySelectorAll(".admin-tab").forEach(b => {
         b.className = "admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap";
       });
-      ["orders", "manage", "add", "settings"].forEach(t => {
+      ["orders", "customers", "manage", "add", "settings"].forEach(t => {
         const el = document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
         if(el) el.classList.add("hidden");
       });
@@ -1178,6 +1205,67 @@
       const cap = tab.charAt(0).toUpperCase() + tab.slice(1);
       document.getElementById(`tab${cap}Btn`).className = "admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap shadow-md shadow-yellow-500/20";
       document.getElementById(`adminTab${cap}`).classList.remove("hidden");
+    }
+
+    /* Admin Customers Management Tab (View last seen & delete unwanted accounts) */
+    async function loadAdminCustomers() {
+      if (!firebaseReady || !state.isAdminLoggedIn) return;
+      const list = document.getElementById("adminCustomersList");
+      list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">جاري تحميل قائمة الزبائن...</p>`;
+
+      try {
+        const snap = await db.collection("store_users").get();
+        state.customers = snap.docs.map(d => ({ phone: d.id, ...d.data() }));
+        document.getElementById("statTotalCustomers").textContent = state.customers.length;
+
+        if (!state.customers.length) {
+          list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">لا يوجد زبائن مسجلون بعد.</p>`;
+          return;
+        }
+
+        list.innerHTML = state.customers.map(c => {
+          let lastSeenText = "غير متوفر";
+          if (c.lastSeen && c.lastSeen.toDate) {
+            const date = c.lastSeen.toDate();
+            lastSeenText = date.toLocaleString("ar-DZ", { dateStyle: "short", timeStyle: "short" });
+          }
+
+          const avatar = c.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
+          const customerName = c.name ? c.name : "بدون اسم";
+
+          return `
+            <div class="flex justify-between items-center bg-gray-950 p-3 rounded-2xl border border-gray-800 text-xs gap-2">
+              <div class="flex items-center gap-3 overflow-hidden">
+                <img src="${esc(avatar)}" class="w-10 h-10 rounded-full object-cover border border-yellow-500/40 shrink-0">
+                <div class="truncate space-y-0.5">
+                  <p class="font-bold text-gray-100 truncate">${esc(customerName)} <span class="text-amber-400 font-normal">(${esc(c.phone)})</span></p>
+                  <p class="text-gray-400 text-[10px] truncate">العنوان: ${esc(c.address || "غير مدخل")}</p>
+                  <p class="text-gray-500 text-[10px]">آخر اتصال: <span class="text-emerald-400 font-medium">${esc(lastSeenText)}</span></p>
+                </div>
+              </div>
+              <div class="shrink-0">
+                <button onclick="deleteCustomerAccount('${esc(c.phone)}')" class="px-2.5 py-1.5 bg-red-950/80 hover:bg-red-900 border border-red-800 text-red-300 rounded-xl text-[10px] font-bold transition">
+                  حذف الحساب
+                </button>
+              </div>
+            </div>`;
+        }).join("");
+      } catch (e) {
+        console.error(e);
+        list.innerHTML = `<p class="text-xs text-red-400 text-center py-4">تعذر تحميل الزبائن.</p>`;
+      }
+    }
+
+    async function deleteCustomerAccount(phone) {
+      if (!confirm(`هل أنت متأكد من حذف الحساب برقم الهاتف ${phone} نهائياً؟`)) return;
+      try {
+        await db.collection("store_users").doc(phone).delete();
+        toast("تم حذف حساب الزبون بنجاح.", "success");
+        loadAdminCustomers();
+      } catch (e) {
+        console.error(e);
+        toast("تعذر حذف الحساب.", "error");
+      }
     }
 
     async function updateAdminCredentials() {
@@ -1437,7 +1525,7 @@
       const category = document.getElementById("editPCategory").value;
       const image = document.getElementById("editPImgBase64").value;
 
-      const currentProduct = state.products.content ? null : state.products.find(x => x.id === id);
+      const currentProduct = state.products.find(x => x.id === id);
       if (!currentProduct) return toast("المنتج غير موجود.", "error");
 
       if (!id || !name || isNaN(newPrice) || newPrice < 0 || isNaN(stock) || stock < 0) {
