@@ -13,7 +13,6 @@
   
   <!-- Firebase Compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
@@ -199,26 +198,26 @@
   <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-sm modal-scroll relative">
       <div class="flex justify-between items-center mb-5">
-        <h3 id="authTitle" class="text-base font-extrabold text-yellow-400">تسجيل الدخول عبر Firebase Auth</h3>
+        <h3 id="authTitle" class="text-base font-extrabold text-yellow-400">تسجيل الدخول برقم الهاتف</h3>
         <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
       </div>
 
       <!-- Login / Register Form -->
       <div id="authFormContainer" class="space-y-4">
         <div>
-          <label class="text-[11px] text-gray-400 font-semibold block mb-1">البريد الإلكتروني</label>
-          <input id="custEmail" type="email" placeholder="user@vip-smook.com"
+          <label class="text-[11px] text-gray-400 font-semibold block mb-1">رقم الهاتف</label>
+          <input id="custPhone" type="tel" placeholder="0661234567"
             class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
         </div>
 
         <div>
-          <label class="text-[11px] text-gray-400 font-semibold block mb-1">كلمة السر الآمنة</label>
+          <label class="text-[11px] text-gray-400 font-semibold block mb-1">كلمة السر</label>
           <input id="custPass" type="password" placeholder="******"
             class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
         </div>
 
-        <button onclick="handleFirebaseEmailAuth()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs shadow-md shadow-amber-500/20">
-          دخول / إنشاء حساب آمن
+        <button onclick="handlePhoneAuth()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs shadow-md shadow-amber-500/20">
+          دخول / إنشاء حساب
         </button>
       </div>
 
@@ -228,7 +227,7 @@
           <div class="relative w-20 h-20 rounded-full overflow-hidden border-2 border-yellow-500 bg-gray-950 mb-2">
             <img id="profileImgPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover">
           </div>
-          <span id="profileEmailDisplay" class="text-yellow-400 font-bold text-xs"></span>
+          <span id="profilePhoneDisplay" class="text-yellow-400 font-bold text-xs"></span>
         </div>
 
         <div>
@@ -237,18 +236,15 @@
         </div>
 
         <div>
-          <label class="text-[11px] text-gray-400 block mb-1">رقم الهاتف</label>
-          <input type="tel" id="profilePhone" placeholder="0661234567" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-        </div>
-
-        <div>
           <label class="text-[11px] text-gray-400 block mb-1">العنوان الافتراضي (الولاية / المدينة)</label>
           <input type="text" id="profileAddress" placeholder="عنوانك لتسهيل التوصيل" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
         </div>
 
         <div>
-          <label class="text-[11px] text-gray-400 block mb-1">رابط صورة البروفايل</label>
+          <label class="text-[11px] text-gray-400 block mb-1">صورة البروفايل (رابط مباشر أو رفع من الهاتف)</label>
           <input type="url" id="profileImgUrl" placeholder="https://..." oninput="handleProfileImgInput(this.value)" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white mb-2">
+          <input type="file" accept="image/*" onchange="handleProfileImgUpload(event)" class="w-full text-[10px] text-gray-400 bg-gray-950 p-2 rounded-xl border border-gray-800">
+          <input type="hidden" id="profileImgBase64">
         </div>
 
         <div class="space-y-2 pt-2">
@@ -280,19 +276,20 @@
       </div>
 
       <div class="border-t border-gray-900 pt-4 space-y-3 bg-gray-950">
+        <!-- Delivery info note (Auto filled from profile) -->
         <div class="bg-gray-900/80 p-2.5 rounded-xl border border-gray-800 text-[11px] text-gray-300 flex items-center justify-between">
-          <span><i class="fas fa-circle-check text-emerald-400 ml-1"></i> يتم اعتماد الحساب وهوية المستخدم الآمنة</span>
-          <button onclick="toggleCart(); toggleAuthModal();" class="text-yellow-400 font-bold underline">الملف</button>
+          <span><i class="fas fa-circle-check text-emerald-400 ml-1"></i> معلومات التوصيل مسجلة من حسابك</span>
+          <button onclick="toggleCart(); toggleAuthModal();" class="text-yellow-400 font-bold underline">تعديل</button>
         </div>
 
         <div class="flex justify-between text-base font-black pt-2 border-t border-gray-900">
-          <span>الإجمالي (محسوب بأمان)</span>
+          <span>الإجمالي</span>
           <span id="cartTotal" class="text-yellow-400">0 د.ج</span>
         </div>
 
         <div>
-          <button onclick="submitOrderSecurely()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/20">
-            <i class="fas fa-paper-plane"></i> إرسال الطلب الآمن للمتجر
+          <button onclick="submitOrderToAdmin()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/20">
+            <i class="fas fa-paper-plane"></i> إرسال الطلب للمتجر
           </button>
         </div>
       </div>
@@ -303,7 +300,7 @@
   <div id="myOrdersModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-lg modal-scroll">
       <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
-        <h3 class="text-base font-extrabold text-yellow-400 flex items-center gap-2"><i class="fas fa-clock-rotate-left"></i> سجل طلباتي الآمنة</h3>
+        <h3 class="text-base font-extrabold text-yellow-400 flex items-center gap-2"><i class="fas fa-clock-rotate-left"></i> سجل طلباتي</h3>
         <button onclick="toggleMyOrders()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
       </div>
       <div id="myOrdersList" class="space-y-3">
@@ -312,11 +309,11 @@
     </div>
   </div>
 
-  <!-- Edit Product Modal (Admin Only) -->
+  <!-- Edit Product Modal (Admin) -->
   <div id="editProductModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[80] hidden items-center justify-center p-4">
     <div class="bg-gray-900 border border-yellow-500/40 p-6 rounded-3xl w-full max-w-md modal-scroll space-y-4">
       <div class="flex justify-between items-center pb-2 border-b border-gray-800">
-        <h3 class="text-base font-bold text-yellow-400"><i class="fas fa-pen-to-square ml-1"></i> تعديل بيانات المنتج (Admin)</h3>
+        <h3 class="text-base font-bold text-yellow-400"><i class="fas fa-pen-to-square ml-1"></i> تعديل بيانات المنتج</h3>
         <button onclick="closeEditModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark"></i></button>
       </div>
       <input type="hidden" id="editPId">
@@ -344,41 +341,46 @@
       </div>
       <div class="space-y-2">
         <label class="text-[11px] text-gray-400 block">صورة المنتج</label>
-        <input type="url" id="editPImgUrl" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+        <input type="url" id="editPImgUrl" oninput="handleEditImageUrlInput(this.value)" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+        <input type="file" id="editPImgFile" accept="image/*" onchange="handleEditImageUpload(event)" class="w-full text-[11px] text-gray-400 bg-gray-950 p-2 rounded-xl border border-gray-800">
+        <input type="hidden" id="editPImgBase64">
+      </div>
+      <div class="flex items-center gap-3">
+        <img id="editImgPreview" class="w-20 h-20 object-cover rounded-xl border border-yellow-500/40 bg-gray-950">
+        <span class="text-[11px] text-gray-400">معاينة الصورة</span>
       </div>
       <button onclick="saveProductEdits()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs shadow-md">
-        حفظ التعديلات عبر السيرفر
+        حفظ التعديلات
       </button>
     </div>
   </div>
 
-  <!-- Admin Dashboard Modal (Firebase Auth & Custom Claims Secured) -->
+  <!-- Admin Dashboard Modal (Secret Double-Click Access) -->
   <div id="adminModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] hidden items-center justify-center p-4">
     <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-4xl modal-scroll">
       <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
         <div>
-          <h3 class="text-base font-bold text-yellow-400 flex items-center gap-2"><i class="fas fa-user-shield"></i> لوحة التحكم الآمنة للمدير</h3>
-          <p class="text-[10px] text-gray-400">تحقق عبر Firebase Authentication ومصادقة المشرفين</p>
+          <h3 class="text-base font-bold text-yellow-400 flex items-center gap-2"><i class="fas fa-user-shield"></i> لوحة التحكم والإدارة الاحترافية</h3>
+          <p class="text-[10px] text-gray-400">إدارة المبيعات والمنتجات والزبائن المسجلين</p>
         </div>
         <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
       </div>
 
-      <!-- Admin Auth Form (Firebase Login) -->
+      <!-- Admin Auth Form -->
       <div id="adminLoginForm" class="space-y-3">
-        <p class="text-xs text-gray-300">قم بتسجيل الدخول باستخدام حساب مدير موثق (Firebase Auth مع Custom Claims):</p>
-        <input type="email" id="adminEmailInput" placeholder="admin@vip-smook.com"
+        <input type="text" id="adminUserInput" placeholder="رقم الهاتف / اسم المستخدم للمدير"
           class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-        <input type="password" id="adminPassInput" placeholder="كلمة المرور السرية"
+        <input type="password" id="adminPassInput" placeholder="كلمة المرور"
           class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-        <button onclick="loginAdminSecure()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition">
-          دخول المدير الآمن
+        <button onclick="loginAdmin()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition">
+          دخول المدير
         </button>
       </div>
 
       <!-- Admin Main Panel -->
       <div id="adminPanel" class="hidden space-y-4">
         <div class="flex items-center justify-between bg-gray-950 p-3 rounded-xl border border-gray-800 text-xs">
-          <span id="adminSignedInAs" class="text-gray-300 font-semibold">مرحباً بالمدير الموثق</span>
+          <span id="adminSignedInAs" class="text-gray-300 font-semibold">مرحباً بالمدير</span>
           <button onclick="logoutAdmin()" class="px-3 py-1 bg-red-950 text-red-400 hover:bg-red-900 rounded-lg text-[11px]">خروج</button>
         </div>
 
@@ -402,6 +404,7 @@
           <button onclick="switchAdminTab('customers')" id="tabCustomersBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الزبائن المسجلون</button>
           <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">إدارة وتعديل المخزون</button>
           <button onclick="switchAdminTab('add')" id="tabAddBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">+ إضافة منتج</button>
+          <button onclick="switchAdminTab('settings')" id="tabSettingsBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الإعدادات</button>
         </div>
 
         <!-- Orders Tab -->
@@ -422,7 +425,7 @@
           </div>
         </div>
 
-        <!-- Customers Tab -->
+        <!-- Customers Tab (New for Admin) -->
         <div id="adminTabCustomers" class="hidden space-y-3">
           <div class="flex justify-between items-center">
             <h4 class="text-xs font-bold text-gray-300">قائمة الزبائن المسجلين ونشاطهم:</h4>
@@ -453,14 +456,34 @@
             <option value="sweets">حلويات ومقرمشات</option>
           </select>
           <div class="space-y-2">
-            <label class="text-[11px] text-gray-400 block">رابط صورة المنتج:</label>
-            <input type="url" id="pImgUrl" placeholder="رابط صورة مباشر" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
+            <label class="text-[11px] text-gray-400 block">صورة المنتج:</label>
+            <input type="url" id="pImgUrl" placeholder="رابط صورة مباشر" oninput="handleImageUrlInput(this.value)" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
+            <input type="file" id="pImgFile" accept="image/*" onchange="handleImageUpload(event)" class="w-full text-xs text-gray-400 bg-gray-900 p-2 rounded-xl border border-gray-800">
+            <input type="hidden" id="pImgBase64">
           </div>
-          <button onclick="addProductSecure()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs transition">
-            حفظ ونشر المنتج بأمان
+          <div id="imgPreviewContainer" class="hidden">
+            <img id="imgPreview" class="w-20 h-20 object-cover rounded-xl border border-yellow-500/40">
+          </div>
+          <button onclick="addProduct()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs transition">
+            حفظ ونشر المنتج
           </button>
         </div>
 
+        <!-- Settings Tab -->
+        <div id="adminTabSettings" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
+          <h4 class="text-xs font-bold text-yellow-400 border-b border-gray-800 pb-2">تحديث بيانات حساب المدير</h4>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">رقم الهاتف / اسم المستخدم الجديد</label>
+            <input type="text" id="newAdminUser" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">كلمة المرور الجديدة</label>
+            <input type="password" id="newAdminPass" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
+          </div>
+          <button onclick="updateAdminCredentials()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition">
+            تحديث وحفظ
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -479,13 +502,11 @@
 
     let firebaseReady = false;
     let db = null;
-    let auth = null;
 
     try {
       if (firebaseConfig.apiKey) {
         firebase.initializeApp(firebaseConfig);
         db = firebase.firestore();
-        auth = firebase.auth();
         firebaseReady = true;
       }
     } catch (e) {
@@ -499,8 +520,9 @@
       cart: JSON.parse(localStorage.getItem("vip_cart") || "[]"),
       currentCategory: "all",
       searchQuery: "",
-      currentUser: null,
-      isAdmin: false
+      customer: JSON.parse(localStorage.getItem("vip_user") || "null"),
+      isAdminLoggedIn: sessionStorage.getItem("vip_admin_auth") === "true",
+      adminCredentials: { username: "0781896750", pass: "1234567a" }
     };
 
     document.getElementById("year").textContent = new Date().getFullYear();
@@ -564,52 +586,35 @@
       localStorage.setItem("vip_cart", JSON.stringify(state.cart));
     }
 
+    async function hashPassword(str) {
+      const msgBuffer = new TextEncoder().encode(str);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
     initApp();
 
     async function initApp() {
+      updateUserUI();
+      updateCartUI();
+
       if (!firebaseReady) {
-        showFirebaseError("تعذر الاتصال بالسيرفر، يرجى تفعيل إعدادات Firebase.");
+        showFirebaseError("تعذر الاتصال بالسيرفر، جاري العرض أوفلاين.");
         renderProducts();
         return;
       }
 
       hideFirebaseError();
+      await syncAdminCredentials();
 
-      // Monitor Auth state changes
-      auth.onAuthStateChanged(async user => {
-        state.currentUser = user;
-        if (user) {
-          // Check Admin Custom Claims
-          const tokenResult = await user.getIdTokenResult(true);
-          state.isAdmin = !!tokenResult.claims.admin;
-          
-          document.getElementById("userAuthLabel").textContent = "حسابي";
-          document.getElementById("mobileAuthLabel").textContent = "حسابي";
-          document.getElementById("myOrdersBtn").classList.remove("hidden");
-          document.getElementById("mobileOrdersBtn").classList.remove("hidden");
+      // Update customer last active timestamp if logged in
+      if (state.customer && state.customer.phone) {
+        db.collection("store_users").doc(state.customer.phone).update({
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(() => {});
+      }
 
-          // Sync user profile in Firestore
-          const userDocRef = db.collection("store_users").doc(user.uid);
-          const doc = await userDocRef.get();
-          if (doc.exists) {
-            state.customerProfile = doc.data();
-          } else {
-            const initialProfile = { email: user.email, name: "", phone: "", address: "", image: "", createdAt: firebase.firestore.FieldValue.serverTimestamp() };
-            await userDocRef.set(initialProfile);
-            state.customerProfile = initialProfile;
-          }
-        } else {
-          state.isAdmin = false;
-          state.customerProfile = null;
-          document.getElementById("userAuthLabel").textContent = "دخول";
-          document.getElementById("mobileAuthLabel").textContent = "حسابي";
-          document.getElementById("myOrdersBtn").classList.add("hidden");
-          document.getElementById("mobileOrdersBtn").classList.add("hidden");
-        }
-        updateCartUI();
-      });
-
-      // Listen products in real-time
       db.collection("products").orderBy("name").onSnapshot(
         snap => {
           state.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -623,6 +628,20 @@
           showFirebaseError("تعذر تحميل المنتجات من القاعدة.");
         }
       );
+    }
+
+    async function syncAdminCredentials() {
+      if (!firebaseReady) return;
+      try {
+        const doc = await db.collection("settings").doc("admin").get();
+        if (doc.exists) {
+          state.adminCredentials = doc.data();
+        } else {
+          await db.collection("settings").doc("admin").set(state.adminCredentials);
+        }
+      } catch (e) {
+        console.error("Credentials fetch error", e);
+      }
     }
 
     function renderProducts() {
@@ -785,7 +804,6 @@
         if (existing.qty + qty > stock) return toast(`تجاوزت الكمية المتاحة (${stock}).`, "error");
         existing.qty += qty;
       } else {
-        // نأخذ السعر الحقيقي من الكاتالوج ولا نعتمد على تعديل المستخدم
         state.cart.push({ id, name: p.name, price: Number(p.price || 0), qty });
       }
 
@@ -821,16 +839,13 @@
 
       let total = 0;
       box.innerHTML = state.cart.map(item => {
-        // إعادة حساب السعر من السيرفر/القائمة الموثوقة وليس المتصفح
-        const realProd = state.products.find(p => p.id === item.id);
-        const itemPrice = realProd ? Number(realProd.price || 0) : item.price;
-        total += itemPrice * item.qty;
+        total += item.price * item.qty;
         return `
           <div class="bg-gray-900 border border-gray-800 p-3 rounded-xl space-y-2">
             <div class="flex justify-between items-start gap-2">
               <div>
                 <h4 class="font-bold text-xs text-gray-100">${esc(item.name)}</h4>
-                <p class="text-[11px] text-amber-400 mt-0.5">${money(itemPrice)}</p>
+                <p class="text-[11px] text-amber-400 mt-0.5">${money(item.price)}</p>
               </div>
               <button onclick="removeFromCart('${esc(item.id)}')" class="text-red-400 hover:text-red-300 text-xs p-1">
                 <i class="fas fa-trash"></i>
@@ -843,7 +858,7 @@
                   onchange="updateCartQtyDirect('${esc(item.id)}', this.value)"
                   class="w-14 p-1 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
               </div>
-              <span class="text-xs font-bold text-amber-400">${money(itemPrice * item.qty)}</span>
+              <span class="text-xs font-bold text-amber-400">${money(item.price * item.qty)}</span>
             </div>
           </div>`;
       }).join("");
@@ -870,458 +885,698 @@
       updateCartUI();
     }
 
-    /* Customer Firebase Authentication & Profile Management */
+    /* Customer Phone Auth & Profile Management */
     function toggleAuthModal() {
       const el = document.getElementById("authModal");
       el.classList.toggle("hidden");
       el.classList.toggle("flex");
 
-      if (state.currentUser) {
-        document.getElementById("authTitle").textContent = "حسابي الشخصي الآمن";
+      if (state.customer) {
+        document.getElementById("authTitle").textContent = "حسابي الشخصي والبروفايل";
         document.getElementById("authFormContainer").classList.add("hidden");
         document.getElementById("customerProfileContainer").classList.remove("hidden");
         
-        document.getElementById("profileEmailDisplay").textContent = state.currentUser.email || "";
-        if (state.customerProfile) {
-          document.getElementById("profileName").value = state.customerProfile.name || "";
-          document.getElementById("profilePhone").value = state.customerProfile.phone || "";
-          document.getElementById("profileAddress").value = state.customerProfile.address || "";
-          document.getElementById("profileImgUrl").value = state.customerProfile.image || "";
+        document.getElementById("profilePhoneDisplay").textContent = state.customer.phone || "";
+        document.getElementById("profileName").value = state.customer.name || "";
+        document.getElementById("profileAddress").value = state.customer.address || "";
+        document.getElementById("profileImgBase64").value = state.customer.image || "";
+        if (state.customer.image) {
+          document.getElementById("profileImgPreview").src = state.customer.image;
         }
       } else {
-        document.getElementById("authTitle").textContent = "تسجيل الدخول عبر Firebase Auth";
+        document.getElementById("authTitle").textContent = "تسجيل الدخول برقم الهاتف";
         document.getElementById("authFormContainer").classList.remove("hidden");
         document.getElementById("customerProfileContainer").classList.add("hidden");
+        document.getElementById("custPhone").value = "";
+        document.getElementById("custPass").value = "";
       }
     }
 
-    async function handleFirebaseEmailAuth() {
+    async function handlePhoneAuth() {
       if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
-      const email = document.getElementById("custEmail").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
       const pass = document.getElementById("custPass").value.trim();
 
-      if (!email || !pass) return toast("يرجى إدخال البريد الإلكتروني وكلمة السر.", "error");
+      if (!phone || !pass) return toast("يرجى إدخال رقم الهاتف وكلمة السر.", "error");
 
       try {
-        // محاولة تسجيل الدخول، وإذا لم يكن الحساب موجوداً يتم إنشاؤه تلقائياً
-        await auth.signInWithEmailAndPassword(email, pass);
-        toast("تم تسجيل الدخول بنجاح!", "success");
-        toggleAuthModal();
-      } catch (err) {
-        if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-          try {
-            await auth.createUserWithEmailAndPassword(email, pass);
-            toast("تم إنشاء حسابك الجديد وتسجيل الدخول بنجاح!", "success");
-            toggleAuthModal();
-          } catch (createErr) {
-            toast(createErr.message, "error");
-          }
+        const hashedPass = await hashPassword(pass);
+        const userRef = db.collection("store_users").doc(phone);
+        const doc = await userRef.get();
+
+        if (!doc.exists) {
+          const newUserData = { 
+            phone, 
+            pass: hashedPass, 
+            name: "", 
+            address: "", 
+            image: "", 
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+          };
+          await userRef.set(newUserData);
+          state.customer = newUserData;
+          toast("تم إنشاء حسابك الجديد برقم هاتفك بنجاح!", "success");
         } else {
-          toast(err.message, "error");
+          const data = doc.data();
+          if (data.pass !== hashedPass) return toast("كلمة السر غير صحيحة.", "error");
+          
+          // Update last seen
+          await userRef.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
+          state.customer = data;
+          toast("مرحباً بك مجدداً!", "success");
         }
+
+        localStorage.setItem("vip_user", JSON.stringify(state.customer));
+        updateUserUI();
+        toggleAuthModal();
+        renderMyOrders();
+      } catch (e) {
+        console.error(e);
+        toast("حدث خطأ أثناء المصادقة.", "error");
+      }
+    }
+
+    function handleProfileImgInput(url) {
+      if (!url.trim()) return;
+      document.getElementById("profileImgBase64").value = url.trim();
+      document.getElementById("profileImgPreview").src = url.trim();
+    }
+
+    async function handleProfileImgUpload(e) {
+      const f = e.target.files[0];
+      if (!f) return;
+      try {
+        toast("جاري معالجة الصورة...", "normal");
+        const b64 = await compressAndConvertImage(f, 300, 0.6);
+        document.getElementById("profileImgBase64").value = b64;
+        document.getElementById("profileImgPreview").src = b64;
+        toast("تمت جاهزية الصورة!", "success");
+      } catch (err) {
+        toast("فشل تحميل الصورة.", "error");
       }
     }
 
     async function saveCustomerProfile() {
-      if (!state.currentUser) return toast("يرجى تسجيل الدخول أولاً.", "error");
+      if (!firebaseReady || !state.customer) return;
       const name = document.getElementById("profileName").value.trim();
-      const phone = document.getElementById("profilePhone").value.trim();
       const address = document.getElementById("profileAddress").value.trim();
-      const image = document.getElementById("profileImgUrl").value.trim();
+      const image = document.getElementById("profileImgBase64").value.trim();
+
+      if (!name || !address) {
+        return toast("يرجى ملء الاسم والعنوان لتسهيل توصيل الطلبات.", "error");
+      }
 
       try {
-        await db.collection("store_users").doc(state.currentUser.uid).set({
-          email: state.currentUser.email,
-          name,
-          phone,
-          address,
-          image,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
+        const userRef = db.collection("store_users").doc(state.customer.phone);
+        await userRef.update({ name, address, image });
         
-        state.customerProfile = { name, phone, address, image };
-        toast("تم حفظ بيانات البروفايل بنجاح!", "success");
+        state.customer.name = name;
+        state.customer.address = address;
+        state.customer.image = image;
+        localStorage.setItem("vip_user", JSON.stringify(state.customer));
+
+        toast("تم حفظ معلومات البروفايل بنجاح.", "success");
+        updateUserUI();
         toggleAuthModal();
       } catch (e) {
+        console.error(e);
         toast("تعذر حفظ التعديلات.", "error");
       }
     }
 
-    async function logoutCustomer() {
-      await auth.signOut();
-      state.currentUser = null;
-      state.customerProfile = null;
-      toast("تم تسجيل الخروج بنجاح.");
+    function logoutCustomer() {
+      state.customer = null;
+      localStorage.removeItem("vip_user");
+      updateUserUI();
       toggleAuthModal();
+      toast("تم تسجيل الخروج.");
     }
 
-    /* Secure Order Submission */
-    async function submitOrderSecurely() {
-      if (!state.currentUser) {
-        toast("يرجى تسجيل الدخول بحسابك أولاً لإتمام الطلب.", "error");
-        toggleAuthModal();
-        return;
+    function updateUserUI() {
+      const label = document.getElementById("userAuthLabel");
+      const mobileLabel = document.getElementById("mobileAuthLabel");
+      const ordersBtn = document.getElementById("myOrdersBtn");
+      const mobileOrdersBtn = document.getElementById("mobileOrdersBtn");
+
+      if (state.customer) {
+        const displayName = state.customer.name ? state.customer.name : state.customer.phone;
+        label.textContent = displayName;
+        mobileLabel.textContent = "حسابي";
+        ordersBtn.classList.remove("hidden");
+        mobileOrdersBtn.classList.remove("hidden");
+      } else {
+        label.textContent = "دخول";
+        mobileLabel.textContent = "حسابي";
+        ordersBtn.classList.add("hidden");
+        mobileOrdersBtn.classList.add("hidden");
       }
+    }
+
+    /* Submitting Orders (Automatically using profile info) */
+    async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
+      if (!state.customer) {
+        toggleCart();
+        toggleAuthModal();
+        return toast("يرجى تسجيل الدخول برقم هاتفك وحسابك لتأكيد الطلب.", "error");
+      }
 
-      // حساب الإجمالي والتحقق من الأسعار الحقيقية من الكاتالوج على الخادم
-      let finalTotal = 0;
-      const orderItems = state.cart.map(item => {
-        const prod = state.products.find(p => p.id === item.id);
-        const serverPrice = prod ? Number(prod.price || 0) : item.price;
-        finalTotal += serverPrice * item.qty;
-        return {
-          productId: item.id,
-          name: item.name,
-          price: serverPrice,
-          qty: item.qty
-        };
-      });
+      if (!state.customer.name || !state.customer.address) {
+        toggleCart();
+        toggleAuthModal();
+        return toast("يرجى إكمال اسمك وعنوان التوصيل في ملفك الشخصي أولاً.", "error");
+      }
 
-      const orderData = {
-        customerUid: state.currentUser.uid,
-        customerEmail: state.currentUser.email,
-        customerName: state.customerProfile?.name || "بدون اسم",
-        customerPhone: state.customerProfile?.phone || "بدون هاتف",
-        customerAddress: state.customerProfile?.address || "بدون عنوان",
-        items: orderItems,
-        total: finalTotal,
-        status: "جديد",
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
+      if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
+
+      const verifiedItems = [];
+      for (const item of state.cart) {
+        const snap = await db.collection("products").doc(item.id).get();
+        if (!snap.exists) return toast(`المنتج ${item.name} غير متوفر.`, "error");
+        const p = snap.data();
+        const stock = Number(p.stock || 0);
+        if (item.qty > stock) return toast(`المخزون غير كافٍ للمنتج: ${item.name}.`, "error");
+        verifiedItems.push({ id: item.id, name: p.name, price: Number(p.price || 0), qty: item.qty });
+      }
+
+      const total = verifiedItems.reduce((s, x) => s + x.price * x.qty, 0);
 
       try {
-        await db.collection("orders").add(orderData);
+        await db.runTransaction(async tx => {
+          const refs = verifiedItems.map(i => db.collection("products").doc(i.id));
+          const snaps = [];
+          for (const ref of refs) snaps.push(await tx.get(ref));
+
+          for (let i = 0; i < snaps.length; i++) {
+            const p = snaps[i].data();
+            const stock = Number(p.stock || 0);
+            const qty = verifiedItems[i].qty;
+            if (stock < qty) throw new Error("OUT_OF_STOCK");
+            tx.update(refs[i], { stock: stock - qty });
+          }
+
+          const orderRef = db.collection("orders").doc();
+          tx.set(orderRef, {
+            customerPhone: state.customer.phone,
+            customerName: state.customer.name,
+            phone: state.customer.phone,
+            address: state.customer.address,
+            items: verifiedItems,
+            total,
+            status: "جديد",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        });
+
         state.cart = [];
         persistCart();
         updateCartUI();
         toggleCart();
-        toast("تم إرسال طلبك الآمن بنجاح!", "success");
+        toast("تم إرسال طلبك بنجاح! سنتصل بك قريباً.", "success");
+        renderMyOrders();
       } catch (e) {
         console.error(e);
-        toast("تعذر إرسال الطلب، يرجى المحاولة لاحقاً.", "error");
+        toast("تعذر إرسال الطلب، تأكد من توفر المخزون.", "error");
       }
     }
 
-    /* Customer Orders View */
-    async function toggleMyOrders() {
+    function toggleMyOrders() {
       const el = document.getElementById("myOrdersModal");
       el.classList.toggle("hidden");
       el.classList.toggle("flex");
+      if (!el.classList.contains("hidden")) renderMyOrders();
+    }
 
-      if (!el.classList.contains("hidden") && state.currentUser) {
-        const list = document.getElementById("myOrdersList");
-        list.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">جاري جلب طلباتك...</p>`;
-        try {
-          const snap = await db.collection("orders").where("customerUid", "==", state.currentUser.uid).orderBy("createdAt", "desc").get();
-          if (snap.empty) {
-            list.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">لا توجد طلبات سابقة.</p>`;
-            return;
-          }
-          list.innerHTML = snap.docs.map(doc => {
-            const d = doc.data();
-            const date = d.createdAt?.toDate ? d.createdAt.toDate().toLocaleString('ar-DZ') : 'الآن';
-            return `
-              <div class="bg-gray-950 border border-gray-800 p-3 rounded-xl space-y-2 text-xs">
-                <div class="flex justify-between items-center text-gray-400 text-[10px]">
-                  <span>رقم الطلب: ${doc.id.slice(0,6)}</span>
-                  <span class="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 rounded">${esc(d.status)}</span>
-                </div>
-                <div class="space-y-1">
-                  ${(d.items || []).map(i => `<div class="flex justify-between text-gray-300"><span>${esc(i.name)} (x${i.qty})</span><span>${money(i.price * i.qty)}</span></div>`).join("")}
-                </div>
-                <div class="flex justify-between font-bold pt-2 border-t border-gray-900 text-yellow-400">
-                  <span>الإجمالي:</span>
-                  <span>${money(d.total)}</span>
-                </div>
-              </div>`;
-          }).join("");
-        } catch (e) {
-          list.innerHTML = `<p class="text-xs text-red-400 text-center py-6">تعذر جلب الطلبات (تأكد من قواعد الأمان).</p>`;
+    async function renderMyOrders() {
+      const container = document.getElementById("myOrdersList");
+      if (!state.customer) {
+        container.innerHTML = `<p class="text-gray-400 text-center py-6 text-xs">سجّل الدخول لمشاهدة طلباتك.</p>`;
+        return;
+      }
+      if (!firebaseReady) return;
+
+      try {
+        const snap = await db.collection("orders")
+          .where("customerPhone", "==", state.customer.phone)
+          .get();
+
+        const list = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+        if (!list.length) {
+          container.innerHTML = `<p class="text-gray-400 text-center py-6 text-xs">لا توجد طلبات سابقة في حسابك.</p>`;
+          return;
         }
+
+        container.innerHTML = list.map(o => `
+          <div class="bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs space-y-2">
+            <div class="flex justify-between items-center text-gray-400 border-b border-gray-800 pb-2">
+              <span>طلب #${esc(o.id.slice(0, 6))}</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${o.status === "مكتمل" ? "bg-emerald-950 text-emerald-300 border border-emerald-800" : "bg-amber-950 text-amber-300 border border-amber-800"}">
+                ${esc(o.status || "جديد")}
+              </span>
+            </div>
+            <div class="space-y-1">
+              ${(o.items || []).map(i => `
+                <div class="flex justify-between text-gray-300">
+                  <span>${esc(i.name)} ×${i.qty}</span>
+                  <span>${money(i.price * i.qty)}</span>
+                </div>`).join("")}
+            </div>
+            <div class="flex justify-between pt-2 border-t border-gray-800 font-extrabold text-amber-400">
+              <span>المجموع الكلي:</span>
+              <span>${money(o.total)}</span>
+            </div>
+          </div>`).join("");
+      } catch (e) {
+        console.error(e);
+        container.innerHTML = `<p class="text-red-400 text-center py-6 text-xs">تعذر جلب سجل الطلبات.</p>`;
       }
     }
 
-    /* Admin Secure Access & Management */
+    /* Secret Admin Trigger via Double-Click on Store Logo */
     function triggerAdminSecret() {
-      const el = document.getElementById("adminModal");
-      el.classList.toggle("hidden");
-      el.classList.toggle("flex");
-
-      if (state.isAdmin) {
-        document.getElementById("adminLoginForm").classList.add("hidden");
-        document.getElementById("adminPanel").classList.remove("hidden");
-        loadAdminDashboardData();
-      } else {
-        document.getElementById("adminLoginForm").classList.remove("hidden");
-        document.getElementById("adminPanel").classList.add("hidden");
-      }
+      toggleAdminModal();
     }
 
     function toggleAdminModal() {
       const el = document.getElementById("adminModal");
       el.classList.toggle("hidden");
       el.classList.toggle("flex");
+
+      if (state.isAdminLoggedIn) {
+        document.getElementById("adminLoginForm").classList.add("hidden");
+        document.getElementById("adminPanel").classList.remove("hidden");
+        document.getElementById("adminSignedInAs").textContent = `مدير المتجر: ${state.adminCredentials.username}`;
+        loadOrdersOnce();
+        loadAdminCustomers();
+        updateAdminDashboardStats();
+      } else {
+        document.getElementById("adminLoginForm").classList.remove("hidden");
+        document.getElementById("adminPanel").classList.add("hidden");
+      }
     }
 
-    async function loginAdminSecure() {
-      const email = document.getElementById("adminEmailInput").value.trim();
+    async function loginAdmin() {
+      const user = document.getElementById("adminUserInput").value.trim();
       const pass = document.getElementById("adminPassInput").value.trim();
-      if (!email || !pass) return toast("أدخل بيانات المدير.", "error");
+      await syncAdminCredentials();
 
-      try {
-        await auth.signInWithEmailAndPassword(email, pass);
-        const tokenResult = await auth.currentUser.getIdTokenResult(true);
-        if (tokenResult.claims.admin) {
-          state.isAdmin = true;
-          document.getElementById("adminLoginForm").classList.add("hidden");
-          document.getElementById("adminPanel").classList.remove("hidden");
-          loadAdminDashboardData();
-          toast("تم تسجيل دخول المدير بنجاح!", "success");
-        } else {
-          toast("هذا الحساب ليس لديه صلاحيات Admin.", "error");
-          await auth.signOut();
-        }
-      } catch (e) {
-        toast("فشل تسجيل الدخول: " + e.message, "error");
+      if (user === state.adminCredentials.username && pass === state.adminCredentials.pass) {
+        state.isAdminLoggedIn = true;
+        sessionStorage.setItem("vip_admin_auth", "true");
+        document.getElementById("adminLoginForm").classList.add("hidden");
+        document.getElementById("adminPanel").classList.remove("hidden");
+        document.getElementById("adminSignedInAs").textContent = `مدير المتجر: ${user}`;
+        toast("مرحباً بك في لوحة الإدارة.", "success");
+        loadOrdersOnce();
+        loadAdminCustomers();
+        updateAdminDashboardStats();
+      } else {
+        toast("بيانات الدخول غير صحيحة.", "error");
       }
     }
 
-    async function logoutAdmin() {
-      await auth.signOut();
-      state.isAdmin = false;
-      document.getElementById("adminModal").classList.add("hidden");
-      toast("تم تسجيل خروج المدير.");
+    function logoutAdmin() {
+      state.isAdminLoggedIn = false;
+      sessionStorage.removeItem("vip_admin_auth");
+      document.getElementById("adminLoginForm").classList.remove("hidden");
+      document.getElementById("adminPanel").classList.add("hidden");
+      toast("تم الخروج من لوحة التحكم.");
     }
 
-    function switchAdminTab(tabName) {
-      ["orders", "customers", "manage", "add"].forEach(t => {
-        document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add("hidden");
-        document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Btn`).className = "admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap";
-      });
-      document.getElementById(`adminTab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.remove("hidden");
-      document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Btn`).className = "admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap";
-
-      if (tabName === "orders") loadOrdersOnce();
-      if (tabName === "customers") loadAdminCustomers();
-      if (tabName === "manage") renderAdminProducts();
-    }
-
-    async function loadAdminDashboardData() {
-      updateAdminDashboardStats();
-      loadOrdersOnce();
-      loadAdminCustomers();
-      renderAdminProducts();
-    }
-
-    async function updateAdminDashboardStats() {
+    function updateAdminDashboardStats() {
       document.getElementById("statTotalProducts").textContent = state.products.length;
-      try {
-        const ordersSnap = await db.collection("orders").get();
-        const pending = ordersSnap.docs.filter(d => d.data().status === "جديد").length;
-        document.getElementById("statPendingOrders").textContent = pending;
-
-        const custSnap = await db.collection("store_users").get();
-        document.getElementById("statTotalCustomers").textContent = custSnap.size;
-      } catch (e) {
-        console.error(e);
-      }
+      document.getElementById("statTotalCustomers").textContent = state.customers.length;
+      const lowCount = state.products.filter(p => Number(p.stock || 0) <= 3).length;
+      document.getElementById("statLowStock").textContent = lowCount;
     }
 
-    async function loadOrdersOnce() {
-      const list = document.getElementById("adminOrdersList");
-      const filter = document.getElementById("adminOrderFilter").value;
-      list.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">جاري جلب الطلبات...</p>`;
+    function switchAdminTab(tab) {
+      document.querySelectorAll(".admin-tab").forEach(b => {
+        b.className = "admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap";
+      });
+      ["orders", "customers", "manage", "add", "settings"].forEach(t => {
+        const el = document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if(el) el.classList.add("hidden");
+      });
 
-      try {
-        let query = db.collection("orders").orderBy("createdAt", "desc");
-        const snap = await query.get();
-        let docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-        if (filter !== "all") {
-          docs = docs.filter(o => o.status === filter);
-        }
-
-        if (!docs.length) {
-          list.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">لا توجد طلبات واردة.</p>`;
-          return;
-        }
-
-        list.innerHTML = docs.map(o => `
-          <div class="bg-gray-950 border border-gray-800 p-3.5 rounded-xl space-y-2 text-xs">
-            <div class="flex justify-between items-center">
-              <span class="text-yellow-400 font-bold">العميل: ${esc(o.customerName)} (${esc(o.customerPhone)})</span>
-              <span class="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded">${esc(o.status)}</span>
-            </div>
-            <p class="text-gray-400 text-[11px]">العنوان: ${esc(o.customerAddress)} | البريد: ${esc(o.customerEmail)}</p>
-            <div class="space-y-1 pt-1 border-t border-gray-900">
-              ${(o.items || []).map(i => `<div class="flex justify-between text-gray-300"><span>${esc(i.name)} (x${i.qty})</span><span>${money(i.price * i.qty)}</span></div>`).join("")}
-            </div>
-            <div class="flex justify-between items-center pt-2 border-t border-gray-900">
-              <span class="font-bold text-amber-400">الإجمالي: ${money(o.total)}</span>
-              <div class="flex gap-1.5">
-                <button onclick="updateOrderStatus('${o.id}', 'مكتمل')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[10px]">اكتمال</button>
-                <button onclick="deleteOrder('${o.id}')" class="px-2.5 py-1 bg-red-950 text-red-400 rounded text-[10px]">حذف</button>
-              </div>
-            </div>
-          </div>`).join("");
-      } catch (e) {
-        list.innerHTML = `<p class="text-xs text-red-400 text-center py-6">تعذر جلب الطلبات (تأكد من صلاحيات Admin).</p>`;
-      }
+      const cap = tab.charAt(0).toUpperCase() + tab.slice(1);
+      document.getElementById(`tab${cap}Btn`).className = "admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap shadow-md shadow-yellow-500/20";
+      document.getElementById(`adminTab${cap}`).classList.remove("hidden");
     }
 
-    async function updateOrderStatus(id, status) {
-      try {
-        await db.collection("orders").doc(id).update({ status });
-        toast("تم تحديث حالة الطلب.", "success");
-        loadOrdersOnce();
-      } catch (e) {
-        toast("تعذر التحديث.", "error");
-      }
-    }
-
-    async function deleteOrder(id) {
-      if (!confirm("هل أنت متأكد من حذف الطلب؟")) return;
-      try {
-        await db.collection("orders").doc(id).delete();
-        toast("تم حذف الطلب.", "success");
-        loadOrdersOnce();
-      } catch (e) {
-        toast("تعذر الحذف.", "error");
-      }
-    }
-
+    /* Admin Customers Management Tab (View last seen & delete unwanted accounts) */
     async function loadAdminCustomers() {
+      if (!firebaseReady || !state.isAdminLoggedIn) return;
       const list = document.getElementById("adminCustomersList");
-      list.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">جاري جلب الزبائن...</p>`;
+      list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">جاري تحميل قائمة الزبائن...</p>`;
+
       try {
         const snap = await db.collection("store_users").get();
-        if (snap.empty) {
-          list.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">لا يوجد زبائن مسجلون.</p>`;
+        state.customers = snap.docs.map(d => ({ phone: d.id, ...d.data() }));
+        document.getElementById("statTotalCustomers").textContent = state.customers.length;
+
+        if (!state.customers.length) {
+          list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">لا يوجد زبائن مسجلون بعد.</p>`;
           return;
         }
-        list.innerHTML = snap.docs.map(d => {
-          const u = d.data();
+
+        list.innerHTML = state.customers.map(c => {
+          let lastSeenText = "غير متوفر";
+          if (c.lastSeen && c.lastSeen.toDate) {
+            const date = c.lastSeen.toDate();
+            lastSeenText = date.toLocaleString("ar-DZ", { dateStyle: "short", timeStyle: "short" });
+          }
+
+          const avatar = c.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
+          const customerName = c.name ? c.name : "بدون اسم";
+
           return `
-            <div class="bg-gray-950 border border-gray-800 p-3 rounded-xl flex items-center justify-between text-xs">
-              <div>
-                <p class="font-bold text-gray-200">${esc(u.name || "بدون اسم")} <span class="text-amber-400 font-normal">(${esc(u.email || u.phone)})</span></p>
-                <p class="text-[10px] text-gray-400">العنوان: ${esc(u.address || "غير مسجل")}</p>
+            <div class="flex justify-between items-center bg-gray-950 p-3 rounded-2xl border border-gray-800 text-xs gap-2">
+              <div class="flex items-center gap-3 overflow-hidden">
+                <img src="${esc(avatar)}" class="w-10 h-10 rounded-full object-cover border border-yellow-500/40 shrink-0">
+                <div class="truncate space-y-0.5">
+                  <p class="font-bold text-gray-100 truncate">${esc(customerName)} <span class="text-amber-400 font-normal">(${esc(c.phone)})</span></p>
+                  <p class="text-gray-400 text-[10px] truncate">العنوان: ${esc(c.address || "غير مدخل")}</p>
+                  <p class="text-gray-500 text-[10px]">آخر اتصال: <span class="text-emerald-400 font-medium">${esc(lastSeenText)}</span></p>
+                </div>
+              </div>
+              <div class="shrink-0">
+                <button onclick="deleteCustomerAccount('${esc(c.phone)}')" class="px-2.5 py-1.5 bg-red-950/80 hover:bg-red-900 border border-red-800 text-red-300 rounded-xl text-[10px] font-bold transition">
+                  حذف الحساب
+                </button>
               </div>
             </div>`;
         }).join("");
       } catch (e) {
-        list.innerHTML = `<p class="text-xs text-red-400 text-center py-6">تعذر جلب قائمة الزبائن.</p>`;
+        console.error(e);
+        list.innerHTML = `<p class="text-xs text-red-400 text-center py-4">تعذر تحميل الزبائن.</p>`;
       }
     }
 
-    function renderAdminProducts() {
-      const list = document.getElementById("adminProductsList");
-      if (!list) return;
-      const search = (document.getElementById("adminStockSearch")?.value || "").toLowerCase();
-      const filtered = state.products.filter(p => String(p.name || "").toLowerCase().includes(search));
-
-      if (!filtered.length) {
-        list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">لا توجد منتجات.</p>`;
-        return;
+    async function deleteCustomerAccount(phone) {
+      if (!confirm(`هل أنت متأكد من حذف الحساب برقم الهاتف ${phone} نهائياً؟`)) return;
+      try {
+        await db.collection("store_users").doc(phone).delete();
+        toast("تم حذف حساب الزبون بنجاح.", "success");
+        loadAdminCustomers();
+      } catch (e) {
+        console.error(e);
+        toast("تعذر حذف الحساب.", "error");
       }
+    }
 
-      list.innerHTML = filtered.map(p => `
-        <div class="bg-gray-950 border border-gray-800 p-2.5 rounded-xl flex items-center justify-between text-xs">
-          <div class="flex items-center gap-2">
-            <img src="${esc(p.image)}" class="w-10 h-10 object-cover rounded-lg bg-gray-900">
-            <div>
-              <p class="font-bold text-gray-200">${esc(p.name)}</p>
-              <p class="text-[10px] text-amber-400">${money(p.price)} | المخزون: ${p.stock}</p>
+    async function updateAdminCredentials() {
+      const newUser = document.getElementById("newAdminUser").value.trim();
+      const newPass = document.getElementById("newAdminPass").value.trim();
+      if (!newUser || !newPass) return toast("يرجى كتابة اسم ومفتاح مرور جديد.", "error");
+
+      try {
+        await db.collection("settings").doc("admin").set({ username: newUser, pass: newPass });
+        state.adminCredentials = { username: newUser, pass: newPass };
+        document.getElementById("adminSignedInAs").textContent = `مدير المتجر: ${newUser}`;
+        document.getElementById("newAdminUser").value = "";
+        document.getElementById("newAdminPass").value = "";
+        toast("تم تحديث معلومات دخول المدير بنجاح.", "success");
+      } catch (e) {
+        console.error(e);
+        toast("تعذر تحديث البيانات.", "error");
+      }
+    }
+
+    async function loadOrdersOnce() {
+      if (!firebaseReady || !state.isAdminLoggedIn) return;
+      const list = document.getElementById("adminOrdersList");
+      list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">جاري تحميل الطلبات...</p>`;
+
+      try {
+        const snap = await db.collection("orders").get();
+        state.orders = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+        const filterStatus = document.getElementById("adminOrderFilter")?.value || "all";
+        let filteredOrders = state.orders;
+        if (filterStatus !== "all") {
+          filteredOrders = filteredOrders.filter(o => o.status === filterStatus);
+        }
+
+        const pending = state.orders.filter(o => o.status !== "مكتمل").length;
+        document.getElementById("statPendingOrders").textContent = pending;
+
+        if (!filteredOrders.length) {
+          list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">لا توجد طلبات جارية لهذا الفلتر.</p>`;
+          return;
+        }
+
+        list.innerHTML = filteredOrders.map(o => `
+          <div class="bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs space-y-2">
+            <div class="flex justify-between items-start font-bold border-b border-gray-800 pb-2">
+              <div>
+                <span class="text-amber-400 block">الزبون: ${esc(o.customerName || o.customerPhone)}</span>
+                <span class="text-gray-400 text-[11px] block font-normal">هاتف: ${esc(o.phone || "غير محدد")}</span>
+                <span class="text-gray-400 text-[11px] block font-normal">العنوان: ${esc(o.address || "غير محدد")}</span>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] ${o.status === "مكتمل" ? "bg-emerald-950 text-emerald-300" : "bg-amber-950 text-amber-300"}">
+                ${esc(o.status || "جديد")}
+              </span>
             </div>
-          </div>
-          <div class="flex gap-1.5">
-            <button onclick="openEditModal('${p.id}')" class="px-2.5 py-1.5 bg-blue-950 text-blue-300 rounded-lg text-[10px]">تعديل</button>
-            <button onclick="deleteProductSecure('${p.id}')" class="px-2.5 py-1.5 bg-red-950 text-red-300 rounded-lg text-[10px]">حذف</button>
-          </div>
-        </div>`).join("");
+            <div class="space-y-1">
+              ${(o.items || []).map(i => `
+                <div class="flex justify-between text-gray-300">
+                  <span>• ${esc(i.name)} ×${i.qty}</span>
+                  <span>${money(i.price * i.qty)}</span>
+                </div>`).join("")}
+            </div>
+            <div class="flex justify-between items-center pt-2 border-t border-gray-800 font-bold">
+              <span>المجموع: ${money(o.total)}</span>
+              ${o.status !== "مكتمل" ? `
+                <button onclick="markOrderComplete('${esc(o.id)}')"
+                  class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[11px] font-bold transition">
+                  تأكيد الإكتمال والتسليم
+                </button>` : `<span class="text-emerald-400 text-[11px]">مكتمل ✅</span>`}
+            </div>
+          </div>`).join("");
+      } catch (e) {
+        console.error(e);
+        list.innerHTML = `<p class="text-xs text-red-400 text-center py-4">خطأ في تحميل الطلبات.</p>`;
+      }
     }
 
-    async function addProductSecure() {
-      if (!state.isAdmin) return toast("غير مسموح لك بإضافة منتجات.", "error");
+    async function markOrderComplete(id) {
+      try {
+        await db.collection("orders").doc(id).update({ status: "مكتمل" });
+        toast("تم تحديث حالة الطلب إلى مكتمل.", "success");
+        loadOrdersOnce();
+      } catch (e) {
+        console.error(e);
+        toast("تعذر تحديث الطلب.", "error");
+      }
+    }
+
+    /* Image Compressor */
+    function compressAndConvertImage(file, maxWidth = 500, quality = 0.65) {
+      return new Promise((resolve, reject) => {
+        if (!file) return reject("الملف غير موجود");
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = event => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            let w = img.width;
+            let h = img.height;
+            if (w > h) {
+              if (w > maxWidth) { h = Math.round((h * maxWidth) / w); w = maxWidth; }
+            } else {
+              if (h > maxWidth) { w = Math.round((w * maxWidth) / h); h = maxWidth; }
+            }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = () => reject("تعذر معالجة الصورة.");
+        };
+        reader.onerror = () => reject("تعذر قراءة الملف.");
+      });
+    }
+
+    function handleImageUrlInput(url) {
+      if (!url.trim()) return;
+      document.getElementById("pImgBase64").value = url.trim();
+      document.getElementById("imgPreview").src = url.trim();
+      document.getElementById("imgPreviewContainer").classList.remove("hidden");
+    }
+
+    function handleEditImageUrlInput(url) {
+      if (!url.trim()) return;
+      document.getElementById("editPImgBase64").value = url.trim();
+      document.getElementById("editImgPreview").src = url.trim();
+    }
+
+    async function handleImageUpload(e) {
+      const f = e.target.files[0];
+      if (!f) return;
+      try {
+        toast("جاري ضغط ومعالجة الصورة...", "normal");
+        const b64 = await compressAndConvertImage(f);
+        document.getElementById("pImgBase64").value = b64;
+        document.getElementById("imgPreview").src = b64;
+        document.getElementById("imgPreviewContainer").classList.remove("hidden");
+        toast("تمت جاهزية الصورة للرفع!", "success");
+      } catch (err) {
+        toast("فشل تحميل الصورة.", "error");
+      }
+    }
+
+    async function handleEditImageUpload(e) {
+      const f = e.target.files[0];
+      if (!f) return;
+      try {
+        toast("جاري ضغط ومعالجة الصورة...", "normal");
+        const b64 = await compressAndConvertImage(f);
+        document.getElementById("editPImgBase64").value = b64;
+        document.getElementById("editImgPreview").src = b64;
+        toast("تمت جاهزية الصورة للرفع!", "success");
+      } catch (err) {
+        toast("فشل تحميل الصورة.", "error");
+      }
+    }
+
+    async function addProduct() {
+      if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
       const name = document.getElementById("pName").value.trim();
       const price = Number(document.getElementById("pPrice").value);
       const stock = Number(document.getElementById("pStock").value);
       const category = document.getElementById("pCategory").value;
-      const image = document.getElementById("pImgUrl").value.trim();
+      const image = document.getElementById("pImgBase64").value;
 
-      if (!name || isNaN(price) || isNaN(stock)) return toast("يرجى ملء كافة الحقول بشكل صحيح.", "error");
+      if (!name || isNaN(price) || price < 0 || isNaN(stock) || stock < 0) {
+        return toast("يرجى إدخال اسم وسعر ومخزون صحيح.", "error");
+      }
 
       try {
         await db.collection("products").add({
-          name, price, stock, category, image,
+          name, price, previousPrice: price, stock, category, image,
+          likesCount: 0, dislikesCount: 0,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        toast("تمت إضافة المنتج بنجاح عبر السيرفر!", "success");
+
         document.getElementById("pName").value = "";
         document.getElementById("pPrice").value = "";
         document.getElementById("pStock").value = "";
         document.getElementById("pImgUrl").value = "";
+        document.getElementById("pImgBase64").value = "";
+        document.getElementById("pImgFile").value = "";
+        document.getElementById("imgPreviewContainer").classList.add("hidden");
+        toast("تمت إضافة المنتج ونشره بنجاح.", "success");
       } catch (e) {
-        toast("تعذر إضافة المنتج (تأكد من صلاحيات Admin).", "error");
+        console.error(e);
+        toast("تعذر إضافة المنتج.", "error");
       }
+    }
+
+    function renderAdminProducts() {
+      filterAdminProductsList();
+    }
+
+    function filterAdminProductsList() {
+      const list = document.getElementById("adminProductsList");
+      if (!list) return;
+      const query = (document.getElementById("adminStockSearch")?.value || "").trim().toLowerCase();
+      let filtered = state.products;
+      if (query) filtered = filtered.filter(p => String(p.name || "").toLowerCase().includes(query));
+
+      if (!filtered.length) {
+        list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">لا توجد منتجات مطابقة.</p>`;
+        return;
+      }
+
+      list.innerHTML = filtered.map(p => `
+        <div class="flex justify-between items-center bg-gray-950 p-2.5 rounded-2xl border border-gray-800 text-xs">
+          <div class="flex items-center gap-2.5 overflow-hidden">
+            <img src="${esc(p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80")}" class="w-10 h-10 rounded-xl object-cover border border-gray-800">
+            <div class="truncate">
+              <p class="font-bold text-gray-200 truncate">${esc(p.name)}</p>
+              <p class="text-gray-400 text-[11px] mt-0.5">${money(p.price)} | المتوفر: <span class="font-bold text-amber-400">${p.stock || 0}</span></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="openEditModal('${esc(p.id)}')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-[11px]">تعديل</button>
+            <button onclick="deleteProduct('${esc(p.id)}')" class="p-1.5 text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>`).join("");
     }
 
     function openEditModal(id) {
       const p = state.products.find(x => x.id === id);
       if (!p) return;
       document.getElementById("editPId").value = p.id;
-      document.getElementById("editPName").value = p.name;
-      document.getElementById("editPPrice").value = p.price;
-      document.getElementById("editPStock").value = p.stock;
+      document.getElementById("editPName").value = p.name || "";
+      document.getElementById("editPPrice").value = p.price || 0;
+      document.getElementById("editPStock").value = p.stock || 0;
       document.getElementById("editPCategory").value = p.category || "tobacco";
-      document.getElementById("editPImgUrl").value = p.image || "";
-      document.getElementById("editProductModal").classList.remove("hidden");
-      document.getElementById("editProductModal").classList.add("flex");
+      document.getElementById("editPImgUrl").value = p.image?.startsWith("http") ? p.image : "";
+      document.getElementById("editPImgBase64").value = p.image || "";
+      document.getElementById("editImgPreview").src = p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
+
+      const el = document.getElementById("editProductModal");
+      el.classList.remove("hidden");
+      el.classList.add("flex");
     }
 
     function closeEditModal() {
-      document.getElementById("editProductModal").classList.add("hidden");
-      document.getElementById("editProductModal").classList.remove("flex");
+      const el = document.getElementById("editProductModal");
+      el.classList.add("hidden");
+      el.classList.remove("flex");
     }
 
     async function saveProductEdits() {
-      if (!state.isAdmin) return toast("غير مسموح لك بالتعديل.", "error");
+      if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
       const id = document.getElementById("editPId").value;
       const name = document.getElementById("editPName").value.trim();
-      const price = Number(document.getElementById("editPPrice").value);
+      const newPrice = Number(document.getElementById("editPPrice").value);
       const stock = Number(document.getElementById("editPStock").value);
       const category = document.getElementById("editPCategory").value;
-      const image = document.getElementById("editPImgUrl").value.trim();
+      const image = document.getElementById("editPImgBase64").value;
+
+      const currentProduct = state.products.find(x => x.id === id);
+      if (!currentProduct) return toast("المنتج غير موجود.", "error");
+
+      if (!id || !name || isNaN(newPrice) || newPrice < 0 || isNaN(stock) || stock < 0) {
+        return toast("يرجى مراجعة البيانات المدخلة.", "error");
+      }
+
+      const oldPrice = Number(currentProduct.price || 0);
+      let previousPrice = Number(currentProduct.previousPrice || oldPrice);
+      if (oldPrice !== newPrice) previousPrice = oldPrice;
 
       try {
-        const oldProd = state.products.find(x => x.id === id);
-        const prevPrice = oldProd ? Number(oldProd.price || 0) : price;
-
-        await db.collection("products").doc(id).update({
-          name, price, stock, category, image,
-          previousPrice: prevPrice !== price ? prevPrice : (oldProd?.previousPrice || 0)
-        });
-        toast("تم حفظ التعديلات بنجاح!", "success");
+        await db.collection("products").doc(id).update({ name, price: newPrice, previousPrice, stock, category, image });
+        toast("تم تحديث بيانات المنتج بنجاح.", "success");
         closeEditModal();
       } catch (e) {
+        console.error(e);
         toast("تعذر حفظ التعديلات.", "error");
       }
     }
 
-    async function deleteProductSecure(id) {
-      if (!state.isAdmin) return toast("غير مسموح لك بالحذف.", "error");
-      if (!confirm("هل أنت متأكد من حذف هذا المنتج؟")) return;
+    async function deleteProduct(id) {
+      if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
+      if (!confirm("هل أنت متأكد من حذف هذا المنتج نهائياً؟")) return;
       try {
         await db.collection("products").doc(id).delete();
-        toast("تم حذف المنتج بنجاح.", "success");
+        toast("تم حذف المنتج.");
       } catch (e) {
-        toast("تعذر الحذف.", "error");
+        console.error(e);
+        toast("تعذر حذف المنتج.", "error");
       }
-    }
-
-    function filterAdminProductsList() {
-      renderAdminProducts();
     }
   </script>
 </body>
