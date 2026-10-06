@@ -14,6 +14,7 @@
   <!-- Firebase Compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-messaging-compat.js"></script>
 
   <style>
     * { box-sizing: border-box; }
@@ -56,12 +57,24 @@
     <div id="toastInner" class="glass border rounded-2xl px-5 py-3.5 shadow-2xl text-xs font-medium flex items-center gap-2"></div>
   </div>
 
+  <!-- Live Change Alert Toast (In-App Notification) -->
+  <div id="liveAlert" class="fixed bottom-20 right-4 left-4 md:left-auto md:right-5 z-[110] hidden transition-all duration-300 max-w-sm">
+    <div class="bg-gray-900 border border-yellow-500/50 rounded-2xl p-4 shadow-2xl text-xs text-gray-200 flex items-start gap-3 relative">
+      <i id="liveAlertIcon" class="fas fa-bell text-yellow-400 text-lg mt-0.5"></i>
+      <div class="flex-1">
+        <h4 id="liveAlertTitle" class="font-bold text-yellow-400 mb-0.5">تحديث جديد</h4>
+        <p id="liveAlertMessage" class="text-gray-300 text-[11px]"></p>
+      </div>
+      <button onclick="closeLiveAlert()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark"></i></button>
+    </div>
+  </div>
+
   <!-- Header -->
   <header class="sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md border-b border-yellow-500/20">
     <div class="max-w-6xl mx-auto px-4 py-3">
       <div class="flex items-center justify-between gap-3">
         
-        <!-- Logo (Double Click here opens Admin Login) -->
+        <!-- Logo -->
         <button ondblclick="triggerAdminSecret()" onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="text-right cursor-pointer select-none" title="اضغط مرتين لفتح لوحة التحكم">
           <span class="font-black text-xl md:text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">
             VIP SMOOK
@@ -78,6 +91,10 @@
 
         <!-- Desktop Nav Buttons -->
         <div class="hidden md:flex items-center gap-2">
+          <button id="pushNotifBtn" onclick="requestNotificationPermission()" class="px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-yellow-400 transition flex items-center gap-1">
+            <i class="fas fa-bell"></i> تفعيل الإشعارات
+          </button>
+
           <button id="myOrdersBtn" onclick="toggleMyOrders()" class="hidden px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition">
             <i class="fas fa-box-archive text-yellow-500 ml-1"></i> طلباتي
           </button>
@@ -181,7 +198,6 @@
         <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
       </div>
 
-      <!-- Login / Register Form -->
       <div id="authFormContainer" class="space-y-4">
         <div>
           <label class="text-[11px] text-gray-400 font-semibold block mb-1">رقم الهاتف</label>
@@ -200,7 +216,6 @@
         </button>
       </div>
 
-      <!-- Customer Profile View (Shown when logged in) -->
       <div id="customerProfileContainer" class="hidden space-y-4">
         <div class="flex flex-col items-center text-center pb-3 border-b border-gray-800">
           <div class="relative w-20 h-20 rounded-full overflow-hidden border-2 border-yellow-500 bg-gray-950 mb-2">
@@ -255,7 +270,6 @@
       </div>
 
       <div class="border-t border-gray-900 pt-4 space-y-3 bg-gray-950">
-        <!-- Delivery info note (Auto filled from profile) -->
         <div class="bg-gray-900/80 p-2.5 rounded-xl border border-gray-800 text-[11px] text-gray-300 flex items-center justify-between">
           <span><i class="fas fa-circle-check text-emerald-400 ml-1"></i> معلومات التوصيل مسجلة من حسابك</span>
           <button onclick="toggleCart(); toggleAuthModal();" class="text-yellow-400 font-bold underline">تعديل</button>
@@ -334,7 +348,7 @@
     </div>
   </div>
 
-  <!-- Admin Dashboard Modal (Secret Double-Click Access) -->
+  <!-- Admin Dashboard Modal -->
   <div id="adminModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] hidden items-center justify-center p-4">
     <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-4xl modal-scroll">
       <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
@@ -345,7 +359,6 @@
         <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
       </div>
 
-      <!-- Admin Auth Form -->
       <div id="adminLoginForm" class="space-y-3">
         <input type="text" id="adminUserInput" placeholder="رقم الهاتف / اسم المستخدم للمدير"
           class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
@@ -356,7 +369,6 @@
         </button>
       </div>
 
-      <!-- Admin Main Panel -->
       <div id="adminPanel" class="hidden space-y-4">
         <div class="flex items-center justify-between bg-gray-950 p-3 rounded-xl border border-gray-800 text-xs">
           <span id="adminSignedInAs" class="text-gray-300 font-semibold">مرحباً بالمدير</span>
@@ -390,7 +402,6 @@
           <button onclick="switchAdminTab('settings')" id="tabSettingsBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الإعدادات</button>
         </div>
 
-        <!-- Orders Tab -->
         <div id="adminTabOrders" class="space-y-3">
           <div class="flex justify-between items-center">
             <div class="flex items-center gap-2">
@@ -408,7 +419,6 @@
           </div>
         </div>
 
-        <!-- Customers Tab -->
         <div id="adminTabCustomers" class="hidden space-y-3">
           <div class="flex justify-between items-center">
             <h4 class="text-xs font-bold text-gray-300">قائمة الزبائن المسجلين ونشاطهم:</h4>
@@ -419,14 +429,12 @@
           </div>
         </div>
 
-        <!-- Manage Stock Tab -->
         <div id="adminTabManage" class="hidden space-y-3">
           <input id="adminStockSearch" oninput="filterAdminProductsList()" type="search" placeholder="ابحث عن منتج لتعديله..."
             class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
           <div id="adminProductsList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- Add Product Tab -->
         <div id="adminTabAdd" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <div class="grid grid-cols-2 gap-2">
@@ -452,7 +460,6 @@
           </button>
         </div>
 
-        <!-- Settings Tab -->
         <div id="adminTabSettings" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <h4 class="text-xs font-bold text-yellow-400 border-b border-gray-800 pb-2">تحديث بيانات حساب المدير</h4>
           <div>
@@ -485,11 +492,15 @@
 
     let firebaseReady = false;
     let db = null;
+    let messaging = null;
 
     try {
       if (firebaseConfig.apiKey) {
         firebase.initializeApp(firebaseConfig);
         db = firebase.firestore();
+        if (firebase.messaging.isSupported()) {
+          messaging = firebase.messaging();
+        }
         firebaseReady = true;
       }
     } catch (e) {
@@ -498,6 +509,8 @@
 
     const state = {
       products: [],
+      previousProductsMap: new Map(),
+      isInitialProductLoad: true,
       orders: [],
       customers: [],
       cart: JSON.parse(localStorage.getItem("vip_cart") || "[]"),
@@ -555,6 +568,40 @@
       window.__toastTimer = setTimeout(() => box.classList.add("hidden"), 3000);
     }
 
+    function triggerLiveAlert(title, message, iconClass = "fa-bell text-yellow-400") {
+      const box = document.getElementById("liveAlert");
+      document.getElementById("liveAlertTitle").textContent = title;
+      document.getElementById("liveAlertMessage").textContent = message;
+      document.getElementById("liveAlertIcon").className = `fas ${iconClass} text-lg mt-0.5`;
+      box.classList.remove("hidden");
+
+      clearTimeout(window.__liveAlertTimer);
+      window.__liveAlertTimer = setTimeout(() => closeLiveAlert(), 5000);
+    }
+
+    function closeLiveAlert() {
+      document.getElementById("liveAlert").classList.add("hidden");
+    }
+
+    async function requestNotificationPermission() {
+      if (!messaging) return toast("إشعارات المتصفح غير مدعومة في جهازك.", "error");
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          const token = await messaging.getToken();
+          if (token && state.customer && firebaseReady) {
+            await db.collection("store_users").doc(state.customer.phone).update({ fcmToken: token });
+          }
+          toast("تم تفعيل إشعارات المتصفح والتلفون بنجاح!", "success");
+        } else {
+          toast("لم يتم السماح بالإشعارات.", "error");
+        }
+      } catch (err) {
+        console.error("FCM Token error", err);
+        toast("تعذر تفعيل الإشعارات.", "error");
+      }
+    }
+
     function showFirebaseError(message) {
       const box = document.getElementById("firebaseError");
       document.getElementById("firebaseErrorText").textContent = message;
@@ -599,7 +646,17 @@
 
       db.collection("products").orderBy("name").onSnapshot(
         snap => {
-          state.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          const newProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+          if (!state.isInitialProductLoad) {
+            checkForLiveProductUpdates(newProducts);
+          } else {
+            state.isInitialProductLoad = false;
+          }
+
+          state.products = newProducts;
+          state.previousProductsMap = new Map(newProducts.map(p => [p.id, p]));
+
           renderProducts();
           renderAdminProducts();
           syncCartWithStock();
@@ -610,6 +667,32 @@
           showFirebaseError("تعذر تحميل المنتجات من القاعدة.");
         }
       );
+
+      if (messaging) {
+        messaging.onMessage((payload) => {
+          triggerLiveAlert(payload.notification?.title || "تحديث جديد", payload.notification?.body || "", "fa-circle-info text-yellow-400");
+        });
+      }
+    }
+
+    function checkForLiveProductUpdates(newProducts) {
+      const newMap = new Map(newProducts.map(p => [p.id, p]));
+
+      for (const [id, newP] of newMap.entries()) {
+        if (!state.previousProductsMap.has(id)) {
+          triggerLiveAlert("منتج جديد!", `تمت إضافة منتج جديد: ${newP.name} بسعر ${money(newP.price)}`, "fa-bag-shopping text-emerald-400");
+          return;
+        } else {
+          const oldP = state.previousProductsMap.get(id);
+          if (Number(oldP.price) !== Number(newP.price)) {
+            const isDiscount = Number(newP.price) < Number(oldP.price);
+            const title = isDiscount ? "تخفيض في السعر! 🎉" : "تحديث في السعر 🏷️";
+            const icon = isDiscount ? "fa-arrow-down text-emerald-400" : "fa-tag text-yellow-400";
+            triggerLiveAlert(title, `تم تغيير سعر ${newP.name} من ${money(oldP.price)} إلى ${money(newP.price)}`, icon);
+            return;
+          }
+        }
+      }
     }
 
     async function syncAdminCredentials() {
@@ -867,7 +950,6 @@
       updateCartUI();
     }
 
-    /* Customer Phone Auth & Profile Management */
     function toggleAuthModal() {
       const el = document.getElementById("authModal");
       el.classList.toggle("hidden");
@@ -1014,7 +1096,6 @@
       }
     }
 
-    /* Submitting Orders (Automatically using profile info) */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
@@ -1137,7 +1218,6 @@
       }
     }
 
-    /* Secret Admin Trigger via Double-Click on Store Logo */
     function triggerAdminSecret() {
       toggleAdminModal();
     }
@@ -1209,7 +1289,6 @@
       document.getElementById(`adminTab${cap}`).classList.remove("hidden");
     }
 
-    /* Admin Customers Management Tab */
     async function loadAdminCustomers() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const list = document.getElementById("adminCustomersList");
@@ -1358,7 +1437,6 @@
       }
     }
 
-    /* Image Compressor */
     function compressAndConvertImage(file, maxWidth = 500, quality = 0.65) {
       return new Promise((resolve, reject) => {
         if (!file) return reject("الملف غير موجود");
