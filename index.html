@@ -14,7 +14,6 @@
   <!-- Firebase Compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-messaging-compat.js"></script>
 
   <style>
     * { box-sizing: border-box; }
@@ -57,18 +56,6 @@
     <div id="toastInner" class="glass border rounded-2xl px-5 py-3.5 shadow-2xl text-xs font-medium flex items-center gap-2"></div>
   </div>
 
-  <!-- Live Change Alert Toast (In-App Notification) -->
-  <div id="liveAlert" class="fixed bottom-20 right-4 left-4 md:left-auto md:right-5 z-[110] hidden transition-all duration-300 max-w-sm">
-    <div class="bg-gray-900 border border-yellow-500/50 rounded-2xl p-4 shadow-2xl text-xs text-gray-200 flex items-start gap-3 relative">
-      <i id="liveAlertIcon" class="fas fa-bell text-yellow-400 text-lg mt-0.5"></i>
-      <div class="flex-1">
-        <h4 id="liveAlertTitle" class="font-bold text-yellow-400 mb-0.5">تحديث جديد</h4>
-        <p id="liveAlertMessage" class="text-gray-300 text-[11px]"></p>
-      </div>
-      <button onclick="closeLiveAlert()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark"></i></button>
-    </div>
-  </div>
-
   <!-- Header -->
   <header class="sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md border-b border-yellow-500/20">
     <div class="max-w-6xl mx-auto px-4 py-3">
@@ -91,10 +78,6 @@
 
         <!-- Desktop Nav Buttons -->
         <div class="hidden md:flex items-center gap-2">
-          <button id="pushNotifBtn" onclick="requestNotificationPermission()" class="px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-yellow-400 transition flex items-center gap-1">
-            <i class="fas fa-bell"></i> تفعيل الإشعارات
-          </button>
-
           <button id="myOrdersBtn" onclick="toggleMyOrders()" class="hidden px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition">
             <i class="fas fa-box-archive text-yellow-500 ml-1"></i> طلباتي
           </button>
@@ -126,6 +109,19 @@
       </div>
       <div class="flex items-center gap-2">
         <button onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="px-4 py-2 bg-yellow-500 text-black font-bold text-xs rounded-xl hover:bg-yellow-400 transition">استكشف كافة المنتجات</button>
+      </div>
+    </section>
+
+    <!-- NEW: Today's News & Updates Section (Shows items updated/added within 10 hours) -->
+    <section id="todayNewsSection" class="hidden mb-6 bg-gradient-to-r from-yellow-500/10 via-amber-500/5 to-transparent border border-yellow-500/30 rounded-2xl p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xs md:text-sm font-black text-yellow-400 flex items-center gap-2">
+          <i class="fas fa-bolt text-amber-400 animate-pulse"></i> جديد اليوم والمستجدات (خلال الـ 10 ساعات الأخيرة)
+        </h2>
+        <span class="text-[10px] text-gray-400">تختفي التحديثات تلقائياً بعد 10 ساعات</span>
+      </div>
+      <div id="todayNewsList" class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+        <!-- Dynamic News Cards will be loaded here -->
       </div>
     </section>
 
@@ -198,6 +194,7 @@
         <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
       </div>
 
+      <!-- Login / Register Form -->
       <div id="authFormContainer" class="space-y-4">
         <div>
           <label class="text-[11px] text-gray-400 font-semibold block mb-1">رقم الهاتف</label>
@@ -216,6 +213,7 @@
         </button>
       </div>
 
+      <!-- Customer Profile View -->
       <div id="customerProfileContainer" class="hidden space-y-4">
         <div class="flex flex-col items-center text-center pb-3 border-b border-gray-800">
           <div class="relative w-20 h-20 rounded-full overflow-hidden border-2 border-yellow-500 bg-gray-950 mb-2">
@@ -235,7 +233,7 @@
         </div>
 
         <div>
-          <label class="text-[11px] text-gray-400 block mb-1">صورة البروفايل (رابط مباشر أو رفع من الهاتف)</label>
+          <label class="text-[11px] text-gray-400 block mb-1">صورة البروفايل</label>
           <input type="url" id="profileImgUrl" placeholder="https://..." oninput="handleProfileImgInput(this.value)" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white mb-2">
           <input type="file" accept="image/*" onchange="handleProfileImgUpload(event)" class="w-full text-[10px] text-gray-400 bg-gray-950 p-2 rounded-xl border border-gray-800">
           <input type="hidden" id="profileImgBase64">
@@ -359,6 +357,7 @@
         <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
       </div>
 
+      <!-- Admin Auth Form -->
       <div id="adminLoginForm" class="space-y-3">
         <input type="text" id="adminUserInput" placeholder="رقم الهاتف / اسم المستخدم للمدير"
           class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
@@ -369,6 +368,7 @@
         </button>
       </div>
 
+      <!-- Admin Main Panel -->
       <div id="adminPanel" class="hidden space-y-4">
         <div class="flex items-center justify-between bg-gray-950 p-3 rounded-xl border border-gray-800 text-xs">
           <span id="adminSignedInAs" class="text-gray-300 font-semibold">مرحباً بالمدير</span>
@@ -402,6 +402,7 @@
           <button onclick="switchAdminTab('settings')" id="tabSettingsBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الإعدادات</button>
         </div>
 
+        <!-- Orders Tab -->
         <div id="adminTabOrders" class="space-y-3">
           <div class="flex justify-between items-center">
             <div class="flex items-center gap-2">
@@ -419,6 +420,7 @@
           </div>
         </div>
 
+        <!-- Customers Tab -->
         <div id="adminTabCustomers" class="hidden space-y-3">
           <div class="flex justify-between items-center">
             <h4 class="text-xs font-bold text-gray-300">قائمة الزبائن المسجلين ونشاطهم:</h4>
@@ -429,12 +431,14 @@
           </div>
         </div>
 
+        <!-- Manage Stock Tab -->
         <div id="adminTabManage" class="hidden space-y-3">
           <input id="adminStockSearch" oninput="filterAdminProductsList()" type="search" placeholder="ابحث عن منتج لتعديله..."
             class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
           <div id="adminProductsList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
+        <!-- Add Product Tab -->
         <div id="adminTabAdd" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <div class="grid grid-cols-2 gap-2">
@@ -460,6 +464,7 @@
           </button>
         </div>
 
+        <!-- Settings Tab -->
         <div id="adminTabSettings" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <h4 class="text-xs font-bold text-yellow-400 border-b border-gray-800 pb-2">تحديث بيانات حساب المدير</h4>
           <div>
@@ -492,15 +497,11 @@
 
     let firebaseReady = false;
     let db = null;
-    let messaging = null;
 
     try {
       if (firebaseConfig.apiKey) {
         firebase.initializeApp(firebaseConfig);
         db = firebase.firestore();
-        if (firebase.messaging.isSupported()) {
-          messaging = firebase.messaging();
-        }
         firebaseReady = true;
       }
     } catch (e) {
@@ -509,8 +510,6 @@
 
     const state = {
       products: [],
-      previousProductsMap: new Map(),
-      isInitialProductLoad: true,
       orders: [],
       customers: [],
       cart: JSON.parse(localStorage.getItem("vip_cart") || "[]"),
@@ -555,6 +554,14 @@
       return `${Number(n || 0).toLocaleString("fr-DZ")} د.ج`;
     }
 
+    function formatTimeAgo(milliseconds) {
+      const minutes = Math.floor(milliseconds / (1000 * 60));
+      if (minutes < 1) return "الآن";
+      if (minutes < 60) return `منذ ${minutes} دقيقة`;
+      const hours = Math.floor(minutes / 60);
+      return `منذ ${hours} ساعة${hours > 1 ? 'س' : ''}`;
+    }
+
     function toast(message, type = "normal") {
       const box = document.getElementById("toast");
       const inner = document.getElementById("toastInner");
@@ -566,40 +573,6 @@
       box.classList.remove("hidden");
       clearTimeout(window.__toastTimer);
       window.__toastTimer = setTimeout(() => box.classList.add("hidden"), 3000);
-    }
-
-    function triggerLiveAlert(title, message, iconClass = "fa-bell text-yellow-400") {
-      const box = document.getElementById("liveAlert");
-      document.getElementById("liveAlertTitle").textContent = title;
-      document.getElementById("liveAlertMessage").textContent = message;
-      document.getElementById("liveAlertIcon").className = `fas ${iconClass} text-lg mt-0.5`;
-      box.classList.remove("hidden");
-
-      clearTimeout(window.__liveAlertTimer);
-      window.__liveAlertTimer = setTimeout(() => closeLiveAlert(), 5000);
-    }
-
-    function closeLiveAlert() {
-      document.getElementById("liveAlert").classList.add("hidden");
-    }
-
-    async function requestNotificationPermission() {
-      if (!messaging) return toast("إشعارات المتصفح غير مدعومة في جهازك.", "error");
-      try {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-          const token = await messaging.getToken();
-          if (token && state.customer && firebaseReady) {
-            await db.collection("store_users").doc(state.customer.phone).update({ fcmToken: token });
-          }
-          toast("تم تفعيل إشعارات المتصفح والتلفون بنجاح!", "success");
-        } else {
-          toast("لم يتم السماح بالإشعارات.", "error");
-        }
-      } catch (err) {
-        console.error("FCM Token error", err);
-        toast("تعذر تفعيل الإشعارات.", "error");
-      }
     }
 
     function showFirebaseError(message) {
@@ -646,18 +619,9 @@
 
       db.collection("products").orderBy("name").onSnapshot(
         snap => {
-          const newProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-          if (!state.isInitialProductLoad) {
-            checkForLiveProductUpdates(newProducts);
-          } else {
-            state.isInitialProductLoad = false;
-          }
-
-          state.products = newProducts;
-          state.previousProductsMap = new Map(newProducts.map(p => [p.id, p]));
-
+          state.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
           renderProducts();
+          renderTodayNews();
           renderAdminProducts();
           syncCartWithStock();
           updateAdminDashboardStats();
@@ -667,32 +631,6 @@
           showFirebaseError("تعذر تحميل المنتجات من القاعدة.");
         }
       );
-
-      if (messaging) {
-        messaging.onMessage((payload) => {
-          triggerLiveAlert(payload.notification?.title || "تحديث جديد", payload.notification?.body || "", "fa-circle-info text-yellow-400");
-        });
-      }
-    }
-
-    function checkForLiveProductUpdates(newProducts) {
-      const newMap = new Map(newProducts.map(p => [p.id, p]));
-
-      for (const [id, newP] of newMap.entries()) {
-        if (!state.previousProductsMap.has(id)) {
-          triggerLiveAlert("منتج جديد!", `تمت إضافة منتج جديد: ${newP.name} بسعر ${money(newP.price)}`, "fa-bag-shopping text-emerald-400");
-          return;
-        } else {
-          const oldP = state.previousProductsMap.get(id);
-          if (Number(oldP.price) !== Number(newP.price)) {
-            const isDiscount = Number(newP.price) < Number(oldP.price);
-            const title = isDiscount ? "تخفيض في السعر! 🎉" : "تحديث في السعر 🏷️";
-            const icon = isDiscount ? "fa-arrow-down text-emerald-400" : "fa-tag text-yellow-400";
-            triggerLiveAlert(title, `تم تغيير سعر ${newP.name} من ${money(oldP.price)} إلى ${money(newP.price)}`, icon);
-            return;
-          }
-        }
-      }
     }
 
     async function syncAdminCredentials() {
@@ -707,6 +645,77 @@
       } catch (e) {
         console.error("Credentials fetch error", e);
       }
+    }
+
+    /* NEW: Render Today's News (Filter <= 10 hours) */
+    function renderTodayNews() {
+      const newsSection = document.getElementById("todayNewsSection");
+      const newsList = document.getElementById("todayNewsList");
+      const TEN_HOURS_MS = 10 * 60 * 60 * 1000; // 10 Hours in Milliseconds
+      const now = Date.now();
+
+      const recentUpdates = state.products.map(p => {
+        let updateTime = null;
+        let updateType = ""; // "new", "price_up", "price_down"
+
+        // Check timestamp from firebase or local date
+        if (p.updatedAt) {
+          updateTime = p.updatedAt.toDate ? p.updatedAt.toDate().getTime() : new Date(p.updatedAt).getTime();
+        } else if (p.createdAt) {
+          updateTime = p.createdAt.toDate ? p.createdAt.toDate().getTime() : new Date(p.createdAt).getTime();
+        }
+
+        if (!updateTime) return null;
+        const diff = now - updateTime;
+
+        if (diff <= TEN_HOURS_MS) {
+          const price = Number(p.price || 0);
+          const prevPrice = Number(p.previousPrice || 0);
+
+          if (prevPrice > 0 && price > prevPrice) {
+            updateType = "price_up";
+          } else if (prevPrice > 0 && price < prevPrice) {
+            updateType = "price_down";
+          } else {
+            updateType = "new";
+          }
+
+          return { ...p, diff, updateType, formattedTime: formatTimeAgo(diff) };
+        }
+        return null;
+      }).filter(Boolean);
+
+      if (!recentUpdates.length) {
+        newsSection.classList.add("hidden");
+        return;
+      }
+
+      newsSection.classList.remove("hidden");
+      newsList.innerHTML = recentUpdates.map(p => {
+        let tagHtml = "";
+        if (p.updateType === "price_up") {
+          tagHtml = `<span class="bg-red-950/80 border border-red-800 text-red-300 text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 font-bold"><i class="fas fa-arrow-up"></i> ارتفع السعر</span>`;
+        } else if (p.updateType === "price_down") {
+          tagHtml = `<span class="bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 font-bold"><i class="fas fa-arrow-down"></i> انخفض السعر</span>`;
+        } else {
+          tagHtml = `<span class="bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 font-bold"><i class="fas fa-plus"></i> منتج جديد</span>`;
+        }
+
+        const image = p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
+
+        return `
+          <div class="bg-gray-900 border border-yellow-500/20 rounded-xl p-2.5 min-w-[220px] max-w-[240px] shrink-0 flex gap-2.5 items-center">
+            <img src="${esc(image)}" class="w-12 h-12 rounded-lg object-cover bg-gray-950 shrink-0 border border-gray-800">
+            <div class="overflow-hidden flex-1 space-y-1">
+              <div class="flex items-center justify-between gap-1">
+                ${tagHtml}
+                <span class="text-[9px] text-gray-400 font-mono">${p.formattedTime}</span>
+              </div>
+              <h4 class="text-xs font-bold text-gray-100 truncate">${esc(p.name)}</h4>
+              <p class="text-xs font-black text-amber-400">${money(p.price)}</p>
+            </div>
+          </div>`;
+      }).join("");
     }
 
     function renderProducts() {
@@ -950,6 +959,7 @@
       updateCartUI();
     }
 
+    /* Customer Phone Auth & Profile Management */
     function toggleAuthModal() {
       const el = document.getElementById("authModal");
       el.classList.toggle("hidden");
@@ -1096,6 +1106,7 @@
       }
     }
 
+    /* Submitting Orders */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
@@ -1218,6 +1229,7 @@
       }
     }
 
+    /* Admin Management Section */
     function triggerAdminSecret() {
       toggleAdminModal();
     }
@@ -1289,6 +1301,7 @@
       document.getElementById(`adminTab${cap}`).classList.remove("hidden");
     }
 
+    /* Admin Customers Management Tab */
     async function loadAdminCustomers() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const list = document.getElementById("adminCustomersList");
@@ -1338,108 +1351,227 @@
     }
 
     async function deleteCustomerAccount(phone) {
-      if (!confirm(`هل أنت متأكد من حذف الحساب برقم الهاتف ${phone} نهائياً؟`)) return;
+      if (!confirm(`هل أنت تأكد من حذف حساب الزبون صاحب الهاتف: ${phone}؟`)) return;
       try {
         await db.collection("store_users").doc(phone).delete();
         toast("تم حذف حساب الزبون بنجاح.", "success");
         loadAdminCustomers();
       } catch (e) {
         console.error(e);
-        toast("تعذر حذف الحساب.", "error");
+        toast("تعذر حذف حساب الزبون.", "error");
+      }
+    }
+
+    /* Admin Add & Edit Products with Timestamp Updates */
+    async function addProduct() {
+      if (!firebaseReady || !state.isAdminLoggedIn) return;
+      const name = document.getElementById("pName").value.trim();
+      const price = Number(document.getElementById("pPrice").value);
+      const stock = Number(document.getElementById("pStock").value);
+      const category = document.getElementById("pCategory").value;
+      const image = document.getElementById("pImgBase64").value.trim() || document.getElementById("pImgUrl").value.trim();
+
+      if (!name || isNaN(price) || isNaN(stock)) {
+        return toast("يرجى ملء كافة الخانات الأساسية للمنتج.", "error");
+      }
+
+      try {
+        await db.collection("products").add({
+          name,
+          price,
+          previousPrice: 0,
+          stock,
+          category,
+          image,
+          likesCount: 0,
+          dislikesCount: 0,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        toast("تمت إضافة المنتج بنجاح!", "success");
+        document.getElementById("pName").value = "";
+        document.getElementById("pPrice").value = "";
+        document.getElementById("pStock").value = "";
+        document.getElementById("pImgUrl").value = "";
+        document.getElementById("pImgBase64").value = "";
+        document.getElementById("imgPreviewContainer").classList.add("hidden");
+      } catch (e) {
+        console.error(e);
+        toast("تعذر إضافة المنتج.", "error");
+      }
+    }
+
+    function renderAdminProducts() {
+      const container = document.getElementById("adminProductsList");
+      if (!container) return;
+
+      container.innerHTML = state.products.map(p => `
+        <div class="flex items-center justify-between bg-gray-950 p-2.5 rounded-xl border border-gray-800 text-xs">
+          <div class="flex items-center gap-2 overflow-hidden">
+            <img src="${esc(p.image)}" class="w-10 h-10 object-cover rounded-lg bg-gray-900 border border-gray-800 shrink-0">
+            <div class="truncate">
+              <h5 class="font-bold text-gray-200 truncate">${esc(p.name)}</h5>
+              <p class="text-[10px] text-amber-400 font-bold">${money(p.price)} - المتبقي: ${p.stock}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="openEditModal('${esc(p.id)}')" class="px-2.5 py-1 bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500 hover:text-black rounded-lg text-[10px] font-bold transition">تعديل</button>
+            <button onclick="deleteProduct('${esc(p.id)}')" class="px-2.5 py-1 bg-red-950 text-red-400 hover:bg-red-900 rounded-lg text-[10px] font-bold transition">حذف</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function openEditModal(id) {
+      const p = state.products.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById("editPId").value = p.id;
+      document.getElementById("editPName").value = p.name || "";
+      document.getElementById("editPPrice").value = p.price || 0;
+      document.getElementById("editPStock").value = p.stock || 0;
+      document.getElementById("editPCategory").value = p.category || "tobacco";
+      document.getElementById("editPImgUrl").value = p.image || "";
+      document.getElementById("editPImgBase64").value = p.image || "";
+      document.getElementById("editImgPreview").src = p.image || "";
+
+      const modal = document.getElementById("editProductModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeEditModal() {
+      const modal = document.getElementById("editProductModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    async function saveProductEdits() {
+      if (!firebaseReady || !state.isAdminLoggedIn) return;
+      const id = document.getElementById("editPId").value;
+      const p = state.products.find(x => x.id === id);
+      if (!p) return;
+
+      const name = document.getElementById("editPName").value.trim();
+      const newPrice = Number(document.getElementById("editPPrice").value);
+      const stock = Number(document.getElementById("editPStock").value);
+      const category = document.getElementById("editPCategory").value;
+      const image = document.getElementById("editPImgBase64").value.trim() || document.getElementById("editPImgUrl").value.trim();
+
+      const oldPrice = Number(p.price || 0);
+
+      try {
+        await db.collection("products").doc(id).update({
+          name,
+          price: newPrice,
+          previousPrice: oldPrice !== newPrice ? oldPrice : Number(p.previousPrice || 0),
+          stock,
+          category,
+          image,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        toast("تم تعديل بيانات المنتج ونشر التحديث!", "success");
+        closeEditModal();
+      } catch (e) {
+        console.error(e);
+        toast("فشل حفظ التعديلات.", "error");
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm("هل أنت تأكد من رغبتك في حذف هذا المنتج نهائياً؟")) return;
+      try {
+        await db.collection("products").doc(id).delete();
+        toast("تم حذف المنتج.", "success");
+      } catch (e) {
+        toast("تعذر حذف المنتج.", "error");
+      }
+    }
+
+    /* Admin Orders Management */
+    async function loadOrdersOnce() {
+      if (!firebaseReady || !state.isAdminLoggedIn) return;
+      const container = document.getElementById("adminOrdersList");
+      const filter = document.getElementById("adminOrderFilter").value;
+
+      try {
+        let ref = db.collection("orders");
+        if (filter !== "all") ref = ref.where("status", "==", filter);
+        const snap = await ref.get();
+
+        const orders = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+        document.getElementById("statPendingOrders").textContent = orders.filter(o => o.status === "جديد").length;
+
+        if (!orders.length) {
+          container.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">لا توجد طلبات مطابقة.</p>`;
+          return;
+        }
+
+        container.innerHTML = orders.map(o => `
+          <div class="bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs space-y-2">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+              <div>
+                <span class="font-bold text-yellow-400">الزبون: ${esc(o.customerName || "غير معروف")}</span>
+                <span class="text-[10px] text-gray-400 block">الهاتف: ${esc(o.phone)}</span>
+              </div>
+              <select onchange="updateOrderStatus('${esc(o.id)}', this.value)" class="bg-gray-900 border border-gray-700 text-[10px] p-1 rounded-lg text-white font-bold">
+                <option value="جديد" ${o.status === "جديد" ? "selected" : ""}>جديد</option>
+                <option value="مكتمل" ${o.status === "مكتمل" ? "selected" : ""}>مكتمل</option>
+              </select>
+            </div>
+            <p class="text-[10px] text-gray-400">العنوان: ${esc(o.address)}</p>
+            <div class="space-y-1 pt-1 border-t border-gray-900">
+              ${(o.items || []).map(i => `
+                <div class="flex justify-between text-[11px] text-gray-300">
+                  <span>${esc(i.name)} ×${i.qty}</span>
+                  <span>${money(i.price * i.qty)}</span>
+                </div>
+              `).join("")}
+            </div>
+            <div class="flex justify-between items-center pt-2 border-t border-gray-800 font-extrabold">
+              <span class="text-gray-400">الإجمالي:</span>
+              <span class="text-amber-400">${money(o.total)}</span>
+            </div>
+          </div>
+        `).join("");
+      } catch (e) {
+        console.error(e);
+        container.innerHTML = `<p class="text-xs text-red-400 text-center py-6">فشل تحميل الطلبات.</p>`;
+      }
+    }
+
+    async function updateOrderStatus(id, status) {
+      if (!firebaseReady) return;
+      try {
+        await db.collection("orders").doc(id).update({ status });
+        toast("تم تغيير حالة الطلب بنجاح.", "success");
+        loadOrdersOnce();
+      } catch (e) {
+        toast("تعذر تحديث الحالة.", "error");
       }
     }
 
     async function updateAdminCredentials() {
-      const newUser = document.getElementById("newAdminUser").value.trim();
-      const newPass = document.getElementById("newAdminPass").value.trim();
-      if (!newUser || !newPass) return toast("يرجى كتابة اسم ومفتاح مرور جديد.", "error");
+      const user = document.getElementById("newAdminUser").value.trim();
+      const pass = document.getElementById("newAdminPass").value.trim();
+      if (!user || !pass) return toast("يرجى ملء اسم المستخدم وكلمة السر الجديدة.", "error");
 
       try {
-        await db.collection("settings").doc("admin").set({ username: newUser, pass: newPass });
-        state.adminCredentials = { username: newUser, pass: newPass };
-        document.getElementById("adminSignedInAs").textContent = `مدير المتجر: ${newUser}`;
-        document.getElementById("newAdminUser").value = "";
-        document.getElementById("newAdminPass").value = "";
-        toast("تم تحديث معلومات دخول المدير بنجاح.", "success");
+        await db.collection("settings").doc("admin").set({ username: user, pass });
+        state.adminCredentials = { username: user, pass };
+        toast("تم تحديث بيانات المدير بنجاح!", "success");
       } catch (e) {
-        console.error(e);
-        toast("تعذر تحديث البيانات.", "error");
+        toast("فشل تحديث البيانات.", "error");
       }
     }
 
-    async function loadOrdersOnce() {
-      if (!firebaseReady || !state.isAdminLoggedIn) return;
-      const list = document.getElementById("adminOrdersList");
-      list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">جاري تحميل الطلبات...</p>`;
-
-      try {
-        const snap = await db.collection("orders").get();
-        state.orders = snap.docs
-          .map(d => ({ id: d.id, ...d.data() }))
-          .sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-
-        const filterStatus = document.getElementById("adminOrderFilter")?.value || "all";
-        let filteredOrders = state.orders;
-        if (filterStatus !== "all") {
-          filteredOrders = filteredOrders.filter(o => o.status === filterStatus);
-        }
-
-        const pending = state.orders.filter(o => o.status !== "مكتمل").length;
-        document.getElementById("statPendingOrders").textContent = pending;
-
-        if (!filteredOrders.length) {
-          list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">لا توجد طلبات جارية لهذا الفلتر.</p>`;
-          return;
-        }
-
-        list.innerHTML = filteredOrders.map(o => `
-          <div class="bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs space-y-2">
-            <div class="flex justify-between items-start font-bold border-b border-gray-800 pb-2">
-              <div>
-                <span class="text-amber-400 block">الزبون: ${esc(o.customerName || o.customerPhone)}</span>
-                <span class="text-gray-400 text-[11px] block font-normal">هاتف: ${esc(o.phone || "غير محدد")}</span>
-                <span class="text-gray-400 text-[11px] block font-normal">العنوان: ${esc(o.address || "غير محدد")}</span>
-              </div>
-              <span class="px-2 py-0.5 rounded text-[10px] ${o.status === "مكتمل" ? "bg-emerald-950 text-emerald-300" : "bg-amber-950 text-amber-300"}">
-                ${esc(o.status || "جديد")}
-              </span>
-            </div>
-            <div class="space-y-1">
-              ${(o.items || []).map(i => `
-                <div class="flex justify-between text-gray-300">
-                  <span>• ${esc(i.name)} ×${i.qty}</span>
-                  <span>${money(i.price * i.qty)}</span>
-                </div>`).join("")}
-            </div>
-            <div class="flex justify-between items-center pt-2 border-t border-gray-800 font-bold">
-              <span>المجموع: ${money(o.total)}</span>
-              ${o.status !== "مكتمل" ? `
-                <button onclick="markOrderComplete('${esc(o.id)}')"
-                  class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[11px] font-bold transition">
-                  تأكيد الإكتمال والتسليم
-                </button>` : `<span class="text-emerald-400 text-[11px]">مكتمل ✅</span>`}
-            </div>
-          </div>`).join("");
-      } catch (e) {
-        console.error(e);
-        list.innerHTML = `<p class="text-xs text-red-400 text-center py-4">خطأ في تحميل الطلبات.</p>`;
-      }
-    }
-
-    async function markOrderComplete(id) {
-      try {
-        await db.collection("orders").doc(id).update({ status: "مكتمل" });
-        toast("تم تحديث حالة الطلب إلى مكتمل.", "success");
-        loadOrdersOnce();
-      } catch (e) {
-        console.error(e);
-        toast("تعذر تحديث الطلب.", "error");
-      }
-    }
-
-    function compressAndConvertImage(file, maxWidth = 500, quality = 0.65) {
+    /* Helper Image Compress function */
+    function compressAndConvertImage(file, maxWidth = 400, quality = 0.6) {
       return new Promise((resolve, reject) => {
-        if (!file) return reject("الملف غير موجود");
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = event => {
@@ -1447,22 +1579,23 @@
           img.src = event.target.result;
           img.onload = () => {
             const canvas = document.createElement("canvas");
-            let w = img.width;
-            let h = img.height;
-            if (w > h) {
-              if (w > maxWidth) { h = Math.round((h * maxWidth) / w); w = maxWidth; }
-            } else {
-              if (h > maxWidth) { w = Math.round((w * maxWidth) / h); h = maxWidth; }
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
             }
-            canvas.width = w;
-            canvas.height = h;
+
+            canvas.width = width;
+            canvas.height = height;
             const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, w, h);
+            ctx.drawImage(img, 0, 0, width, height);
             resolve(canvas.toDataURL("image/jpeg", quality));
           };
-          img.onerror = () => reject("تعذر معالجة الصورة.");
+          img.onerror = error => reject(error);
         };
-        reader.onerror = () => reject("تعذر قراءة الملف.");
+        reader.onerror = error => reject(error);
       });
     }
 
@@ -1471,12 +1604,6 @@
       document.getElementById("pImgBase64").value = url.trim();
       document.getElementById("imgPreview").src = url.trim();
       document.getElementById("imgPreviewContainer").classList.remove("hidden");
-    }
-
-    function handleEditImageUrlInput(url) {
-      if (!url.trim()) return;
-      document.getElementById("editPImgBase64").value = url.trim();
-      document.getElementById("editImgPreview").src = url.trim();
     }
 
     async function handleImageUpload(e) {
@@ -1488,153 +1615,29 @@
         document.getElementById("pImgBase64").value = b64;
         document.getElementById("imgPreview").src = b64;
         document.getElementById("imgPreviewContainer").classList.remove("hidden");
-        toast("تمت جاهزية الصورة للرفع!", "success");
+        toast("تمت جاهزية الصورة!", "success");
       } catch (err) {
         toast("فشل تحميل الصورة.", "error");
       }
+    }
+
+    function handleEditImageUrlInput(url) {
+      if (!url.trim()) return;
+      document.getElementById("editPImgBase64").value = url.trim();
+      document.getElementById("editImgPreview").src = url.trim();
     }
 
     async function handleEditImageUpload(e) {
       const f = e.target.files[0];
       if (!f) return;
       try {
-        toast("جاري ضغط ومعالجة الصورة...", "normal");
+        toast("جاري معالجة الصورة...", "normal");
         const b64 = await compressAndConvertImage(f);
         document.getElementById("editPImgBase64").value = b64;
         document.getElementById("editImgPreview").src = b64;
-        toast("تمت جاهزية الصورة للرفع!", "success");
+        toast("تمت جاهزية الصورة!", "success");
       } catch (err) {
         toast("فشل تحميل الصورة.", "error");
-      }
-    }
-
-    async function addProduct() {
-      if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
-      const name = document.getElementById("pName").value.trim();
-      const price = Number(document.getElementById("pPrice").value);
-      const stock = Number(document.getElementById("pStock").value);
-      const category = document.getElementById("pCategory").value;
-      const image = document.getElementById("pImgBase64").value;
-
-      if (!name || isNaN(price) || price < 0 || isNaN(stock) || stock < 0) {
-        return toast("يرجى إدخال اسم وسعر ومخزون صحيح.", "error");
-      }
-
-      try {
-        await db.collection("products").add({
-          name, price, previousPrice: price, stock, category, image,
-          likesCount: 0, dislikesCount: 0,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        document.getElementById("pName").value = "";
-        document.getElementById("pPrice").value = "";
-        document.getElementById("pStock").value = "";
-        document.getElementById("pImgUrl").value = "";
-        document.getElementById("pImgBase64").value = "";
-        document.getElementById("pImgFile").value = "";
-        document.getElementById("imgPreviewContainer").classList.add("hidden");
-        toast("تمت إضافة المنتج ونشره بنجاح.", "success");
-      } catch (e) {
-        console.error(e);
-        toast("تعذر إضافة المنتج.", "error");
-      }
-    }
-
-    function renderAdminProducts() {
-      filterAdminProductsList();
-    }
-
-    function filterAdminProductsList() {
-      const list = document.getElementById("adminProductsList");
-      if (!list) return;
-      const query = (document.getElementById("adminStockSearch")?.value || "").trim().toLowerCase();
-      let filtered = state.products;
-      if (query) filtered = filtered.filter(p => String(p.name || "").toLowerCase().includes(query));
-
-      if (!filtered.length) {
-        list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">لا توجد منتجات مطابقة.</p>`;
-        return;
-      }
-
-      list.innerHTML = filtered.map(p => `
-        <div class="flex justify-between items-center bg-gray-950 p-2.5 rounded-2xl border border-gray-800 text-xs">
-          <div class="flex items-center gap-2.5 overflow-hidden">
-            <img src="${esc(p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80")}" class="w-10 h-10 rounded-xl object-cover border border-gray-800">
-            <div class="truncate">
-              <p class="font-bold text-gray-200 truncate">${esc(p.name)}</p>
-              <p class="text-gray-400 text-[11px] mt-0.5">${money(p.price)} | المتوفر: <span class="font-bold text-amber-400">${p.stock || 0}</span></p>
-            </div>
-          </div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            <button onclick="openEditModal('${esc(p.id)}')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-[11px]">تعديل</button>
-            <button onclick="deleteProduct('${esc(p.id)}')" class="p-1.5 text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
-          </div>
-        </div>`).join("");
-    }
-
-    function openEditModal(id) {
-      const p = state.products.find(x => x.id === id);
-      if (!p) return;
-      document.getElementById("editPId").value = p.id;
-      document.getElementById("editPName").value = p.name || "";
-      document.getElementById("editPPrice").value = p.price || 0;
-      document.getElementById("editPStock").value = p.stock || 0;
-      document.getElementById("editPCategory").value = p.category || "tobacco";
-      document.getElementById("editPImgUrl").value = p.image?.startsWith("http") ? p.image : "";
-      document.getElementById("editPImgBase64").value = p.image || "";
-      document.getElementById("editImgPreview").src = p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
-
-      const el = document.getElementById("editProductModal");
-      el.classList.remove("hidden");
-      el.classList.add("flex");
-    }
-
-    function closeEditModal() {
-      const el = document.getElementById("editProductModal");
-      el.classList.add("hidden");
-      el.classList.remove("flex");
-    }
-
-    async function saveProductEdits() {
-      if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
-      const id = document.getElementById("editPId").value;
-      const name = document.getElementById("editPName").value.trim();
-      const newPrice = Number(document.getElementById("editPPrice").value);
-      const stock = Number(document.getElementById("editPStock").value);
-      const category = document.getElementById("editPCategory").value;
-      const image = document.getElementById("editPImgBase64").value;
-
-      const currentProduct = state.products.find(x => x.id === id);
-      if (!currentProduct) return toast("المنتج غير موجود.", "error");
-
-      if (!id || !name || isNaN(newPrice) || newPrice < 0 || isNaN(stock) || stock < 0) {
-        return toast("يرجى مراجعة البيانات المدخلة.", "error");
-      }
-
-      const oldPrice = Number(currentProduct.price || 0);
-      let previousPrice = Number(currentProduct.previousPrice || oldPrice);
-      if (oldPrice !== newPrice) previousPrice = oldPrice;
-
-      try {
-        await db.collection("products").doc(id).update({ name, price: newPrice, previousPrice, stock, category, image });
-        toast("تم تحديث بيانات المنتج بنجاح.", "success");
-        closeEditModal();
-      } catch (e) {
-        console.error(e);
-        toast("تعذر حفظ التعديلات.", "error");
-      }
-    }
-
-    async function deleteProduct(id) {
-      if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
-      if (!confirm("هل أنت متأكد من حذف هذا المنتج نهائياً؟")) return;
-      try {
-        await db.collection("products").doc(id).delete();
-        toast("تم حذف المنتج.");
-      } catch (e) {
-        console.error(e);
-        toast("تعذر حذف المنتج.", "error");
       }
     }
   </script>
