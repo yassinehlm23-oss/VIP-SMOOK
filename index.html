@@ -26,12 +26,40 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 4rem); }
     .modal-scroll { max-height: calc(90vh - 2rem); overflow-y: auto; }
+    
+    /* شريط زر الإغلاق العائم لإعلانات الشاشة الكاملة */
+    .ad-close-bar {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 99999;
+      background: rgba(0, 0, 0, 0.92);
+      border: 1px solid #eab308;
+      border-radius: 50px;
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.9);
+    }
   </style>
 </head>
 <body class="bg-[#070a12] text-gray-100 min-h-screen pb-16 md:pb-0">
 
+  <!-- زر إغلاق (X) العائم لإعلانات الشاشة الكاملة والـ Popunder -->
+  <div id="globalAdCloseBar" class="ad-close-bar">
+    <span class="text-xs text-yellow-400 font-bold"><i class="fas fa-ad ml-1"></i> إعلان</span>
+    <button onclick="dismissFullAds()" class="bg-red-600 hover:bg-red-500 text-white text-xs font-black px-3 py-1 rounded-full transition flex items-center gap-1 shadow-md">
+      <span>إغلاق الإعلان</span>
+      <i class="fas fa-xmark text-sm"></i>
+    </button>
+  </div>
+
   <!-- إعلان 2: Social Bar -->
-  <script data-cfasync="false" src="https://bicea.org/14/ddeec1781bd6c9842deda4a337366a61"></script>
+  <div id="socialBarAdContainer">
+    <script data-cfasync="false" src="https://bicea.org/14/ddeec1781bd6c9842deda4a337366a61"></script>
+  </div>
 
   <!-- Legal Gate -->
   <div id="legalGate" class="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4">
@@ -116,7 +144,10 @@
     </section>
 
     <!-- إعلان 1: Banner 300x250 -->
-    <div class="mb-6 flex justify-center">
+    <div id="adBanner1Container" class="mb-6 flex flex-col items-center relative">
+      <button onclick="closeAdContainer('adBanner1Container')" class="self-end mb-1 text-[10px] bg-gray-800 hover:bg-red-600 text-gray-300 hover:text-white px-2 py-0.5 rounded transition">
+        إغلاق الإعلان <i class="fas fa-xmark ml-0.5"></i>
+      </button>
       <script>
         atOptions = {
           'key' : 'b8431248371af1074dbae7ea26f4d4dc',
@@ -158,7 +189,10 @@
     </section>
 
     <!-- إعلان 3: Native Banner -->
-    <div class="mb-6 flex justify-center">
+    <div id="adBanner3Container" class="mb-6 flex flex-col items-center relative">
+      <button onclick="closeAdContainer('adBanner3Container')" class="self-end mb-1 text-[10px] bg-gray-800 hover:bg-red-600 text-gray-300 hover:text-white px-2 py-0.5 rounded transition">
+        إغلاق الإعلان <i class="fas fa-xmark ml-0.5"></i>
+      </button>
       <script async="async" data-cfasync="false" src="https://bicea.org/21/9571d0c78b35f980f46033dff6337357"></script>
       <div id="container-9571d0c78b35f980f46033dff6337357"></div>
     </div>
@@ -506,6 +540,27 @@
 
   <!-- Application Script -->
   <script>
+    // وظائف التحكم في إغلاق الإعلانات العائمة والتغطية
+    function dismissFullAds() {
+      const socialBar = document.getElementById('socialBarAdContainer');
+      if (socialBar) socialBar.remove();
+
+      const iframes = document.querySelectorAll('iframe');
+      iframes.forEach(iframe => {
+        if (!iframe.src.includes('firebase') && !iframe.src.includes('unsplash')) {
+          iframe.style.display = 'none';
+        }
+      });
+
+      const closeBar = document.getElementById('globalAdCloseBar');
+      if (closeBar) closeBar.style.display = 'none';
+    }
+
+    function closeAdContainer(containerId) {
+      const el = document.getElementById(containerId);
+      if (el) el.style.display = 'none';
+    }
+
     const firebaseConfig = {
       apiKey: "AIzaSyC0SNi-uPVJ_voLCcu3_M898Il0gyEbmsM",
       authDomain: "vip-smook.firebaseapp.com",
@@ -1171,7 +1226,7 @@
           tx.set(orderRef, {
             customerPhone: state.customer.phone,
             customerName: state.customer.name,
-            customerImage: state.customer.image || "", // إرفاق صورة الزبون بالطلب
+            customerImage: state.customer.image || "",
             phone: state.customer.phone,
             address: state.customer.address,
             items: verifiedItems,
