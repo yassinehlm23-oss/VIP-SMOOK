@@ -540,25 +540,24 @@
 
   <!-- Application Script -->
   <script>
-    // وظائف التحكم في إغلاق الإعلانات العائمة والتغطية
+    // وظائف التحكم في إغلاق الإعلانات العائمة والتغطية (نسخة آمنة لمنع الشاشة البيضاء)
     function dismissFullAds() {
       const socialBar = document.getElementById('socialBarAdContainer');
-      if (socialBar) socialBar.remove();
-
-      const iframes = document.querySelectorAll('iframe');
-      iframes.forEach(iframe => {
-        if (!iframe.src.includes('firebase') && !iframe.src.includes('unsplash')) {
-          iframe.style.display = 'none';
-        }
-      });
+      if (socialBar) {
+        socialBar.style.display = 'none';
+      }
 
       const closeBar = document.getElementById('globalAdCloseBar');
-      if (closeBar) closeBar.style.display = 'none';
+      if (closeBar) {
+        closeBar.style.display = 'none';
+      }
     }
 
     function closeAdContainer(containerId) {
       const el = document.getElementById(containerId);
-      if (el) el.style.display = 'none';
+      if (el) {
+        el.style.display = 'none';
+      }
     }
 
     const firebaseConfig = {
