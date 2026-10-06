@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0b0f19">
   <meta name="description" content="VIP SMOOK - متجر إلكتروني فاخر للبيع والتسليم المباشر.">
-  <title>VIP SMOOK | المتجر الرسمي</title>
+  <title>VIP SMOOK | المتجر الرسمي الفاخر</title>
 
   <!-- Tailwind CSS & FontAwesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -18,17 +18,37 @@
   <style>
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { background: #070a12; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: #070a12; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); }
-    .card-hover { transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
-    .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(234, 179, 8, 0.12); }
+    .card-hover { transition: transform .25s cubic-bezier(0.4, 0, 0.2, 1), border-color .25s ease, box-shadow .25s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(234, 179, 8, 0.15); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 4rem); }
+    .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 4.5rem); }
     .modal-scroll { max-height: calc(90vh - 2rem); overflow-y: auto; }
+    
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    .animate-marquee {
+      display: inline-block;
+      white-space: nowrap;
+      animation: marquee 25s linear infinite;
+    }
+    .animate-marquee:hover { animation-play-state: paused; }
   </style>
 </head>
-<body class="bg-[#070a12] text-gray-100 min-h-screen pb-16 md:pb-0">
+<body class="bg-[#070a12] text-gray-100 min-h-screen pb-16 md:pb-0 select-none">
+
+  <!-- Ticker Banner -->
+  <div class="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black text-[11px] font-black py-1 overflow-hidden relative shadow-md">
+    <div class="animate-marquee flex gap-8 items-center">
+      <span>🔥 أهلاً بكم في VIP SMOOK - التوصيل سريع ومتوفر لجميع الولايات!</span>
+      <span>⚡ تخفيضات حصرية وعروض يومية متجددة</span>
+      <span>⭐ التقييم المباشر متاح للأسعار والمنتجات</span>
+    </div>
+  </div>
 
   <!-- Legal Gate -->
   <div id="legalGate" class="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4">
@@ -118,18 +138,29 @@
         <h2 class="text-xs md:text-sm font-black text-yellow-400 flex items-center gap-2">
           <i class="fas fa-bolt text-amber-400 animate-pulse"></i> جديد اليوم والمستجدات (خلال الـ 10 ساعات الأخيرة)
         </h2>
-        <span class="text-[10px] text-gray-400">تختفي التحديثات تلقائياً بعد 10 ساعات</span>
+        <span class="text-[10px] text-gray-400">تختفي التحديثات تلقائياً</span>
       </div>
       <div id="todayNewsList" class="flex gap-3 overflow-x-auto no-scrollbar pb-1"></div>
     </section>
 
-    <!-- Categories -->
+    <!-- Categories & Sorting -->
     <section class="mb-6">
-      <div class="flex items-center justify-between gap-3 mb-3">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
         <h2 class="text-base md:text-lg font-black text-gray-100 flex items-center gap-2">
           <i class="fas fa-layer-group text-yellow-500 text-sm"></i> الأقسام والمنتجات
         </h2>
-        <span id="productCount" class="text-xs text-gray-400 font-medium"></span>
+        
+        <div class="flex items-center gap-2">
+          <!-- Sorting dropdown -->
+          <select id="sortSelect" onchange="renderProducts()" class="bg-gray-900 border border-gray-800 text-gray-300 text-xs rounded-xl p-2 focus:outline-none focus:border-yellow-500">
+            <option value="default">الترتيب الافتراضي</option>
+            <option value="price_low">السعر: من الأقل للأعلى</option>
+            <option value="price_high">السعر: من الأعلى للأقل</option>
+            <option value="popular">الأكثر شعبية (تقييماً)</option>
+          </select>
+
+          <span id="productCount" class="text-xs text-gray-400 font-medium bg-gray-900 px-2.5 py-1.5 rounded-xl border border-gray-800"></span>
+        </div>
       </div>
 
       <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
@@ -254,13 +285,25 @@
   <div id="cartDrawer" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden justify-end">
     <div class="bg-gray-950 w-full max-w-md h-full p-5 flex flex-col justify-between border-r border-gray-800 safe-bottom">
       <div>
-        <div class="flex justify-between items-center mb-5 pb-3 border-b border-gray-900">
+        <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-900">
           <h2 class="text-lg font-black text-yellow-400 flex items-center gap-2">
             <i class="fas fa-shopping-bag"></i> سلة المشتريات
           </h2>
           <button onclick="toggleCart()" class="text-gray-400 hover:text-white text-lg"><i class="fas fa-xmark"></i></button>
         </div>
-        <div id="cartItems" class="space-y-3 max-h-[48vh] overflow-y-auto pl-1 no-scrollbar">
+
+        <!-- Free Shipping Target Progress Bar -->
+        <div class="mb-4 bg-gray-900 p-3 rounded-xl border border-gray-800">
+          <div class="flex justify-between text-[10px] mb-1">
+            <span id="shippingText" class="text-gray-300">أضف منتجات للتوصيل المجاني</span>
+            <span id="shippingProgressText" class="text-amber-400 font-bold">0%</span>
+          </div>
+          <div class="w-full bg-gray-950 h-2 rounded-full overflow-hidden border border-gray-800">
+            <div id="shippingProgressBar" class="bg-gradient-to-r from-amber-500 to-yellow-400 h-full transition-all duration-300 w-0"></div>
+          </div>
+        </div>
+
+        <div id="cartItems" class="space-y-3 max-h-[42vh] overflow-y-auto pl-1 no-scrollbar">
           <p class="text-gray-400 text-center py-10 text-xs">السلة فارغة حالياً</p>
         </div>
       </div>
@@ -515,7 +558,8 @@
       searchQuery: "",
       customer: JSON.parse(localStorage.getItem("vip_user") || "null"),
       isAdminLoggedIn: sessionStorage.getItem("vip_admin_auth") === "true",
-      adminCredentials: { username: "0781896750", pass: "1234567a" }
+      adminCredentials: { username: "0781896750", pass: "1234567a" },
+      freeShippingTarget: 5000 // الحد الأدنى للتوصيل المجاني 5000 د.ج
     };
 
     document.getElementById("year").textContent = new Date().getFullYear();
@@ -557,7 +601,7 @@
       if (minutes < 1) return "الآن";
       if (minutes < 60) return `منذ ${minutes} دقيقة`;
       const hours = Math.floor(minutes / 60);
-      return `منذ ${hours} ساعة${hours > 1 ? 'س' : ''}`;
+      return `منذ ${hours} ساعة`;
     }
 
     function toast(message, type = "normal") {
@@ -725,6 +769,16 @@
       if (state.searchQuery.trim()) {
         const q = state.searchQuery.trim().toLowerCase();
         filtered = filtered.filter(p => String(p.name || "").toLowerCase().includes(q));
+      }
+
+      // تطبيق الفرز
+      const sortVal = document.getElementById("sortSelect") ? document.getElementById("sortSelect").value : "default";
+      if (sortVal === "price_low") {
+        filtered.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+      } else if (sortVal === "price_high") {
+        filtered.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
+      } else if (sortVal === "popular") {
+        filtered.sort((a, b) => Number(b.likesCount || 0) - Number(a.likesCount || 0));
       }
 
       document.getElementById("productCount").textContent = `${filtered.length} منتج`;
@@ -904,6 +958,7 @@
       if (!state.cart.length) {
         box.innerHTML = `<p class="text-gray-400 text-center py-10 text-xs">السلة فارغة حالياً</p>`;
         document.getElementById("cartTotal").textContent = "0 د.ج";
+        updateShippingProgress(0);
         return;
       }
 
@@ -934,6 +989,25 @@
       }).join("");
 
       document.getElementById("cartTotal").textContent = money(total);
+      updateShippingProgress(total);
+    }
+
+    function updateShippingProgress(total) {
+      const target = state.freeShippingTarget;
+      const pct = Math.min(100, Math.round((total / target) * 100));
+      const bar = document.getElementById("shippingProgressBar");
+      const text = document.getElementById("shippingText");
+      const pctText = document.getElementById("shippingProgressText");
+
+      if (bar) bar.style.width = `${pct}%`;
+      if (pctText) pctText.textContent = `${pct}%`;
+
+      if (total >= target) {
+        if (text) text.innerHTML = `<span class="text-emerald-400 font-bold">🎉 تهانينا! حصلت على توصيل مجاني!</span>`;
+      } else {
+        const remaining = target - total;
+        if (text) text.textContent = `بقي ${money(remaining)} للحصول على توصيل مجاني`;
+      }
     }
 
     function updateCartQtyDirect(id, value) {
@@ -1101,7 +1175,6 @@
       }
     }
 
-    /* Submitting Orders with Customer Photo Attached */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
@@ -1148,7 +1221,7 @@
           tx.set(orderRef, {
             customerPhone: state.customer.phone,
             customerName: state.customer.name,
-            customerImage: state.customer.image || "", // إرفاق صورة الزبون بالطلب
+            customerImage: state.customer.image || "",
             phone: state.customer.phone,
             address: state.customer.address,
             items: verifiedItems,
@@ -1203,9 +1276,12 @@
           <div class="bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs space-y-2">
             <div class="flex justify-between items-center text-gray-400 border-b border-gray-800 pb-2">
               <span>طلب #${esc(o.id.slice(0, 6))}</span>
-              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${o.status === "مكتمل" ? "bg-emerald-950 text-emerald-300 border border-emerald-800" : "bg-amber-950 text-amber-300 border border-amber-800"}">
-                ${esc(o.status || "جديد")}
-              </span>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${o.status === "مكتمل" ? "bg-emerald-950 text-emerald-300 border border-emerald-800" : "bg-amber-950 text-amber-300 border border-amber-800"}">
+                  ${esc(o.status || "جديد")}
+                </span>
+                ${o.status === "جديد" ? `<button onclick="cancelMyOrder('${esc(o.id)}')" class="text-red-400 hover:underline text-[10px]">إلغاء</button>` : ''}
+              </div>
             </div>
             <div class="space-y-1">
               ${(o.items || []).map(i => `
@@ -1222,6 +1298,36 @@
       } catch (e) {
         console.error(e);
         container.innerHTML = `<p class="text-red-400 text-center py-6 text-xs">تعذر جلب سجل الطلبات.</p>`;
+      }
+    }
+
+    async function cancelMyOrder(orderId) {
+      if (!confirm("هل أنت تأكد من إلغاء هذا الطلب؟")) return;
+      try {
+        await db.runTransaction(async tx => {
+          const orderRef = db.collection("orders").doc(orderId);
+          const snap = await tx.get(orderRef);
+          if (!snap.exists) return;
+          const order = snap.data();
+          if (order.status !== "جديد") throw new Error("NOT_NEW");
+
+          // استرجاع المخزون
+          for (const item of (order.items || [])) {
+            const pRef = db.collection("products").doc(item.id);
+            const pSnap = await tx.get(pRef);
+            if (pSnap.exists) {
+              const currentStock = Number(pSnap.data().stock || 0);
+              tx.update(pRef, { stock: currentStock + Number(item.qty || 0) });
+            }
+          }
+
+          tx.delete(orderRef);
+        });
+
+        toast("تم إلغاء الطلب بنجاح.", "success");
+        renderMyOrders();
+      } catch (e) {
+        toast("تعذر إلغاء الطلب.", "error");
       }
     }
 
@@ -1297,7 +1403,6 @@
       document.getElementById(`adminTab${cap}`).classList.remove("hidden");
     }
 
-    /* Admin Customers Management Tab */
     async function loadAdminCustomers() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const list = document.getElementById("adminCustomersList");
@@ -1358,7 +1463,55 @@
       }
     }
 
-    /* Admin Add & Edit Products with Timestamp Updates */
+    /* Product Management & Images Handlers */
+    function handleImageUrlInput(val) {
+      const container = document.getElementById("imgPreviewContainer");
+      const preview = document.getElementById("imgPreview");
+      if (val.trim()) {
+        preview.src = val.trim();
+        container.classList.remove("hidden");
+        document.getElementById("pImgBase64").value = "";
+      } else {
+        container.classList.add("hidden");
+      }
+    }
+
+    async function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        toast("جاري ضغط ومعالجة الصورة...", "normal");
+        const b64 = await compressAndConvertImage(file, 500, 0.7);
+        document.getElementById("pImgBase64").value = b64;
+        document.getElementById("imgPreview").src = b64;
+        document.getElementById("imgPreviewContainer").classList.remove("hidden");
+        toast("تمت جاهزية الصورة!", "success");
+      } catch (err) {
+        toast("فشل معالجة الصورة.", "error");
+      }
+    }
+
+    function handleEditImageUrlInput(val) {
+      if (val.trim()) {
+        document.getElementById("editImgPreview").src = val.trim();
+        document.getElementById("editPImgBase64").value = "";
+      }
+    }
+
+    async function handleEditImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        toast("جاري ضغط الصورة...", "normal");
+        const b64 = await compressAndConvertImage(file, 500, 0.7);
+        document.getElementById("editPImgBase64").value = b64;
+        document.getElementById("editImgPreview").src = b64;
+        toast("تم تحضير الصورة التعديل!", "success");
+      } catch (err) {
+        toast("فشل رفع الصورة.", "error");
+      }
+    }
+
     async function addProduct() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const name = document.getElementById("pName").value.trim();
@@ -1508,7 +1661,6 @@
       }
     }
 
-    /* Admin Orders Management with Customer Images Displayed */
     async function loadOrdersOnce() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const container = document.getElementById("adminOrdersList");
@@ -1600,8 +1752,8 @@
       }
     }
 
-    /* Helper Image Compress function */
-    function compressAndConvertImage(file, maxWidth = 400, quality = 0.6) {
+    /* COMPLETE & COMPACT Image Compress Helper Function */
+    function compressAndConvertImage(file, maxWidth = 500, quality = 0.7) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -1609,7 +1761,7 @@
           const img = new Image();
           img.src = event.target.result;
           img.onload = () => {
-            const canvas = document.createElement("canvas");
+            const elem = document.createElement('canvas');
             let width = img.width;
             let height = img.height;
 
@@ -1618,58 +1770,18 @@
               width = maxWidth;
             }
 
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext("2d");
+            elem.width = width;
+            elem.height = height;
+            const ctx = elem.getContext('canvas');
             ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL("image/jpeg", quality));
+
+            const data = ctx.canvas.toDataURL('image/jpeg', quality);
+            resolve(data);
           };
           img.onerror = error => reject(error);
         };
         reader.onerror = error => reject(error);
       });
-    }
-
-    function handleImageUrlInput(url) {
-      if (!url.trim()) return;
-      document.getElementById("pImgBase64").value = url.trim();
-      document.getElementById("imgPreview").src = url.trim();
-      document.getElementById("imgPreviewContainer").classList.remove("hidden");
-    }
-
-    async function handleImageUpload(e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      try {
-        toast("جاري ضغط ومعالجة الصورة...", "normal");
-        const b64 = await compressAndConvertImage(f);
-        document.getElementById("pImgBase64").value = b64;
-        document.getElementById("imgPreview").src = b64;
-        document.getElementById("imgPreviewContainer").classList.remove("hidden");
-        toast("تمت جاهزية الصورة!", "success");
-      } catch (err) {
-        toast("فشل تحميل الصورة.", "error");
-      }
-    }
-
-    function handleEditImageUrlInput(url) {
-      if (!url.trim()) return;
-      document.getElementById("editPImgBase64").value = url.trim();
-      document.getElementById("editImgPreview").src = url.trim();
-    }
-
-    async function handleEditImageUpload(e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      try {
-        toast("جاري معالجة الصورة...", "normal");
-        const b64 = await compressAndConvertImage(f);
-        document.getElementById("editPImgBase64").value = b64;
-        document.getElementById("editImgPreview").src = b64;
-        toast("تمت جاهزية الصورة!", "success");
-      } catch (err) {
-        toast("فشل تحميل الصورة.", "error");
-      }
     }
   </script>
 </body>
