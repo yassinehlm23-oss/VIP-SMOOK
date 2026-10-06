@@ -112,7 +112,7 @@
       </div>
     </section>
 
-    <!-- NEW: Today's News & Updates Section (Shows items updated/added within 10 hours) -->
+    <!-- News Section -->
     <section id="todayNewsSection" class="hidden mb-6 bg-gradient-to-r from-yellow-500/10 via-amber-500/5 to-transparent border border-yellow-500/30 rounded-2xl p-4">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-xs md:text-sm font-black text-yellow-400 flex items-center gap-2">
@@ -120,9 +120,7 @@
         </h2>
         <span class="text-[10px] text-gray-400">تختفي التحديثات تلقائياً بعد 10 ساعات</span>
       </div>
-      <div id="todayNewsList" class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
-        <!-- Dynamic News Cards will be loaded here -->
-      </div>
+      <div id="todayNewsList" class="flex gap-3 overflow-x-auto no-scrollbar pb-1"></div>
     </section>
 
     <!-- Categories -->
@@ -647,18 +645,16 @@
       }
     }
 
-    /* NEW: Render Today's News (Filter <= 10 hours) */
     function renderTodayNews() {
       const newsSection = document.getElementById("todayNewsSection");
       const newsList = document.getElementById("todayNewsList");
-      const TEN_HOURS_MS = 10 * 60 * 60 * 1000; // 10 Hours in Milliseconds
+      const TEN_HOURS_MS = 10 * 60 * 60 * 1000;
       const now = Date.now();
 
       const recentUpdates = state.products.map(p => {
         let updateTime = null;
-        let updateType = ""; // "new", "price_up", "price_down"
+        let updateType = "";
 
-        // Check timestamp from firebase or local date
         if (p.updatedAt) {
           updateTime = p.updatedAt.toDate ? p.updatedAt.toDate().getTime() : new Date(p.updatedAt).getTime();
         } else if (p.createdAt) {
@@ -959,7 +955,6 @@
       updateCartUI();
     }
 
-    /* Customer Phone Auth & Profile Management */
     function toggleAuthModal() {
       const el = document.getElementById("authModal");
       el.classList.toggle("hidden");
@@ -1106,7 +1101,7 @@
       }
     }
 
-    /* Submitting Orders */
+    /* Submitting Orders with Customer Photo Attached */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
@@ -1153,6 +1148,7 @@
           tx.set(orderRef, {
             customerPhone: state.customer.phone,
             customerName: state.customer.name,
+            customerImage: state.customer.image || "", // إرفاق صورة الزبون بالطلب
             phone: state.customer.phone,
             address: state.customer.address,
             items: verifiedItems,
@@ -1423,6 +1419,29 @@
       `).join("");
     }
 
+    function filterAdminProductsList() {
+      const q = document.getElementById("adminStockSearch").value.toLowerCase().trim();
+      const filtered = state.products.filter(p => (p.name || "").toLowerCase().includes(q));
+      const container = document.getElementById("adminProductsList");
+      if (!container) return;
+
+      container.innerHTML = filtered.map(p => `
+        <div class="flex items-center justify-between bg-gray-950 p-2.5 rounded-xl border border-gray-800 text-xs">
+          <div class="flex items-center gap-2 overflow-hidden">
+            <img src="${esc(p.image)}" class="w-10 h-10 object-cover rounded-lg bg-gray-900 border border-gray-800 shrink-0">
+            <div class="truncate">
+              <h5 class="font-bold text-gray-200 truncate">${esc(p.name)}</h5>
+              <p class="text-[10px] text-amber-400 font-bold">${money(p.price)} - المتبقي: ${p.stock}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="openEditModal('${esc(p.id)}')" class="px-2.5 py-1 bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500 hover:text-black rounded-lg text-[10px] font-bold transition">تعديل</button>
+            <button onclick="deleteProduct('${esc(p.id)}')" class="px-2.5 py-1 bg-red-950 text-red-400 hover:bg-red-900 rounded-lg text-[10px] font-bold transition">حذف</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
     function openEditModal(id) {
       const p = state.products.find(x => x.id === id);
       if (!p) return;
@@ -1489,7 +1508,7 @@
       }
     }
 
-    /* Admin Orders Management */
+    /* Admin Orders Management with Customer Images Displayed */
     async function loadOrdersOnce() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const container = document.getElementById("adminOrdersList");
@@ -1511,33 +1530,45 @@
           return;
         }
 
-        container.innerHTML = orders.map(o => `
-          <div class="bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs space-y-2">
-            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-              <div>
-                <span class="font-bold text-yellow-400">الزبون: ${esc(o.customerName || "غير معروف")}</span>
-                <span class="text-[10px] text-gray-400 block">الهاتف: ${esc(o.phone)}</span>
-              </div>
-              <select onchange="updateOrderStatus('${esc(o.id)}', this.value)" class="bg-gray-900 border border-gray-700 text-[10px] p-1 rounded-lg text-white font-bold">
-                <option value="جديد" ${o.status === "جديد" ? "selected" : ""}>جديد</option>
-                <option value="مكتمل" ${o.status === "مكتمل" ? "selected" : ""}>مكتمل</option>
-              </select>
-            </div>
-            <p class="text-[10px] text-gray-400">العنوان: ${esc(o.address)}</p>
-            <div class="space-y-1 pt-1 border-t border-gray-900">
-              ${(o.items || []).map(i => `
-                <div class="flex justify-between text-[11px] text-gray-300">
-                  <span>${esc(i.name)} ×${i.qty}</span>
-                  <span>${money(i.price * i.qty)}</span>
+        container.innerHTML = orders.map(o => {
+          const custAvatar = o.customerImage || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
+
+          return `
+            <div class="bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs space-y-3">
+              <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+                <div class="flex items-center gap-2.5">
+                  <img src="${esc(custAvatar)}" class="w-9 h-9 rounded-full object-cover border border-yellow-500/50 bg-gray-900 shrink-0" title="صورة الزبون">
+                  <div>
+                    <span class="font-bold text-yellow-400 block">${esc(o.customerName || "زبون بدون اسم")}</span>
+                    <span class="text-[10px] text-gray-400 font-mono">${esc(o.phone)}</span>
+                  </div>
                 </div>
-              `).join("")}
+                <select onchange="updateOrderStatus('${esc(o.id)}', this.value)" class="bg-gray-900 border border-gray-700 text-[10px] p-1.5 rounded-lg text-white font-bold focus:outline-none focus:border-yellow-500">
+                  <option value="جديد" ${o.status === "جديد" ? "selected" : ""}>جديد</option>
+                  <option value="مكتمل" ${o.status === "مكتمل" ? "selected" : ""}>مكتمل</option>
+                </select>
+              </div>
+              
+              <div class="bg-gray-900/60 p-2 rounded-xl text-[11px] text-gray-300">
+                <span class="text-gray-400 block text-[10px]">عنوان التوصيل:</span>
+                ${esc(o.address)}
+              </div>
+
+              <div class="space-y-1 pt-1 border-t border-gray-900">
+                ${(o.items || []).map(i => `
+                  <div class="flex justify-between text-[11px] text-gray-300">
+                    <span>${esc(i.name)} ×${i.qty}</span>
+                    <span>${money(i.price * i.qty)}</span>
+                  </div>
+                `).join("")}
+              </div>
+              <div class="flex justify-between items-center pt-2 border-t border-gray-800 font-extrabold">
+                <span class="text-gray-400">الإجمالي:</span>
+                <span class="text-amber-400 text-sm">${money(o.total)}</span>
+              </div>
             </div>
-            <div class="flex justify-between items-center pt-2 border-t border-gray-800 font-extrabold">
-              <span class="text-gray-400">الإجمالي:</span>
-              <span class="text-amber-400">${money(o.total)}</span>
-            </div>
-          </div>
-        `).join("");
+          `;
+        }).join("");
       } catch (e) {
         console.error(e);
         container.innerHTML = `<p class="text-xs text-red-400 text-center py-6">فشل تحميل الطلبات.</p>`;
