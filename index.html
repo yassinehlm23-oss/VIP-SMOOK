@@ -26,40 +26,9 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 4rem); }
     .modal-scroll { max-height: calc(90vh - 2rem); overflow-y: auto; }
-    
-    /* شريط زر الإغلاق العائم لإعلانات الشاشة الكاملة */
-    .ad-close-bar {
-      position: fixed;
-      top: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 99999;
-      background: rgba(0, 0, 0, 0.92);
-      border: 1px solid #eab308;
-      border-radius: 50px;
-      padding: 6px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 4px 25px rgba(0,0,0,0.9);
-    }
   </style>
 </head>
 <body class="bg-[#070a12] text-gray-100 min-h-screen pb-16 md:pb-0">
-
-  <!-- زر إغلاق (X) العائم لإعلانات الشاشة الكاملة والـ Popunder -->
-  <div id="globalAdCloseBar" class="ad-close-bar">
-    <span class="text-xs text-yellow-400 font-bold"><i class="fas fa-ad ml-1"></i> إعلان</span>
-    <button onclick="dismissFullAds()" class="bg-red-600 hover:bg-red-500 text-white text-xs font-black px-3 py-1 rounded-full transition flex items-center gap-1 shadow-md">
-      <span>إغلاق الإعلان</span>
-      <i class="fas fa-xmark text-sm"></i>
-    </button>
-  </div>
-
-  <!-- إعلان 2: Social Bar -->
-  <div id="socialBarAdContainer">
-    <script data-cfasync="false" src="https://bicea.org/14/ddeec1781bd6c9842deda4a337366a61"></script>
-  </div>
 
   <!-- Legal Gate -->
   <div id="legalGate" class="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4">
@@ -143,23 +112,6 @@
       </div>
     </section>
 
-    <!-- إعلان 1: Banner 300x250 -->
-    <div id="adBanner1Container" class="mb-6 flex flex-col items-center relative">
-      <button onclick="closeAdContainer('adBanner1Container')" class="self-end mb-1 text-[10px] bg-gray-800 hover:bg-red-600 text-gray-300 hover:text-white px-2 py-0.5 rounded transition">
-        إغلاق الإعلان <i class="fas fa-xmark ml-0.5"></i>
-      </button>
-      <script>
-        atOptions = {
-          'key' : 'b8431248371af1074dbae7ea26f4d4dc',
-          'format' : 'iframe',
-          'height' : 250,
-          'width' : 300,
-          'params' : {}
-        };
-      </script>
-      <script src="https://bicea.org/22/b8431248371af1074dbae7ea26f4d4dc"></script>
-    </div>
-
     <!-- News Section -->
     <section id="todayNewsSection" class="hidden mb-6 bg-gradient-to-r from-yellow-500/10 via-amber-500/5 to-transparent border border-yellow-500/30 rounded-2xl p-4">
       <div class="flex items-center justify-between mb-3">
@@ -187,15 +139,6 @@
         <button onclick="filterCategory('sweets', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">حلويات ومقرمشات</button>
       </div>
     </section>
-
-    <!-- إعلان 3: Native Banner -->
-    <div id="adBanner3Container" class="mb-6 flex flex-col items-center relative">
-      <button onclick="closeAdContainer('adBanner3Container')" class="self-end mb-1 text-[10px] bg-gray-800 hover:bg-red-600 text-gray-300 hover:text-white px-2 py-0.5 rounded transition">
-        إغلاق الإعلان <i class="fas fa-xmark ml-0.5"></i>
-      </button>
-      <script async="async" data-cfasync="false" src="https://bicea.org/21/9571d0c78b35f980f46033dff6337357"></script>
-      <div id="container-9571d0c78b35f980f46033dff6337357"></div>
-    </div>
 
     <!-- Error Alerts -->
     <div id="firebaseError" class="hidden mb-6 bg-red-950/40 border border-red-800/60 text-red-300 rounded-2xl p-4 text-xs flex items-center gap-3">
@@ -540,26 +483,6 @@
 
   <!-- Application Script -->
   <script>
-    // وظائف التحكم في إغلاق الإعلانات العائمة والتغطية (نسخة آمنة لمنع الشاشة البيضاء)
-    function dismissFullAds() {
-      const socialBar = document.getElementById('socialBarAdContainer');
-      if (socialBar) {
-        socialBar.style.display = 'none';
-      }
-
-      const closeBar = document.getElementById('globalAdCloseBar');
-      if (closeBar) {
-        closeBar.style.display = 'none';
-      }
-    }
-
-    function closeAdContainer(containerId) {
-      const el = document.getElementById(containerId);
-      if (el) {
-        el.style.display = 'none';
-      }
-    }
-
     const firebaseConfig = {
       apiKey: "AIzaSyC0SNi-uPVJ_voLCcu3_M898Il0gyEbmsM",
       authDomain: "vip-smook.firebaseapp.com",
@@ -1178,7 +1101,6 @@
       }
     }
 
-    /* Submitting Orders with Customer Photo Attached */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
@@ -1374,7 +1296,6 @@
       document.getElementById(`adminTab${cap}`).classList.remove("hidden");
     }
 
-    /* Admin Customers Management Tab */
     async function loadAdminCustomers() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const list = document.getElementById("adminCustomersList");
@@ -1435,7 +1356,6 @@
       }
     }
 
-    /* Admin Add & Edit Products with Timestamp Updates */
     async function addProduct() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const name = document.getElementById("pName").value.trim();
@@ -1585,7 +1505,6 @@
       }
     }
 
-    /* Admin Orders Management with Customer Images Displayed */
     async function loadOrdersOnce() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const container = document.getElementById("adminOrdersList");
@@ -1677,7 +1596,6 @@
       }
     }
 
-    /* Helper Image Compress function */
     function compressAndConvertImage(file, maxWidth = 400, quality = 0.6) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
