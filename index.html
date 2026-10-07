@@ -120,7 +120,7 @@
   <!-- Main Container -->
   <main class="max-w-6xl mx-auto px-4 py-6 min-h-[80vh] safe-bottom">
 
-    <!-- Ad Unit Container (موقع الإعلان) -->
+    <!-- Ad Unit Container -->
     <div class="mb-6 flex justify-center items-center overflow-hidden">
       <script>
         atOptions = {
@@ -165,7 +165,6 @@
         </h2>
         
         <div class="flex items-center gap-2">
-          <!-- Sorting dropdown -->
           <select id="sortSelect" onchange="renderProducts()" class="bg-gray-900 border border-gray-800 text-gray-300 text-xs rounded-xl p-2 focus:outline-none focus:border-yellow-500">
             <option value="default">الترتيب الافتراضي</option>
             <option value="price_low">السعر: من الأقل للأعلى</option>
@@ -573,7 +572,7 @@
       customer: JSON.parse(localStorage.getItem("vip_user") || "null"),
       isAdminLoggedIn: sessionStorage.getItem("vip_admin_auth") === "true",
       adminCredentials: { username: "0781896750", pass: "1234567a" },
-      freeShippingTarget: 5000 // الحد الأدنى للتوصيل المجاني 5000 د.ج
+      freeShippingTarget: 5000 
     };
 
     document.getElementById("year").textContent = new Date().getFullYear();
@@ -785,7 +784,6 @@
         filtered = filtered.filter(p => String(p.name || "").toLowerCase().includes(q));
       }
 
-      // تطبيق الفرز
       const sortVal = document.getElementById("sortSelect") ? document.getElementById("sortSelect").value : "default";
       if (sortVal === "price_low") {
         filtered.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
@@ -1325,7 +1323,6 @@
           const order = snap.data();
           if (order.status !== "جديد") throw new Error("NOT_NEW");
 
-          // استرجاع المخزون
           for (const item of (order.items || [])) {
             const pRef = db.collection("products").doc(item.id);
             const pSnap = await tx.get(pRef);
@@ -1345,7 +1342,6 @@
       }
     }
 
-    /* Admin Management Section */
     function triggerAdminSecret() {
       toggleAdminModal();
     }
@@ -1477,7 +1473,6 @@
       }
     }
 
-    /* Product Management & Images Handlers */
     function handleImageUrlInput(val) {
       const container = document.getElementById("imgPreviewContainer");
       const preview = document.getElementById("imgPreview");
@@ -1520,7 +1515,7 @@
         const b64 = await compressAndConvertImage(file, 500, 0.7);
         document.getElementById("editPImgBase64").value = b64;
         document.getElementById("editImgPreview").src = b64;
-        toast("تم تحضير الصورة التعديل!", "success");
+        toast("تم تحضير الصورة للتعديل!", "success");
       } catch (err) {
         toast("فشل رفع الصورة.", "error");
       }
@@ -1766,7 +1761,7 @@
       }
     }
 
-    /* COMPLETE & COMPACT Image Compress Helper Function */
+    // إصلاح الخطأ البراميتري: تم استبدال canvas بـ 2d في دالة معالجة الصور
     function compressAndConvertImage(file, maxWidth = 500, quality = 0.7) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1786,7 +1781,7 @@
 
             elem.width = width;
             elem.height = height;
-            const ctx = elem.getContext('canvas');
+            const ctx = elem.getContext('2d'); // <-- تم التصحيح هنا بنجاح
             ctx.drawImage(img, 0, 0, width, height);
 
             const data = ctx.canvas.toDataURL('image/jpeg', quality);
