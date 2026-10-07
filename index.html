@@ -1054,9 +1054,14 @@
         document.getElementById("profilePhoneDisplay").textContent = state.customer.phone || "";
         document.getElementById("profileName").value = state.customer.name || "";
         document.getElementById("profileAddress").value = state.customer.address || "";
+        document.getElementById("profileImgUrl").value = state.customer.image && !state.customer.image.startsWith("data:") ? state.customer.image : "";
         document.getElementById("profileImgBase64").value = state.customer.image || "";
+        
+        const previewImg = document.getElementById("profileImgPreview");
         if (state.customer.image) {
-          document.getElementById("profileImgPreview").src = state.customer.image;
+          previewImg.src = state.customer.image;
+        } else {
+          previewImg.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
         }
       } else {
         document.getElementById("authTitle").textContent = "تسجيل الدخول برقم الهاتف";
@@ -1112,20 +1117,24 @@
     }
 
     function handleProfileImgInput(url) {
-      if (!url.trim()) return;
-      document.getElementById("profileImgBase64").value = url.trim();
-      document.getElementById("profileImgPreview").src = url.trim();
+      const val = url.trim();
+      if (val) {
+        document.getElementById("profileImgBase64").value = val;
+        document.getElementById("profileImgPreview").src = val;
+      }
     }
 
     async function handleProfileImgUpload(e) {
       const f = e.target.files[0];
       if (!f) return;
       try {
-        toast("جاري معالجة الصورة...", "normal");
-        const b64 = await compressAndConvertImage(f, 300, 0.6);
+        toast("جاري معالجة وضغط الصورة...", "normal");
+        // ضغط الصورة بقوة لتناسب قاعدة البيانات (أقصى عرض 200 بكسل وجودة 0.5)
+        const b64 = await compressAndConvertImage(f, 200, 0.5);
         document.getElementById("profileImgBase64").value = b64;
         document.getElementById("profileImgPreview").src = b64;
-        toast("تمت جاهزية الصورة!", "success");
+        document.getElementById("profileImgUrl").value = "";
+        toast("تمت جاهزية صورة البروفايل!", "success");
       } catch (err) {
         toast("فشل تحميل الصورة.", "error");
       }
@@ -1761,8 +1770,8 @@
       }
     }
 
-    // إصلاح الخطأ البراميتري: تم استبدال canvas بـ 2d في دالة معالجة الصور
-    function compressAndConvertImage(file, maxWidth = 500, quality = 0.7) {
+    // دالة ضغط الصور العامة المحسنة والمعالجة
+    function compressAndConvertImage(file, maxWidth = 300, quality = 0.6) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -1781,10 +1790,10 @@
 
             elem.width = width;
             elem.height = height;
-            const ctx = elem.getContext('2d'); // <-- تم التصحيح هنا بنجاح
+            const ctx = elem.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
-            const data = ctx.canvas.toDataURL('image/jpeg', quality);
+            const data = elem.toDataURL('image/jpeg', quality);
             resolve(data);
           };
           img.onerror = error => reject(error);
