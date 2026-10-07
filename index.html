@@ -10,7 +10,7 @@
   <!-- Tailwind CSS & FontAwesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+
   <!-- Firebase Compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -26,32 +26,52 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 4.5rem); }
     .modal-scroll { max-height: calc(90vh - 2rem); overflow-y: auto; }
-    
+
+    /* التحديد ممنوع على الأزرار فقط، وليس على كامل الصفحة */
+    button, .cat-btn, .admin-tab {
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* قفل تمرير الصفحة عند فتح أي نافذة */
+    body.modal-open { overflow: hidden; }
+
+    /* شريط الأخبار المتحرك بدون فراغات */
+    .marquee-track {
+      animation: marquee 30s linear infinite;
+      will-change: transform;
+    }
+    .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
     @keyframes marquee {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
     }
-    .animate-marquee {
-      display: inline-block;
-      white-space: nowrap;
-      animation: marquee 25s linear infinite;
+    @media (prefers-reduced-motion: reduce) {
+      .marquee-track { animation: none; }
     }
-    .animate-marquee:hover { animation-play-state: paused; }
   </style>
 </head>
-<body class="bg-[#070a12] text-gray-100 min-h-screen pb-16 md:pb-0 select-none">
+<body class="bg-[#070a12] text-gray-100 min-h-screen pb-16 md:pb-0">
 
   <!-- Ticker Banner -->
-  <div class="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black text-[11px] font-black py-1 overflow-hidden relative shadow-md">
-    <div class="animate-marquee flex gap-8 items-center">
-      <span>🔥 أهلاً بكم في VIP SMOOK - التوصيل سريع ومتوفر لجميع الولايات!</span>
-      <span>⚡ تخفيضات حصرية وعروض يومية متجددة</span>
-      <span>⭐ التقييم المباشر متاح للأسعار والمنتجات</span>
+  <div class="marquee-wrap bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black text-[11px] font-black py-1 overflow-hidden relative shadow-md" dir="ltr">
+    <div class="marquee-track flex w-max">
+      <div class="flex gap-8 items-center pr-8">
+        <span>🔥 أهلاً بكم في VIP SMOOK - التوصيل سريع ومتوفر لجميع الولايات!</span>
+        <span>⚡ تخفيضات حصرية وعروض يومية متجددة</span>
+        <span>⭐ التقييم المباشر متاح للأسعار والمنتجات</span>
+      </div>
+      <div class="flex gap-8 items-center pr-8" aria-hidden="true">
+        <span>🔥 أهلاً بكم في VIP SMOOK - التوصيل سريع ومتوفر لجميع الولايات!</span>
+        <span>⚡ تخفيضات حصرية وعروض يومية متجددة</span>
+        <span>⭐ التقييم المباشر متاح للأسعار والمنتجات</span>
+      </div>
     </div>
   </div>
 
-  <!-- Legal Gate -->
-  <div id="legalGate" class="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4">
+  <!-- Legal Gate (مخفية افتراضياً لتجنب الوميض) -->
+  <div id="legalGate" class="fixed inset-0 z-[100] bg-black/95 hidden items-center justify-center p-4">
     <div class="w-full max-w-md bg-gray-900 border border-yellow-500/40 rounded-3xl p-6 text-center shadow-2xl relative overflow-hidden">
       <div class="w-16 h-16 mx-auto rounded-2xl bg-yellow-500/10 text-yellow-500 border border-yellow-500/30 flex items-center justify-center text-3xl mb-4">
         <i class="fas fa-shield-halved"></i>
@@ -72,7 +92,8 @@
   </div>
 
   <!-- Toast Notification -->
-  <div id="toast" class="fixed top-5 left-4 right-4 md:left-auto md:right-5 z-[120] hidden transition-all duration-300">
+  <div id="toast" onclick="hideToast()"
+       class="fixed top-5 left-4 right-4 md:left-auto md:right-5 z-[120] hidden opacity-0 transition-opacity duration-300 cursor-pointer">
     <div id="toastInner" class="glass border rounded-2xl px-5 py-3.5 shadow-2xl text-xs font-medium flex items-center gap-2"></div>
   </div>
 
@@ -80,7 +101,7 @@
   <header class="sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md border-b border-yellow-500/20">
     <div class="max-w-6xl mx-auto px-4 py-3">
       <div class="flex items-center justify-between gap-3">
-        
+
         <!-- Logo -->
         <button ondblclick="triggerAdminSecret()" onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="text-right cursor-pointer select-none" title="اضغط مرتين لفتح لوحة التحكم">
           <span class="font-black text-xl md:text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">
@@ -163,7 +184,7 @@
         <h2 class="text-base md:text-lg font-black text-gray-100 flex items-center gap-2">
           <i class="fas fa-layer-group text-yellow-500 text-sm"></i> الأقسام والمنتجات
         </h2>
-        
+
         <div class="flex items-center gap-2">
           <select id="sortSelect" onchange="renderProducts()" class="bg-gray-900 border border-gray-800 text-gray-300 text-xs rounded-xl p-2 focus:outline-none focus:border-yellow-500">
             <option value="default">الترتيب الافتراضي</option>
@@ -240,14 +261,20 @@
       <div id="authFormContainer" class="space-y-4">
         <div>
           <label class="text-[11px] text-gray-400 font-semibold block mb-1">رقم الهاتف</label>
-          <input id="custPhone" type="tel" placeholder="0661234567"
+          <input id="custPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="15" placeholder="0661234567"
             class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
         </div>
 
         <div>
           <label class="text-[11px] text-gray-400 font-semibold block mb-1">كلمة السر</label>
-          <input id="custPass" type="password" placeholder="******"
-            class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
+          <div class="relative">
+            <input id="custPass" type="password" autocomplete="current-password" placeholder="******"
+              class="w-full p-3 pl-10 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
+            <button type="button" onclick="togglePasswordVisibility('custPass', this)" aria-label="إظهار كلمة السر"
+              class="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-yellow-400 transition">
+              <i class="fas fa-eye text-xs"></i>
+            </button>
+          </div>
         </div>
 
         <button onclick="handlePhoneAuth()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs shadow-md shadow-amber-500/20">
@@ -259,7 +286,7 @@
       <div id="customerProfileContainer" class="hidden space-y-4">
         <div class="flex flex-col items-center text-center pb-3 border-b border-gray-800">
           <div class="relative w-20 h-20 rounded-full overflow-hidden border-2 border-yellow-500 bg-gray-950 mb-2">
-            <img id="profileImgPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover">
+            <img id="profileImgPreview" onerror="imgFallback(this)" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover">
           </div>
           <span id="profilePhoneDisplay" class="text-yellow-400 font-bold text-xs"></span>
         </div>
@@ -333,7 +360,7 @@
         </div>
 
         <div>
-          <button onclick="submitOrderToAdmin()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/20">
+          <button id="submitOrderBtn" onclick="submitOrderToAdmin()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/20">
             <i class="fas fa-paper-plane"></i> إرسال الطلب للمتجر
           </button>
         </div>
@@ -369,11 +396,11 @@
       <div class="grid grid-cols-2 gap-2">
         <div>
           <label class="text-[11px] text-gray-400 block mb-1">السعر (د.ج)</label>
-          <input type="number" min="0" id="editPPrice" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+          <input type="number" min="0" inputmode="decimal" id="editPPrice" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
         </div>
         <div>
           <label class="text-[11px] text-gray-400 block mb-1">المخزون</label>
-          <input type="number" min="0" id="editPStock" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+          <input type="number" min="0" inputmode="numeric" id="editPStock" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
         </div>
       </div>
       <div>
@@ -391,7 +418,7 @@
         <input type="hidden" id="editPImgBase64">
       </div>
       <div class="flex items-center gap-3">
-        <img id="editImgPreview" class="w-20 h-20 object-cover rounded-xl border border-yellow-500/40 bg-gray-950">
+        <img id="editImgPreview" onerror="imgFallback(this)" class="w-20 h-20 object-cover rounded-xl border border-yellow-500/40 bg-gray-950">
         <span class="text-[11px] text-gray-400">معاينة الصورة</span>
       </div>
       <button onclick="saveProductEdits()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs shadow-md">
@@ -496,8 +523,8 @@
         <div id="adminTabAdd" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <div class="grid grid-cols-2 gap-2">
-            <input type="number" min="0" id="pPrice" placeholder="السعر (د.ج)" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
-            <input type="number" min="0" id="pStock" placeholder="الكمية المتوفرة" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
+            <input type="number" min="0" inputmode="decimal" id="pPrice" placeholder="السعر (د.ج)" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
+            <input type="number" min="0" inputmode="numeric" id="pStock" placeholder="الكمية المتوفرة" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           </div>
           <select id="pCategory" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-gray-300">
             <option value="tobacco">سجائر وتبغ</option>
@@ -511,7 +538,7 @@
             <input type="hidden" id="pImgBase64">
           </div>
           <div id="imgPreviewContainer" class="hidden">
-            <img id="imgPreview" class="w-20 h-20 object-cover rounded-xl border border-yellow-500/40">
+            <img id="imgPreview" onerror="imgFallback(this)" class="w-20 h-20 object-cover rounded-xl border border-yellow-500/40">
           </div>
           <button onclick="addProduct()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs transition">
             حفظ ونشر المنتج
@@ -539,6 +566,9 @@
 
   <!-- Application Script -->
   <script>
+    const FALLBACK_IMG = "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
+    const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
+
     const firebaseConfig = {
       apiKey: "AIzaSyC0SNi-uPVJ_voLCcu3_M898Il0gyEbmsM",
       authDomain: "vip-smook.firebaseapp.com",
@@ -572,29 +602,12 @@
       customer: JSON.parse(localStorage.getItem("vip_user") || "null"),
       isAdminLoggedIn: sessionStorage.getItem("vip_admin_auth") === "true",
       adminCredentials: { username: "0781896750", pass: "1234567a" },
-      freeShippingTarget: 5000 
+      freeShippingTarget: 5000
     };
 
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    function acceptLegalGate() {
-      localStorage.setItem("vip_legal_gate", "accepted");
-      document.getElementById("legalGate").classList.add("hidden");
-    }
-
-    function leaveSite() {
-      document.body.innerHTML = `
-        <div class="min-h-screen bg-black text-white flex items-center justify-center p-6 text-center">
-          <div>
-            <h1 class="text-xl font-bold mb-2">تمت مغادرة المتجر</h1>
-            <p class="text-gray-400 text-xs">شكراً لزيارتكم.</p>
-          </div>
-        </div>`;
-    }
-
-    if (localStorage.getItem("vip_legal_gate") === "accepted") {
-      document.getElementById("legalGate").classList.add("hidden");
-    }
+    /* ================= أدوات مساعدة عامة ================= */
 
     function esc(value) {
       return String(value ?? "")
@@ -609,6 +622,16 @@
       return `${Number(n || 0).toLocaleString("fr-DZ")} د.ج`;
     }
 
+    function imgSrc(v, fallback = FALLBACK_IMG) {
+      const s = String(v ?? "").trim();
+      return s || fallback;
+    }
+
+    function imgFallback(el) {
+      el.onerror = null;
+      el.src = FALLBACK_IMG;
+    }
+
     function formatTimeAgo(milliseconds) {
       const minutes = Math.floor(milliseconds / (1000 * 60));
       if (minutes < 1) return "الآن";
@@ -617,17 +640,59 @@
       return `منذ ${hours} ساعة`;
     }
 
+    /* ================= بوابة السن القانونية ================= */
+
+    function acceptLegalGate() {
+      localStorage.setItem("vip_legal_gate", "accepted");
+      closeModal("legalGate");
+    }
+
+    function leaveSite() {
+      document.body.innerHTML = `
+        <div class="min-h-screen bg-black text-white flex items-center justify-center p-6 text-center">
+          <div>
+            <h1 class="text-xl font-bold mb-2">تمت مغادرة المتجر</h1>
+            <p class="text-gray-400 text-xs">شكراً لزيارتكم.</p>
+          </div>
+        </div>`;
+    }
+
+    if (localStorage.getItem("vip_legal_gate") !== "accepted") {
+      const gate = document.getElementById("legalGate");
+      gate.classList.remove("hidden");
+      gate.classList.add("flex");
+    }
+
+    /* ================= التنبيهات (Toast) ================= */
+
     function toast(message, type = "normal") {
       const box = document.getElementById("toast");
       const inner = document.getElementById("toastInner");
-      inner.innerHTML = `<i class="fas ${type === "error" ? "fa-circle-xmark text-red-400" : type === "success" ? "fa-circle-check text-emerald-400" : "fa-info-circle text-yellow-400"}"></i> <span>${esc(message)}</span>`;
+
+      inner.innerHTML = `<i class="fas ${
+        type === "error" ? "fa-circle-xmark text-red-400"
+        : type === "success" ? "fa-circle-check text-emerald-400"
+        : "fa-info-circle text-yellow-400"
+      }"></i> <span>${esc(message)}</span>`;
+
       inner.className = "glass border rounded-2xl px-5 py-3.5 shadow-2xl text-xs font-medium flex items-center gap-2 " +
-        (type === "error" ? "border-red-800/80 text-red-200" :
-         type === "success" ? "border-emerald-800/80 text-emerald-200" :
-         "border-yellow-500/40 text-gray-200");
+        (type === "error" ? "border-red-800/80 text-red-200"
+         : type === "success" ? "border-emerald-800/80 text-emerald-200"
+         : "border-yellow-500/40 text-gray-200");
+
       box.classList.remove("hidden");
+      requestAnimationFrame(() => box.classList.remove("opacity-0"));
+
       clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(() => box.classList.add("hidden"), 3000);
+      window.__toastTimer = setTimeout(hideToast, 3200);
+    }
+
+    function hideToast() {
+      const box = document.getElementById("toast");
+      if (!box || box.classList.contains("hidden")) return;
+      box.classList.add("opacity-0");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => box.classList.add("hidden"), 300);
     }
 
     function showFirebaseError(message) {
@@ -640,16 +705,96 @@
       document.getElementById("firebaseError").classList.add("hidden");
     }
 
+    /* ================= مدير النوافذ (Esc + خلفية + قفل تمرير) ================= */
+
+    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal"];
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.add("hidden");
+      el.classList.remove("flex");
+    }
+
+    function isModalOpen(id) {
+      const el = document.getElementById(id);
+      return !!el && !el.classList.contains("hidden");
+    }
+
+    function syncBodyScrollLock() {
+      document.body.classList.toggle("modal-open", MODAL_IDS.some(isModalOpen));
+    }
+
+    MODAL_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      el.addEventListener("mousedown", e => { if (e.target === el) closeModal(id); });
+
+      new MutationObserver(syncBodyScrollLock)
+        .observe(el, { attributes: true, attributeFilter: ["class"] });
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key !== "Escape") return;
+      const openId = MODAL_IDS.filter(isModalOpen).pop();
+      if (openId) closeModal(openId);
+    });
+
+    /* ================= كلمة السر: إظهار / إخفاء ================= */
+
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      btn.innerHTML = `<i class="fas fa-eye${show ? "-slash" : ""} text-xs"></i>`;
+      btn.setAttribute("aria-label", show ? "إخفاء كلمة السر" : "إظهار كلمة السر");
+    }
+
+    /* ================= هاش كلمة السر ================= */
+
+    async function hashPassword(str) {
+      // crypto.subtle متاح فقط عبر https أو localhost
+      try {
+        if (window.crypto && window.crypto.subtle) {
+          const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+          return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+      } catch (_) { /* fallthrough */ }
+      // بديل احتياطي حتى لا تتعطل تجربة المستخدم في file://
+      return "f" + simpleHash(str);
+    }
+
+    // دالة تجزئة بسيطة كبديل احتياطي — البادئة "f" تميّزها عن SHA-256
+    function simpleHash(str) {
+      let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+      for (let i = 0; i < str.length; i++) {
+        const ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+      }
+      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      return (h2 >>> 0).toString(16) + (h1 >>> 0).toString(16);
+    }
+
+    /* ================= تخزين زبون (بدون الـ hash) ================= */
+
     function persistCart() {
       localStorage.setItem("vip_cart", JSON.stringify(state.cart));
     }
 
-    async function hashPassword(str) {
-      const msgBuffer = new TextEncoder().encode(str);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    function persistCustomer() {
+      if (!state.customer) {
+        localStorage.removeItem("vip_user");
+        return;
+      }
+      const { pass, createdAt, lastSeen, ...safe } = state.customer;
+      localStorage.setItem("vip_user", JSON.stringify(safe));
     }
+
+    /* ================= إقلاع التطبيق ================= */
 
     initApp();
 
@@ -702,6 +847,8 @@
       }
     }
 
+    /* ================= أخبار اليوم ================= */
+
     function renderTodayNews() {
       const newsSection = document.getElementById("todayNewsSection");
       const newsList = document.getElementById("todayNewsList");
@@ -710,32 +857,22 @@
 
       const recentUpdates = state.products.map(p => {
         let updateTime = null;
-        let updateType = "";
-
         if (p.updatedAt) {
           updateTime = p.updatedAt.toDate ? p.updatedAt.toDate().getTime() : new Date(p.updatedAt).getTime();
         } else if (p.createdAt) {
           updateTime = p.createdAt.toDate ? p.createdAt.toDate().getTime() : new Date(p.createdAt).getTime();
         }
-
         if (!updateTime) return null;
         const diff = now - updateTime;
+        if (diff > TEN_HOURS_MS) return null;
 
-        if (diff <= TEN_HOURS_MS) {
-          const price = Number(p.price || 0);
-          const prevPrice = Number(p.previousPrice || 0);
+        const price = Number(p.price || 0);
+        const prevPrice = Number(p.previousPrice || 0);
+        let updateType = "new";
+        if (prevPrice > 0 && price > prevPrice) updateType = "price_up";
+        else if (prevPrice > 0 && price < prevPrice) updateType = "price_down";
 
-          if (prevPrice > 0 && price > prevPrice) {
-            updateType = "price_up";
-          } else if (prevPrice > 0 && price < prevPrice) {
-            updateType = "price_down";
-          } else {
-            updateType = "new";
-          }
-
-          return { ...p, diff, updateType, formattedTime: formatTimeAgo(diff) };
-        }
-        return null;
+        return { ...p, diff, updateType, formattedTime: formatTimeAgo(diff) };
       }).filter(Boolean);
 
       if (!recentUpdates.length) {
@@ -754,11 +891,9 @@
           tagHtml = `<span class="bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1 font-bold"><i class="fas fa-plus"></i> منتج جديد</span>`;
         }
 
-        const image = p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
-
         return `
           <div class="bg-gray-900 border border-yellow-500/20 rounded-xl p-2.5 min-w-[220px] max-w-[240px] shrink-0 flex gap-2.5 items-center">
-            <img src="${esc(image)}" class="w-12 h-12 rounded-lg object-cover bg-gray-950 shrink-0 border border-gray-800">
+            <img src="${esc(imgSrc(p.image))}" onerror="imgFallback(this)" class="w-12 h-12 rounded-lg object-cover bg-gray-950 shrink-0 border border-gray-800">
             <div class="overflow-hidden flex-1 space-y-1">
               <div class="flex items-center justify-between gap-1">
                 ${tagHtml}
@@ -770,6 +905,8 @@
           </div>`;
       }).join("");
     }
+
+    /* ================= عرض المنتجات ================= */
 
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
@@ -796,7 +933,13 @@
       document.getElementById("productCount").textContent = `${filtered.length} منتج`;
 
       if (!filtered.length) {
-        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400 text-xs">لا توجد منتجات مطابقة حالياً.</div>`;
+        const isSearch = state.searchQuery.trim().length > 0;
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-16 text-gray-400 text-xs flex flex-col items-center gap-3">
+            <i class="fas fa-magnifying-glass text-2xl text-gray-600"></i>
+            <span>${isSearch ? "لا توجد نتائج مطابقة لبحثك." : "لا توجد منتجات في هذا القسم حالياً."}</span>
+            ${isSearch ? `<button onclick="clearSearch()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-200 font-bold transition">إظهار كل المنتجات</button>` : ""}
+          </div>`;
         return;
       }
 
@@ -804,16 +947,14 @@
         const stock = Math.max(0, Number(p.stock || 0));
         const out = stock <= 0;
         const lowStock = stock > 0 && stock <= 3;
-        const image = p.image || "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
 
         let trendHtml = "";
         const price = Number(p.price || 0);
         const prevPrice = Number(p.previousPrice || 0);
-
         if (prevPrice > 0 && prevPrice !== price) {
           if (price < prevPrice) {
             trendHtml = `<span class="text-emerald-400 text-[10px] font-bold flex items-center gap-0.5"><i class="fas fa-arrow-down"></i> انخفض</span>`;
-          } else if (price > prevPrice) {
+          } else {
             trendHtml = `<span class="text-red-400 text-[10px] font-bold flex items-center gap-0.5"><i class="fas fa-arrow-up"></i> ارتفع</span>`;
           }
         }
@@ -828,13 +969,13 @@
           <article class="card-hover bg-gray-900/90 border border-gray-800 rounded-2xl p-3 flex flex-col justify-between overflow-hidden relative group">
             <div>
               <div class="relative overflow-hidden rounded-xl mb-2.5 bg-gray-950 aspect-square">
-                <img src="${esc(image)}" alt="${esc(p.name)}" loading="lazy"
-                     onerror="this.src='https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80'"
+                <img src="${esc(imgSrc(p.image))}" alt="${esc(p.name)}" loading="lazy"
+                     onerror="imgFallback(this)"
                      class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                 <div class="absolute top-2 right-2">
-                  ${out ? `<span class="px-2 py-0.5 bg-red-950/90 border border-red-800 text-red-300 text-[9px] font-bold rounded-md">نفد المخزون</span>` : 
-                    lowStock ? `<span class="px-2 py-0.5 bg-amber-950/90 border border-amber-700 text-amber-300 text-[9px] font-bold rounded-md">بقي ${stock} فقط</span>` :
-                    `<span class="px-2 py-0.5 bg-emerald-950/90 border border-emerald-800 text-emerald-300 text-[9px] font-bold rounded-md">متوفر</span>`}
+                  ${out ? `<span class="px-2 py-0.5 bg-red-950/90 border border-red-800 text-red-300 text-[9px] font-bold rounded-md">نفد المخزون</span>`
+                    : lowStock ? `<span class="px-2 py-0.5 bg-amber-950/90 border border-amber-700 text-amber-300 text-[9px] font-bold rounded-md">بقي ${stock} فقط</span>`
+                    : `<span class="px-2 py-0.5 bg-emerald-950/90 border border-emerald-800 text-emerald-300 text-[9px] font-bold rounded-md">متوفر</span>`}
                 </div>
               </div>
 
@@ -862,7 +1003,7 @@
 
               <div class="mt-2 pt-2 border-t border-gray-800/80">
                 <div class="flex gap-1.5">
-                  <input id="qty_input_${esc(p.id)}" type="number" min="1" max="${stock}" value="1" ${out ? "disabled" : ""}
+                  <input id="qty_input_${esc(p.id)}" type="number" min="1" max="${stock}" value="1" inputmode="numeric" ${out ? "disabled" : ""}
                     class="w-12 p-1.5 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
                   <button onclick="addToCart('${esc(p.id)}')" ${out ? "disabled" : ""}
                     class="flex-1 py-1.5 ${out ? "bg-gray-800 text-gray-400 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-400 text-black"} text-[11px] font-bold rounded-lg transition">
@@ -874,6 +1015,8 @@
           </article>`;
       }).join("");
     }
+
+    /* ================= تقييم السعر ================= */
 
     async function votePrice(id, newVote) {
       if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
@@ -904,6 +1047,8 @@
       }
     }
 
+    /* ================= تصفية وأدوات البحث ================= */
+
     function filterCategory(cat, btn) {
       state.currentCategory = cat;
       document.querySelectorAll(".cat-btn").forEach(b => {
@@ -913,10 +1058,23 @@
       renderProducts();
     }
 
+    let searchDebounce;
     function searchProducts() {
-      state.searchQuery = document.getElementById("searchInput").value;
+      const value = document.getElementById("searchInput").value;
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => {
+        state.searchQuery = value;
+        renderProducts();
+      }, 200);
+    }
+
+    function clearSearch() {
+      document.getElementById("searchInput").value = "";
+      state.searchQuery = "";
       renderProducts();
     }
+
+    /* ================= السلة ================= */
 
     function toggleCart() {
       const el = document.getElementById("cartDrawer");
@@ -945,18 +1103,28 @@
 
       persistCart();
       updateCartUI();
+      if (input) input.value = 1;  // إعادة الحقل للقيمة الافتراضية
       toast(`تمت إضافة ${qty} من ${p.name} للسلة.`, "success");
     }
 
     function syncCartWithStock() {
+      const before = state.cart.length;
+
       state.cart = state.cart
         .map(item => {
           const p = state.products.find(x => x.id === item.id);
           if (!p) return null;
           const stock = Number(p.stock || 0);
-          return stock > 0 ? { ...item, name: p.name, price: Number(p.price || 0), qty: Math.min(item.qty, stock) } : null;
+          return stock > 0
+            ? { ...item, name: p.name, price: Number(p.price || 0), qty: Math.min(item.qty, stock) }
+            : null;
         })
         .filter(Boolean);
+
+      if (state.cart.length < before) {
+        toast("تمت إزالة منتجات نفد مخزونها من سلتك تلقائياً.", "error");
+      }
+
       persistCart();
       updateCartUI();
     }
@@ -977,6 +1145,9 @@
       let total = 0;
       box.innerHTML = state.cart.map(item => {
         total += item.price * item.qty;
+        const p = state.products.find(x => x.id === item.id);
+        const max = Math.max(1, Number(p?.stock || 1));
+
         return `
           <div class="bg-gray-900 border border-gray-800 p-3 rounded-xl space-y-2">
             <div class="flex justify-between items-start gap-2">
@@ -991,7 +1162,7 @@
             <div class="flex items-center justify-between pt-2 border-t border-gray-800">
               <div class="flex items-center gap-2">
                 <span class="text-[10px] text-gray-400">الكمية:</span>
-                <input type="number" min="1" value="${item.qty}"
+                <input type="number" min="1" max="${max}" inputmode="numeric" value="${item.qty}"
                   onchange="updateCartQtyDirect('${esc(item.id)}', this.value)"
                   class="w-14 p-1 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
               </div>
@@ -1026,10 +1197,17 @@
       const item = state.cart.find(x => x.id === id);
       const p = state.products.find(x => x.id === id);
       if (!item || !p) return;
-      let qty = Math.floor(Number(value));
+
       const stock = Number(p.stock || 0);
-      if (!Number.isInteger(qty) || qty <= 0) return removeFromCart(id);
-      qty = Math.min(qty, stock);
+      let qty = Math.floor(Number(value));
+
+      if (!Number.isFinite(qty) || qty <= 0) return removeFromCart(id);
+
+      if (qty > stock) {
+        qty = stock;
+        toast(`الكمية المتاحة ${stock} قطع فقط، تم تعديل الطلب.`, "error");
+      }
+
       item.qty = qty;
       persistCart();
       updateCartUI();
@@ -1041,6 +1219,8 @@
       updateCartUI();
     }
 
+    /* ================= الحساب / تسجيل الدخول ================= */
+
     function toggleAuthModal() {
       const el = document.getElementById("authModal");
       el.classList.toggle("hidden");
@@ -1050,19 +1230,15 @@
         document.getElementById("authTitle").textContent = "حسابي الشخصي والبروفايل";
         document.getElementById("authFormContainer").classList.add("hidden");
         document.getElementById("customerProfileContainer").classList.remove("hidden");
-        
+
         document.getElementById("profilePhoneDisplay").textContent = state.customer.phone || "";
         document.getElementById("profileName").value = state.customer.name || "";
         document.getElementById("profileAddress").value = state.customer.address || "";
         document.getElementById("profileImgUrl").value = state.customer.image && !state.customer.image.startsWith("data:") ? state.customer.image : "";
         document.getElementById("profileImgBase64").value = state.customer.image || "";
-        
+
         const previewImg = document.getElementById("profileImgPreview");
-        if (state.customer.image) {
-          previewImg.src = state.customer.image;
-        } else {
-          previewImg.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
-        }
+        previewImg.src = state.customer.image || FALLBACK_AVATAR;
       } else {
         document.getElementById("authTitle").textContent = "تسجيل الدخول برقم الهاتف";
         document.getElementById("authFormContainer").classList.remove("hidden");
@@ -1085,28 +1261,29 @@
         const doc = await userRef.get();
 
         if (!doc.exists) {
-          const newUserData = { 
-            phone, 
-            pass: hashedPass, 
-            name: "", 
-            address: "", 
-            image: "", 
+          const newUserData = {
+            phone,
+            pass: hashedPass,
+            name: "",
+            address: "",
+            image: "",
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             lastSeen: firebase.firestore.FieldValue.serverTimestamp()
           };
           await userRef.set(newUserData);
-          state.customer = newUserData;
+          // لا نحفظ كائنات Firestore sentinel محلياً
+          state.customer = { phone, name: "", address: "", image: "" };
           toast("تم إنشاء حسابك الجديد برقم هاتفك بنجاح!", "success");
         } else {
           const data = doc.data();
           if (data.pass !== hashedPass) return toast("كلمة السر غير صحيحة.", "error");
-          
+
           await userRef.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
           state.customer = data;
           toast("مرحباً بك مجدداً!", "success");
         }
 
-        localStorage.setItem("vip_user", JSON.stringify(state.customer));
+        persistCustomer();
         updateUserUI();
         toggleAuthModal();
         renderMyOrders();
@@ -1129,7 +1306,6 @@
       if (!f) return;
       try {
         toast("جاري معالجة وضغط الصورة...", "normal");
-        // ضغط الصورة بقوة لتناسب قاعدة البيانات (أقصى عرض 200 بكسل وجودة 0.5)
         const b64 = await compressAndConvertImage(f, 200, 0.5);
         document.getElementById("profileImgBase64").value = b64;
         document.getElementById("profileImgPreview").src = b64;
@@ -1153,11 +1329,11 @@
       try {
         const userRef = db.collection("store_users").doc(state.customer.phone);
         await userRef.update({ name, address, image });
-        
+
         state.customer.name = name;
         state.customer.address = address;
         state.customer.image = image;
-        localStorage.setItem("vip_user", JSON.stringify(state.customer));
+        persistCustomer();
 
         toast("تم حفظ معلومات البروفايل بنجاح.", "success");
         updateUserUI();
@@ -1170,7 +1346,7 @@
 
     function logoutCustomer() {
       state.customer = null;
-      localStorage.removeItem("vip_user");
+      persistCustomer();
       updateUserUI();
       toggleAuthModal();
       toast("تم تسجيل الخروج.");
@@ -1196,6 +1372,8 @@
       }
     }
 
+    /* ================= إرسال الطلب ================= */
+
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
@@ -1212,19 +1390,28 @@
 
       if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
 
-      const verifiedItems = [];
-      for (const item of state.cart) {
-        const snap = await db.collection("products").doc(item.id).get();
-        if (!snap.exists) return toast(`المنتج ${item.name} غير متوفر.`, "error");
-        const p = snap.data();
-        const stock = Number(p.stock || 0);
-        if (item.qty > stock) return toast(`المخزون غير كافٍ للمنتج: ${item.name}.`, "error");
-        verifiedItems.push({ id: item.id, name: p.name, price: Number(p.price || 0), qty: item.qty });
+      const btn = document.getElementById("submitOrderBtn");
+      if (btn?.disabled) return;  // حماية من النقر المزدوج
+      const originalHTML = btn ? btn.innerHTML : "";
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add("opacity-60", "cursor-not-allowed");
+        btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> جاري إرسال الطلب...`;
       }
 
-      const total = verifiedItems.reduce((s, x) => s + x.price * x.qty, 0);
-
       try {
+        const verifiedItems = [];
+        for (const item of state.cart) {
+          const snap = await db.collection("products").doc(item.id).get();
+          if (!snap.exists) throw new Error(`المنتج ${item.name} غير متوفر.`);
+          const p = snap.data();
+          const stock = Number(p.stock || 0);
+          if (item.qty > stock) throw new Error(`المخزون غير كافٍ للمنتج: ${item.name}.`);
+          verifiedItems.push({ id: item.id, name: p.name, price: Number(p.price || 0), qty: item.qty });
+        }
+
+        const total = verifiedItems.reduce((s, x) => s + x.price * x.qty, 0);
+
         await db.runTransaction(async tx => {
           const refs = verifiedItems.map(i => db.collection("products").doc(i.id));
           const snaps = [];
@@ -1260,9 +1447,17 @@
         renderMyOrders();
       } catch (e) {
         console.error(e);
-        toast("تعذر إرسال الطلب، تأكد من توفر المخزون.", "error");
+        toast(e.message && e.message.length < 100 ? e.message : "تعذر إرسال الطلب، تأكد من توفر المخزون.", "error");
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove("opacity-60", "cursor-not-allowed");
+          btn.innerHTML = originalHTML;
+        }
       }
     }
+
+    /* ================= طلباتي ================= */
 
     function toggleMyOrders() {
       const el = document.getElementById("myOrdersModal");
@@ -1286,7 +1481,7 @@
 
         const list = snap.docs
           .map(d => ({ id: d.id, ...d.data() }))
-          .sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+          .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
         if (!list.length) {
           container.innerHTML = `<p class="text-gray-400 text-center py-6 text-xs">لا توجد طلبات سابقة في حسابك.</p>`;
@@ -1351,6 +1546,8 @@
       }
     }
 
+    /* ================= لوحة التحكم ================= */
+
     function triggerAdminSecret() {
       toggleAdminModal();
     }
@@ -1414,7 +1611,7 @@
       });
       ["orders", "customers", "manage", "add", "settings"].forEach(t => {
         const el = document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
-        if(el) el.classList.add("hidden");
+        if (el) el.classList.add("hidden");
       });
 
       const cap = tab.charAt(0).toUpperCase() + tab.slice(1);
@@ -1444,13 +1641,13 @@
             lastSeenText = date.toLocaleString("ar-DZ", { dateStyle: "short", timeStyle: "short" });
           }
 
-          const avatar = c.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
+          const avatar = imgSrc(c.image, FALLBACK_AVATAR);
           const customerName = c.name ? c.name : "بدون اسم";
 
           return `
             <div class="flex justify-between items-center bg-gray-950 p-3 rounded-2xl border border-gray-800 text-xs gap-2">
               <div class="flex items-center gap-3 overflow-hidden">
-                <img src="${esc(avatar)}" class="w-10 h-10 rounded-full object-cover border border-yellow-500/40 shrink-0">
+                <img src="${esc(avatar)}" onerror="imgFallback(this)" class="w-10 h-10 rounded-full object-cover border border-yellow-500/40 shrink-0">
                 <div class="truncate space-y-0.5">
                   <p class="font-bold text-gray-100 truncate">${esc(customerName)} <span class="text-amber-400 font-normal">(${esc(c.phone)})</span></p>
                   <p class="text-gray-400 text-[10px] truncate">العنوان: ${esc(c.address || "غير مدخل")}</p>
@@ -1569,14 +1766,11 @@
       }
     }
 
-    function renderAdminProducts() {
-      const container = document.getElementById("adminProductsList");
-      if (!container) return;
-
-      container.innerHTML = state.products.map(p => `
+    function adminProductRow(p) {
+      return `
         <div class="flex items-center justify-between bg-gray-950 p-2.5 rounded-xl border border-gray-800 text-xs">
           <div class="flex items-center gap-2 overflow-hidden">
-            <img src="${esc(p.image)}" class="w-10 h-10 object-cover rounded-lg bg-gray-900 border border-gray-800 shrink-0">
+            <img src="${esc(imgSrc(p.image))}" onerror="imgFallback(this)" class="w-10 h-10 object-cover rounded-lg bg-gray-900 border border-gray-800 shrink-0">
             <div class="truncate">
               <h5 class="font-bold text-gray-200 truncate">${esc(p.name)}</h5>
               <p class="text-[10px] text-amber-400 font-bold">${money(p.price)} - المتبقي: ${p.stock}</p>
@@ -1586,8 +1780,13 @@
             <button onclick="openEditModal('${esc(p.id)}')" class="px-2.5 py-1 bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500 hover:text-black rounded-lg text-[10px] font-bold transition">تعديل</button>
             <button onclick="deleteProduct('${esc(p.id)}')" class="px-2.5 py-1 bg-red-950 text-red-400 hover:bg-red-900 rounded-lg text-[10px] font-bold transition">حذف</button>
           </div>
-        </div>
-      `).join("");
+        </div>`;
+    }
+
+    function renderAdminProducts() {
+      const container = document.getElementById("adminProductsList");
+      if (!container) return;
+      container.innerHTML = state.products.map(adminProductRow).join("");
     }
 
     function filterAdminProductsList() {
@@ -1595,22 +1794,9 @@
       const filtered = state.products.filter(p => (p.name || "").toLowerCase().includes(q));
       const container = document.getElementById("adminProductsList");
       if (!container) return;
-
-      container.innerHTML = filtered.map(p => `
-        <div class="flex items-center justify-between bg-gray-950 p-2.5 rounded-xl border border-gray-800 text-xs">
-          <div class="flex items-center gap-2 overflow-hidden">
-            <img src="${esc(p.image)}" class="w-10 h-10 object-cover rounded-lg bg-gray-900 border border-gray-800 shrink-0">
-            <div class="truncate">
-              <h5 class="font-bold text-gray-200 truncate">${esc(p.name)}</h5>
-              <p class="text-[10px] text-amber-400 font-bold">${money(p.price)} - المتبقي: ${p.stock}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            <button onclick="openEditModal('${esc(p.id)}')" class="px-2.5 py-1 bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500 hover:text-black rounded-lg text-[10px] font-bold transition">تعديل</button>
-            <button onclick="deleteProduct('${esc(p.id)}')" class="px-2.5 py-1 bg-red-950 text-red-400 hover:bg-red-900 rounded-lg text-[10px] font-bold transition">حذف</button>
-          </div>
-        </div>
-      `).join("");
+      container.innerHTML = filtered.length
+        ? filtered.map(adminProductRow).join("")
+        : `<p class="text-xs text-gray-500 text-center py-4">لا توجد نتائج مطابقة.</p>`;
     }
 
     function openEditModal(id) {
@@ -1621,9 +1807,9 @@
       document.getElementById("editPPrice").value = p.price || 0;
       document.getElementById("editPStock").value = p.stock || 0;
       document.getElementById("editPCategory").value = p.category || "tobacco";
-      document.getElementById("editPImgUrl").value = p.image || "";
+      document.getElementById("editPImgUrl").value = p.image && !p.image.startsWith("data:") ? p.image : "";
       document.getElementById("editPImgBase64").value = p.image || "";
-      document.getElementById("editImgPreview").src = p.image || "";
+      document.getElementById("editImgPreview").src = imgSrc(p.image);
 
       const modal = document.getElementById("editProductModal");
       modal.classList.remove("hidden");
@@ -1631,9 +1817,7 @@
     }
 
     function closeEditModal() {
-      const modal = document.getElementById("editProductModal");
-      modal.classList.add("hidden");
-      modal.classList.remove("flex");
+      closeModal("editProductModal");
     }
 
     async function saveProductEdits() {
@@ -1647,6 +1831,10 @@
       const stock = Number(document.getElementById("editPStock").value);
       const category = document.getElementById("editPCategory").value;
       const image = document.getElementById("editPImgBase64").value.trim() || document.getElementById("editPImgUrl").value.trim();
+
+      if (!name || isNaN(newPrice) || isNaN(stock)) {
+        return toast("يرجى التحقق من صحة البيانات.", "error");
+      }
 
       const oldPrice = Number(p.price || 0);
 
@@ -1679,6 +1867,8 @@
       }
     }
 
+    /* ================= الطلبات (لوحة المدير) ================= */
+
     async function loadOrdersOnce() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const container = document.getElementById("adminOrdersList");
@@ -1691,7 +1881,7 @@
 
         const orders = snap.docs
           .map(d => ({ id: d.id, ...d.data() }))
-          .sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+          .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
         document.getElementById("statPendingOrders").textContent = orders.filter(o => o.status === "جديد").length;
 
@@ -1701,13 +1891,13 @@
         }
 
         container.innerHTML = orders.map(o => {
-          const custAvatar = o.customerImage || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
+          const custAvatar = imgSrc(o.customerImage, FALLBACK_AVATAR);
 
           return `
             <div class="bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs space-y-3">
               <div class="flex justify-between items-center border-b border-gray-800 pb-2">
                 <div class="flex items-center gap-2.5">
-                  <img src="${esc(custAvatar)}" class="w-9 h-9 rounded-full object-cover border border-yellow-500/50 bg-gray-900 shrink-0" title="صورة الزبون">
+                  <img src="${esc(custAvatar)}" onerror="imgFallback(this)" class="w-9 h-9 rounded-full object-cover border border-yellow-500/50 bg-gray-900 shrink-0" title="صورة الزبون">
                   <div>
                     <span class="font-bold text-yellow-400 block">${esc(o.customerName || "زبون بدون اسم")}</span>
                     <span class="text-[10px] text-gray-400 font-mono">${esc(o.phone)}</span>
@@ -1718,7 +1908,7 @@
                   <option value="مكتمل" ${o.status === "مكتمل" ? "selected" : ""}>مكتمل</option>
                 </select>
               </div>
-              
+
               <div class="bg-gray-900/60 p-2 rounded-xl text-[11px] text-gray-300">
                 <span class="text-gray-400 block text-[10px]">عنوان التوصيل:</span>
                 ${esc(o.address)}
@@ -1747,6 +1937,13 @@
 
     async function updateOrderStatus(id, status) {
       if (!firebaseReady) return;
+
+      // تأكيد قبل إتمام الطلب (لا يمكن التراجع)
+      if (status === "مكتمل" && !confirm("هل تريد تأكيد إتمام هذا الطلب؟ (لا يمكن التراجع)")) {
+        loadOrdersOnce();
+        return;
+      }
+
       try {
         await db.collection("orders").doc(id).update({ status });
         toast("تم تغيير حالة الطلب بنجاح.", "success");
@@ -1770,7 +1967,8 @@
       }
     }
 
-    // دالة ضغط الصور العامة المحسنة والمعالجة
+    /* ================= ضغط الصور ================= */
+
     function compressAndConvertImage(file, maxWidth = 300, quality = 0.6) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1779,7 +1977,7 @@
           const img = new Image();
           img.src = event.target.result;
           img.onload = () => {
-            const elem = document.createElement('canvas');
+            const elem = document.createElement("canvas");
             let width = img.width;
             let height = img.height;
 
@@ -1790,10 +1988,10 @@
 
             elem.width = width;
             elem.height = height;
-            const ctx = elem.getContext('2d');
+            const ctx = elem.getContext("2d");
             ctx.drawImage(img, 0, 0, width, height);
 
-            const data = elem.toDataURL('image/jpeg', quality);
+            const data = elem.toDataURL("image/jpeg", quality);
             resolve(data);
           };
           img.onerror = error => reject(error);
