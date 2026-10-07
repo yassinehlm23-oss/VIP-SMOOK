@@ -27,17 +27,14 @@
     .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 4.5rem); }
     .modal-scroll { max-height: calc(90vh - 2rem); overflow-y: auto; }
 
-    /* التحديد ممنوع على الأزرار فقط، وليس على كامل الصفحة */
     button, .cat-btn, .admin-tab {
       user-select: none;
       -webkit-user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* قفل تمرير الصفحة عند فتح أي نافذة */
     body.modal-open { overflow: hidden; }
 
-    /* شريط الأخبار المتحرك بدون فراغات */
     .marquee-track {
       animation: marquee 30s linear infinite;
       will-change: transform;
@@ -70,7 +67,7 @@
     </div>
   </div>
 
-  <!-- Legal Gate (مخفية افتراضياً لتجنب الوميض) -->
+  <!-- Legal Gate -->
   <div id="legalGate" class="fixed inset-0 z-[100] bg-black/95 hidden items-center justify-center p-4">
     <div class="w-full max-w-md bg-gray-900 border border-yellow-500/40 rounded-3xl p-6 text-center shadow-2xl relative overflow-hidden">
       <div class="w-16 h-16 mx-auto rounded-2xl bg-yellow-500/10 text-yellow-500 border border-yellow-500/30 flex items-center justify-center text-3xl mb-4">
@@ -141,21 +138,7 @@
   <!-- Main Container -->
   <main class="max-w-6xl mx-auto px-4 py-6 min-h-[80vh] safe-bottom">
 
-    <!-- Ad Unit Container -->
-    <div class="mb-6 flex justify-center items-center overflow-hidden">
-      <script>
-        atOptions = {
-          'key' : 'd3f74e10f83061056ca52dcce516a416',
-          'format' : 'iframe',
-          'height' : 50,
-          'width' : 320,
-          'params' : {}
-        };
-      </script>
-      <script src="https://bicea.org/22/d3f74e10f83061056ca52dcce516a416"></script>
-    </div>
-
-    <!-- Banners -->
+    <!-- Hero Banner -->
     <section class="mb-6 rounded-2xl bg-gradient-to-r from-amber-950/40 via-gray-900 to-amber-900/20 border border-yellow-500/20 p-4 md:p-6 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4">
       <div>
         <span class="px-2.5 py-1 bg-yellow-500/10 text-yellow-400 text-[10px] font-bold rounded-full border border-yellow-500/30">المتجر الرسمي</span>
@@ -206,9 +189,12 @@
     </section>
 
     <!-- Error Alerts -->
-    <div id="firebaseError" class="hidden mb-6 bg-red-950/40 border border-red-800/60 text-red-300 rounded-2xl p-4 text-xs flex items-center gap-3">
-      <i class="fas fa-exclamation-triangle text-base text-red-400"></i>
-      <span id="firebaseErrorText">تعذر الاتصال بقاعدة البيانات.</span>
+    <div id="firebaseError" class="hidden mb-6 bg-red-950/40 border border-red-800/60 text-red-300 rounded-2xl p-4 text-xs flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <i class="fas fa-exclamation-triangle text-base text-red-400"></i>
+        <span id="firebaseErrorText">تعذر الاتصال بقاعدة البيانات. تأكد من إعداد قواعد Firestore.</span>
+      </div>
+      <button onclick="retryConnection()" class="px-3 py-1 bg-red-900/60 hover:bg-red-800 text-xs rounded-lg text-white">إعادة المحاولة</button>
     </div>
 
     <!-- Products Grid -->
@@ -581,10 +567,13 @@
 
     let firebaseReady = false;
     let db = null;
+    let unsubscribeProducts = null;
 
     try {
       if (firebaseConfig.apiKey) {
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+        }
         db = firebase.firestore();
         firebaseReady = true;
       }
@@ -607,7 +596,7 @@
 
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    /* ================= أدوات مساعدة عامة ================= */
+    /* ================= أدوات مساعدة ================= */
 
     function esc(value) {
       return String(value ?? "")
@@ -640,7 +629,7 @@
       return `منذ ${hours} ساعة`;
     }
 
-    /* ================= بوابة السن القانونية ================= */
+    /* ================= بوابة السن ================= */
 
     function acceptLegalGate() {
       localStorage.setItem("vip_legal_gate", "accepted");
@@ -705,7 +694,7 @@
       document.getElementById("firebaseError").classList.add("hidden");
     }
 
-    /* ================= مدير النوافذ (Esc + خلفية + قفل تمرير) ================= */
+    /* ================= مدير النوافذ ================= */
 
     const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal"];
 
@@ -728,11 +717,8 @@
     MODAL_IDS.forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
-
       el.addEventListener("mousedown", e => { if (e.target === el) closeModal(id); });
-
-      new MutationObserver(syncBodyScrollLock)
-        .observe(el, { attributes: true, attributeFilter: ["class"] });
+      new MutationObserver(syncBodyScrollLock).observe(el, { attributes: true, attributeFilter: ["class"] });
     });
 
     document.addEventListener("keydown", e => {
@@ -740,8 +726,6 @@
       const openId = MODAL_IDS.filter(isModalOpen).pop();
       if (openId) closeModal(openId);
     });
-
-    /* ================= كلمة السر: إظهار / إخفاء ================= */
 
     function togglePasswordVisibility(inputId, btn) {
       const input = document.getElementById(inputId);
@@ -752,21 +736,16 @@
       btn.setAttribute("aria-label", show ? "إخفاء كلمة السر" : "إظهار كلمة السر");
     }
 
-    /* ================= هاش كلمة السر ================= */
-
     async function hashPassword(str) {
-      // crypto.subtle متاح فقط عبر https أو localhost
       try {
         if (window.crypto && window.crypto.subtle) {
           const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
           return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
         }
-      } catch (_) { /* fallthrough */ }
-      // بديل احتياطي حتى لا تتعطل تجربة المستخدم في file://
+      } catch (_) {}
       return "f" + simpleHash(str);
     }
 
-    // دالة تجزئة بسيطة كبديل احتياطي — البادئة "f" تميّزها عن SHA-256
     function simpleHash(str) {
       let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
       for (let i = 0; i < str.length; i++) {
@@ -778,8 +757,6 @@
       h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
       return (h2 >>> 0).toString(16) + (h1 >>> 0).toString(16);
     }
-
-    /* ================= تخزين زبون (بدون الـ hash) ================= */
 
     function persistCart() {
       localStorage.setItem("vip_cart", JSON.stringify(state.cart));
@@ -794,31 +771,39 @@
       localStorage.setItem("vip_user", JSON.stringify(safe));
     }
 
-    /* ================= إقلاع التطبيق ================= */
+    /* ================= بدء التشغيل والاتصال ================= */
 
     initApp();
+
+    function retryConnection() {
+      toast("جاري إعادة محاولة الاتصال...", "normal");
+      initApp();
+    }
 
     async function initApp() {
       updateUserUI();
       updateCartUI();
 
-      if (!firebaseReady) {
-        showFirebaseError("تعذر الاتصال بالسيرفر، جاري العرض أوفلاين.");
+      if (!firebaseReady || !db) {
+        showFirebaseError("تعذر تهيئة Firebase في المتصفح.");
         renderProducts();
         return;
       }
 
-      hideFirebaseError();
-      await syncAdminCredentials();
-
+      // مزامنة حالة المستخدم
       if (state.customer && state.customer.phone) {
         db.collection("store_users").doc(state.customer.phone).update({
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
         }).catch(() => {});
       }
 
-      db.collection("products").orderBy("name").onSnapshot(
+      // إلغاء أي اشتراك قديم لتجنب التكرار
+      if (unsubscribeProducts) unsubscribeProducts();
+
+      // جلب المنتجات دون اشتراط فهرس معقد لتفادي الأخطاء
+      unsubscribeProducts = db.collection("products").onSnapshot(
         snap => {
+          hideFirebaseError();
           state.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
           renderProducts();
           renderTodayNews();
@@ -827,23 +812,25 @@
           updateAdminDashboardStats();
         },
         err => {
-          console.error(err);
-          showFirebaseError("تعذر تحميل المنتجات من القاعدة.");
+          console.error("Firestore Listen Error:", err);
+          showFirebaseError("تعذر جلب المنتجات. يرجى مراجعة إعدادات Rules في لوحة تحكم Firebase.");
+          renderProducts();
         }
       );
+
+      // تحميل الإعدادات للمدير في الخلفية
+      syncAdminCredentials().catch(() => {});
     }
 
     async function syncAdminCredentials() {
-      if (!firebaseReady) return;
+      if (!firebaseReady || !db) return;
       try {
         const doc = await db.collection("settings").doc("admin").get();
         if (doc.exists) {
           state.adminCredentials = doc.data();
-        } else {
-          await db.collection("settings").doc("admin").set(state.adminCredentials);
         }
       } catch (e) {
-        console.error("Credentials fetch error", e);
+        console.warn("Could not sync admin settings from Firestore, using defaults:", e);
       }
     }
 
@@ -928,6 +915,8 @@
         filtered.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
       } else if (sortVal === "popular") {
         filtered.sort((a, b) => Number(b.likesCount || 0) - Number(a.likesCount || 0));
+      } else {
+        filtered.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "ar"));
       }
 
       document.getElementById("productCount").textContent = `${filtered.length} منتج`;
@@ -937,7 +926,7 @@
         grid.innerHTML = `
           <div class="col-span-full text-center py-16 text-gray-400 text-xs flex flex-col items-center gap-3">
             <i class="fas fa-magnifying-glass text-2xl text-gray-600"></i>
-            <span>${isSearch ? "لا توجد نتائج مطابقة لبحثك." : "لا توجد منتجات في هذا القسم حالياً."}</span>
+            <span>${isSearch ? "لا توجد نتائج مطابقة لبحثك." : "لا توجد منتجات مسجلة في المتجر حتى الآن."}</span>
             ${isSearch ? `<button onclick="clearSearch()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-200 font-bold transition">إظهار كل المنتجات</button>` : ""}
           </div>`;
         return;
@@ -1047,7 +1036,7 @@
       }
     }
 
-    /* ================= تصفية وأدوات البحث ================= */
+    /* ================= تصفية وبحث ================= */
 
     function filterCategory(cat, btn) {
       state.currentCategory = cat;
@@ -1103,13 +1092,12 @@
 
       persistCart();
       updateCartUI();
-      if (input) input.value = 1;  // إعادة الحقل للقيمة الافتراضية
+      if (input) input.value = 1;
       toast(`تمت إضافة ${qty} من ${p.name} للسلة.`, "success");
     }
 
     function syncCartWithStock() {
       const before = state.cart.length;
-
       state.cart = state.cart
         .map(item => {
           const p = state.products.find(x => x.id === item.id);
@@ -1124,7 +1112,6 @@
       if (state.cart.length < before) {
         toast("تمت إزالة منتجات نفد مخزونها من سلتك تلقائياً.", "error");
       }
-
       persistCart();
       updateCartUI();
     }
@@ -1219,7 +1206,7 @@
       updateCartUI();
     }
 
-    /* ================= الحساب / تسجيل الدخول ================= */
+    /* ================= الحساب ================= */
 
     function toggleAuthModal() {
       const el = document.getElementById("authModal");
@@ -1271,9 +1258,8 @@
             lastSeen: firebase.firestore.FieldValue.serverTimestamp()
           };
           await userRef.set(newUserData);
-          // لا نحفظ كائنات Firestore sentinel محلياً
           state.customer = { phone, name: "", address: "", image: "" };
-          toast("تم إنشاء حسابك الجديد برقم هاتفك بنجاح!", "success");
+          toast("تم إنشاء حسابك الجديد بنجاح!", "success");
         } else {
           const data = doc.data();
           if (data.pass !== hashedPass) return toast("كلمة السر غير صحيحة.", "error");
@@ -1391,7 +1377,7 @@
       if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
 
       const btn = document.getElementById("submitOrderBtn");
-      if (btn?.disabled) return;  // حماية من النقر المزدوج
+      if (btn?.disabled) return;
       const originalHTML = btn ? btn.innerHTML : "";
       if (btn) {
         btn.disabled = true;
@@ -1457,7 +1443,7 @@
       }
     }
 
-    /* ================= طلباتي ================= */
+    /* ================= سجل الطلبات ================= */
 
     function toggleMyOrders() {
       const el = document.getElementById("myOrdersModal");
@@ -1518,7 +1504,7 @@
     }
 
     async function cancelMyOrder(orderId) {
-      if (!confirm("هل أنت تأكد من إلغاء هذا الطلب؟")) return;
+      if (!confirm("هل أنت متأكد من إلغاء هذا الطلب؟")) return;
       try {
         await db.runTransaction(async tx => {
           const orderRef = db.collection("orders").doc(orderId);
@@ -1668,7 +1654,7 @@
     }
 
     async function deleteCustomerAccount(phone) {
-      if (!confirm(`هل أنت تأكد من حذف حساب الزبون صاحب الهاتف: ${phone}؟`)) return;
+      if (!confirm(`هل أنت متأكد من حذف حساب الزبون صاحب الهاتف: ${phone}؟`)) return;
       try {
         await db.collection("store_users").doc(phone).delete();
         toast("تم حذف حساب الزبون بنجاح.", "success");
@@ -1858,7 +1844,7 @@
     }
 
     async function deleteProduct(id) {
-      if (!confirm("هل أنت تأكد من رغبتك في حذف هذا المنتج نهائياً؟")) return;
+      if (!confirm("هل أنت متأكد من رغبتك في حذف هذا المنتج نهائياً؟")) return;
       try {
         await db.collection("products").doc(id).delete();
         toast("تم حذف المنتج.", "success");
@@ -1937,8 +1923,6 @@
 
     async function updateOrderStatus(id, status) {
       if (!firebaseReady) return;
-
-      // تأكيد قبل إتمام الطلب (لا يمكن التراجع)
       if (status === "مكتمل" && !confirm("هل تريد تأكيد إتمام هذا الطلب؟ (لا يمكن التراجع)")) {
         loadOrdersOnce();
         return;
