@@ -17,6 +17,7 @@
   <!-- Firebase Compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
 
   <style>
     * { box-sizing: border-box; }
@@ -54,7 +55,7 @@
 </head>
 <body class="bg-[#070a12] text-gray-100 min-h-screen pb-16 md:pb-0">
 
-  <!-- Ticker Banner (يمكن تعديل النص من لوحة التحكم) -->
+  <!-- Ticker Banner -->
   <div class="marquee-wrap bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black text-[11px] font-black py-1 overflow-hidden relative shadow-md" dir="ltr">
     <div class="marquee-track flex w-max">
       <div id="tickerTrackA" class="flex gap-8 items-center pr-8">
@@ -115,7 +116,6 @@
 
         <!-- Phone & Desktop Nav Buttons -->
         <div class="flex items-center gap-2">
-          <!-- أرقام الاتصال بالمحل للزبائن -->
           <div id="storePhonesHeader" class="hidden lg:flex items-center gap-1.5 bg-gray-900/80 border border-gray-800 px-2.5 py-1.5 rounded-xl text-xs text-yellow-400 font-semibold">
             <i class="fas fa-phone-volume text-[11px]"></i>
             <span id="storePhonesHeaderList" class="flex gap-2"></span>
@@ -148,7 +148,7 @@
   <!-- Main Container -->
   <main class="max-w-6xl mx-auto px-4 py-6 min-h-[80vh] safe-bottom">
 
-    <!-- Store Phones Bar (الهواتف للزبائن على الهواتف والأجهزة الصغيرة) -->
+    <!-- Store Phones Bar -->
     <div id="storePhonesMobileBar" class="mb-4 bg-gray-900/80 border border-yellow-500/30 rounded-2xl p-2.5 flex items-center justify-between text-xs">
       <div class="flex items-center gap-2 text-yellow-400 font-bold">
         <i class="fas fa-phone-alt"></i>
@@ -299,7 +299,6 @@
         <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
       </div>
 
-      <!-- Login / Register Form -->
       <div id="authFormContainer" class="space-y-4">
         <div>
           <label class="text-[11px] text-gray-400 font-semibold block mb-1">رقم الهاتف</label>
@@ -324,7 +323,6 @@
         </button>
       </div>
 
-      <!-- Customer Profile View -->
       <div id="customerProfileContainer" class="hidden space-y-4">
         <div class="flex flex-col items-center text-center pb-3 border-b border-gray-800">
           <div class="relative w-20 h-20 rounded-full overflow-hidden border-2 border-yellow-500 bg-gray-950 mb-2">
@@ -382,7 +380,6 @@
           <button onclick="toggleCart()" class="text-gray-400 hover:text-white text-lg"><i class="fas fa-xmark"></i></button>
         </div>
 
-        <!-- Free Shipping Target Progress Bar -->
         <div class="mb-4 bg-gray-900 p-3 rounded-xl border border-gray-800">
           <div class="flex justify-between text-[10px] mb-1">
             <span id="shippingText" class="text-gray-300">أضف منتجات للتوصيل المجاني</span>
@@ -398,10 +395,7 @@
         </div>
       </div>
 
-      <!-- Checkout Section -->
       <div class="border-t border-gray-900 pt-3 space-y-3 bg-gray-950">
-        
-        <!-- Promo Coupon Code Box -->
         <div class="flex gap-2">
           <input type="text" id="couponCodeInput" placeholder="أدخل كود الخصم" class="flex-1 p-2 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white uppercase focus:outline-none focus:border-yellow-500">
           <button onclick="applyCoupon()" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-yellow-400 font-bold text-xs rounded-xl transition">تطبيق</button>
@@ -410,13 +404,11 @@
           <i class="fas fa-check-circle"></i> <span id="couponSuccessNotice">تم تطبيق الخصم بنجاح!</span>
         </div>
 
-        <!-- Local Delivery Selection -->
         <div>
           <label class="text-[10px] text-gray-400 block mb-1">طريقة ومنطقة الاستلام:</label>
           <select id="checkoutArea" onchange="updateCartUI()" class="w-full p-2 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white"></select>
         </div>
 
-        <!-- Summary Totals -->
         <div class="space-y-1 text-xs text-gray-300 pt-2 border-t border-gray-900">
           <div class="flex justify-between">
             <span>قيمة المنتجات:</span>
@@ -525,14 +517,20 @@
         <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
       </div>
 
-      <!-- Admin Auth Form -->
+      <!-- Admin Auth Form (تم التحديث للدخول عبر Firebase Auth) -->
       <div id="adminLoginForm" class="space-y-3">
-        <input type="text" id="adminUserInput" placeholder="رقم الهاتف / اسم المستخدم للمدير"
-          class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-        <input type="password" id="adminPassInput" placeholder="كلمة المرور"
-          class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-        <button onclick="loginAdmin()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition">
-          دخول المدير
+        <div>
+          <label class="text-[11px] text-gray-400 block mb-1">البريد الإلكتروني للمدير</label>
+          <input type="email" id="adminUserInput" placeholder="admin@example.com"
+            class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
+        </div>
+        <div>
+          <label class="text-[11px] text-gray-400 block mb-1">كلمة المرور</label>
+          <input type="password" id="adminPassInput" placeholder="******"
+            class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
+        </div>
+        <button id="adminLoginSubmitBtn" onclick="loginAdmin()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition shadow-md shadow-amber-500/20">
+          دخول المدير المعتمد
         </button>
       </div>
 
@@ -568,14 +566,12 @@
           <button onclick="switchAdminTab('customers')" id="tabCustomersBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الزبائن المسجلون</button>
           <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">إدارة وتعديل المخزون</button>
           <button onclick="switchAdminTab('add')" id="tabAddBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">+ إضافة منتج</button>
-          <button onclick="switchAdminTab('settings')" id="tabSettingsBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">حساب المدير</button>
         </div>
 
-        <!-- 1. تبويب إعدادات المتجر الشاملة للمدير (كود الخصم، التوصيل، الإعلانات، أرقام الهاتف) -->
+        <!-- 1. Store Settings Tab -->
         <div id="adminTabStoreSettings" class="space-y-4 bg-gray-950/80 p-4 rounded-2xl border border-gray-800 text-xs">
           <h4 class="text-sm font-bold text-yellow-400 border-b border-gray-800 pb-2">تحكم المدير في العروض والأسعار والإعلانات</h4>
 
-          <!-- كود ونسبة الخصم -->
           <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
             <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-tag text-yellow-400"></i> إعدادات كود الخصم</h5>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -590,7 +586,6 @@
             </div>
           </div>
 
-          <!-- إعدادات التوصيل والتوصيل المجاني -->
           <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
             <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-truck text-yellow-400"></i> إعدادات التوصيل والتوصيل المجاني</h5>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -609,17 +604,14 @@
             </div>
           </div>
 
-          <!-- شريط الإعلانات المتحرك -->
           <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
             <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-bullhorn text-yellow-400"></i> نص لوحة الإعلانات المتحركة (أعلى الشاشة)</h5>
             <input type="text" id="adminTickerText" placeholder="اكتب النص الإعلاني الترويجي هنا..." class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
           </div>
 
-          <!-- أرقام هواتف المحل -->
           <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
             <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-phone text-yellow-400"></i> أرقام هاتف المحل للزبائن (مفصولة بفاصلة)</h5>
             <input type="text" id="adminStorePhones" placeholder="مثال: 0781896750, 0661234567" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white font-mono">
-            <span class="text-[10px] text-gray-400">ستظهر هذه الأرقام للزبائن في أعلى وأسفل الموقع مع إمكانية الاتصال المباشر.</span>
           </div>
 
           <button onclick="saveStoreSettings()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition shadow-md">
@@ -627,7 +619,7 @@
           </button>
         </div>
 
-        <!-- Orders Tab -->
+        <!-- 2. Orders Tab -->
         <div id="adminTabOrders" class="hidden space-y-3">
           <div class="flex justify-between items-center">
             <div class="flex items-center gap-2">
@@ -645,7 +637,7 @@
           </div>
         </div>
 
-        <!-- Customers Tab -->
+        <!-- 3. Customers Tab -->
         <div id="adminTabCustomers" class="hidden space-y-3">
           <div class="flex justify-between items-center">
             <h4 class="text-xs font-bold text-gray-300">قائمة الزبائن المسجلين:</h4>
@@ -656,14 +648,14 @@
           </div>
         </div>
 
-        <!-- Manage Stock Tab -->
+        <!-- 4. Manage Stock Tab -->
         <div id="adminTabManage" class="hidden space-y-3">
           <input id="adminStockSearch" oninput="filterAdminProductsList()" type="search" placeholder="ابحث عن منتج لتعديله..."
             class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
           <div id="adminProductsList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- Add Product Tab (فقط كاميرا ومعرض صور وبدون روابط) -->
+        <!-- 5. Add Product Tab -->
         <div id="adminTabAdd" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <div class="grid grid-cols-2 gap-2">
@@ -676,7 +668,7 @@
             <option value="sweets">حلويات ومقرمشات</option>
           </select>
           <div class="space-y-2">
-            <label class="text-[11px] text-gray-400 block">صورة المنتج (اختر من الكاميرا أو المعرض):</label>
+            <label class="text-[11px] text-gray-400 block">صورة المنتج (كاميرا أو معرض):</label>
             <div class="grid grid-cols-2 gap-2">
               <label class="flex flex-col items-center justify-center p-3 bg-gray-900 border border-gray-800 rounded-xl cursor-pointer hover:border-yellow-500/50">
                 <i class="fas fa-camera text-yellow-400 text-base mb-1"></i>
@@ -699,22 +691,6 @@
             حفظ ونشر المنتج
           </button>
         </div>
-
-        <!-- Settings Tab -->
-        <div id="adminTabSettings" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
-          <h4 class="text-xs font-bold text-yellow-400 border-b border-gray-800 pb-2">تحديث بيانات حساب المدير</h4>
-          <div>
-            <label class="text-[11px] text-gray-400 block mb-1">رقم الهاتف / اسم المستخدم الجديد</label>
-            <input type="text" id="newAdminUser" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
-          </div>
-          <div>
-            <label class="text-[11px] text-gray-400 block mb-1">كلمة المرور الجديدة</label>
-            <input type="password" id="newAdminPass" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
-          </div>
-          <button onclick="updateAdminCredentials()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition">
-            تحديث وحفظ
-          </button>
-        </div>
       </div>
     </div>
   </div>
@@ -723,6 +699,9 @@
   <script>
     const FALLBACK_IMG = "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
     const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
+
+    // UID المدير المحمي الخاص بك في Firebase Auth
+    const ADMIN_UID = "9dVIlrBv7hUmpkfDg9yH4Nnr4cI2";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC0SNi-uPVJ_voLCcu3_M898Il0gyEbmsM",
@@ -736,12 +715,14 @@
 
     let firebaseReady = false;
     let db = null;
+    let auth = null;
     let unsubscribeProducts = null;
 
     try {
       if (firebaseConfig.apiKey) {
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         db = firebase.firestore();
+        auth = firebase.auth();
         firebaseReady = true;
       }
     } catch (e) {
@@ -757,9 +738,7 @@
       currentCategory: "all",
       searchQuery: "",
       customer: JSON.parse(localStorage.getItem("vip_user") || "null"),
-      isAdminLoggedIn: sessionStorage.getItem("vip_admin_auth") === "true",
-      adminCredentials: { username: "0781896750", pass: "1234567a" },
-      // الإعدادات القابلة للتحكم من لوحة المدير
+      isAdminLoggedIn: false,
       storeSettings: {
         couponCode: "",
         couponPercent: 0,
@@ -910,7 +889,23 @@
         return;
       }
 
-      // مزامنة إعدادات المتجر العامة (كوبونات، توصيل، إعلانات، هواتف)
+      // تتبع حالة جلسة المدير عبر Firebase Authentication
+      auth.onAuthStateChanged(user => {
+        if (user && user.uid === ADMIN_UID) {
+          state.isAdminLoggedIn = true;
+          document.getElementById("adminSignedInAs").textContent = `مرحباً بالمدير (${user.email})`;
+          document.getElementById("adminLoginForm").classList.add("hidden");
+          document.getElementById("adminPanel").classList.remove("hidden");
+          populateAdminSettingsInputs();
+          loadOrdersOnce();
+          updateAdminDashboardStats();
+        } else {
+          state.isAdminLoggedIn = false;
+          document.getElementById("adminLoginForm").classList.remove("hidden");
+          document.getElementById("adminPanel").classList.add("hidden");
+        }
+      });
+
       await syncStoreSettings();
 
       if (state.customer && state.customer.phone) {
@@ -936,8 +931,6 @@
           renderProducts();
         }
       );
-
-      syncAdminCredentials().catch(() => {});
     }
 
     /* ================= مزامنة إعدادات المتجر ================= */
@@ -958,12 +951,10 @@
 
     function applyStoreSettingsToUI() {
       const cfg = state.storeSettings;
-      // 1. الشريط الإعلاني المتحرك
       const tickerText = cfg.tickerText || "🔥 أهلاً بكم في VIP SMOOK";
       document.getElementById("tickerTextA").textContent = tickerText;
       document.getElementById("tickerTextB").textContent = tickerText;
 
-      // 2. تعبئة خيارات التوصيل بالأسعار المحددة
       const cSelect = document.getElementById("checkoutArea");
       if (cSelect) {
         cSelect.innerHTML = `
@@ -973,7 +964,6 @@
         `;
       }
 
-      // 3. أرقام هواتف المحل في الواجهة
       const phones = cfg.storePhones || [];
       const makePhoneBtns = () => phones.map(p => `
         <a href="tel:${esc(p)}" class="hover:text-yellow-400 bg-gray-950 px-2 py-0.5 rounded-lg border border-gray-800 transition">
@@ -988,17 +978,7 @@
       updateCartUI();
     }
 
-    async function syncAdminCredentials() {
-      if (!firebaseReady || !db) return;
-      try {
-        const doc = await db.collection("settings").doc("admin").get();
-        if (doc.exists) state.adminCredentials = doc.data();
-      } catch (e) {
-        console.warn(e);
-      }
-    }
-
-    /* ================= حفظ إعدادات المتجر من لوحة المدير ================= */
+    /* ================= حفظ إعدادات المتجر ================= */
     async function saveStoreSettings() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const code = document.getElementById("adminCouponCode").value.trim().toUpperCase();
@@ -1027,11 +1007,10 @@
         toast("تم حفظ وتحديث إعدادات المتجر بنجاح!", "success");
       } catch (e) {
         console.error(e);
-        toast("تعذر حفظ الإعدادات في قاعدة البيانات.", "error");
+        toast("تعذر حفظ الإعدادات.", "error");
       }
     }
 
-    /* ================= كود الخصم المدار من المدير ================= */
     function applyCoupon() {
       const enteredCode = document.getElementById("couponCodeInput").value.trim().toUpperCase();
       const validCode = (state.storeSettings.couponCode || "").toUpperCase();
@@ -1051,7 +1030,7 @@
       }
     }
 
-    /* ================= قائمة المفضلة ================= */
+    /* ================= المفضلة ================= */
     function toggleWishlist(id) {
       const idx = state.wishlist.indexOf(id);
       if (idx > -1) {
@@ -1212,7 +1191,6 @@
                 <div class="flex items-center justify-between mt-1">
                   <p class="text-amber-400 font-extrabold text-xs">${money(p.price)}</p>
                   
-                  <!-- زر الإعجاب (يشترط الحساب المسجل) -->
                   <button onclick="voteLikeProduct('${esc(p.id)}')" class="flex items-center gap-1 text-[11px] ${userLiked ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-emerald-400'} transition" title="إعجاب بالمنتج (يتطلب تسجيل الدخول)">
                     <i class="fas fa-thumbs-up"></i>
                     <span>${likes}</span>
@@ -1235,7 +1213,6 @@
       }).join("");
     }
 
-    /* ================= 5. زر الإعجاب يشترط تسجيل الحساب ================= */
     async function voteLikeProduct(id) {
       if (!state.customer || !state.customer.phone) {
         toast("يرجى تسجيل الدخول بحسابك أولاً لتتمكن من وضع إعجاب!", "error");
@@ -1255,14 +1232,12 @@
           const userPhone = state.customer.phone;
 
           if (likedBy.includes(userPhone)) {
-            // إلغاء الإعجاب
             tx.update(pRef, {
               likesCount: firebase.firestore.FieldValue.increment(-1),
               likedBy: firebase.firestore.FieldValue.arrayRemove(userPhone)
             });
             toast("تم إلغاء إعجابك بالمنتج.", "normal");
           } else {
-            // إضافة الإعجاب
             tx.update(pRef, {
               likesCount: firebase.firestore.FieldValue.increment(1),
               likedBy: firebase.firestore.FieldValue.arrayUnion(userPhone)
@@ -1276,7 +1251,6 @@
       }
     }
 
-    /* ================= 2. تصفية الأقسام مع لافتة التوصيل ================= */
     function filterCategory(cat, btn) {
       state.currentCategory = cat;
       document.querySelectorAll(".cat-btn").forEach(b => {
@@ -1284,7 +1258,6 @@
       });
       if (btn) btn.className = "cat-btn px-4 py-2.5 bg-yellow-500 text-black rounded-xl font-bold text-xs whitespace-nowrap transition shadow-md shadow-yellow-500/20";
 
-      // إظهار اللافتة إذا تم اختيار قسم المشروبات أو الحلويات
       const notice = document.getElementById("categoryDeliveryNotice");
       if (cat === "drinks" || cat === "sweets") {
         notice.classList.remove("hidden");
@@ -1304,7 +1277,7 @@
       }, 200);
     }
 
-    /* ================= السلة والتوصيل المحسوب من لوحة المدير ================= */
+    /* ================= السلة والتوصيل ================= */
     function toggleCart() {
       const el = document.getElementById("cartDrawer");
       if (el.classList.contains("hidden")) {
@@ -1385,7 +1358,6 @@
           </div>`;
       }).join("");
 
-      // حساب التوصيل بالقيم التي حددها المدير
       const areaVal = document.getElementById("checkoutArea")?.value || "centre_ville";
       const cfg = state.storeSettings;
       let shippingFee = cfg.shippingFeeCentre;
@@ -1436,7 +1408,7 @@
       updateCartUI();
     }
 
-    /* ================= تسجيل الدخول والملف ================= */
+    /* ================= تسجيل الزبائن والملف ================= */
     function toggleAuthModal() {
       const el = document.getElementById("authModal");
       if (el.classList.contains("hidden")) {
@@ -1498,7 +1470,7 @@
       if (!f) return;
       try {
         toast("جاري ضغط ومعالجة الصورة...", "normal");
-        const b64 = await compressAndConvertImage(f, 250, 0.6);
+        const b64 = await compressAndConvertImage(f, 200, 0.5);
         document.getElementById("profileImgBase64").value = b64;
         document.getElementById("profileImgPreview").src = b64;
         toast("تمت جاهزية صورة الملف!", "success");
@@ -1665,8 +1637,8 @@
       }
     }
 
-    /* ================= 4. رفع وضغط الصور مباشرة ================= */
-    function compressAndConvertImage(file, maxWidth = 500, quality = 0.65) {
+    /* ================= ضغط الصور فائق الخفة ================= */
+    function compressAndConvertImage(file, maxWidth = 380, quality = 0.55) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -1700,13 +1672,13 @@
       if (!file) return;
       try {
         toast("جاري ضغط ومعالجة الصورة...", "normal");
-        const b64 = await compressAndConvertImage(file, 500, 0.7);
+        const b64 = await compressAndConvertImage(file, 380, 0.55);
         document.getElementById("pImgBase64").value = b64;
         document.getElementById("imgPreview").src = b64;
         document.getElementById("imgPreviewContainer").classList.remove("hidden");
-        toast("تمت معالجة الصورة بنجاح!", "success");
+        toast("تمت معالجة الصورة بنجاح بحجم فائق الخفة!", "success");
       } catch (err) {
-        toast("فشل رفع ومعالجة الصورة.", "error");
+        toast("فشل معالجة الصورة.", "error");
       }
     }
 
@@ -1715,7 +1687,7 @@
       if (!file) return;
       try {
         toast("جاري ضغط الصورة...", "normal");
-        const b64 = await compressAndConvertImage(file, 500, 0.7);
+        const b64 = await compressAndConvertImage(file, 380, 0.55);
         document.getElementById("editPImgBase64").value = b64;
         document.getElementById("editImgPreview").src = b64;
         toast("تم تحديث صورة المنتج!", "success");
@@ -1724,7 +1696,7 @@
       }
     }
 
-    /* ================= لوحة تحكم المدير ================= */
+    /* ================= لوحة تحكم المدير وتوثيق Firebase Auth ================= */
     function toggleAdminModal() {
       const el = document.getElementById("adminModal");
       if (el.classList.contains("hidden")) {
@@ -1755,28 +1727,39 @@
       document.getElementById("adminStorePhones").value = (cfg.storePhones || []).join(", ");
     }
 
-    function loginAdmin() {
-      const user = document.getElementById("adminUserInput").value.trim();
+    async function loginAdmin() {
+      if (!firebaseReady || !auth) return toast("خدمة الاتصال غير مفعلة.", "error");
+      const email = document.getElementById("adminUserInput").value.trim();
       const pass = document.getElementById("adminPassInput").value.trim();
-      if (user === state.adminCredentials.username && pass === state.adminCredentials.pass) {
-        state.isAdminLoggedIn = true;
-        sessionStorage.setItem("vip_admin_auth", "true");
-        document.getElementById("adminLoginForm").classList.add("hidden");
-        document.getElementById("adminPanel").classList.remove("hidden");
-        populateAdminSettingsInputs();
-        loadOrdersOnce();
-        updateAdminDashboardStats();
-        toast("مرحباً بك في لوحة الإدارة.", "success");
-      } else {
-        toast("بيانات الدخول غير صحيحة.", "error");
+      const btn = document.getElementById("adminLoginSubmitBtn");
+
+      if (!email || !pass) return toast("يرجى كتابة البريد وكلمة المرور للمدير.", "error");
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري التحقق...`;
+
+      try {
+        const cred = await auth.signInWithEmailAndPassword(email, pass);
+        if (cred.user.uid !== ADMIN_UID) {
+          await auth.signOut();
+          return toast("هذا الحساب لا يملك صلاحيات الإدارة.", "error");
+        }
+        toast("مرحباً بك في لوحة الإدارة المعتمدة!", "success");
+      } catch (error) {
+        console.error(error);
+        toast("البريد أو كلمة المرور غير صحيحة.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = "دخول المدير المعتمد";
       }
     }
 
-    function logoutAdmin() {
+    async function logoutAdmin() {
+      if (auth) await auth.signOut();
       state.isAdminLoggedIn = false;
-      sessionStorage.removeItem("vip_admin_auth");
       document.getElementById("adminLoginForm").classList.remove("hidden");
       document.getElementById("adminPanel").classList.add("hidden");
+      toast("تم تسجيل خروج المدير بنجاح.");
     }
 
     function updateAdminDashboardStats() {
@@ -1788,7 +1771,7 @@
       document.querySelectorAll(".admin-tab").forEach(b => {
         b.className = "admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap";
       });
-      ["storeSettings", "orders", "customers", "manage", "add", "settings"].forEach(t => {
+      ["storeSettings", "orders", "customers", "manage", "add"].forEach(t => {
         const el = document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
         if (el) el.classList.add("hidden");
       });
@@ -1911,7 +1894,6 @@
       `).join("");
     }
 
-    /* ================= 4. إضافة وتعديل المنتج عبر الصور الملتقطة/المحمولة ================= */
     function addProduct() {
       const name = document.getElementById("pName").value.trim();
       const price = Number(document.getElementById("pPrice").value);
@@ -1937,7 +1919,7 @@
         document.getElementById("pStock").value = "";
         document.getElementById("pImgBase64").value = "";
         document.getElementById("imgPreviewContainer").classList.add("hidden");
-      }).catch(() => toast("تعذر إضافة المنتج.", "error"));
+      }).catch(() => toast("تعذر إضافة المنتج. تأكد من تسجيل دخولك كمدير.", "error"));
     }
 
     function openEditModal(id) {
@@ -1971,25 +1953,12 @@
       db.collection("products").doc(id).update(updates).then(() => {
         toast("تم حفظ التعديلات!", "success");
         closeEditModal();
-      }).catch(() => toast("فشل حفظ التعديلات.", "error"));
+      }).catch(() => toast("فشل حفظ التعديلات. تأكد من صلاحية الإدارة.", "error"));
     }
 
     function deleteProduct(id) {
       if (!confirm("هل أنت متأكد من حذف هذا المنتج نهائياً؟")) return;
-      db.collection("products").doc(id).delete().then(() => toast("تم حذف المنتج.", "success"));
-    }
-
-    async function updateAdminCredentials() {
-      const user = document.getElementById("newAdminUser").value.trim();
-      const pass = document.getElementById("newAdminPass").value.trim();
-      if (!user || !pass) return toast("يرجى ملء كافة الخانات.", "error");
-      try {
-        await db.collection("settings").doc("admin").set({ username: user, pass });
-        state.adminCredentials = { username: user, pass };
-        toast("تم تحديث بيانات المدير بنجاح!", "success");
-      } catch (e) {
-        toast("تعذر تحديث البيانات.", "error");
-      }
+      db.collection("products").doc(id).delete().then(() => toast("تم حذف المنتج.", "success")).catch(() => toast("فشل الحذف، يتطلب صلاحية المدير.", "error"));
     }
   </script>
 </body>
