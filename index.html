@@ -709,6 +709,10 @@
     // UID المدير المسجل في Firebase Auth
     const ADMIN_UID = "Mb1v98Csl6bVd9fnzUSTdMTGaCT2";
 
+    // إعدادات إشعارات بوت التيليجرام
+    const TELEGRAM_BOT_TOKEN = "8306019686:AAEVN6Stiinu6cefq3OP_e9JwquGswckfVo";
+    const TELEGRAM_CHAT_ID = "6481958888";
+
     const firebaseConfig = {
       apiKey: "AIzaSyC8Sh1-ufVJ_voLCcu3_W89011oQYEGn60",
       authDomain: "vip-smook.firebaseapp.com",
@@ -1528,6 +1532,33 @@
       }
     }
 
+    /* ================= دالة إرسال إشعار تيليجرام ================= */
+    async function sendTelegramNotification(orderData) {
+      try {
+        let itemsList = orderData.items.map(i => `• ${i.name} (×${i.qty}) - ${money(i.price * i.qty)}`).join("\n");
+        
+        let text = `🔥 *طلب جديد في VIP SMOOK!*\n\n` +
+                   `👤 *الزبون:* ${orderData.customerName}\n` +
+                   `📞 *الهاتف:* \`${orderData.customerPhone}\`\n` +
+                   `📍 *العنوان:* ${orderData.address}\n\n` +
+                   `📦 *المنتجات المطلوبة:*\n${itemsList}\n\n` +
+                   `🚚 *التوصيل:* ${orderData.shippingFee === 0 ? 'مجاني' : money(orderData.shippingFee)}\n` +
+                   `💰 *المبلغ الإجمالي:* *${money(orderData.total)}*`;
+
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: text,
+            parse_mode: "Markdown"
+          })
+        });
+      } catch (e) {
+        console.error("فشل إرسال إشعار تيليجرام:", e);
+      }
+    }
+
     /* ================= تأكيد الطلب ================= */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
@@ -1568,6 +1599,19 @@
         const discount = subtotal * state.appliedDiscount;
         const total = Math.max(0, subtotal - discount) + shippingFee;
 
+        const newOrderData = {
+          customerPhone: state.customer.phone,
+          customerName: state.customer.name,
+          customerImage: state.customer.image || "",
+          address: `${areaText} - ${state.customer.address}`,
+          items: [...state.cart],
+          coupon: state.appliedCoupon,
+          shippingFee,
+          total,
+          status: "جديد",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
         await db.runTransaction(async tx => {
           for (const item of state.cart) {
             const pRef = db.collection("products").doc(item.id);
@@ -1579,19 +1623,11 @@
           }
 
           const orderRef = db.collection("orders").doc();
-          tx.set(orderRef, {
-            customerPhone: state.customer.phone,
-            customerName: state.customer.name,
-            customerImage: state.customer.image || "",
-            address: `${areaText} - ${state.customer.address}`,
-            items: state.cart,
-            coupon: state.appliedCoupon,
-            shippingFee,
-            total,
-            status: "جديد",
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
+          tx.set(orderRef, newOrderData);
         });
+
+        // إرسال الإشعار فوراً إلى التيليجرام
+        sendTelegramNotification(newOrderData);
 
         state.cart = [];
         persistCart();
