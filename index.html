@@ -48,20 +48,6 @@
     @media (prefers-reduced-motion: reduce) {
       .marquee-track { animation: none; }
     }
-
-    /* Skeleton Shimmer Loading */
-    .skeleton-card {
-      background: linear-gradient(90deg, #111827 25%, #1f2937 50%, #111827 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    /* Wheel Transition */
-    #wheelCanvas { transition: transform 4s cubic-bezier(0.15, 0.9, 0.2, 1); }
   </style>
 </head>
 <body class="bg-[#070a12] text-gray-100 min-h-screen pb-16 md:pb-0">
@@ -75,17 +61,6 @@
       <div id="tickerTrackB" class="flex gap-8 items-center pr-8" aria-hidden="true">
         <span id="tickerTextB">🔥 أهلاً بكم في VIP SMOOK - التوصيل سريع ومباشر لوسط المدينة والمناطق القريبة!</span>
       </div>
-    </div>
-  </div>
-
-  <!-- ETA Delivery Countdown Banner -->
-  <div id="etaBanner" class="bg-gray-900/90 border-b border-yellow-500/20 py-2 px-4 text-center text-xs">
-    <div class="max-w-6xl mx-auto flex items-center justify-center gap-2 text-gray-300">
-      <span class="inline-flex relative flex h-2 w-2">
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-      </span>
-      <span>اطلب خلال <strong id="etaTimer" class="text-yellow-400 font-mono font-bold">00:45:00</strong> واستلم طلبيتك اليوم في أسرع جولة توصيل!</span>
     </div>
   </div>
 
@@ -112,7 +87,7 @@
 
   <!-- Toast Notification -->
   <div id="toast" onclick="hideToast()"
-       class="fixed top-5 left-4 right-4 md:left-auto md:right-5 z-[150] hidden opacity-0 transition-opacity duration-300 cursor-pointer">
+       class="fixed top-5 left-4 right-4 md:left-auto md:right-5 z-[120] hidden opacity-0 transition-opacity duration-300 cursor-pointer">
     <div id="toastInner" class="glass border rounded-2xl px-5 py-3.5 shadow-2xl text-xs font-medium flex items-center gap-2"></div>
   </div>
 
@@ -138,11 +113,6 @@
 
         <!-- Phone & Desktop Nav Buttons -->
         <div class="flex items-center gap-2">
-          <!-- Spin Wheel Trigger Button -->
-          <button id="spinTriggerBtn" onclick="openModal('wheelModal')" class="hidden sm:flex px-3 py-2 bg-gradient-to-r from-amber-500 to-yellow-400 text-black font-extrabold text-xs rounded-xl shadow-md hover:brightness-110 items-center gap-1.5 transition">
-            <i class="fas fa-dharmachakra"></i> عجلة الحظ
-          </button>
-
           <div id="storePhonesHeader" class="hidden lg:flex items-center gap-1.5 bg-gray-900/80 border border-gray-800 px-2.5 py-1.5 rounded-xl text-xs text-yellow-400 font-semibold">
             <i class="fas fa-phone-volume text-[11px]"></i>
             <span id="storePhonesHeaderList" class="flex gap-2"></span>
@@ -173,14 +143,7 @@
   </header>
 
   <!-- Main Container -->
-  <main class="max-w-6xl mx-auto px-4 py-4 min-h-[80vh] safe-bottom">
-
-    <!-- Stories Bar -->
-    <section id="storiesContainer" class="mb-5 overflow-x-auto no-scrollbar py-2">
-      <div id="storiesList" class="flex gap-4 items-center">
-        <!-- Rendered dynamically -->
-      </div>
-    </section>
+  <main class="max-w-6xl mx-auto px-4 py-6 min-h-[80vh] safe-bottom">
 
     <!-- Store Phones Bar -->
     <div id="storePhonesMobileBar" class="mb-4 bg-gray-900/80 border border-yellow-500/30 rounded-2xl p-2.5 flex items-center justify-between text-xs">
@@ -191,33 +154,13 @@
       <div id="storePhonesMobileList" class="flex flex-wrap gap-2 text-white font-mono text-[11px]"></div>
     </div>
 
-    <!-- Trust Badges Bar -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-5 text-center text-xs">
-      <div class="bg-gray-900/60 border border-gray-800 p-2.5 rounded-2xl flex items-center justify-center gap-2">
-        <i class="fas fa-eye text-yellow-400 text-sm"></i>
-        <span class="text-gray-300 font-medium">عاين قبل الدفع</span>
-      </div>
-      <div class="bg-gray-900/60 border border-gray-800 p-2.5 rounded-2xl flex items-center justify-center gap-2">
-        <i class="fas fa-motorcycle text-yellow-400 text-sm"></i>
-        <span class="text-gray-300 font-medium">توصيل سريع كاش</span>
-      </div>
-      <div class="bg-gray-900/60 border border-gray-800 p-2.5 rounded-2xl flex items-center justify-center gap-2">
-        <i class="fas fa-shield-alt text-yellow-400 text-sm"></i>
-        <span class="text-gray-300 font-medium">منتجات أصلية 100%</span>
-      </div>
-      <div class="bg-gray-900/60 border border-gray-800 p-2.5 rounded-2xl flex items-center justify-center gap-2">
-        <i class="fas fa-phone-volume text-yellow-400 text-sm"></i>
-        <span class="text-gray-300 font-medium">متابعة هاتفية فورية</span>
-      </div>
-    </div>
-
     <!-- Hero Banner -->
     <section class="mb-6 rounded-3xl bg-gradient-to-r from-amber-950/50 via-gray-900 to-amber-900/30 border border-yellow-500/30 p-6 md:p-8 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
       <div class="space-y-2 text-center md:text-right">
         <span class="px-3 py-1 bg-yellow-500/10 text-yellow-400 text-xs font-bold rounded-full border border-yellow-500/30 inline-flex items-center gap-1">
           <i class="fas fa-location-dot text-[10px]"></i> توصيل مباشر لوسط المدينة والمناطق المجاورة
         </span>
-        <h1 class="text-xl md:text-3xl font-black text-white leading-tight">عروض وأسعار محدّثة لحظة بلحظة</h1>
+        <h1 class="text-xl md:text-3xl font-black text-white leading-tight">عروض وأأسعار محدّثة لحظة بلحظة</h1>
         <p class="text-xs md:text-sm text-gray-300">اختر منتجاتك وسنصلك في أسرع وقت مع خيار المعاينة والدفع كاش عند الاستلام.</p>
       </div>
       <div class="flex flex-col sm:flex-row items-center gap-3 shrink-0">
@@ -262,12 +205,12 @@
       </div>
     </section>
 
-    <!-- Products Grid with Shimmer Skeleton -->
+    <!-- Products Grid -->
     <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 md:gap-5">
-      <div class="skeleton-card h-64 rounded-2xl"></div>
-      <div class="skeleton-card h-64 rounded-2xl"></div>
-      <div class="skeleton-card h-64 rounded-2xl"></div>
-      <div class="skeleton-card h-64 rounded-2xl"></div>
+      <div class="col-span-full text-center py-20 text-gray-400 text-xs flex flex-col items-center gap-3">
+        <i class="fas fa-circle-notch fa-spin text-2xl text-yellow-500"></i>
+        <span>جاري جلب المنتجات والمخزون...</span>
+      </div>
     </div>
   </main>
 
@@ -276,10 +219,6 @@
     <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center gap-1 text-yellow-400">
       <i class="fas fa-store text-base"></i>
       <span>الرئيسية</span>
-    </button>
-    <button onclick="openModal('wheelModal')" class="flex flex-col items-center gap-1 text-amber-400">
-      <i class="fas fa-dharmachakra text-base"></i>
-      <span>عجلة الحظ</span>
     </button>
     <button onclick="toggleWishlistModal()" class="flex flex-col items-center gap-1 relative">
       <i class="fas fa-heart text-base text-red-400"></i>
@@ -299,46 +238,6 @@
       <i class="fas fa-user-circle text-base"></i>
       <span id="mobileAuthLabel">حسابي</span>
     </button>
-  </div>
-
-  <!-- Spin The Wheel Modal -->
-  <div id="wheelModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-4">
-    <div class="bg-gray-900 border border-yellow-500/40 p-6 rounded-3xl w-full max-w-sm text-center relative shadow-2xl">
-      <button onclick="closeModal('wheelModal')" class="absolute top-4 left-4 text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
-      <h3 class="text-base font-black text-yellow-400 mb-1">عجلة الحظ الترحيبية 🎁</h3>
-      <p class="text-xs text-gray-300 mb-4">دوّر العجلة واربح خصماً فورياً على طلبيتك اليوم!</p>
-      
-      <div class="relative w-64 h-64 mx-auto mb-4 flex items-center justify-center">
-        <!-- Pointer -->
-        <div class="absolute -top-2 left-1/2 -translate-x-1/2 z-20 text-yellow-400 text-2xl drop-shadow-md">
-          <i class="fas fa-caret-down"></i>
-        </div>
-        <canvas id="wheelCanvas" width="250" height="250" class="rounded-full shadow-xl border-4 border-yellow-500/40"></canvas>
-      </div>
-
-      <button id="spinBtn" onclick="spinWheel()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-black rounded-xl text-xs transition shadow-md active:scale-95">
-        تدوير العجلة الآن
-      </button>
-      <div id="spinResult" class="hidden mt-3 text-xs font-bold text-emerald-400"></div>
-    </div>
-  </div>
-
-  <!-- Story Viewer Modal -->
-  <div id="storyModal" class="fixed inset-0 bg-black/95 z-[95] hidden items-center justify-center p-4">
-    <div class="w-full max-w-sm h-[80vh] bg-gray-900 rounded-3xl overflow-hidden relative flex flex-col justify-between p-4 border border-yellow-500/30">
-      <div class="flex justify-between items-center z-10">
-        <span id="storyTitle" class="text-xs font-black text-white"></span>
-        <button onclick="closeModal('storyModal')" class="text-white text-lg"><i class="fas fa-xmark"></i></button>
-      </div>
-      <img id="storyImg" src="" class="absolute inset-0 w-full h-full object-cover">
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60"></div>
-      <div class="z-10 text-center space-y-3 pb-2">
-        <p id="storyDesc" class="text-xs text-gray-200 font-medium"></p>
-        <button onclick="closeModal('storyModal'); filterCategory('all', document.querySelector('.cat-btn'));" class="w-full py-3 bg-amber-500 text-black font-extrabold text-xs rounded-xl shadow-lg">
-          استكشف المنتجات الآن
-        </button>
-      </div>
-    </div>
   </div>
 
   <!-- Quick View Modal -->
@@ -464,16 +363,8 @@
           </div>
         </div>
 
-        <div id="cartItems" class="space-y-3 max-h-[30vh] overflow-y-auto pl-1 no-scrollbar">
+        <div id="cartItems" class="space-y-3 max-h-[35vh] overflow-y-auto pl-1 no-scrollbar">
           <p class="text-gray-400 text-center py-10 text-xs">السلة فارغة حالياً</p>
-        </div>
-
-        <!-- Smart Upsell / Cross-Sell -->
-        <div id="upsellBox" class="mt-4 pt-3 border-t border-gray-900">
-          <h4 class="text-[11px] font-bold text-gray-300 mb-2 flex items-center gap-1.5">
-            <i class="fas fa-fire-flame-curved text-amber-400"></i> اقتراحات زبائننا مع هذه السلة:
-          </h4>
-          <div id="upsellList" class="flex gap-2 overflow-x-auto no-scrollbar py-1"></div>
         </div>
       </div>
 
@@ -644,28 +535,9 @@
           <button onclick="switchAdminTab('add')" id="tabAddBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">+ إضافة منتج</button>
         </div>
 
-        <!-- 1. Store Settings Tab (Enhanced with Feature Toggles) -->
+        <!-- 1. Store Settings Tab -->
         <div id="adminTabStoreSettings" class="space-y-4 bg-gray-950/80 p-4 rounded-2xl border border-gray-800 text-xs">
-          <h4 class="text-sm font-bold text-yellow-400 border-b border-gray-800 pb-2">تحكم المدير في العروض والأسعار والإعلانات والميزات الحديثة</h4>
-
-          <!-- Features Toggles Box -->
-          <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-toggle-on text-yellow-400"></i> تفعيل وتعطيل الميزات العصرية</h5>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-              <label class="flex items-center gap-2 bg-gray-950 p-2.5 rounded-xl border border-gray-800 cursor-pointer">
-                <input type="checkbox" id="adminToggleWheel" class="accent-amber-500">
-                <span class="text-gray-200">تفعيل عجلة الحظ</span>
-              </label>
-              <label class="flex items-center gap-2 bg-gray-950 p-2.5 rounded-xl border border-gray-800 cursor-pointer">
-                <input type="checkbox" id="adminToggleEta" class="accent-amber-500">
-                <span class="text-gray-200">تفعيل عداد التوصيل السريع</span>
-              </label>
-              <label class="flex items-center gap-2 bg-gray-950 p-2.5 rounded-xl border border-gray-800 cursor-pointer">
-                <input type="checkbox" id="adminToggleStories" class="accent-amber-500">
-                <span class="text-gray-200">تفعيل شريط القصص (Stories)</span>
-              </label>
-            </div>
-          </div>
+          <h4 class="text-sm font-bold text-yellow-400 border-b border-gray-800 pb-2">تحكم المدير في العروض والأسعار والإعلانات</h4>
 
           <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
             <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-tag text-yellow-400"></i> إعدادات كود الخصم</h5>
@@ -779,7 +651,7 @@
 
   <footer class="border-t border-gray-900 bg-black/60 py-8 text-center text-xs text-gray-400">
     <div class="max-w-6xl mx-auto px-4 space-y-2">
-      <p class="font-bold text-yellow-500/80">VIP SMOOK © <span id="year"></span> | التوصيل السريع والدفع كاش عند المعاينة</p>
+      <p class="font-bold text-yellow-500/80">VIP SMOOK © <span id="year"></span></p>
       <div id="storePhonesFooterList" class="flex flex-wrap justify-center gap-2 text-white font-mono text-[11px]"></div>
     </div>
   </footer>
@@ -833,10 +705,7 @@
         shippingFeeCentre: 200,
         shippingFeeNearby: 350,
         tickerText: "🔥 أهلاً بكم في VIP SMOOK - التوصيل سريع ومباشر لوسط المدينة والمناطق القريبة!",
-        storePhones: ["0781896750"],
-        enableWheel: true,
-        enableEta: true,
-        enableStories: true
+        storePhones: ["0781896750"]
       },
       appliedDiscount: 0,
       appliedCoupon: null
@@ -850,10 +719,6 @@
 
     function money(n) {
       return `${Number(n || 0).toLocaleString("fr-DZ")} د.ج`;
-    }
-
-    function haptic() {
-      if (navigator.vibrate) navigator.vibrate(35);
     }
 
     function imgSrc(v, fallback = FALLBACK_IMG) {
@@ -911,7 +776,7 @@
       setTimeout(() => box.classList.add("hidden"), 300);
     }
 
-    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal", "wheelModal", "storyModal"];
+    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal"];
 
     function openModal(id) {
       const el = document.getElementById(id);
@@ -968,16 +833,12 @@
       localStorage.setItem("vip_user", JSON.stringify(safe));
     }
 
-    /* Start App */
     initApp();
 
     async function initApp() {
       updateUserUI();
       updateCartUI();
       updateWishlistUI();
-      renderStories();
-      initWheel();
-      startEtaTimer();
 
       if (!firebaseReady || !db) return;
 
@@ -1011,7 +872,6 @@
         snap => {
           state.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
           renderProducts();
-          renderUpsells();
           renderAdminProducts();
           syncCartWithStock();
           updateAdminDashboardStats();
@@ -1020,45 +880,6 @@
       );
     }
 
-    /* ETA Countdown */
-    function startEtaTimer() {
-      let seconds = 45 * 60;
-      setInterval(() => {
-        seconds = seconds <= 0 ? 45 * 60 : seconds - 1;
-        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
-        const s = String(seconds % 60).padStart(2, '0');
-        const el = document.getElementById("etaTimer");
-        if (el) el.textContent = `00:${m}:${s}`;
-      }, 1000);
-    }
-
-    /* Instagram-Style Stories */
-    function renderStories() {
-      const stories = [
-        { id: 1, title: "🔥 جديدنا", img: "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=400&q=80", desc: "وصلت تشكيلة نكهات ومنتجات فاخرة الآن بالمحل بأفضل الأسعار!" },
-        { id: 2, title: "⚡ تخفيضات", img: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=400&q=80", desc: "عروض مميزة للمشروبات والحلويات متوفرة للتوصيل اليوم!" },
-        { id: 3, title: "👑 الأكثر طلباً", img: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=400&q=80", desc: "المنتجات الأكثر طلباً في وسط المدينة والمناطق المجاورة." }
-      ];
-      const listEl = document.getElementById("storiesList");
-      if (!listEl) return;
-      listEl.innerHTML = stories.map(s => `
-        <div onclick="openStory('${esc(s.title)}', '${esc(s.img)}', '${esc(s.desc)}')" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0">
-          <div class="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-yellow-500 via-amber-300 to-amber-600 shadow-md transition hover:scale-105">
-            <img src="${esc(s.img)}" class="w-full h-full rounded-full object-cover border-2 border-black">
-          </div>
-          <span class="text-[10px] font-bold text-gray-300">${esc(s.title)}</span>
-        </div>
-      `).join("");
-    }
-
-    function openStory(title, img, desc) {
-      document.getElementById("storyTitle").textContent = title;
-      document.getElementById("storyImg").src = img;
-      document.getElementById("storyDesc").textContent = desc;
-      openModal("storyModal");
-    }
-
-    /* Sync and Apply Settings */
     async function syncStoreSettings() {
       if (!firebaseReady || !db) return;
       try {
@@ -1077,16 +898,6 @@
       const tickerText = cfg.tickerText || "🔥 أهلاً بكم في VIP SMOOK";
       document.getElementById("tickerTextA").textContent = tickerText;
       document.getElementById("tickerTextB").textContent = tickerText;
-
-      // Visibility controls configured by admin
-      const etaBanner = document.getElementById("etaBanner");
-      if (etaBanner) etaBanner.style.display = cfg.enableEta !== false ? "block" : "none";
-
-      const storiesBox = document.getElementById("storiesContainer");
-      if (storiesBox) storiesBox.style.display = cfg.enableStories !== false ? "block" : "none";
-
-      const wheelBtn = document.getElementById("spinTriggerBtn");
-      if (wheelBtn) wheelBtn.style.display = cfg.enableWheel !== false ? "flex" : "none";
 
       const cSelect = document.getElementById("checkoutArea");
       if (cSelect) {
@@ -1111,20 +922,6 @@
       updateCartUI();
     }
 
-    function populateAdminSettingsInputs() {
-      const cfg = state.storeSettings;
-      document.getElementById("adminCouponCode").value = cfg.couponCode || "";
-      document.getElementById("adminCouponPercent").value = cfg.couponPercent || 0;
-      document.getElementById("adminFreeShippingTarget").value = cfg.freeShippingTarget || 3000;
-      document.getElementById("adminShippingCentre").value = cfg.shippingFeeCentre || 200;
-      document.getElementById("adminShippingNearby").value = cfg.shippingFeeNearby || 350;
-      document.getElementById("adminTickerText").value = cfg.tickerText || "";
-      document.getElementById("adminStorePhones").value = (cfg.storePhones || []).join(", ");
-      document.getElementById("adminToggleWheel").checked = cfg.enableWheel !== false;
-      document.getElementById("adminToggleEta").checked = cfg.enableEta !== false;
-      document.getElementById("adminToggleStories").checked = cfg.enableStories !== false;
-    }
-
     async function saveStoreSettings() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const code = document.getElementById("adminCouponCode").value.trim().toUpperCase();
@@ -1135,9 +932,6 @@
       const ticker = document.getElementById("adminTickerText").value.trim();
       const phonesStr = document.getElementById("adminStorePhones").value;
       const phones = phonesStr.split(",").map(p => p.trim()).filter(Boolean);
-      const enableWheel = document.getElementById("adminToggleWheel").checked;
-      const enableEta = document.getElementById("adminToggleEta").checked;
-      const enableStories = document.getElementById("adminToggleStories").checked;
 
       const newConfig = {
         couponCode: code,
@@ -1146,17 +940,14 @@
         shippingFeeCentre: feeCentre,
         shippingFeeNearby: feeNearby,
         tickerText: ticker || state.storeSettings.tickerText,
-        storePhones: phones.length ? phones : ["0781896750"],
-        enableWheel,
-        enableEta,
-        enableStories
+        storePhones: phones.length ? phones : ["0781896750"]
       };
 
       try {
-        await db.collection("settings").doc("store_config").set(newConfig, { merge: true });
+        await db.collection("settings").doc("store_config").set(newConfig);
         state.storeSettings = newConfig;
         applyStoreSettingsToUI();
-        toast("تم حفظ وتطبيق إعدادات المتجر بنجاح!", "success");
+        toast("تم حفظ وتحديث إعدادات المتجر بنجاح!", "success");
       } catch (e) {
         toast("تعذر حفظ الإعدادات.", "error");
       }
@@ -1181,9 +972,7 @@
       }
     }
 
-    /* Wishlist Operations */
     function toggleWishlist(id) {
-      haptic();
       const idx = state.wishlist.indexOf(id);
       if (idx > -1) {
         state.wishlist.splice(idx, 1);
@@ -1276,7 +1065,6 @@
       openModal("quickViewModal");
     }
 
-    /* Products Rendering with Low Stock Pulse */
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
       let filtered = [...state.products];
@@ -1312,7 +1100,6 @@
       grid.innerHTML = filtered.map(p => {
         const stock = Math.max(0, Number(p.stock || 0));
         const out = stock <= 0;
-        const isLow = stock > 0 && stock <= 3;
         const isWish = state.wishlist.includes(p.id);
         const likes = Number(p.likesCount || 0);
         const userPhone = state.customer?.phone;
@@ -1328,7 +1115,6 @@
                 
                 <div class="absolute top-2 right-2">
                   ${out ? `<span class="px-2 py-0.5 bg-red-950/90 border border-red-800 text-red-300 text-[9px] font-bold rounded-md">نفد المخزون</span>`
-                        : isLow ? `<span class="animate-pulse px-2 py-0.5 bg-amber-950/90 border border-amber-800 text-amber-300 text-[9px] font-bold rounded-md">بقي ${stock} فقط!</span>`
                         : `<span class="px-2 py-0.5 bg-emerald-950/90 border border-emerald-800 text-emerald-300 text-[9px] font-bold rounded-md">متوفر</span>`}
                 </div>
 
@@ -1356,29 +1142,13 @@
                 <input id="qty_${esc(p.id)}" type="number" min="1" max="${stock}" value="1" ${out ? "disabled" : ""}
                   class="w-12 p-1.5 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
                 <button onclick="addToCart('${esc(p.id)}')" ${out ? "disabled" : ""}
-                  class="flex-1 py-1.5 ${out ? "bg-gray-800 text-gray-400 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-400 text-black"} text-[11px] font-bold rounded-lg transition active:scale-95 shadow-md">
+                  class="flex-1 py-1.5 ${out ? "bg-gray-800 text-gray-400 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-400 text-black"} text-[11px] font-bold rounded-lg transition">
                   ${out ? "غير متوفر" : "إضافة +"}
                 </button>
               </div>
             </div>
           </article>`;
       }).join("");
-    }
-
-    /* Upsell List in Cart */
-    function renderUpsells() {
-      const box = document.getElementById("upsellList");
-      if (!box || !state.products.length) return;
-      const candidates = state.products.slice(0, 5);
-      box.innerHTML = candidates.map(p => `
-        <div onclick="addToCart('${esc(p.id)}')" class="bg-gray-900 border border-gray-800 hover:border-yellow-500/40 p-2 rounded-xl flex items-center gap-2 cursor-pointer shrink-0 text-xs">
-          <img src="${esc(imgSrc(p.image))}" onerror="imgFallback(this)" class="w-8 h-8 rounded-lg object-cover">
-          <div>
-            <div class="font-bold text-gray-200 text-[10px] line-clamp-1">${esc(p.name)}</div>
-            <div class="text-amber-400 text-[10px] font-bold">+ ${money(p.price)}</div>
-          </div>
-        </div>
-      `).join("");
     }
 
     async function voteLikeProduct(id) {
@@ -1444,7 +1214,6 @@
     }
 
     function addToCart(id) {
-      haptic();
       const p = state.products.find(x => x.id === id);
       if (!p) return;
       const stock = Number(p.stock || 0);
@@ -1562,52 +1331,6 @@
       state.cart = state.cart.filter(x => x.id !== id);
       persistCart();
       updateCartUI();
-    }
-
-    /* Wheel Gamification */
-    const prizes = ["خصم 10%", "توصيل مجاني", "هدية خاصة", "خصم 5%", "حظ أوفر"];
-    function initWheel() {
-      const canvas = document.getElementById("wheelCanvas");
-      if (!canvas) return;
-      const ctx = canvas.getContext("2d");
-      const arc = (2 * Math.PI) / prizes.length;
-      const colors = ["#d97706", "#1f2937", "#f59e0b", "#111827", "#ca8a04"];
-
-      prizes.forEach((p, i) => {
-        const angle = i * arc;
-        ctx.beginPath();
-        ctx.fillStyle = colors[i % colors.length];
-        ctx.moveTo(125, 125);
-        ctx.arc(125, 125, 120, angle, angle + arc);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.save();
-        ctx.translate(125, 125);
-        ctx.rotate(angle + arc / 2);
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 11px sans-serif";
-        ctx.fillText(p, 45, 5);
-        ctx.restore();
-      });
-    }
-
-    let hasSpun = false;
-    function spinWheel() {
-      if (hasSpun) return toast("لقد قمت بتدوير العجلة مسبقاً لهذه الجلسة!");
-      hasSpun = true;
-      haptic();
-      const canvas = document.getElementById("wheelCanvas");
-      const deg = 1800 + Math.floor(Math.random() * 360);
-      canvas.style.transform = `rotate(${deg}deg)`;
-
-      setTimeout(() => {
-        state.appliedDiscount = 0.10;
-        updateCartUI();
-        document.getElementById("spinResult").classList.remove("hidden");
-        document.getElementById("spinResult").textContent = "🎉 مبروك! حصلت على خصم 10% تم تفعيله في سلتك!";
-        toast("تم تفعيل هديتك في السلة!", "success");
-      }, 4000);
     }
 
     function toggleAuthModal() {
@@ -1743,7 +1466,7 @@
       }
     }
 
-    /* Submit Order */
+    /* ================= دالة تأكيد الطلب المحدثة ================= */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
@@ -1796,7 +1519,7 @@
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        // Transaction to secure inventory & reduce stock
+        // التحقق من المخزون والتحديث عبر Transaction لجميع المنتجات
         await db.runTransaction(async tx => {
           const reads = [];
           for (const item of state.cart) {
@@ -1816,6 +1539,7 @@
             }
           });
 
+          // خصم الكميات من المخزون بعد التأكد
           docs.forEach((pDoc, index) => {
             const item = state.cart[index];
             const currentStock = Number(pDoc.data().stock || 0);
@@ -1947,6 +1671,17 @@
       } else {
         closeModal("adminModal");
       }
+    }
+
+    function populateAdminSettingsInputs() {
+      const cfg = state.storeSettings;
+      document.getElementById("adminCouponCode").value = cfg.couponCode || "";
+      document.getElementById("adminCouponPercent").value = cfg.couponPercent || 0;
+      document.getElementById("adminFreeShippingTarget").value = cfg.freeShippingTarget || 3000;
+      document.getElementById("adminShippingCentre").value = cfg.shippingFeeCentre || 200;
+      document.getElementById("adminShippingNearby").value = cfg.shippingFeeNearby || 350;
+      document.getElementById("adminTickerText").value = cfg.tickerText || "";
+      document.getElementById("adminStorePhones").value = (cfg.storePhones || []).join(", ");
     }
 
     async function loginAdmin() {
