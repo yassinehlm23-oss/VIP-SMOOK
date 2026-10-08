@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#070a12">
   <meta name="description" content="VIP SMOOK - المتجر الفاخر للتسوق والتوصيل السريع لوسط المدينة والمناطق القريبة. عروض حصرية ودفع عند الاستلام.">
-  <meta property="og:title" content="VIP SMOOK | المتجر الرسمي الفاخر">
-  <meta property="og:description" content="تسوق أفضل المنتجات بأفضل الأسعار مع توصيل سريع ومباشر لوسط المدينة والمناطق المجاورة.">
-  <meta property="og:type" content="website">
   <title>VIP SMOOK | المتجر الرسمي الفاخر</title>
 
   <!-- Tailwind CSS & FontAwesome Icons -->
@@ -202,21 +199,12 @@
         <button onclick="filterCategory('sweets', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">حلويات ومقرمشات</button>
       </div>
 
-      <!-- لافتة تنبيه لجهة المشروبات والحلويات -->
+      <!-- لافتة تنبيه -->
       <div id="categoryDeliveryNotice" class="hidden mt-3 bg-amber-500/10 border border-amber-500/40 text-amber-300 rounded-2xl p-3 text-xs flex items-center gap-2">
         <i class="fas fa-circle-info text-amber-400 text-base"></i>
-        <span><strong>تنبيه هام:</strong> توصيل هذه المواد ليس متوفراً حالياً (متوفرة فقط للاستلام من المحل).</span>
+        <span><strong>تنبيه هام:</strong> توصيل هذه المواد متوفر حالياً للاستلام المباشر أو التوصيل المحلي.</span>
       </div>
     </section>
-
-    <!-- Error Alerts -->
-    <div id="firebaseError" class="hidden mb-6 bg-red-950/40 border border-red-800/60 text-red-300 rounded-2xl p-4 text-xs flex items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <i class="fas fa-exclamation-triangle text-base text-red-400"></i>
-        <span id="firebaseErrorText">تعذر الاتصال بقاعدة البيانات. تأكد من إعداد قواعد Firestore.</span>
-      </div>
-      <button onclick="initApp()" class="px-3 py-1 bg-red-900/60 hover:bg-red-800 text-xs rounded-lg text-white">إعادة المحاولة</button>
-    </div>
 
     <!-- Products Grid -->
     <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 md:gap-5">
@@ -252,18 +240,6 @@
       <span id="mobileAuthLabel">حسابي</span>
     </button>
   </div>
-
-  <!-- Footer -->
-  <footer class="border-t border-gray-900 bg-black/60 py-10 text-center text-xs text-gray-400">
-    <div class="max-w-6xl mx-auto px-4 space-y-4">
-      <div id="storePhonesFooter" class="flex flex-wrap justify-center items-center gap-3 text-xs text-yellow-400">
-        <span><i class="fas fa-phone-alt ml-1"></i> أرقام خدمة المتجر:</span>
-        <div id="storePhonesFooterList" class="flex flex-wrap gap-2 text-white font-mono"></div>
-      </div>
-      <p class="font-bold text-yellow-500/80">VIP SMOOK © <span id="year"></span></p>
-      <p class="text-[11px] text-gray-500">متجر إلكتروني رسمي. جميع الحقوق محفوظة.</p>
-    </div>
-  </footer>
 
   <!-- Quick View Product Modal -->
   <div id="quickViewModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
@@ -311,8 +287,7 @@
           <div class="relative">
             <input id="custPass" type="password" autocomplete="current-password" placeholder="******"
               class="w-full p-3 pl-10 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
-            <button type="button" onclick="togglePasswordVisibility('custPass', this)" aria-label="إظهار كلمة السر"
-              class="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-yellow-400 transition">
+            <button type="button" onclick="togglePasswordVisibility('custPass', this)" class="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-yellow-400 transition">
               <i class="fas fa-eye text-xs"></i>
             </button>
           </div>
@@ -346,12 +321,12 @@
         </div>
 
         <div>
-          <label class="text-[11px] text-gray-400 block mb-1">العنوان بالتفصيل (الحي / الشارع / رقم العمارة)</label>
+          <label class="text-[11px] text-gray-400 block mb-1">العنوان بالتفصيل</label>
           <input type="text" id="profileAddress" placeholder="مثال: حي النصر، قرب المسجد" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
         </div>
 
         <div>
-          <label class="text-[11px] text-gray-400 block mb-1">صورة البروفايل (من الكاميرا أو المعرض)</label>
+          <label class="text-[11px] text-gray-400 block mb-1">صورة الحساب</label>
           <input type="file" accept="image/*" onchange="handleProfileImgUpload(event)" class="w-full text-[10px] text-gray-400 bg-gray-950 p-2 rounded-xl border border-gray-800">
           <input type="hidden" id="profileImgBase64">
         </div>
@@ -365,7 +340,6 @@
           </button>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -465,11 +439,11 @@
       <div class="grid grid-cols-2 gap-2">
         <div>
           <label class="text-[11px] text-gray-400 block mb-1">السعر (د.ج)</label>
-          <input type="number" min="0" inputmode="decimal" id="editPPrice" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+          <input type="number" min="0" id="editPPrice" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
         </div>
         <div>
           <label class="text-[11px] text-gray-400 block mb-1">المخزون</label>
-          <input type="number" min="0" inputmode="numeric" id="editPStock" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+          <input type="number" min="0" id="editPStock" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
         </div>
       </div>
       <div>
@@ -481,24 +455,13 @@
         </select>
       </div>
       <div class="space-y-2">
-        <label class="text-[11px] text-gray-400 block">صورة المنتج (كاميرا أو معرض الصور):</label>
-        <div class="grid grid-cols-2 gap-2">
-          <label class="flex flex-col items-center justify-center p-3 bg-gray-950 border border-gray-800 rounded-xl cursor-pointer hover:border-yellow-500/50">
-            <i class="fas fa-camera text-yellow-400 text-base mb-1"></i>
-            <span class="text-[10px]">التقط صورة</span>
-            <input type="file" accept="image/*" capture="environment" onchange="handleEditImageUpload(event)" class="hidden">
-          </label>
-          <label class="flex flex-col items-center justify-center p-3 bg-gray-950 border border-gray-800 rounded-xl cursor-pointer hover:border-yellow-500/50">
-            <i class="fas fa-images text-yellow-400 text-base mb-1"></i>
-            <span class="text-[10px]">من المعرض</span>
-            <input type="file" accept="image/*" onchange="handleEditImageUpload(event)" class="hidden">
-          </label>
-        </div>
+        <label class="text-[11px] text-gray-400 block">صورة المنتج:</label>
+        <input type="file" accept="image/*" onchange="handleEditImageUpload(event)" class="w-full text-[10px] text-gray-400 bg-gray-950 p-2 rounded-xl border border-gray-800">
         <input type="hidden" id="editPImgBase64">
       </div>
       <div class="flex items-center gap-3">
         <img id="editImgPreview" onerror="imgFallback(this)" class="w-20 h-20 object-cover rounded-xl border border-yellow-500/40 bg-gray-950">
-        <span class="text-[11px] text-gray-400">معاينة الصورة الحالية</span>
+        <span class="text-[11px] text-gray-400">معاينة الصورة</span>
       </div>
       <button onclick="saveProductEdits()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs shadow-md">
         حفظ التعديلات
@@ -517,7 +480,7 @@
         <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
       </div>
 
-      <!-- Admin Auth Form مع زر إظهار كلمة المرور -->
+      <!-- Admin Auth Form -->
       <div id="adminLoginForm" class="space-y-3">
         <div>
           <label class="text-[11px] text-gray-400 block mb-1">البريد الإلكتروني للمدير</label>
@@ -529,8 +492,7 @@
           <div class="relative">
             <input id="adminPassInput" type="password" placeholder="******"
               class="w-full p-3 pl-10 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
-            <button type="button" onclick="togglePasswordVisibility('adminPassInput', this)" aria-label="إظهار كلمة السر"
-              class="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-yellow-400 transition">
+            <button type="button" onclick="togglePasswordVisibility('adminPassInput', this)" class="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-yellow-400 transition">
               <i class="fas fa-eye text-xs"></i>
             </button>
           </div>
@@ -586,17 +548,17 @@
                 <input type="text" id="adminCouponCode" placeholder="مثال: SALE20" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white uppercase">
               </div>
               <div>
-                <label class="text-[10px] text-gray-400 block mb-1">نسبة الخصم بالمئة (%):</label>
+                <label class="text-[10px] text-gray-400 block mb-1">نسبة الخصم (%):</label>
                 <input type="number" min="1" max="100" id="adminCouponPercent" placeholder="10" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
               </div>
             </div>
           </div>
 
           <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-truck text-yellow-400"></i> إعدادات التوصيل والتوصيل المجاني</h5>
+            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-truck text-yellow-400"></i> إعدادات التوصيل</h5>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
               <div>
-                <label class="text-[10px] text-gray-400 block mb-1">حد الشراء للتوصيل المجاني (د.ج):</label>
+                <label class="text-[10px] text-gray-400 block mb-1">حد التوصيل المجاني (د.ج):</label>
                 <input type="number" min="0" id="adminFreeShippingTarget" placeholder="3000" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
               </div>
               <div>
@@ -611,17 +573,17 @@
           </div>
 
           <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-bullhorn text-yellow-400"></i> نص لوحة الإعلانات المتحركة (أعلى الشاشة)</h5>
-            <input type="text" id="adminTickerText" placeholder="اكتب النص الإعلاني الترويجي هنا..." class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-bullhorn text-yellow-400"></i> نص الشريط الإعلاني</h5>
+            <input type="text" id="adminTickerText" placeholder="اكتب النص الإعلاني..." class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
           </div>
 
           <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-phone text-yellow-400"></i> أرقام هاتف المحل للزبائن (مفصولة بفاصلة)</h5>
-            <input type="text" id="adminStorePhones" placeholder="مثال: 0781896750, 0661234567" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white font-mono">
+            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-phone text-yellow-400"></i> أرقام هاتف المحل (مفصولة بفاصلة)</h5>
+            <input type="text" id="adminStorePhones" placeholder="0781896750, 0661234567" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white font-mono">
           </div>
 
           <button onclick="saveStoreSettings()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition shadow-md">
-            حفظ وتطبيق إعدادات المتجر فوراً
+            حفظ وتطبيق إعدادات المتجر
           </button>
         </div>
 
@@ -649,9 +611,7 @@
             <h4 class="text-xs font-bold text-gray-300">قائمة الزبائن المسجلين:</h4>
             <button onclick="loadAdminCustomers()" class="text-xs text-yellow-400 flex items-center gap-1"><i class="fas fa-rotate"></i> تحديث</button>
           </div>
-          <div id="adminCustomersList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
-            <p class="text-xs text-gray-400 text-center py-6">جاري جلب قائمة الزبائن...</p>
-          </div>
+          <div id="adminCustomersList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
         <!-- 4. Manage Stock Tab -->
@@ -665,8 +625,8 @@
         <div id="adminTabAdd" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <div class="grid grid-cols-2 gap-2">
-            <input type="number" min="0" inputmode="decimal" id="pPrice" placeholder="السعر (د.ج)" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
-            <input type="number" min="0" inputmode="numeric" id="pStock" placeholder="الكمية المتوفرة" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
+            <input type="number" min="0" id="pPrice" placeholder="السعر (د.ج)" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
+            <input type="number" min="0" id="pStock" placeholder="الكمية المتوفرة" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           </div>
           <select id="pCategory" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-gray-300">
             <option value="tobacco">سجائر وتبغ</option>
@@ -674,24 +634,13 @@
             <option value="sweets">حلويات ومقرمشات</option>
           </select>
           <div class="space-y-2">
-            <label class="text-[11px] text-gray-400 block">صورة المنتج (كاميرا أو معرض):</label>
-            <div class="grid grid-cols-2 gap-2">
-              <label class="flex flex-col items-center justify-center p-3 bg-gray-900 border border-gray-800 rounded-xl cursor-pointer hover:border-yellow-500/50">
-                <i class="fas fa-camera text-yellow-400 text-base mb-1"></i>
-                <span class="text-xs">التقاط صورة مباشرة</span>
-                <input type="file" accept="image/*" capture="environment" onchange="handleAddImageUpload(event)" class="hidden">
-              </label>
-              <label class="flex flex-col items-center justify-center p-3 bg-gray-900 border border-gray-800 rounded-xl cursor-pointer hover:border-yellow-500/50">
-                <i class="fas fa-images text-yellow-400 text-base mb-1"></i>
-                <span class="text-xs">تحميل من المعرض</span>
-                <input type="file" accept="image/*" onchange="handleAddImageUpload(event)" class="hidden">
-              </label>
-            </div>
+            <label class="text-[11px] text-gray-400 block">صورة المنتج:</label>
+            <input type="file" accept="image/*" onchange="handleAddImageUpload(event)" class="w-full text-xs text-gray-400 bg-gray-900 p-2 rounded-xl border border-gray-800">
             <input type="hidden" id="pImgBase64">
           </div>
           <div id="imgPreviewContainer" class="hidden flex items-center gap-3 bg-gray-900 p-2 rounded-xl">
             <img id="imgPreview" onerror="imgFallback(this)" class="w-16 h-16 object-cover rounded-xl border border-yellow-500/40">
-            <span class="text-xs text-emerald-400">تم تجهيز وضغط الصورة بنجاح!</span>
+            <span class="text-xs text-emerald-400">تم تجهيز الصورة بنجاح!</span>
           </div>
           <button onclick="addProduct()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs transition">
             حفظ ونشر المنتج
@@ -701,15 +650,18 @@
     </div>
   </div>
 
-  <!-- Application Script -->
+  <footer class="border-t border-gray-900 bg-black/60 py-8 text-center text-xs text-gray-400">
+    <div class="max-w-6xl mx-auto px-4 space-y-2">
+      <p class="font-bold text-yellow-500/80">VIP SMOOK © <span id="year"></span></p>
+      <div id="storePhonesFooterList" class="flex flex-wrap justify-center gap-2 text-white font-mono text-[11px]"></div>
+    </div>
+  </footer>
+
   <script>
     const FALLBACK_IMG = "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
     const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
 
-    // UID المدير المسجل في Firebase Auth
     const ADMIN_UID = "Mb1v98Csl6bVd9fnzUSTdMTGaCT2";
-
-    // إعدادات إشعارات بوت التيليجرام
     const TELEGRAM_BOT_TOKEN = "8306019686:AAEVN6Stiinu6cefq3OP_e9JwquGswckfVo";
     const TELEGRAM_CHAT_ID = "6481958888";
 
@@ -729,12 +681,10 @@
     let unsubscribeProducts = null;
 
     try {
-      if (firebaseConfig.apiKey) {
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
-        auth = firebase.auth();
-        firebaseReady = true;
-      }
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+      auth = firebase.auth();
+      firebaseReady = true;
     } catch (e) {
       console.error("Firebase init failed:", e);
     }
@@ -764,7 +714,6 @@
 
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    /* ================= أدوات مساعدة ================= */
     function esc(value) {
       return String(value ?? "").replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' })[m]);
     }
@@ -783,7 +732,6 @@
       el.src = FALLBACK_IMG;
     }
 
-    /* ================= بوابة السن القانونية ================= */
     function acceptLegalGate() {
       localStorage.setItem("vip_legal_gate", "accepted");
       closeModal("legalGate");
@@ -799,7 +747,6 @@
       gate.classList.add("flex");
     }
 
-    /* ================= التنبيهات ================= */
     function toast(message, type = "normal") {
       const box = document.getElementById("toast");
       const inner = document.getElementById("toastInner");
@@ -830,7 +777,6 @@
       setTimeout(() => box.classList.add("hidden"), 300);
     }
 
-    /* ================= مدير النوافذ ================= */
     const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal"];
 
     function openModal(id) {
@@ -865,7 +811,10 @@
       if (!input) return;
       const show = input.type === "password";
       input.type = show ? "text" : "password";
-      btn.innerHTML = `<i class="fas fa-eye${show ? "-slash" : ""} text-xs"></i>`;
+      const icon = btn.querySelector("i");
+      if (icon) {
+        icon.className = `fas fa-eye${show ? "-slash" : ""} text-xs`;
+      }
     }
 
     async function hashPassword(str) {
@@ -885,7 +834,6 @@
       localStorage.setItem("vip_user", JSON.stringify(safe));
     }
 
-    /* ================= بدء التشغيل والاتصال ================= */
     initApp();
 
     async function initApp() {
@@ -893,13 +841,8 @@
       updateCartUI();
       updateWishlistUI();
 
-      if (!firebaseReady || !db) {
-        document.getElementById("firebaseError").classList.remove("hidden");
-        renderProducts();
-        return;
-      }
+      if (!firebaseReady || !db) return;
 
-      // تتبع جلسة المدير الحالية
       auth.onAuthStateChanged(user => {
         if (user && user.uid === ADMIN_UID) {
           state.isAdminLoggedIn = true;
@@ -919,42 +862,34 @@
       await syncStoreSettings();
 
       if (state.customer && state.customer.phone) {
-        db.collection("store_users").doc(state.customer.phone).update({
+        db.collection("store_users").doc(state.customer.phone).set({
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-        }).catch(() => {});
+        }, { merge: true }).catch(() => {});
       }
 
       if (unsubscribeProducts) unsubscribeProducts();
 
       unsubscribeProducts = db.collection("products").onSnapshot(
         snap => {
-          document.getElementById("firebaseError").classList.add("hidden");
           state.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
           renderProducts();
           renderAdminProducts();
           syncCartWithStock();
           updateAdminDashboardStats();
         },
-        err => {
-          console.error(err);
-          document.getElementById("firebaseError").classList.remove("hidden");
-          renderProducts();
-        }
+        err => console.error("Firestore Error:", err)
       );
     }
 
-    /* ================= مزامنة إعدادات المتجر ================= */
     async function syncStoreSettings() {
       if (!firebaseReady || !db) return;
       try {
         const doc = await db.collection("settings").doc("store_config").get();
         if (doc.exists) {
           state.storeSettings = { ...state.storeSettings, ...doc.data() };
-        } else {
-          await db.collection("settings").doc("store_config").set(state.storeSettings);
         }
       } catch (e) {
-        console.warn("Using default store settings:", e);
+        console.warn("Using default settings:", e);
       }
       applyStoreSettingsToUI();
     }
@@ -977,7 +912,7 @@
       const phones = cfg.storePhones || [];
       const makePhoneBtns = () => phones.map(p => `
         <a href="tel:${esc(p)}" class="hover:text-yellow-400 bg-gray-950 px-2 py-0.5 rounded-lg border border-gray-800 transition">
-          <i class="fas fa-phone-flip text-[10px] ml-1"></i>${esc(p)}
+          <i class="fas fa-phone text-[10px] ml-1"></i>${esc(p)}
         </a>
       `).join("");
 
@@ -988,7 +923,6 @@
       updateCartUI();
     }
 
-    /* ================= حفظ إعدادات المتجر ================= */
     async function saveStoreSettings() {
       if (!firebaseReady || !state.isAdminLoggedIn) return;
       const code = document.getElementById("adminCouponCode").value.trim().toUpperCase();
@@ -1016,7 +950,6 @@
         applyStoreSettingsToUI();
         toast("تم حفظ وتحديث إعدادات المتجر بنجاح!", "success");
       } catch (e) {
-        console.error(e);
         toast("تعذر حفظ الإعدادات.", "error");
       }
     }
@@ -1040,7 +973,6 @@
       }
     }
 
-    /* ================= المفضلة ================= */
     function toggleWishlist(id) {
       const idx = state.wishlist.indexOf(id);
       if (idx > -1) {
@@ -1100,7 +1032,6 @@
       `).join("");
     }
 
-    /* ================= المعاينة السريعة ================= */
     function openQuickView(id) {
       const p = state.products.find(x => x.id === id);
       if (!p) return;
@@ -1135,7 +1066,6 @@
       openModal("quickViewModal");
     }
 
-    /* ================= عرض المنتجات ================= */
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
       let filtered = [...state.products];
@@ -1172,7 +1102,6 @@
         const stock = Math.max(0, Number(p.stock || 0));
         const out = stock <= 0;
         const isWish = state.wishlist.includes(p.id);
-
         const likes = Number(p.likesCount || 0);
         const userPhone = state.customer?.phone;
         const userLiked = userPhone && Array.isArray(p.likedBy) && p.likedBy.includes(userPhone);
@@ -1201,7 +1130,7 @@
                 <div class="flex items-center justify-between mt-1">
                   <p class="text-amber-400 font-extrabold text-xs">${money(p.price)}</p>
                   
-                  <button onclick="voteLikeProduct('${esc(p.id)}')" class="flex items-center gap-1 text-[11px] ${userLiked ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-emerald-400'} transition" title="إعجاب بالمنتج (يتطلب تسجيل الدخول)">
+                  <button onclick="voteLikeProduct('${esc(p.id)}')" class="flex items-center gap-1 text-[11px] ${userLiked ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-emerald-400'} transition">
                     <i class="fas fa-thumbs-up"></i>
                     <span>${likes}</span>
                   </button>
@@ -1211,7 +1140,7 @@
 
             <div class="mt-3 pt-2 border-t border-gray-800/80">
               <div class="flex gap-1.5">
-                <input id="qty_${esc(p.id)}" type="number" min="1" max="${stock}" value="1" inputmode="numeric" ${out ? "disabled" : ""}
+                <input id="qty_${esc(p.id)}" type="number" min="1" max="${stock}" value="1" ${out ? "disabled" : ""}
                   class="w-12 p-1.5 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
                 <button onclick="addToCart('${esc(p.id)}')" ${out ? "disabled" : ""}
                   class="flex-1 py-1.5 ${out ? "bg-gray-800 text-gray-400 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-400 text-black"} text-[11px] font-bold rounded-lg transition">
@@ -1225,12 +1154,11 @@
 
     async function voteLikeProduct(id) {
       if (!state.customer || !state.customer.phone) {
-        toast("يرجى تسجيل الدخول بحسابك أولاً لتتمكن من وضع إعجاب!", "error");
+        toast("يرجى تسجيل الدخول بحسابك أولاً لتتمكن من التفاعل!", "error");
         toggleAuthModal();
         return;
       }
-
-      if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
+      if (!firebaseReady) return toast("الخدمة غير متصلة.", "error");
 
       const pRef = db.collection("products").doc(id);
       try {
@@ -1246,18 +1174,15 @@
               likesCount: firebase.firestore.FieldValue.increment(-1),
               likedBy: firebase.firestore.FieldValue.arrayRemove(userPhone)
             });
-            toast("تم إلغاء إعجابك بالمنتج.", "normal");
           } else {
             tx.update(pRef, {
               likesCount: firebase.firestore.FieldValue.increment(1),
               likedBy: firebase.firestore.FieldValue.arrayUnion(userPhone)
             });
-            toast("شكراً لإعجابك بالمنتج!", "success");
           }
         });
       } catch (e) {
         console.error(e);
-        toast("تعذر تسجيل الإعجاب.", "error");
       }
     }
 
@@ -1267,14 +1192,6 @@
         b.className = "cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition";
       });
       if (btn) btn.className = "cat-btn px-4 py-2.5 bg-yellow-500 text-black rounded-xl font-bold text-xs whitespace-nowrap transition shadow-md shadow-yellow-500/20";
-
-      const notice = document.getElementById("categoryDeliveryNotice");
-      if (cat === "drinks" || cat === "sweets") {
-        notice.classList.remove("hidden");
-      } else {
-        notice.classList.add("hidden");
-      }
-
       renderProducts();
     }
 
@@ -1287,7 +1204,6 @@
       }, 200);
     }
 
-    /* ================= السلة والتوصيل ================= */
     function toggleCart() {
       const el = document.getElementById("cartDrawer");
       if (el.classList.contains("hidden")) {
@@ -1305,12 +1221,12 @@
       const input = document.getElementById(`qty_${id}`);
       const qty = Math.max(1, Math.floor(Number(input?.value || 1)));
 
-      if (stock <= 0) return toast("المنتج غير متوفر.", "error");
-      if (qty > stock) return toast(`المتوفر ${stock} قطع فقط.`, "error");
+      if (stock <= 0) return toast("المنتج غير متوفر حالياً.", "error");
+      if (qty > stock) return toast(`الكمية المتوفرة ${stock} فقط.`, "error");
 
       const existing = state.cart.find(x => x.id === id);
       if (existing) {
-        if (existing.qty + qty > stock) return toast(`تجاوزت المخزون المتاح.`, "error");
+        if (existing.qty + qty > stock) return toast("تجاوزت المخزون المتاح.", "error");
         existing.qty += qty;
       } else {
         state.cart.push({ id, name: p.name, price: Number(p.price || 0), qty });
@@ -1418,7 +1334,6 @@
       updateCartUI();
     }
 
-    /* ================= تسجيل الزبائن والملف ================= */
     function toggleAuthModal() {
       const el = document.getElementById("authModal");
       if (el.classList.contains("hidden")) {
@@ -1479,13 +1394,12 @@
       const f = e.target.files[0];
       if (!f) return;
       try {
-        toast("جاري ضغط ومعالجة الصورة...", "normal");
         const b64 = await compressAndConvertImage(f, 200, 0.5);
         document.getElementById("profileImgBase64").value = b64;
         document.getElementById("profileImgPreview").src = b64;
         toast("تمت جاهزية صورة الملف!", "success");
       } catch (err) {
-        toast("فشل رفع الصورة.", "error");
+        toast("فشل معالجة الصورة.", "error");
       }
     }
 
@@ -1496,9 +1410,9 @@
       const address = document.getElementById("profileAddress").value.trim();
       const image = document.getElementById("profileImgBase64").value;
 
-      if (!name || !address) return toast("يرجى إكمال الاسم والعنوان بالتفصيل.", "error");
+      if (!name || !address) return toast("يرجى إكمال الاسم والعنوان.", "error");
 
-      db.collection("store_users").doc(state.customer.phone).update({ name, area, address, image }).then(() => {
+      db.collection("store_users").doc(state.customer.phone).set({ name, area, address, image }, { merge: true }).then(() => {
         state.customer = { ...state.customer, name, area, address, image };
         persistCustomer();
         toast("تم حفظ الملف الشخصي بنجاح.", "success");
@@ -1523,20 +1437,18 @@
 
       if (state.customer) {
         label.textContent = state.customer.name || state.customer.phone;
-        ordersBtn.classList.remove("hidden");
-        mOrdersBtn.classList.remove("hidden");
+        ordersBtn?.classList.remove("hidden");
+        mOrdersBtn?.classList.remove("hidden");
       } else {
         label.textContent = "دخول";
-        ordersBtn.classList.add("hidden");
-        mOrdersBtn.classList.add("hidden");
+        ordersBtn?.classList.add("hidden");
+        mOrdersBtn?.classList.add("hidden");
       }
     }
 
-    /* ================= دالة إرسال إشعار تيليجرام ================= */
     async function sendTelegramNotification(orderData) {
       try {
         let itemsList = orderData.items.map(i => `• ${i.name} (×${i.qty}) - ${money(i.price * i.qty)}`).join("\n");
-        
         let text = `🔥 *طلب جديد في VIP SMOOK!*\n\n` +
                    `👤 *الزبون:* ${orderData.customerName}\n` +
                    `📞 *الهاتف:* \`${orderData.customerPhone}\`\n` +
@@ -1548,18 +1460,13 @@
         await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: text,
-            parse_mode: "Markdown"
-          })
+          body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: "Markdown" })
         });
       } catch (e) {
-        console.error("فشل إرسال إشعار تيليجرام:", e);
+        console.warn("إشعار تيليجرام لم يرسل:", e);
       }
     }
 
-    /* ================= تأكيد الطلب ================= */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
@@ -1581,14 +1488,14 @@
         const areaVal = document.getElementById("checkoutArea").value;
         const cfg = state.storeSettings;
         let shippingFee = cfg.shippingFeeCentre;
-        let areaText = "وسط المدينة (Centre-ville)";
+        let areaText = "وسط المدينة";
 
         if (areaVal === "nearby") {
           shippingFee = cfg.shippingFeeNearby;
-          areaText = "البلديات القريبة المجاورة";
+          areaText = "البلديات المجاورة";
         } else if (areaVal === "pickup") {
           shippingFee = 0;
-          areaText = "استلام ذاتي من المحل";
+          areaText = "استلام من المحل";
         }
 
         const subtotal = state.cart.reduce((s, x) => s + x.price * x.qty, 0);
@@ -1621,19 +1528,17 @@
             if (stock < item.qty) throw new Error("المخزون نفد");
             tx.update(pRef, { stock: stock - item.qty });
           }
-
           const orderRef = db.collection("orders").doc();
           tx.set(orderRef, newOrderData);
         });
 
-        // إرسال الإشعار فوراً إلى التيليجرام
         sendTelegramNotification(newOrderData);
 
         state.cart = [];
         persistCart();
         updateCartUI();
         closeModal("cartDrawer");
-        toast("تم تأكيد طلبك بنجاح! سنتصل بك مباشرة للتسليم.", "success");
+        toast("تم تأكيد طلبك بنجاح! سنتصل بك مباشرة.", "success");
       } catch (err) {
         toast("تعذر إتمام الطلب، تحقق من توفر المخزون.", "error");
       } finally {
@@ -1642,7 +1547,6 @@
       }
     }
 
-    /* ================= سجل الطلبات ================= */
     function toggleMyOrders() {
       const el = document.getElementById("myOrdersModal");
       if (el.classList.contains("hidden")) {
@@ -1679,7 +1583,6 @@
       }
     }
 
-    /* ================= ضغط الصور فائق الخفة ================= */
     function compressAndConvertImage(file, maxWidth = 380, quality = 0.55) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1691,12 +1594,10 @@
             const canvas = document.createElement("canvas");
             let width = img.width;
             let height = img.height;
-
             if (width > maxWidth) {
               height = Math.round((height * maxWidth) / width);
               width = maxWidth;
             }
-
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext("2d");
@@ -1713,12 +1614,10 @@
       const file = e.target.files[0];
       if (!file) return;
       try {
-        toast("جاري ضغط ومعالجة الصورة...", "normal");
         const b64 = await compressAndConvertImage(file, 380, 0.55);
         document.getElementById("pImgBase64").value = b64;
         document.getElementById("imgPreview").src = b64;
         document.getElementById("imgPreviewContainer").classList.remove("hidden");
-        toast("تمت معالجة الصورة بنجاح بحجم فائق الخفة!", "success");
       } catch (err) {
         toast("فشل معالجة الصورة.", "error");
       }
@@ -1728,17 +1627,14 @@
       const file = e.target.files[0];
       if (!file) return;
       try {
-        toast("جاري ضغط الصورة...", "normal");
         const b64 = await compressAndConvertImage(file, 380, 0.55);
         document.getElementById("editPImgBase64").value = b64;
         document.getElementById("editImgPreview").src = b64;
-        toast("تم تحديث صورة المنتج!", "success");
       } catch (err) {
         toast("فشل معالجة الصورة.", "error");
       }
     }
 
-    /* ================= لوحة تحكم المدير وتوثيق Firebase Auth ================= */
     function toggleAdminModal() {
       const el = document.getElementById("adminModal");
       if (el.classList.contains("hidden")) {
@@ -1775,7 +1671,7 @@
       const pass = document.getElementById("adminPassInput").value.trim();
       const btn = document.getElementById("adminLoginSubmitBtn");
 
-      if (!email || !pass) return toast("يرجى كتابة البريد وكلمة المرور للمدير.", "error");
+      if (!email || !pass) return toast("يرجى إدخال البريد وكلمة المرور.", "error");
 
       btn.disabled = true;
       btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري التحقق...`;
@@ -1784,24 +1680,11 @@
         const cred = await auth.signInWithEmailAndPassword(email, pass);
         if (cred.user.uid !== ADMIN_UID) {
           await auth.signOut();
-          return toast("هذا الحساب لا يملك صلاحيات الإدارة (UID غير مطابق).", "error");
+          return toast("هذا الحساب لا يملك صلاحيات الإدارة.", "error");
         }
-        toast("مرحباً بك في لوحة الإدارة المعتمدة!", "success");
+        toast("مرحباً بك في لوحة الإدارة!", "success");
       } catch (error) {
-        console.error("Firebase Login Error:", error);
-        
-        // إظهار سبب الخطأ الصريح
-        if (error.code === 'auth/wrong-password') {
-          toast("كلمة المرور غير صحيحة لهذا البريد.", "error");
-        } else if (error.code === 'auth/user-not-found') {
-          toast("البريد الإلكتروني غير مسجل في Firebase.", "error");
-        } else if (error.code === 'auth/invalid-credential') {
-          toast("بيانات الدخول غير صحيحة (تأكد من كلمة المرور).", "error");
-        } else if (error.code === 'auth/too-many-requests') {
-          toast("تم حظر المحاولات مؤقتاً لكثرة التكرار، انتظر دقيقة.", "error");
-        } else {
-          toast(error.message || error.code || "تعذر تسجيل الدخول", "error");
-        }
+        toast("بيانات الدخول غير صحيحة.", "error");
       } finally {
         btn.disabled = false;
         btn.innerHTML = "دخول المدير المعتمد";
@@ -1813,7 +1696,7 @@
       state.isAdminLoggedIn = false;
       document.getElementById("adminLoginForm").classList.remove("hidden");
       document.getElementById("adminPanel").classList.add("hidden");
-      toast("تم تسجيل خروج المدير بنجاح.");
+      toast("تم تسجيل الخروج بنجاح.");
     }
 
     function updateAdminDashboardStats() {
@@ -1973,7 +1856,7 @@
         document.getElementById("pStock").value = "";
         document.getElementById("pImgBase64").value = "";
         document.getElementById("imgPreviewContainer").classList.add("hidden");
-      }).catch(() => toast("تعذر إضافة المنتج. تأكد من تسجيل دخولك كمدير.", "error"));
+      }).catch(() => toast("تعذر إضافة المنتج. تأكد من صلاحية الإدارة.", "error"));
     }
 
     function openEditModal(id) {
@@ -2007,12 +1890,12 @@
       db.collection("products").doc(id).update(updates).then(() => {
         toast("تم حفظ التعديلات!", "success");
         closeEditModal();
-      }).catch(() => toast("فشل حفظ التعديلات. تأكد من صلاحية الإدارة.", "error"));
+      }).catch(() => toast("فشل حفظ التعديلات. تأكد من القواعد وصلاحية المدير.", "error"));
     }
 
     function deleteProduct(id) {
       if (!confirm("هل أنت متأكد من حذف هذا المنتج نهائياً؟")) return;
-      db.collection("products").doc(id).delete().then(() => toast("تم حذف المنتج.", "success")).catch(() => toast("فشل الحذف، يتطلب صلاحية المدير.", "error"));
+      db.collection("products").doc(id).delete().then(() => toast("تم حذف المنتج.", "success")).catch(() => toast("فشل الحذف.", "error"));
     }
   </script>
 </body>
