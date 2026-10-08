@@ -160,7 +160,7 @@
         <span class="px-3 py-1 bg-yellow-500/10 text-yellow-400 text-xs font-bold rounded-full border border-yellow-500/30 inline-flex items-center gap-1">
           <i class="fas fa-location-dot text-[10px]"></i> توصيل مباشر لوسط المدينة والمناطق المجاورة
         </span>
-        <h1 class="text-xl md:text-3xl font-black text-white leading-tight">عروض وأسعار محدّثة لحظة بلحظة</h1>
+        <h1 class="text-xl md:text-3xl font-black text-white leading-tight">عروض وأأسعار محدّثة لحظة بلحظة</h1>
         <p class="text-xs md:text-sm text-gray-300">اختر منتجاتك وسنصلك في أسرع وقت مع خيار المعاينة والدفع كاش عند الاستلام.</p>
       </div>
       <div class="flex flex-col sm:flex-row items-center gap-3 shrink-0">
@@ -199,7 +199,6 @@
         <button onclick="filterCategory('sweets', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">حلويات ومقرمشات</button>
       </div>
 
-      <!-- لافتة تنبيه -->
       <div id="categoryDeliveryNotice" class="hidden mt-3 bg-amber-500/10 border border-amber-500/40 text-amber-300 rounded-2xl p-3 text-xs flex items-center gap-2">
         <i class="fas fa-circle-info text-amber-400 text-base"></i>
         <span><strong>تنبيه هام:</strong> توصيل هذه المواد متوفر حالياً للاستلام المباشر أو التوصيل المحلي.</span>
@@ -241,7 +240,7 @@
     </button>
   </div>
 
-  <!-- Quick View Product Modal -->
+  <!-- Quick View Modal -->
   <div id="quickViewModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-lg modal-scroll relative">
       <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
@@ -1467,6 +1466,7 @@
       }
     }
 
+    /* ================= دالة تأكيد الطلب المحدثة ================= */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
@@ -1485,7 +1485,7 @@
       btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> جاري التأكيد...`;
 
       try {
-        const areaVal = document.getElementById("checkoutArea").value;
+        const areaVal = document.getElementById("checkoutArea")?.value || "centre_ville";
         const cfg = state.storeSettings;
         let shippingFee = cfg.shippingFeeCentre;
         let areaText = "وسط المدينة";
@@ -1498,7 +1498,7 @@
           areaText = "استلام من المحل";
         }
 
-        const subtotal = state.cart.reduce((s, x) => s + x.price * x.qty, 0);
+        const subtotal = state.cart.reduce((s, x) => s + (x.price * x.qty), 0);
         if (subtotal >= Number(cfg.freeShippingTarget || 3000) && areaVal !== "pickup") {
           shippingFee = 0;
         }
@@ -1512,22 +1512,40 @@
           customerImage: state.customer.image || "",
           address: `${areaText} - ${state.customer.address}`,
           items: [...state.cart],
-          coupon: state.appliedCoupon,
+          coupon: state.appliedCoupon || null,
           shippingFee,
           total,
           status: "جديد",
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
+        // التحقق من المخزون والتحديث عبر Transaction لجميع المنتجات
         await db.runTransaction(async tx => {
+          const reads = [];
           for (const item of state.cart) {
-            const pRef = db.collection("products").doc(item.id);
-            const pDoc = await tx.get(pRef);
-            if (!pDoc.exists) throw new Error("منتج غير موجود");
-            const stock = Number(pDoc.data().stock || 0);
-            if (stock < item.qty) throw new Error("المخزون نفد");
-            tx.update(pRef, { stock: stock - item.qty });
+            reads.push(tx.get(db.collection("products").doc(item.id)));
           }
+
+          const docs = await Promise.all(reads);
+
+          docs.forEach((pDoc, index) => {
+            const item = state.cart[index];
+            if (!pDoc.exists) {
+              throw new Error(`المنتج "${item.name}" لم يعد موجوداً.`);
+            }
+            const currentStock = Number(pDoc.data().stock || 0);
+            if (currentStock < item.qty) {
+              throw new Error(`المخزون غير كافٍ للمنتج: ${item.name} (المتوفر: ${currentStock})`);
+            }
+          });
+
+          // خصم الكميات من المخزون بعد التأكد
+          docs.forEach((pDoc, index) => {
+            const item = state.cart[index];
+            const currentStock = Number(pDoc.data().stock || 0);
+            tx.update(pDoc.ref, { stock: Math.max(0, currentStock - item.qty) });
+          });
+
           const orderRef = db.collection("orders").doc();
           tx.set(orderRef, newOrderData);
         });
@@ -1538,9 +1556,10 @@
         persistCart();
         updateCartUI();
         closeModal("cartDrawer");
-        toast("تم تأكيد طلبك بنجاح! سنتصل بك مباشرة.", "success");
+        toast("تم تأكيد طلبك بنجاح! سنتصل بك للتسليم.", "success");
       } catch (err) {
-        toast("تعذر إتمام الطلب، تحقق من توفر المخزون.", "error");
+        console.error("Order submit failed:", err);
+        toast(err.message || "تعذر إتمام الطلب، تحقق من توفر المخزون.", "error");
       } finally {
         btn.disabled = false;
         btn.innerHTML = `<i class="fas fa-paper-plane"></i> تأكيد الطلب`;
