@@ -1105,7 +1105,9 @@
       const p = state.products.find(x => x.id === id);
       if (!p) return;
 
+      const isZeroPrice = Number(p.price || 0) === 0;
       const stock = Math.max(0, Number(p.stock || 0));
+      const isAvailable = isZeroPrice || stock > 0;
       const isFav = state.wishlist.includes(p.id);
 
       document.getElementById("quickViewContent").innerHTML = `
@@ -1121,11 +1123,11 @@
             <h2 class="text-base font-black text-white">${esc(p.name)}</h2>
             <div class="text-lg font-black text-amber-400">${money(p.price)}</div>
             <p class="text-[11px] text-gray-300 leading-relaxed">توصيل سريع لوسط المدينة والمناطق القريبة مع إمكانية المعاينة والدفع كاش عند الاستلام.</p>
-            <div class="text-xs ${stock > 0 ? 'text-emerald-400' : 'text-red-400'} font-bold">
-              ${stock > 0 ? `متوفر في المخزون (${stock} قطعة)` : 'نفد من المخزون حالياً'}
+            <div class="text-xs ${isAvailable ? 'text-emerald-400' : 'text-red-400'} font-bold">
+              ${isZeroPrice ? 'متوفر للطلب المباشر' : (stock > 0 ? `متوفر في المخزون (${stock} قطعة)` : 'نفد من المخزون حالياً')}
             </div>
             <div class="flex gap-2 pt-2">
-              <button onclick="addToCart('${esc(p.id)}'); closeModal('quickViewModal');" ${stock <= 0 ? 'disabled' : ''} class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition ${stock <= 0 ? 'opacity-50 cursor-not-allowed' : ''}">
+              <button onclick="addToCart('${esc(p.id)}'); closeModal('quickViewModal');" ${!isAvailable ? 'disabled' : ''} class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition ${!isAvailable ? 'opacity-50 cursor-not-allowed' : ''}">
                 <i class="fas fa-cart-plus ml-1"></i> إضافة إلى السلة
               </button>
             </div>
@@ -1169,8 +1171,10 @@
       }
 
       grid.innerHTML = filtered.map(p => {
+        const isZeroPrice = Number(p.price || 0) === 0;
         const stock = Math.max(0, Number(p.stock || 0));
-        const out = stock <= 0;
+        // المنتج متوفر إذا كان سعره 0 د.ج أو إذا كان مخزونه أكبر من 0
+        const out = !isZeroPrice && stock <= 0;
         const isWish = state.wishlist.includes(p.id);
 
         const likes = Number(p.likesCount || 0);
@@ -1211,7 +1215,7 @@
 
             <div class="mt-3 pt-2 border-t border-gray-800/80">
               <div class="flex gap-1.5">
-                <input id="qty_${esc(p.id)}" type="number" min="1" max="${stock}" value="1" inputmode="numeric" ${out ? "disabled" : ""}
+                <input id="qty_${esc(p.id)}" type="number" min="1" max="${isZeroPrice ? 99 : stock}" value="1" inputmode="numeric" ${out ? "disabled" : ""}
                   class="w-12 p-1.5 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
                 <button onclick="addToCart('${esc(p.id)}')" ${out ? "disabled" : ""}
                   class="flex-1 py-1.5 ${out ? "bg-gray-800 text-gray-400 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-400 text-black"} text-[11px] font-bold rounded-lg transition">
@@ -1301,16 +1305,17 @@
     function addToCart(id) {
       const p = state.products.find(x => x.id === id);
       if (!p) return;
+      const isZeroPrice = Number(p.price || 0) === 0;
       const stock = Number(p.stock || 0);
       const input = document.getElementById(`qty_${id}`);
       const qty = Math.max(1, Math.floor(Number(input?.value || 1)));
 
-      if (stock <= 0) return toast("المنتج غير متوفر.", "error");
-      if (qty > stock) return toast(`المتوفر ${stock} قطع فقط.`, "error");
+      if (!isZeroPrice && stock <= 0) return toast("المنتج غير متوفر.", "error");
+      if (!isZeroPrice && qty > stock) return toast(`المتوفر ${stock} قطع فقط.`, "error");
 
       const existing = state.cart.find(x => x.id === id);
       if (existing) {
-        if (existing.qty + qty > stock) return toast(`تجاوزت المخزون المتاح.`, "error");
+        if (!isZeroPrice && (existing.qty + qty > stock)) return toast(`تجاوزت المخزون المتاح.`, "error");
         existing.qty += qty;
       } else {
         state.cart.push({ id, name: p.name, price: Number(p.price || 0), qty });
@@ -1325,8 +1330,14 @@
     function syncCartWithStock() {
       state.cart = state.cart.map(item => {
         const p = state.products.find(x => x.id === item.id);
-        if (!p || Number(p.stock || 0) <= 0) return null;
-        return { ...item, price: Number(p.price || 0), qty: Math.min(item.qty, Number(p.stock)) };
+        if (!p) return null;
+        const isZeroPrice = Number(p.price || 0) === 0;
+        if (!isZeroPrice && Number(p.stock || 0) <= 0) return null;
+        return { 
+          ...item, 
+          price: Number(p.price || 0), 
+          qty: isZeroPrice ? item.qty : Math.min(item.qty, Number(p.stock)) 
+        };
       }).filter(Boolean);
       persistCart();
       updateCartUI();
@@ -1617,9 +1628,21 @@
             const pRef = db.collection("products").doc(item.id);
             const pDoc = await tx.get(pRef);
             if (!pDoc.exists) throw new Error("منتج غير موجود");
-            const stock = Number(pDoc.data().stock || 0);
-            if (stock < item.qty) throw new Error("المخزون نفد");
-            tx.update(pRef, { stock: stock - item.qty });
+
+            const productData = pDoc.data();
+            const isZeroPrice = Number(productData.price || 0) === 0;
+            const stock = Number(productData.stock || 0);
+
+            // فحص المخزون فقط للمنتجات المدفوعة (التي سعرها أكبر من 0)
+            if (!isZeroPrice) {
+              if (stock < item.qty) throw new Error("المخزون نفد");
+              tx.update(pRef, { stock: Math.max(0, stock - item.qty) });
+            } else {
+              // إذا كان المنتج مجانياً (0 د.ج) ولديه مخزون مسجل نخصم منه إن أمكن، وإن لم يكن لديه مخزون نسمح بالطلب
+              if (stock >= item.qty) {
+                tx.update(pRef, { stock: stock - item.qty });
+              }
+            }
           }
 
           const orderRef = db.collection("orders").doc();
@@ -1635,6 +1658,7 @@
         closeModal("cartDrawer");
         toast("تم تأكيد طلبك بنجاح! سنتصل بك مباشرة للتسليم.", "success");
       } catch (err) {
+        console.error(err);
         toast("تعذر إتمام الطلب، تحقق من توفر المخزون.", "error");
       } finally {
         btn.disabled = false;
