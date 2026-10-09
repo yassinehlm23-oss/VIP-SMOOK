@@ -107,7 +107,7 @@
         <!-- Search Bar -->
         <div class="flex-1 max-w-md mx-2 relative">
           <i class="fas fa-search absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
-          <input id="searchInput" oninput="searchProducts()" type="search" placeholder="ابحث عن منتج..."
+          <input id="searchInput" oninput="searchProducts()" type="search" placeholder="ابحث عن منتج..." autocomplete="off" autocorrect="off" spellcheck="false"
             class="w-full pr-9 pl-3 py-2 bg-gray-900/80 border border-gray-800 rounded-xl text-xs text-gray-200 focus:outline-none focus:border-yellow-500/60 transition">
         </div>
 
@@ -160,7 +160,7 @@
         <span class="px-3 py-1 bg-yellow-500/10 text-yellow-400 text-xs font-bold rounded-full border border-yellow-500/30 inline-flex items-center gap-1">
           <i class="fas fa-location-dot text-[10px]"></i> توصيل مباشر لوسط المدينة والمناطق المجاورة
         </span>
-        <h1 class="text-xl md:text-3xl font-black text-white leading-tight">عروض وأأسعار محدّثة لحظة بلحظة</h1>
+        <h1 class="text-xl md:text-3xl font-black text-white leading-tight">عروض وأسعار محدّثة لحظة بلحظة</h1>
         <p class="text-xs md:text-sm text-gray-300">اختر منتجاتك وسنصلك في أسرع وقت مع خيار المعاينة والدفع كاش عند الاستلام.</p>
       </div>
       <div class="flex flex-col sm:flex-row items-center gap-3 shrink-0">
@@ -370,7 +370,7 @@
 
       <div class="border-t border-gray-900 pt-3 space-y-3 bg-gray-950">
         <div class="flex gap-2">
-          <input type="text" id="couponCodeInput" placeholder="أدخل كود الخصم" class="flex-1 p-2 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white uppercase focus:outline-none focus:border-yellow-500">
+          <input type="text" id="couponCodeInput" autocomplete="off" placeholder="أدخل كود الخصم" class="flex-1 p-2 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white uppercase focus:outline-none focus:border-yellow-500">
           <button onclick="applyCoupon()" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-yellow-400 font-bold text-xs rounded-xl transition">تطبيق</button>
         </div>
         <div id="couponAppliedMsg" class="hidden text-[10px] text-emerald-400 font-bold flex items-center gap-1">
@@ -483,13 +483,13 @@
       <div id="adminLoginForm" class="space-y-3">
         <div>
           <label class="text-[11px] text-gray-400 block mb-1">البريد الإلكتروني للمدير</label>
-          <input type="email" id="adminUserInput" placeholder="admin@example.com"
+          <input type="email" id="adminUserInput" placeholder="admin@example.com" autocomplete="username"
             class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
         </div>
         <div>
           <label class="text-[11px] text-gray-400 block mb-1">كلمة المرور</label>
           <div class="relative">
-            <input id="adminPassInput" type="password" placeholder="******"
+            <input id="adminPassInput" type="password" placeholder="******" autocomplete="current-password"
               class="w-full p-3 pl-10 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
             <button type="button" onclick="togglePasswordVisibility('adminPassInput', this)" class="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-yellow-400 transition">
               <i class="fas fa-eye text-xs"></i>
