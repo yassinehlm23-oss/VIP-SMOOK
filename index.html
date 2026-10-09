@@ -2,1920 +2,3077 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#070a12">
-  <meta name="description" content="VIP SMOOK - المتجر الفاخر للتسوق والتوصيل السريع لوسط المدينة والمناطق القريبة. عروض حصرية ودفع عند الاستلام.">
-  <title>VIP SMOOK | المتجر الرسمي الفاخر</title>
-
-  <!-- Tailwind CSS & FontAwesome Icons -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <!-- Firebase Compat SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Shadow of the Glitch: Cyber Legacy — 10-Stage Campaign Edition</title>
   <style>
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { background: #070a12; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); }
-    .card-hover { transition: transform .25s cubic-bezier(0.4, 0, 0.2, 1), border-color .25s ease, box-shadow .25s ease; }
-    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(234, 179, 8, 0.15); }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 5rem); }
-    .modal-scroll { max-height: calc(90vh - 2rem); overflow-y: auto; }
-
-    button, .cat-btn, .admin-tab {
+    :root {
+      --primary: #00f0ff;
+      --secondary: #ff007f;
+      --amber: #f59e0b;
+      --danger: #ef4444;
+      --success: #10b981;
+      --purple: #a855f7;
+      --bg: #020307;
+      --surface: rgba(8, 14, 28, 0.85);
+      --border: rgba(255, 255, 255, 0.16);
+      --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    }
+    * {
+      box-sizing: border-box;
       user-select: none;
       -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+      -webkit-touch-callout: none;
       -webkit-tap-highlight-color: transparent;
     }
-
-    body.modal-open { overflow: hidden; }
-
-    .marquee-track {
-      animation: marquee 25s linear infinite;
-      will-change: transform;
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: var(--font-main);
+      touch-action: none;
+      overscroll-behavior: none;
     }
-    .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
-    @keyframes marquee {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
+    #game-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      z-index: 1;
     }
-    @media (prefers-reduced-motion: reduce) {
-      .marquee-track { animation: none; }
+
+    /* واجهة المعلومات العلوية HUD */
+    #hud {
+      position: fixed;
+      top: env(safe-area-inset-top, 14px);
+      left: env(safe-area-inset-left, 14px);
+      right: env(safe-area-inset-right, 14px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 100;
+      gap: 8px;
+    }
+    .hud-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .hud-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 18px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    #dim-badge {
+      color: var(--primary);
+      border-color: rgba(0, 240, 255, 0.5);
+      transition: all 0.25s ease;
+    }
+    #dim-badge.glitch-mode {
+      color: var(--secondary);
+      border-color: rgba(255, 0, 127, 0.5);
+    }
+    #hud-delta {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      display: none;
+      font-weight: 800;
+    }
+    #hud-delta.ahead {
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.1);
+      display: inline-block;
+    }
+    #hud-delta.behind {
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.1);
+      display: inline-block;
+    }
+    .btn-hud {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    /* أشرطة الطاقة والصحة التنافسية */
+    .bars-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 130px;
+    }
+    .bar-shell {
+      width: 100%;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    #hp-bar-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #ef4444, #f43f5e);
+      transition: width 0.15s ease-out;
+    }
+    #energy-bar-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #00f0ff, #3b82f6);
+      transition: width 0.08s linear;
+    }
+
+    /* شريط صحة الزعيم */
+    #boss-hud {
+      position: fixed;
+      top: calc(env(safe-area-inset-top, 14px) + 54px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(88vw, 520px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      z-index: 100;
+    }
+    .boss-title-row {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(255, 0, 127, 0.8);
+    }
+    .boss-bar-frame {
+      width: 100%;
+      height: 14px;
+      background: rgba(10, 15, 29, 0.88);
+      border: 1.5px solid rgba(255, 0, 127, 0.7);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 0 24px rgba(255, 0, 127, 0.4);
+    }
+    #boss-hp-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #ff0055, #ff007f);
+      transition: width 0.12s linear;
+    }
+    .phase-marker {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.6);
+      z-index: 2;
+    }
+    .phase-marker.p60 { left: 60%; }
+    .phase-marker.p25 { left: 25%; }
+
+    /* عناصر التحكم اللمسية */
+    #touch-bar {
+      position: fixed;
+      bottom: env(safe-area-inset-bottom, 16px);
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 16px;
+      pointer-events: none;
+      z-index: 110;
+    }
+    .touch-cluster {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      pointer-events: auto;
+    }
+    .touch-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(15, 20, 36, 0.72);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+      touch-action: none;
+      transition: transform 0.06s ease, background 0.06s ease;
+    }
+    .touch-btn.pressed {
+      transform: scale(0.9);
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .btn-shift-ui {
+      border-color: var(--secondary);
+      color: var(--secondary);
+      font-size: 11px;
+    }
+    .btn-dash-ui {
+      border-color: var(--amber);
+      color: var(--amber);
+      font-size: 11px;
+    }
+    .btn-jump-ui {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .btn-atk-ui {
+      border-color: #f43f5e;
+      color: #f43f5e;
+      font-size: 11px;
+    }
+    .btn-emp-ui {
+      border-color: var(--purple);
+      color: var(--purple);
+      font-size: 11px;
+    }
+
+    /* القوائم والنوافذ */
+    .modal-panel {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(10, 16, 32, 0.96) 0%, rgba(2, 3, 6, 0.99) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      padding: 24px;
+      text-align: center;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+    .modal-panel.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .modal-panel h1 {
+      font-size: clamp(24px, 4.5vw, 38px);
+      color: var(--primary);
+      text-shadow: 0 0 30px rgba(0, 240, 255, 0.8);
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+      font-weight: 900;
+    }
+    .modal-panel p {
+      font-size: 14px;
+      color: #94a3b8;
+      max-width: 480px;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      white-space: pre-line;
+    }
+    .rank-text {
+      font-size: clamp(48px, 9vw, 70px);
+      font-weight: 900;
+      color: var(--amber);
+      text-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+      margin-bottom: 6px;
+    }
+    .reward-box {
+      background: rgba(168, 85, 247, 0.12);
+      border: 1px solid rgba(168, 85, 247, 0.5);
+      border-radius: 12px;
+      padding: 10px 20px;
+      margin-bottom: 20px;
+      color: #e9d5ff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .btn-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: min(300px, 88vw);
+    }
+    .action-btn {
+      padding: 13px 32px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #010204;
+      background: linear-gradient(135deg, var(--primary), #0077fe);
+      border: none;
+      border-radius: 30px;
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+      cursor: pointer;
+      transition: transform 0.1s ease, filter 0.1s ease;
+    }
+    .action-btn:active {
+      transform: scale(0.96);
+    }
+    .secondary-action {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
+    /* الإعدادات */
+    .cfg-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: min(460px, 92vw);
+      margin-bottom: 22px;
+      text-align: right;
+    }
+    .cfg-card {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      font-size: 12.5px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cfg-card input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--primary);
+    }
+    .cfg-card input[type="range"] {
+      width: 80px;
+      accent-color: var(--primary);
     }
   </style>
 </head>
-<body class="bg-[#070a12] text-gray-100 min-h-screen pb-16 md:pb-0">
+<body>
 
-  <!-- Ticker Banner -->
-  <div class="marquee-wrap bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black text-[11px] font-black py-1 overflow-hidden relative shadow-md" dir="ltr">
-    <div class="marquee-track flex w-max">
-      <div id="tickerTrackA" class="flex gap-8 items-center pr-8">
-        <span id="tickerTextA">🔥 أهلاً بكم في VIP SMOOK - التوصيل سريع ومباشر لوسط المدينة والمناطق القريبة!</span>
-      </div>
-      <div id="tickerTrackB" class="flex gap-8 items-center pr-8" aria-hidden="true">
-        <span id="tickerTextB">🔥 أهلاً بكم في VIP SMOOK - التوصيل سريع ومباشر لوسط المدينة والمناطق القريبة!</span>
-      </div>
+<canvas id="game-canvas"></canvas>
+
+<!-- واجهة HUD -->
+<div id="hud">
+  <div class="hud-group">
+    <div class="hud-card" id="hud-level">المرحلة: 1 / 10</div>
+    <div class="hud-card" id="dim-badge">✦ الواقع [REALITY]</div>
+    <div class="bars-wrap">
+      <div class="bar-shell" title="Health"><div id="hp-bar-fill"></div></div>
+      <div class="bar-shell" title="Energy"><div id="energy-bar-fill"></div></div>
+    </div>
+    <div id="hud-delta">+0.00</div>
+  </div>
+  <div class="hud-group">
+    <div class="hud-card" id="hud-stats">💀 0 | 💎 0/0 | ⏱️ 00:00.00</div>
+    <div class="hud-card btn-hud" id="btn-pause-open">⏸️</div>
+  </div>
+</div>
+
+<!-- شريط صحة الزعيم -->
+<div id="boss-hud">
+  <div class="boss-title-row">
+    <span id="boss-name-label">GUARDIAN OF REALITY</span>
+    <span id="boss-phase-label">المرحلة 1 / 3</span>
+  </div>
+  <div class="boss-bar-frame">
+    <div class="phase-marker p60"></div>
+    <div class="phase-marker p25"></div>
+    <div id="boss-hp-fill"></div>
+  </div>
+</div>
+
+<!-- أدوات اللمس -->
+<div id="touch-bar">
+  <div class="touch-cluster">
+    <div class="touch-btn" id="t-left">◀</div>
+    <div class="touch-btn" id="t-right">▶</div>
+  </div>
+  <div class="touch-cluster">
+    <div class="touch-btn btn-atk-ui" id="t-atk">ATK</div>
+    <div class="touch-btn btn-emp-ui" id="t-emp">EMP</div>
+    <div class="touch-btn btn-shift-ui" id="t-shift">SHIFT</div>
+    <div class="touch-btn btn-dash-ui" id="t-dash">DASH</div>
+    <div class="touch-btn btn-jump-ui" id="t-jump">▲</div>
+  </div>
+</div>
+
+<!-- القائمة الرئيسية -->
+<div class="modal-panel" id="modal-menu">
+  <div id="rank-slot"></div>
+  <h1 id="menu-title">SHADOW OF THE GLITCH</h1>
+  <p id="menu-desc">
+    الحملة السيبرانية الكبرى: 10 مراحل ملحمية مع مواجهتي زعماء!
+    تحكّم في تبديل الأبعاد، استخدم السيف والنبضة، وتفوق في منصات الدقة السريعة.
+  </p>
+  <div class="btn-stack">
+    <button class="action-btn" id="btn-start">دخول الحملة (10 مراحل)</button>
+    <button class="action-btn secondary-action" id="btn-open-settings">الإعدادات وتخصيص الأزرار</button>
+  </div>
+</div>
+
+<!-- شاشة الإيقاف المؤقت -->
+<div class="modal-panel hidden" id="modal-pause">
+  <h1>اللعبة متوقفة</h1>
+  <p>الزمن التنافسي متوقف حالياً. استعد لاستئناف الجولة.</p>
+  <div class="btn-stack">
+    <button class="action-btn" id="btn-resume">استئناف اللعب</button>
+    <button class="action-btn secondary-action" id="btn-restart-now">إعادة المرحلة الحالية</button>
+    <button class="action-btn secondary-action" id="btn-exit-main">العودة للشاشة الرئيسية</button>
+  </div>
+</div>
+
+<!-- نافذة الإعدادات -->
+<div class="modal-panel hidden" id="modal-settings">
+  <h1>إعدادات النظام والقدرات</h1>
+  <div class="cfg-grid">
+    <div class="cfg-card">
+      <span>نمط الأداء العالي (Low-FX)</span>
+      <input type="checkbox" id="cfg-lowfx">
+    </div>
+    <div class="cfg-card">
+      <span>اهتزاز الشاشة (Shake)</span>
+      <input type="checkbox" id="cfg-shake" checked>
+    </div>
+    <div class="cfg-card">
+      <span>شبح أفضل زمن (Ghost)</span>
+      <input type="checkbox" id="cfg-ghost" checked>
+    </div>
+    <div class="cfg-card">
+      <span>المؤثرات الصوتية والموسيقى</span>
+      <input type="checkbox" id="cfg-audio" checked>
+    </div>
+    <div class="cfg-card">
+      <span>الاهتزاز اللمسي (Haptic)</span>
+      <input type="checkbox" id="cfg-haptic" checked>
+    </div>
+    <div class="cfg-card">
+      <span>شفافية أزرار اللمس</span>
+      <input type="range" id="cfg-touch-alpha" min="20" max="100" value="72">
     </div>
   </div>
-
-  <!-- Legal Gate -->
-  <div id="legalGate" class="fixed inset-0 z-[100] bg-black/95 hidden items-center justify-center p-4">
-    <div class="w-full max-w-md bg-gray-900 border border-yellow-500/40 rounded-3xl p-6 text-center shadow-2xl relative overflow-hidden">
-      <div class="w-16 h-16 mx-auto rounded-2xl bg-yellow-500/10 text-yellow-500 border border-yellow-500/30 flex items-center justify-center text-3xl mb-4">
-        <i class="fas fa-shield-halved"></i>
-      </div>
-      <h2 class="text-2xl font-black text-yellow-400 tracking-wide">تأكيد الأهلية والقانونية</h2>
-      <p class="text-gray-300 text-xs leading-6 mt-3">
-        مرحباً بك في <span class="text-yellow-400 font-bold">VIP SMOOK</span>. بالاستمرار، تؤكد أنك بلغت السن القانونية المسموح بها في منطقتك.
-      </p>
-      <div class="mt-6 space-y-2.5">
-        <button onclick="acceptLegalGate()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition shadow-lg shadow-amber-500/20 active:scale-95">
-          أؤكد أنني في السن القانوني (متابعة)
-        </button>
-        <button onclick="leaveSite()" class="w-full py-3 bg-gray-800 hover:bg-gray-700 text-gray-400 font-semibold rounded-xl text-xs transition">
-          مغادرة الموقع
-        </button>
-      </div>
-    </div>
+  <div class="btn-stack">
+    <button class="action-btn" id="btn-save-cfg">حفظ وتطبيق</button>
   </div>
+</div>
 
-  <!-- Toast Notification -->
-  <div id="toast" onclick="hideToast()"
-       class="fixed top-5 left-4 right-4 md:left-auto md:right-5 z-[120] hidden opacity-0 transition-opacity duration-300 cursor-pointer">
-    <div id="toastInner" class="glass border rounded-2xl px-5 py-3.5 shadow-2xl text-xs font-medium flex items-center gap-2"></div>
-  </div>
+<script>
+/**
+ * Shadow of the Glitch: Cyber Legacy — 10-Stage Full Campaign Edition
+ */
 
-  <!-- Header -->
-  <header class="sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md border-b border-yellow-500/20">
-    <div class="max-w-6xl mx-auto px-4 py-3">
-      <div class="flex items-center justify-between gap-3">
+// ==========================================
+// 1. نظام الحفظ وإدارة الإعدادات والمكافآت
+// ==========================================
+const CONFIG = {
+  lowFX: false,
+  shake: true,
+  ghost: true,
+  audio: true,
+  haptic: true,
+  touchAlpha: 0.72,
+  touchSize: 60
+};
 
-        <!-- Logo -->
-        <button ondblclick="toggleAdminModal()" onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="text-right cursor-pointer select-none" title="اضغط مرتين لفتح لوحة التحكم">
-          <span class="font-black text-xl md:text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">
-            VIP SMOOK
-          </span>
-          <span class="block text-[9px] text-gray-400 tracking-widest font-semibold uppercase">Official Store</span>
-        </button>
+const STORAGE_KEY = 'SOTG_CAMPAIGN10_SAVE_V8';
 
-        <!-- Search Bar -->
-        <div class="flex-1 max-w-md mx-2 relative">
-          <i class="fas fa-search absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
-          <input id="searchInput" oninput="searchProducts()" type="search" placeholder="ابحث عن منتج..." autocomplete="off" autocorrect="off" spellcheck="false"
-            class="w-full pr-9 pl-3 py-2 bg-gray-900/80 border border-gray-800 rounded-xl text-xs text-gray-200 focus:outline-none focus:border-yellow-500/60 transition">
-        </div>
-
-        <!-- Phone & Desktop Nav Buttons -->
-        <div class="flex items-center gap-2">
-          <div id="storePhonesHeader" class="hidden lg:flex items-center gap-1.5 bg-gray-900/80 border border-gray-800 px-2.5 py-1.5 rounded-xl text-xs text-yellow-400 font-semibold">
-            <i class="fas fa-phone-volume text-[11px]"></i>
-            <span id="storePhonesHeaderList" class="flex gap-2"></span>
-          </div>
-
-          <button onclick="toggleWishlistModal()" class="hidden md:flex px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition relative">
-            <i class="fas fa-heart text-red-500 ml-1"></i> المفضلة
-            <span id="wishlistCount" class="bg-red-500/20 text-red-400 text-[10px] px-1.5 py-0.2 rounded-full font-bold mr-1">0</span>
-          </button>
-
-          <button id="myOrdersBtn" onclick="toggleMyOrders()" class="hidden md:flex px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition">
-            <i class="fas fa-box-archive text-yellow-500 ml-1"></i> طلباتي
-          </button>
-
-          <button id="userAuthBtn" onclick="toggleAuthModal()" class="hidden md:flex px-3.5 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-yellow-500/30 rounded-xl text-yellow-400 transition font-medium items-center gap-1.5">
-            <i class="fas fa-user-circle text-sm"></i> <span id="userAuthLabel">دخول</span>
-          </button>
-
-          <button onclick="toggleCart()" class="relative px-4 py-2 bg-amber-500 text-black font-bold rounded-xl hover:bg-amber-400 transition text-xs flex items-center gap-1.5 shadow-md shadow-amber-500/20">
-            <i class="fas fa-shopping-bag"></i>
-            <span>السلة</span>
-            <span id="cartCount" class="bg-black text-yellow-400 text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-black">0</span>
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Container -->
-  <main class="max-w-6xl mx-auto px-4 py-6 min-h-[80vh] safe-bottom">
-
-    <!-- Store Phones Bar -->
-    <div id="storePhonesMobileBar" class="mb-4 bg-gray-900/80 border border-yellow-500/30 rounded-2xl p-2.5 flex items-center justify-between text-xs">
-      <div class="flex items-center gap-2 text-yellow-400 font-bold">
-        <i class="fas fa-phone-alt"></i>
-        <span>للاتصال والطلب المباشر:</span>
-      </div>
-      <div id="storePhonesMobileList" class="flex flex-wrap gap-2 text-white font-mono text-[11px]"></div>
-    </div>
-
-    <!-- Hero Banner -->
-    <section class="mb-6 rounded-3xl bg-gradient-to-r from-amber-950/50 via-gray-900 to-amber-900/30 border border-yellow-500/30 p-6 md:p-8 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
-      <div class="space-y-2 text-center md:text-right">
-        <span class="px-3 py-1 bg-yellow-500/10 text-yellow-400 text-xs font-bold rounded-full border border-yellow-500/30 inline-flex items-center gap-1">
-          <i class="fas fa-location-dot text-[10px]"></i> توصيل مباشر لوسط المدينة والمناطق المجاورة
-        </span>
-        <h1 class="text-xl md:text-3xl font-black text-white leading-tight">عروض وأسعار محدّثة لحظة بلحظة</h1>
-        <p class="text-xs md:text-sm text-gray-300">اختر منتجاتك وسنصلك في أسرع وقت مع خيار المعاينة والدفع كاش عند الاستلام.</p>
-      </div>
-      <div class="flex flex-col sm:flex-row items-center gap-3 shrink-0">
-        <button onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="w-full sm:w-auto px-5 py-3 bg-yellow-500 text-black font-extrabold text-xs rounded-xl hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/20">
-          استكشف المنتجات
-        </button>
-        <button onclick="toggleCart()" class="w-full sm:w-auto px-5 py-3 bg-gray-900 border border-gray-700 text-white font-bold text-xs rounded-xl hover:bg-gray-800 transition">
-          عرض السلة
-        </button>
-      </div>
-    </section>
-
-    <!-- Categories & Sorting -->
-    <section class="mb-6">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
-        <h2 class="text-base md:text-lg font-black text-gray-100 flex items-center gap-2">
-          <i class="fas fa-layer-group text-yellow-500 text-sm"></i> الأقسام والمنتجات
-        </h2>
-
-        <div class="flex items-center gap-2">
-          <select id="sortSelect" onchange="renderProducts()" class="bg-gray-900 border border-gray-800 text-gray-300 text-xs rounded-xl p-2 focus:outline-none focus:border-yellow-500">
-            <option value="default">الترتيب الافتراضي</option>
-            <option value="price_low">السعر: من الأقل للأعلى</option>
-            <option value="price_high">السعر: من الأعلى للأقل</option>
-            <option value="popular">الأكثر إعجاباً</option>
-          </select>
-
-          <span id="productCount" class="text-xs text-gray-400 font-medium bg-gray-900 px-2.5 py-1.5 rounded-xl border border-gray-800"></span>
-        </div>
-      </div>
-
-      <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-        <button onclick="filterCategory('all', this)" class="cat-btn px-4 py-2.5 bg-yellow-500 text-black rounded-xl font-bold text-xs whitespace-nowrap transition shadow-md shadow-yellow-500/20">الكل</button>
-        <button onclick="filterCategory('tobacco', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">سجائر وتبغ</button>
-        <button onclick="filterCategory('drinks', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">مشروبات</button>
-        <button onclick="filterCategory('sweets', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">حلويات ومقرمشات</button>
-      </div>
-
-      <div id="categoryDeliveryNotice" class="hidden mt-3 bg-amber-500/10 border border-amber-500/40 text-amber-300 rounded-2xl p-3 text-xs flex items-center gap-2">
-        <i class="fas fa-circle-info text-amber-400 text-base"></i>
-        <span><strong>تنبيه هام:</strong> توصيل هذه المواد متوفر حالياً للاستلام المباشر أو التوصيل المحلي.</span>
-      </div>
-    </section>
-
-    <!-- Products Grid -->
-    <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 md:gap-5">
-      <div class="col-span-full text-center py-20 text-gray-400 text-xs flex flex-col items-center gap-3">
-        <i class="fas fa-circle-notch fa-spin text-2xl text-yellow-500"></i>
-        <span>جاري جلب المنتجات والمخزون...</span>
-      </div>
-    </div>
-  </main>
-
-  <!-- Mobile Navigation -->
-  <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-gray-950/95 border-t border-gray-800 backdrop-blur-lg px-2 py-2 flex justify-around items-center text-[10px] text-gray-400">
-    <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center gap-1 text-yellow-400">
-      <i class="fas fa-store text-base"></i>
-      <span>الرئيسية</span>
-    </button>
-    <button onclick="toggleWishlistModal()" class="flex flex-col items-center gap-1 relative">
-      <i class="fas fa-heart text-base text-red-400"></i>
-      <span>المفضلة</span>
-      <span id="mobileWishlistBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
-    </button>
-    <button onclick="toggleCart()" class="flex flex-col items-center gap-1 relative">
-      <i class="fas fa-shopping-bag text-base"></i>
-      <span>السلة</span>
-      <span id="mobileCartBadge" class="absolute -top-1 -right-1 bg-amber-500 text-black text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
-    </button>
-    <button id="mobileOrdersBtn" onclick="toggleMyOrders()" class="flex flex-col items-center gap-1 hidden">
-      <i class="fas fa-box text-base"></i>
-      <span>طلباتي</span>
-    </button>
-    <button onclick="toggleAuthModal()" class="flex flex-col items-center gap-1">
-      <i class="fas fa-user-circle text-base"></i>
-      <span id="mobileAuthLabel">حسابي</span>
-    </button>
-  </div>
-
-  <!-- Quick View Modal -->
-  <div id="quickViewModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-lg modal-scroll relative">
-      <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
-        <h3 class="text-sm font-bold text-yellow-400">معاينة وتفاصيل المنتج</h3>
-        <button onclick="closeModal('quickViewModal')" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
-      </div>
-      <div id="quickViewContent" class="space-y-4"></div>
-    </div>
-  </div>
-
-  <!-- Wishlist Modal -->
-  <div id="wishlistModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-md modal-scroll relative">
-      <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
-        <h3 class="text-base font-extrabold text-yellow-400 flex items-center gap-2">
-          <i class="fas fa-heart text-red-500"></i> قائمة المفضلة
-        </h3>
-        <button onclick="toggleWishlistModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
-      </div>
-      <div id="wishlistItems" class="space-y-3">
-        <p class="text-gray-400 text-center py-8 text-xs">قائمة المفضلة فارغة حالياً.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Authentication / Profile Modal -->
-  <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-sm modal-scroll relative">
-      <div class="flex justify-between items-center mb-5">
-        <h3 id="authTitle" class="text-base font-extrabold text-yellow-400">تسجيل الدخول برقم الهاتف</h3>
-        <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
-      </div>
-
-      <div id="authFormContainer" class="space-y-4">
-        <div>
-          <label class="text-[11px] text-gray-400 font-semibold block mb-1">رقم الهاتف</label>
-          <input id="custPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="15" placeholder="0661234567"
-            class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
-        </div>
-
-        <div>
-          <label class="text-[11px] text-gray-400 font-semibold block mb-1">كلمة السر</label>
-          <div class="relative">
-            <input id="custPass" type="password" autocomplete="current-password" placeholder="******"
-              class="w-full p-3 pl-10 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
-            <button type="button" onclick="togglePasswordVisibility('custPass', this)" class="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-yellow-400 transition">
-              <i class="fas fa-eye text-xs"></i>
-            </button>
-          </div>
-        </div>
-
-        <button onclick="handlePhoneAuth()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs shadow-md shadow-amber-500/20">
-          دخول / إنشاء حساب
-        </button>
-      </div>
-
-      <div id="customerProfileContainer" class="hidden space-y-4">
-        <div class="flex flex-col items-center text-center pb-3 border-b border-gray-800">
-          <div class="relative w-20 h-20 rounded-full overflow-hidden border-2 border-yellow-500 bg-gray-950 mb-2">
-            <img id="profileImgPreview" onerror="imgFallback(this)" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover">
-          </div>
-          <span id="profilePhoneDisplay" class="text-yellow-400 font-bold text-xs"></span>
-        </div>
-
-        <div>
-          <label class="text-[11px] text-gray-400 block mb-1">الاسم الكامل</label>
-          <input type="text" id="profileName" placeholder="أدخل اسمك الكريم" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-        </div>
-
-        <div>
-          <label class="text-[11px] text-gray-400 block mb-1">منطقة التوصيل القريبة</label>
-          <select id="profileArea" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-            <option value="وسط المدينة (Centre-ville)">وسط المدينة (Centre-ville)</option>
-            <option value="البلديات والأحياء المجاورة القريبة">البلديات والأحياء المجاورة القريبة</option>
-            <option value="استلام مباشر من المحل">استلام مباشر من المحل</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="text-[11px] text-gray-400 block mb-1">العنوان بالتفصيل</label>
-          <input type="text" id="profileAddress" placeholder="مثال: حي النصر، قرب المسجد" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-        </div>
-
-        <div>
-          <label class="text-[11px] text-gray-400 block mb-1">صورة الحساب</label>
-          <input type="file" accept="image/*" onchange="handleProfileImgUpload(event)" class="w-full text-[10px] text-gray-400 bg-gray-950 p-2 rounded-xl border border-gray-800">
-          <input type="hidden" id="profileImgBase64">
-        </div>
-
-        <div class="space-y-2 pt-2">
-          <button onclick="saveCustomerProfile()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition">
-            حفظ التعديلات
-          </button>
-          <button onclick="logoutCustomer()" class="w-full py-2.5 bg-red-950/60 hover:bg-red-900 border border-red-800 text-red-300 font-bold rounded-xl text-xs transition">
-            تسجيل الخروج
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Cart Drawer -->
-  <div id="cartDrawer" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden justify-end">
-    <div class="bg-gray-950 w-full max-w-md h-full p-5 flex flex-col justify-between border-r border-gray-800 safe-bottom">
-      <div>
-        <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-900">
-          <h2 class="text-lg font-black text-yellow-400 flex items-center gap-2">
-            <i class="fas fa-shopping-bag"></i> سلة المشتريات
-          </h2>
-          <button onclick="toggleCart()" class="text-gray-400 hover:text-white text-lg"><i class="fas fa-xmark"></i></button>
-        </div>
-
-        <div class="mb-4 bg-gray-900 p-3 rounded-xl border border-gray-800">
-          <div class="flex justify-between text-[10px] mb-1">
-            <span id="shippingText" class="text-gray-300">أضف منتجات للتوصيل المجاني</span>
-            <span id="shippingProgressText" class="text-amber-400 font-bold">0%</span>
-          </div>
-          <div class="w-full bg-gray-950 h-2 rounded-full overflow-hidden border border-gray-800">
-            <div id="shippingProgressBar" class="bg-gradient-to-r from-amber-500 to-yellow-400 h-full transition-all duration-300 w-0"></div>
-          </div>
-        </div>
-
-        <div id="cartItems" class="space-y-3 max-h-[35vh] overflow-y-auto pl-1 no-scrollbar">
-          <p class="text-gray-400 text-center py-10 text-xs">السلة فارغة حالياً</p>
-        </div>
-      </div>
-
-      <div class="border-t border-gray-900 pt-3 space-y-3 bg-gray-950">
-        <div class="flex gap-2">
-          <input type="text" id="couponCodeInput" autocomplete="off" placeholder="أدخل كود الخصم" class="flex-1 p-2 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white uppercase focus:outline-none focus:border-yellow-500">
-          <button onclick="applyCoupon()" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-yellow-400 font-bold text-xs rounded-xl transition">تطبيق</button>
-        </div>
-        <div id="couponAppliedMsg" class="hidden text-[10px] text-emerald-400 font-bold flex items-center gap-1">
-          <i class="fas fa-check-circle"></i> <span id="couponSuccessNotice">تم تطبيق الخصم بنجاح!</span>
-        </div>
-
-        <div>
-          <label class="text-[10px] text-gray-400 block mb-1">طريقة ومنطقة الاستلام:</label>
-          <select id="checkoutArea" onchange="updateCartUI()" class="w-full p-2 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white"></select>
-        </div>
-
-        <div class="space-y-1 text-xs text-gray-300 pt-2 border-t border-gray-900">
-          <div class="flex justify-between">
-            <span>قيمة المنتجات:</span>
-            <span id="subTotalDisplay">0 د.ج</span>
-          </div>
-          <div id="discountRow" class="hidden justify-between text-emerald-400">
-            <span>الخصم المطبق:</span>
-            <span id="discountDisplay">-0 د.ج</span>
-          </div>
-          <div class="flex justify-between">
-            <span>تكلفة التوصيل:</span>
-            <span id="shippingFeeDisplay">0 د.ج</span>
-          </div>
-          <div class="flex justify-between text-base font-black pt-2 border-t border-gray-800 text-white">
-            <span>المبلغ الإجمالي:</span>
-            <span id="cartTotal" class="text-yellow-400">0 د.ج</span>
-          </div>
-        </div>
-
-        <div>
-          <button id="submitOrderBtn" onclick="submitOrderToAdmin()" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/20">
-            <i class="fas fa-paper-plane"></i> تأكيد الطلب
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Customer Orders Modal -->
-  <div id="myOrdersModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-lg modal-scroll">
-      <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
-        <h3 class="text-base font-extrabold text-yellow-400 flex items-center gap-2"><i class="fas fa-clock-rotate-left"></i> سجل طلباتي</h3>
-        <button onclick="toggleMyOrders()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
-      </div>
-      <div id="myOrdersList" class="space-y-3">
-        <p class="text-gray-400 text-center py-8 text-xs">قم بتسجيل الدخول للاطلاع على طلباتك السابقة.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Edit Product Modal (Admin) -->
-  <div id="editProductModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[80] hidden items-center justify-center p-4">
-    <div class="bg-gray-900 border border-yellow-500/40 p-6 rounded-3xl w-full max-w-md modal-scroll space-y-4">
-      <div class="flex justify-between items-center pb-2 border-b border-gray-800">
-        <h3 class="text-base font-bold text-yellow-400"><i class="fas fa-pen-to-square ml-1"></i> تعديل بيانات المنتج</h3>
-        <button onclick="closeEditModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark"></i></button>
-      </div>
-      <input type="hidden" id="editPId">
-      <div>
-        <label class="text-[11px] text-gray-400 block mb-1">اسم المنتج</label>
-        <input type="text" id="editPName" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-      </div>
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="text-[11px] text-gray-400 block mb-1">السعر (د.ج)</label>
-          <input type="number" min="0" id="editPPrice" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-        </div>
-        <div>
-          <label class="text-[11px] text-gray-400 block mb-1">المخزون</label>
-          <input type="number" min="0" id="editPStock" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-        </div>
-      </div>
-      <div>
-        <label class="text-[11px] text-gray-400 block mb-1">القسم</label>
-        <select id="editPCategory" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-gray-200">
-          <option value="tobacco">سجائر وتبغ</option>
-          <option value="drinks">مشروبات</option>
-          <option value="sweets">حلويات ومقرمشات</option>
-        </select>
-      </div>
-      <div class="space-y-2">
-        <label class="text-[11px] text-gray-400 block">صورة المنتج:</label>
-        <input type="file" accept="image/*" onchange="handleEditImageUpload(event)" class="w-full text-[10px] text-gray-400 bg-gray-950 p-2 rounded-xl border border-gray-800">
-        <input type="hidden" id="editPImgBase64">
-      </div>
-      <div class="flex items-center gap-3">
-        <img id="editImgPreview" onerror="imgFallback(this)" class="w-20 h-20 object-cover rounded-xl border border-yellow-500/40 bg-gray-950">
-        <span class="text-[11px] text-gray-400">معاينة الصورة</span>
-      </div>
-      <button onclick="saveProductEdits()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs shadow-md">
-        حفظ التعديلات
-      </button>
-    </div>
-  </div>
-
-  <!-- Admin Dashboard Modal -->
-  <div id="adminModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] hidden items-center justify-center p-4">
-    <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-4xl modal-scroll">
-      <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
-        <div>
-          <h3 class="text-base font-bold text-yellow-400 flex items-center gap-2"><i class="fas fa-user-shield"></i> لوحة التحكم والإدارة الشاملة</h3>
-          <p class="text-[10px] text-gray-400">إدارة الإعدادات، المنتجات، المبيعات والزبائن</p>
-        </div>
-        <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
-      </div>
-
-      <!-- Admin Auth Form -->
-      <div id="adminLoginForm" class="space-y-3">
-        <div>
-          <label class="text-[11px] text-gray-400 block mb-1">البريد الإلكتروني للمدير</label>
-          <input type="email" id="adminUserInput" placeholder="admin@example.com" autocomplete="username"
-            class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
-        </div>
-        <div>
-          <label class="text-[11px] text-gray-400 block mb-1">كلمة المرور</label>
-          <div class="relative">
-            <input id="adminPassInput" type="password" placeholder="******" autocomplete="current-password"
-              class="w-full p-3 pl-10 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
-            <button type="button" onclick="togglePasswordVisibility('adminPassInput', this)" class="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-yellow-400 transition">
-              <i class="fas fa-eye text-xs"></i>
-            </button>
-          </div>
-        </div>
-        <button id="adminLoginSubmitBtn" onclick="loginAdmin()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition shadow-md shadow-amber-500/20">
-          دخول المدير المعتمد
-        </button>
-      </div>
-
-      <!-- Admin Main Panel -->
-      <div id="adminPanel" class="hidden space-y-4">
-        <div class="flex items-center justify-between bg-gray-950 p-3 rounded-xl border border-gray-800 text-xs">
-          <span id="adminSignedInAs" class="text-gray-300 font-semibold">مرحباً بالمدير</span>
-          <button onclick="logoutAdmin()" class="px-3 py-1 bg-red-950 text-red-400 hover:bg-red-900 rounded-lg text-[11px]">خروج</button>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
-            <span class="text-[10px] text-gray-400 block">إجمالي المنتجات</span>
-            <span id="statTotalProducts" class="text-base font-black text-yellow-400">0</span>
-          </div>
-          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
-            <span class="text-[10px] text-gray-400 block">طلبات جديدة</span>
-            <span id="statPendingOrders" class="text-base font-black text-amber-400">0</span>
-          </div>
-          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
-            <span class="text-[10px] text-gray-400 block">الزبائن المسجلون</span>
-            <span id="statTotalCustomers" class="text-base font-black text-emerald-400">0</span>
-          </div>
-          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
-            <span class="text-[10px] text-gray-400 block">منخفض المخزون</span>
-            <span id="statLowStock" class="text-base font-black text-red-400">0</span>
-          </div>
-        </div>
-
-        <div class="flex border-b border-gray-800 gap-2 pb-2 overflow-x-auto no-scrollbar">
-          <button onclick="switchAdminTab('storeSettings')" id="tabStoreSettingsBtn" class="admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap shadow-md shadow-yellow-500/20">⚙️ إعدادات المتجر والعروض</button>
-          <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الطلبات الواردة</button>
-          <button onclick="switchAdminTab('customers')" id="tabCustomersBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الزبائن المسجلون</button>
-          <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">إدارة وتعديل المخزون</button>
-          <button onclick="switchAdminTab('add')" id="tabAddBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">+ إضافة منتج</button>
-        </div>
-
-        <!-- 1. Store Settings Tab -->
-        <div id="adminTabStoreSettings" class="space-y-4 bg-gray-950/80 p-4 rounded-2xl border border-gray-800 text-xs">
-          <h4 class="text-sm font-bold text-yellow-400 border-b border-gray-800 pb-2">تحكم المدير في العروض والأسعار والإعلانات</h4>
-
-          <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-tag text-yellow-400"></i> إعدادات كود الخصم</h5>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <div>
-                <label class="text-[10px] text-gray-400 block mb-1">كود الخصم (اتركه فارغاً للتعطيل):</label>
-                <input type="text" id="adminCouponCode" placeholder="مثال: SALE20" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white uppercase">
-              </div>
-              <div>
-                <label class="text-[10px] text-gray-400 block mb-1">نسبة الخصم (%):</label>
-                <input type="number" min="1" max="100" id="adminCouponPercent" placeholder="10" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-truck text-yellow-400"></i> إعدادات التوصيل</h5>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-              <div>
-                <label class="text-[10px] text-gray-400 block mb-1">حد التوصيل المجاني (د.ج):</label>
-                <input type="number" min="0" id="adminFreeShippingTarget" placeholder="3000" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-              </div>
-              <div>
-                <label class="text-[10px] text-gray-400 block mb-1">سعر توصيل وسط المدينة (د.ج):</label>
-                <input type="number" min="0" id="adminShippingCentre" placeholder="200" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-              </div>
-              <div>
-                <label class="text-[10px] text-gray-400 block mb-1">سعر توصيل المناطق المجاورة (د.ج):</label>
-                <input type="number" min="0" id="adminShippingNearby" placeholder="350" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-bullhorn text-yellow-400"></i> نص الشريط الإعلاني</h5>
-            <input type="text" id="adminTickerText" placeholder="اكتب النص الإعلاني..." class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-          </div>
-
-          <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-phone text-yellow-400"></i> أرقام هاتف المحل (مفصولة بفاصلة)</h5>
-            <input type="text" id="adminStorePhones" placeholder="0781896750, 0661234567" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white font-mono">
-          </div>
-
-          <button onclick="saveStoreSettings()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition shadow-md">
-            حفظ وتطبيق إعدادات المتجر
-          </button>
-        </div>
-
-        <!-- 2. Orders Tab -->
-        <div id="adminTabOrders" class="hidden space-y-3">
-          <div class="flex justify-between items-center">
-            <div class="flex items-center gap-2">
-              <h4 class="text-xs font-bold text-gray-300">قائمة الطلبات:</h4>
-              <select id="adminOrderFilter" onchange="loadOrdersOnce()" class="bg-gray-950 border border-gray-800 rounded-lg text-[11px] p-1 text-gray-300">
-                <option value="all">كل الطلبات</option>
-                <option value="جديد">الجديدة فقط</option>
-                <option value="مكتمل">المكتملة</option>
-              </select>
-            </div>
-            <button onclick="loadOrdersOnce()" class="text-xs text-yellow-400 flex items-center gap-1"><i class="fas fa-rotate"></i> تحديث</button>
-          </div>
-          <div id="adminOrdersList" class="space-y-3">
-            <p class="text-xs text-gray-400 text-center py-6">جاري جلب الطلبات...</p>
-          </div>
-        </div>
-
-        <!-- 3. Customers Tab -->
-        <div id="adminTabCustomers" class="hidden space-y-3">
-          <div class="flex justify-between items-center">
-            <h4 class="text-xs font-bold text-gray-300">قائمة الزبائن المسجلين:</h4>
-            <button onclick="loadAdminCustomers()" class="text-xs text-yellow-400 flex items-center gap-1"><i class="fas fa-rotate"></i> تحديث</button>
-          </div>
-          <div id="adminCustomersList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
-        </div>
-
-        <!-- 4. Manage Stock Tab -->
-        <div id="adminTabManage" class="hidden space-y-3">
-          <input id="adminStockSearch" oninput="filterAdminProductsList()" type="search" placeholder="ابحث عن منتج لتعديله..."
-            class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-          <div id="adminProductsList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
-        </div>
-
-        <!-- 5. Add Product Tab -->
-        <div id="adminTabAdd" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
-          <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
-          <div class="grid grid-cols-2 gap-2">
-            <input type="number" min="0" id="pPrice" placeholder="السعر (د.ج)" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
-            <input type="number" min="0" id="pStock" placeholder="الكمية المتوفرة" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
-          </div>
-          <select id="pCategory" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-gray-300">
-            <option value="tobacco">سجائر وتبغ</option>
-            <option value="drinks">مشروبات</option>
-            <option value="sweets">حلويات ومقرمشات</option>
-          </select>
-          <div class="space-y-2">
-            <label class="text-[11px] text-gray-400 block">صورة المنتج:</label>
-            <input type="file" accept="image/*" onchange="handleAddImageUpload(event)" class="w-full text-xs text-gray-400 bg-gray-900 p-2 rounded-xl border border-gray-800">
-            <input type="hidden" id="pImgBase64">
-          </div>
-          <div id="imgPreviewContainer" class="hidden flex items-center gap-3 bg-gray-900 p-2 rounded-xl">
-            <img id="imgPreview" onerror="imgFallback(this)" class="w-16 h-16 object-cover rounded-xl border border-yellow-500/40">
-            <span class="text-xs text-emerald-400">تم تجهيز الصورة بنجاح!</span>
-          </div>
-          <button onclick="addProduct()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs transition">
-            حفظ ونشر المنتج
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer class="border-t border-gray-900 bg-black/60 py-8 text-center text-xs text-gray-400">
-    <div class="max-w-6xl mx-auto px-4 space-y-2">
-      <p class="font-bold text-yellow-500/80">VIP SMOOK © <span id="year"></span></p>
-      <div id="storePhonesFooterList" class="flex flex-wrap justify-center gap-2 text-white font-mono text-[11px]"></div>
-    </div>
-  </footer>
-
-  <script>
-    const FALLBACK_IMG = "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
-    const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
-
-    const ADMIN_UID = "Mb1v98Csl6bVd9fnzUSTdMTGaCT2";
-    const TELEGRAM_BOT_TOKEN = "8306019686:AAEVN6Stiinu6cefq3OP_e9JwquGswckfVo";
-    const TELEGRAM_CHAT_ID = "6481958888";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyC8Sh1-ufVJ_voLCcu3_W89011oQYEGn60",
-      authDomain: "vip-smook.firebaseapp.com",
-      projectId: "vip-smook",
-      storageBucket: "vip-smook.firebasestorage.app",
-      messagingSenderId: "823462448927",
-      appId: "1:823462448927:web:2d9a8b705cac3c6fef6a2a",
-      measurementId: "G-9H9HC9L28B"
-    };
-
-    let firebaseReady = false;
-    let db = null;
-    let auth = null;
-    let unsubscribeProducts = null;
-
+class StorageManager {
+  static load() {
     try {
-      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-      db = firebase.firestore();
-      auth = firebase.auth();
-      firebaseReady = true;
-    } catch (e) {
-      console.error("Firebase init failed:", e);
-    }
-
-    const state = {
-      products: [],
-      orders: [],
-      customers: [],
-      cart: JSON.parse(localStorage.getItem("vip_cart") || "[]"),
-      wishlist: JSON.parse(localStorage.getItem("vip_wishlist") || "[]"),
-      currentCategory: "all",
-      searchQuery: "",
-      customer: JSON.parse(localStorage.getItem("vip_user") || "null"),
-      isAdminLoggedIn: false,
-      storeSettings: {
-        couponCode: "",
-        couponPercent: 0,
-        freeShippingTarget: 3000,
-        shippingFeeCentre: 200,
-        shippingFeeNearby: 350,
-        tickerText: "🔥 أهلاً بكم في VIP SMOOK - التوصيل سريع ومباشر لوسط المدينة والمناطق القريبة!",
-        storePhones: ["0781896750"]
-      },
-      appliedDiscount: 0,
-      appliedCoupon: null
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (parsed.config) Object.assign(CONFIG, parsed.config);
+        return parsed;
+      }
+    } catch (e) {}
+    return {
+      bestTimes: {},
+      bestSplits: {},
+      bestRanks: {},
+      ghostTrails: {},
+      unlockedPrismScarf: false,
+      config: CONFIG
     };
+  }
 
-    document.getElementById("year").textContent = new Date().getFullYear();
+  static save(data) {
+    try {
+      data.config = CONFIG;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {}
+  }
+}
 
-    function esc(value) {
-      return String(value ?? "").replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' })[m]);
+let SAVE_STATE = StorageManager.load();
+
+// ==========================================
+// 2. محرك الصوت الإجرائي
+// ==========================================
+class SoundFX {
+  constructor() {
+    this.ctx = null;
+    this.bgmTimer = null;
+    this.step = 0;
+    this.notes = [110, 110, 130.81, 98, 87.31, 98, 110, 146.83];
+    this.bossNotes = [73.42, 73.42, 87.31, 73.42, 110, 98, 65.41, 82.41];
+  }
+
+  init() {
+    if (!CONFIG.audio) return;
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
     }
-
-    function money(n) {
-      return `${Number(n || 0).toLocaleString("fr-DZ")} د.ج`;
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
     }
+    this.startMusic();
+  }
 
-    function imgSrc(v, fallback = FALLBACK_IMG) {
-      const s = String(v ?? "").trim();
-      return s || fallback;
+  startMusic() {
+    if (this.bgmTimer || !this.ctx || !CONFIG.audio) return;
+    this.bgmTimer = setInterval(() => {
+      if (!sys.running || sys.paused || !CONFIG.audio) return;
+      try {
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        const isBossStage = (sys.level === 2 || sys.level === 9) && boss.active;
+        const melody = isBossStage ? this.bossNotes : this.notes;
+
+        osc.type = (sys.dimFactor < 0.5) ? 'sine' : 'sawtooth';
+        osc.frequency.setValueAtTime(melody[this.step % melody.length], t);
+        const vol = isBossStage ? 0.045 : ((sys.dimFactor < 0.5) ? 0.03 : 0.018);
+        g.gain.setValueAtTime(vol, t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+        osc.connect(g);
+        g.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.35);
+        this.step++;
+      } catch (e) {}
+    }, 280);
+  }
+
+  stopMusic() {
+    if (this.bgmTimer) {
+      clearInterval(this.bgmTimer);
+      this.bgmTimer = null;
     }
+  }
 
-    function imgFallback(el) {
-      el.onerror = null;
-      el.src = FALLBACK_IMG;
+  play(name) {
+    if (!this.ctx || !CONFIG.audio) return;
+    try {
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      osc.connect(g);
+      g.connect(this.ctx.destination);
+
+      if (name === 'jump') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(160, t);
+        osc.frequency.exponentialRampToValueAtTime(560, t + 0.11);
+        g.gain.setValueAtTime(0.18, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.11);
+        osc.start(t); osc.stop(t + 0.11);
+      } else if (name === 'walljump') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(280, t);
+        osc.frequency.exponentialRampToValueAtTime(720, t + 0.13);
+        g.gain.setValueAtTime(0.2, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+        osc.start(t); osc.stop(t + 0.13);
+      } else if (name === 'dash') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(340, t);
+        osc.frequency.exponentialRampToValueAtTime(50, t + 0.16);
+        g.gain.setValueAtTime(0.25, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+        osc.start(t); osc.stop(t + 0.16);
+      } else if (name === 'shift') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(700, t);
+        osc.frequency.exponentialRampToValueAtTime(140, t + 0.2);
+        g.gain.setValueAtTime(0.18, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+        osc.start(t); osc.stop(t + 0.2);
+      } else if (name === 'slash') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(800, t);
+        osc.frequency.exponentialRampToValueAtTime(120, t + 0.12);
+        g.gain.setValueAtTime(0.28, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+        osc.start(t); osc.stop(t + 0.12);
+      } else if (name === 'emp') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(180, t);
+        osc.frequency.exponentialRampToValueAtTime(40, t + 0.35);
+        g.gain.setValueAtTime(0.4, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+        osc.start(t); osc.stop(t + 0.35);
+      } else if (name === 'boss_telegraph') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(220, t);
+        osc.frequency.linearRampToValueAtTime(660, t + 0.5);
+        g.gain.setValueAtTime(0.25, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+        osc.start(t); osc.stop(t + 0.5);
+      } else if (name === 'boss_phase') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(90, t);
+        osc.frequency.exponentialRampToValueAtTime(400, t + 0.8);
+        g.gain.setValueAtTime(0.5, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+        osc.start(t); osc.stop(t + 0.8);
+      } else if (name === 'boss_slam') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(180, t);
+        osc.frequency.exponentialRampToValueAtTime(25, t + 0.45);
+        g.gain.setValueAtTime(0.55, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+        osc.start(t); osc.stop(t + 0.45);
+      } else if (name === 'turret_shot') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(420, t);
+        osc.frequency.exponentialRampToValueAtTime(110, t + 0.14);
+        g.gain.setValueAtTime(0.15, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+        osc.start(t); osc.stop(t + 0.14);
+      } else if (name === 'hurt') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(260, t);
+        osc.frequency.exponentialRampToValueAtTime(70, t + 0.2);
+        g.gain.setValueAtTime(0.35, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+        osc.start(t); osc.stop(t + 0.2);
+      } else if (name === 'shard') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(659.25, t);
+        osc.frequency.setValueAtTime(987.77, t + 0.08);
+        g.gain.setValueAtTime(0.24, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+        osc.start(t); osc.stop(t + 0.28);
+      } else if (name === 'hit') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(200, t);
+        osc.frequency.exponentialRampToValueAtTime(40, t + 0.16);
+        g.gain.setValueAtTime(0.3, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+        osc.start(t); osc.stop(t + 0.16);
+      } else if (name === 'death') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, t);
+        osc.frequency.exponentialRampToValueAtTime(20, t + 0.36);
+        g.gain.setValueAtTime(0.38, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.36);
+        osc.start(t); osc.stop(t + 0.36);
+      }
+    } catch (e) {}
+  }
+}
+
+const audio = new SoundFX();
+
+function triggerHaptic(ms = 25) {
+  if (CONFIG.haptic && navigator.vibrate) {
+    try { navigator.vibrate(ms); } catch (e) {}
+  }
+}
+
+// ==========================================
+// 3. إدارة العرض والرسم (Canvas 2D)
+// ==========================================
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
+let viewW = window.innerWidth;
+let viewH = window.innerHeight;
+let dpr = 1;
+
+function resizeCanvas() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.0);
+  viewW = window.innerWidth;
+  viewH = window.innerHeight;
+  canvas.width = Math.floor(viewW * dpr);
+  canvas.height = Math.floor(viewH * dpr);
+  canvas.style.width = viewW + 'px';
+  canvas.style.height = viewH + 'px';
+  ctx.imageSmoothingEnabled = false;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// ==========================================
+// 4. الثوابت الفيزيائية وحالة المحرك
+// ==========================================
+const CONSTANTS = {
+  fixedStep: 1 / 60,
+  maxAccum: 0.2,
+  gravity: 34.0,
+  maxFall: 17.5,
+  walkSpeed: 6.0,
+  runAccel: 50.0,
+  runDecel: 44.0,
+  airAccel: 30.0,
+  jumpForce: -13.0,
+  wallSlideSpeed: 3.0,
+  wallJumpX: 8.5,
+  wallJumpY: -12.2,
+  dashSpeed: 17.0,
+  dashDuration: 0.18,
+  coyoteMax: 0.1,
+  jumpBufferMax: 0.12,
+  subStepDist: 4.0,
+  maxHp: 3,
+  maxEnergy: 100,
+  energyRegenRate: 18.0,
+  empEnergyCost: 40,
+  attackCooldown: 0.28,
+  attackDuration: 0.14,
+  attackRangeX: 42,
+  attackRangeY: 34,
+  invulnDuration: 1.2
+};
+
+const sys = {
+  running: false,
+  paused: false,
+  level: 0,
+  dimension: 'REAL',
+  dimFactor: 0.0,
+  shake: 0,
+  chromatic: 0,
+  flash: 0,
+  isDead: false,
+  invulnTimer: 0,
+  campaignTotalTime: 0,
+  campaignTotalDeaths: 0,
+  activeLevelTime: 0,
+  levelDeaths: 0,
+  levelSplits: [],
+  shards: 0,
+  totalShards: 0,
+  timeScale: 1.0,
+  slowMoTimer: 0,
+  currentCheckpoint: null
+};
+
+const cam = {
+  x: 0, y: 0,
+  targetX: 0, targetY: 0,
+  lookAheadX: 0,
+  smooth: 0.085
+};
+
+const hero = {
+  x: 0, y: 0,
+  w: 24, h: 36,
+  vx: 0, vy: 0,
+  hp: CONSTANTS.maxHp,
+  energy: CONSTANTS.maxEnergy,
+  isGrounded: false,
+  isWallSliding: false,
+  wallDir: 0,
+  facing: 1,
+  canDoubleJump: true,
+  canDash: true,
+  airDashUsed: false,
+  dashCooldown: 0,
+  isDashing: false,
+  dashTimer: 0,
+  coyoteTimer: 0,
+  jumpBufferTimer: 0,
+  scaleX: 1, scaleY: 1,
+  runCycle: 0,
+  isAttacking: false,
+  attackTimer: 0,
+  attackCooldownTimer: 0,
+  empWave: { active: false, x: 0, y: 0, radius: 0, maxRadius: 130 },
+  scarf: Array.from({ length: 8 }, () => ({ x: 0, y: 0 })),
+  ghosts: []
+};
+
+const chaser = {
+  x: -600,
+  speed: 1.25
+};
+
+const boss = {
+  active: false,
+  name: 'GUARDIAN OF REALITY',
+  x: 0, y: 0,
+  w: 58, h: 68,
+  hp: 100, maxHp: 100,
+  phase: 1,
+  state: 'patrol',
+  timer: 0,
+  dir: 1,
+  invulnTimer: 0,
+  telegraphTimer: 0,
+  attackDim: 'BOTH',
+  shockwaves: [],
+  arenaHazards: []
+};
+
+let enemyProjectiles = [];
+let currentGhostRecord = [];
+let activeReplayGhost = [];
+
+const MAX_PARTICLES = 280;
+const particles = Array.from({ length: MAX_PARTICLES }, () => ({
+  active: false,
+  x: 0, y: 0,
+  vx: 0, vy: 0,
+  life: 0,
+  maxLife: 1,
+  color: '#fff',
+  size: 3
+}));
+
+function emitParticles(x, y, color, count = 10, speedMul = 1) {
+  let spawned = 0;
+  for (let i = 0; i < MAX_PARTICLES && spawned < count; i++) {
+    const p = particles[i];
+    if (!p.active) {
+      p.active = true;
+      p.x = x;
+      p.y = y;
+      const angle = Math.random() * Math.PI * 2;
+      const spd = (Math.random() * 3.5 + 1.2) * speedMul;
+      p.vx = Math.cos(angle) * spd;
+      p.vy = Math.sin(angle) * spd;
+      p.life = 0;
+      p.maxLife = Math.random() * 0.32 + 0.2;
+      p.color = color;
+      p.size = Math.random() * 2.5 + 1.8;
+      spawned++;
     }
+  }
+}
 
-    function acceptLegalGate() {
-      localStorage.setItem("vip_legal_gate", "accepted");
-      closeModal("legalGate");
+// ==========================================
+// 5. قوالب المراحل الـ 10 الكاملة (10-Stage Campaign Templates)
+// ==========================================
+const LEVEL_TEMPLATES = [
+  // 1. مدينة الواقع الرقمي: تعليمية متوازنة
+  {
+    name: 'مدينة الواقع الرقمي',
+    w: 2800, h: 950,
+    spawn: { x: 120, y: 740 },
+    exit: { x: 2600, y: 440 },
+    chaserSpeed: 1.15,
+    platforms: [
+      { x: 0, y: 840, w: 900, h: 110, d: 'BOTH' },
+      { x: 1040, y: 840, w: 1760, h: 110, d: 'BOTH' },
+      { x: 380, y: 710, w: 140, h: 24, d: 'REAL' },
+      { x: 620, y: 590, w: 150, h: 24, d: 'GLITCH' },
+      { x: 860, y: 500, w: 160, h: 24, d: 'REAL' },
+      { x: 1160, y: 580, w: 150, h: 24, d: 'GLITCH' },
+      { x: 1440, y: 660, w: 150, h: 24, d: 'REAL' },
+      { x: 1720, y: 540, w: 160, h: 24, d: 'GLITCH' },
+      { x: 2020, y: 460, w: 180, h: 24, d: 'REAL' },
+      { x: 2360, y: 480, w: 300, h: 24, d: 'BOTH' }
+    ],
+    moving: [
+      { x: 920, y: 720, w: 100, h: 20, d: 'BOTH', minX: 900, maxX: 1030, spd: 1.8, dir: 1 }
+    ],
+    hazards: [
+      { x: 900, y: 900, w: 140, h: 40, d: 'BOTH' },
+      { x: 420, y: 686, w: 60, h: 24, d: 'REAL' },
+      { x: 1480, y: 636, w: 70, h: 24, d: 'REAL' }
+    ],
+    enemies: [
+      { type: 'patrol', x: 1250, y: 800, w: 26, h: 26, minX: 1120, maxX: 1400, spd: 2.0, dir: 1, alive: true, hp: 1, maxHp: 1, d: 'BOTH' },
+      { type: 'turret', x: 2060, y: 426, w: 30, h: 34, alive: true, hp: 2, maxHp: 2, shootCooldown: 1.8, timer: 0.5, d: 'REAL' }
+    ],
+    shards: [
+      { x: 700, y: 540, collected: false },
+      { x: 1240, y: 530, collected: false },
+      { x: 1800, y: 490, collected: false }
+    ],
+    checkpoints: [],
+    boss: null
+  },
+
+  // 2. انهيار السايبر المعلق: قفزات دقيقة ومنصات متحركة
+  {
+    name: 'انهيار السايبر المعلق',
+    w: 3200, h: 1000,
+    spawn: { x: 100, y: 820 },
+    exit: { x: 3000, y: 360 },
+    chaserSpeed: 1.35,
+    platforms: [
+      { x: 0, y: 900, w: 420, h: 100, d: 'BOTH' },
+      { x: 480, y: 800, w: 130, h: 24, d: 'REAL' },
+      { x: 680, y: 700, w: 140, h: 24, d: 'GLITCH' },
+      { x: 900, y: 600, w: 130, h: 24, d: 'REAL' },
+      { x: 1140, y: 500, w: 150, h: 24, d: 'GLITCH' },
+      { x: 1380, y: 590, w: 140, h: 24, d: 'REAL' },
+      { x: 1620, y: 690, w: 140, h: 24, d: 'GLITCH' },
+      { x: 1880, y: 590, w: 150, h: 24, d: 'REAL' },
+      { x: 2140, y: 490, w: 150, h: 24, d: 'GLITCH' },
+      { x: 2400, y: 420, w: 150, h: 24, d: 'REAL' },
+      { x: 2700, y: 440, w: 400, h: 80, d: 'BOTH' }
+    ],
+    moving: [
+      { x: 1140, y: 420, w: 110, h: 20, d: 'REAL', minX: 1080, maxX: 1320, spd: 2.8, dir: 1 },
+      { x: 1900, y: 510, w: 110, h: 20, d: 'GLITCH', minX: 1800, maxX: 2050, spd: 3.2, dir: 1 }
+    ],
+    hazards: [
+      { x: 420, y: 950, w: 2280, h: 40, d: 'BOTH' },
+      { x: 930, y: 576, w: 70, h: 24, d: 'REAL' },
+      { x: 1920, y: 566, w: 70, h: 24, d: 'REAL' }
+    ],
+    enemies: [
+      { type: 'stalker', x: 740, y: 660, w: 26, h: 26, minX: 680, maxX: 840, spd: 3.4, dir: 1, alive: true, hp: 2, maxHp: 2, d: 'GLITCH' },
+      { type: 'turret', x: 1420, y: 556, w: 30, h: 34, alive: true, hp: 2, maxHp: 2, shootCooldown: 1.6, timer: 1.0, d: 'REAL' },
+      { type: 'patrol', x: 2200, y: 450, w: 26, h: 26, minX: 2150, maxX: 2280, spd: 2.2, dir: 1, alive: true, hp: 1, maxHp: 1, d: 'GLITCH' }
+    ],
+    shards: [
+      { x: 750, y: 650, collected: false },
+      { x: 1200, y: 450, collected: false },
+      { x: 2210, y: 440, collected: false }
+    ],
+    checkpoints: [{ x: 1650, y: 640, activated: false }],
+    boss: null
+  },
+
+  // 3. حلبة حارس الواقع: الزعيم الأول
+  {
+    name: 'حلبة حارس الواقع',
+    w: 2400, h: 900,
+    spawn: { x: 150, y: 720 },
+    exit: { x: 2220, y: 720 },
+    chaserSpeed: 0,
+    platforms: [
+      { x: 0, y: 800, w: 2400, h: 100, d: 'BOTH' },
+      { x: 0, y: 0, w: 50, h: 800, d: 'BOTH' },
+      { x: 2350, y: 0, w: 50, h: 800, d: 'BOTH' },
+      { x: 300, y: 640, w: 220, h: 24, d: 'REAL' },
+      { x: 660, y: 520, w: 240, h: 24, d: 'GLITCH' },
+      { x: 1080, y: 410, w: 260, h: 24, d: 'BOTH' },
+      { x: 1520, y: 520, w: 240, h: 24, d: 'GLITCH' },
+      { x: 1900, y: 640, w: 220, h: 24, d: 'REAL' }
+    ],
+    moving: [],
+    hazards: [],
+    enemies: [],
+    shards: [
+      { x: 410, y: 590, collected: false },
+      { x: 1210, y: 350, collected: false },
+      { x: 2010, y: 590, collected: false }
+    ],
+    checkpoints: [],
+    boss: { name: 'GUARDIAN OF REALITY', spawnX: 1300, spawnY: 732 }
+  },
+
+  // 4. محطة الطاقة المهجورة: أشعة ليزر وأرضيات كهربائية
+  {
+    name: 'محطة الطاقة المهجورة',
+    w: 3000, h: 950,
+    spawn: { x: 120, y: 780 },
+    exit: { x: 2850, y: 350 },
+    chaserSpeed: 1.25,
+    platforms: [
+      { x: 0, y: 850, w: 500, h: 100, d: 'BOTH' },
+      { x: 600, y: 750, w: 160, h: 24, d: 'REAL' },
+      { x: 860, y: 660, w: 180, h: 24, d: 'GLITCH' },
+      { x: 1140, y: 560, w: 160, h: 24, d: 'REAL' },
+      { x: 1400, y: 640, w: 200, h: 24, d: 'BOTH' },
+      { x: 1700, y: 540, w: 170, h: 24, d: 'GLITCH' },
+      { x: 1980, y: 440, w: 170, h: 24, d: 'REAL' },
+      { x: 2250, y: 520, w: 180, h: 24, d: 'GLITCH' },
+      { x: 2520, y: 420, w: 480, h: 80, d: 'BOTH' }
+    ],
+    moving: [
+      { x: 1400, y: 580, w: 120, h: 20, d: 'REAL', minX: 1350, maxX: 1600, spd: 3.0, dir: 1 }
+    ],
+    hazards: [
+      { x: 500, y: 910, w: 2020, h: 40, d: 'BOTH' },
+      { x: 880, y: 636, w: 80, h: 24, d: 'GLITCH' },
+      { x: 2000, y: 416, w: 70, h: 24, d: 'REAL' }
+    ],
+    enemies: [
+      { type: 'turret', x: 1180, y: 526, w: 30, h: 34, alive: true, hp: 2, maxHp: 2, shootCooldown: 1.5, timer: 0.2, d: 'REAL' },
+      { type: 'patrol', x: 1750, y: 500, w: 26, h: 26, minX: 1710, maxX: 1840, spd: 2.2, dir: 1, alive: true, hp: 1, maxHp: 1, d: 'GLITCH' },
+      { type: 'stalker', x: 2300, y: 480, w: 26, h: 26, minX: 2260, maxX: 2390, spd: 3.2, dir: 1, alive: true, hp: 2, maxHp: 2, d: 'GLITCH' }
+    ],
+    shards: [
+      { x: 950, y: 610, collected: false },
+      { x: 1460, y: 590, collected: false },
+      { x: 2340, y: 470, collected: false }
+    ],
+    checkpoints: [{ x: 1420, y: 590, activated: false }],
+    boss: null
+  },
+
+  // 5. المدينة الممطرة: منصات زلقة ورؤية ضبابية
+  {
+    name: 'المدينة الممطرة',
+    w: 3200, h: 1000,
+    spawn: { x: 100, y: 800 },
+    exit: { x: 3050, y: 400 },
+    chaserSpeed: 1.30,
+    platforms: [
+      { x: 0, y: 880, w: 460, h: 120, d: 'BOTH' },
+      { x: 550, y: 780, w: 140, h: 24, d: 'GLITCH' },
+      { x: 780, y: 680, w: 150, h: 24, d: 'REAL' },
+      { x: 1030, y: 590, w: 150, h: 24, d: 'GLITCH' },
+      { x: 1280, y: 690, w: 160, h: 24, d: 'REAL' },
+      { x: 1540, y: 580, w: 180, h: 24, d: 'BOTH' },
+      { x: 1820, y: 480, w: 150, h: 24, d: 'REAL' },
+      { x: 2070, y: 580, w: 150, h: 24, d: 'GLITCH' },
+      { x: 2320, y: 480, w: 160, h: 24, d: 'REAL' },
+      { x: 2580, y: 400, w: 160, h: 24, d: 'GLITCH' },
+      { x: 2840, y: 460, w: 360, h: 80, d: 'BOTH' }
+    ],
+    moving: [
+      { x: 1030, y: 530, w: 100, h: 20, d: 'GLITCH', minX: 980, maxX: 1200, spd: 3.2, dir: 1 },
+      { x: 2320, y: 420, w: 110, h: 20, d: 'REAL', minX: 2280, maxX: 2480, spd: 3.0, dir: 1 }
+    ],
+    hazards: [
+      { x: 460, y: 950, w: 2380, h: 40, d: 'BOTH' },
+      { x: 800, y: 656, w: 60, h: 24, d: 'REAL' },
+      { x: 2090, y: 556, w: 60, h: 24, d: 'GLITCH' }
+    ],
+    enemies: [
+      { type: 'stalker', x: 820, y: 640, w: 26, h: 26, minX: 790, maxX: 910, spd: 3.5, dir: 1, alive: true, hp: 2, maxHp: 2, d: 'REAL' },
+      { type: 'turret', x: 1600, y: 546, w: 30, h: 34, alive: true, hp: 2, maxHp: 2, shootCooldown: 1.4, timer: 0.8, d: 'BOTH' },
+      { type: 'patrol', x: 2360, y: 440, w: 26, h: 26, minX: 2330, maxX: 2450, spd: 2.4, dir: 1, alive: true, hp: 1, maxHp: 1, d: 'REAL' }
+    ],
+    shards: [
+      { x: 850, y: 630, collected: false },
+      { x: 1630, y: 530, collected: false },
+      { x: 2650, y: 350, collected: false }
+    ],
+    checkpoints: [{ x: 1560, y: 530, activated: false }],
+    boss: null
+  },
+
+  // 6. مختبر الأبعاد: ألغاز تبديل REAL و GLITCH
+  {
+    name: 'مختبر الأبعاد',
+    w: 3000, h: 1000,
+    spawn: { x: 120, y: 800 },
+    exit: { x: 2800, y: 320 },
+    chaserSpeed: 1.20,
+    platforms: [
+      { x: 0, y: 880, w: 420, h: 100, d: 'BOTH' },
+      { x: 500, y: 780, w: 140, h: 24, d: 'REAL' },
+      { x: 740, y: 680, w: 140, h: 24, d: 'GLITCH' },
+      { x: 980, y: 580, w: 140, h: 24, d: 'REAL' },
+      { x: 1220, y: 480, w: 140, h: 24, d: 'GLITCH' },
+      { x: 1460, y: 580, w: 150, h: 24, d: 'REAL' },
+      { x: 1710, y: 680, w: 150, h: 24, d: 'GLITCH' },
+      { x: 1960, y: 580, w: 150, h: 24, d: 'REAL' },
+      { x: 2210, y: 480, w: 150, h: 24, d: 'GLITCH' },
+      { x: 2460, y: 380, w: 160, h: 24, d: 'REAL' },
+      { x: 2700, y: 400, w: 300, h: 80, d: 'BOTH' }
+    ],
+    moving: [
+      { x: 740, y: 620, w: 90, h: 20, d: 'GLITCH', minX: 700, maxX: 880, spd: 3.2, dir: 1 },
+      { x: 1960, y: 520, w: 90, h: 20, d: 'REAL', minX: 1920, maxX: 2100, spd: 3.2, dir: 1 }
+    ],
+    hazards: [
+      { x: 420, y: 940, w: 2280, h: 40, d: 'BOTH' },
+      { x: 1000, y: 556, w: 80, h: 24, d: 'REAL' },
+      { x: 2230, y: 456, w: 80, h: 24, d: 'GLITCH' }
+    ],
+    enemies: [
+      { type: 'turret', x: 550, y: 746, w: 30, h: 34, alive: true, hp: 2, maxHp: 2, shootCooldown: 1.7, timer: 0.2, d: 'REAL' },
+      { type: 'stalker', x: 1260, y: 440, w: 26, h: 26, minX: 1230, maxX: 1340, spd: 3.6, dir: 1, alive: true, hp: 2, maxHp: 2, d: 'GLITCH' },
+      { type: 'turret', x: 2510, y: 346, w: 30, h: 34, alive: true, hp: 2, maxHp: 2, shootCooldown: 1.5, timer: 1.1, d: 'REAL' }
+    ],
+    shards: [
+      { x: 780, y: 580, collected: false },
+      { x: 1520, y: 530, collected: false },
+      { x: 2270, y: 430, collected: false }
+    ],
+    checkpoints: [{ x: 1480, y: 530, activated: false }],
+    boss: null
+  },
+
+  // 7. المصنع الآلي: مكابس ومنصات عمودية سريعة
+  {
+    name: 'المصنع الآلي',
+    w: 3200, h: 1050,
+    spawn: { x: 120, y: 880 },
+    exit: { x: 3000, y: 360 },
+    chaserSpeed: 1.35,
+    platforms: [
+      { x: 0, y: 950, w: 450, h: 100, d: 'BOTH' },
+      { x: 540, y: 850, w: 140, h: 24, d: 'REAL' },
+      { x: 780, y: 740, w: 150, h: 24, d: 'GLITCH' },
+      { x: 1020, y: 640, w: 160, h: 24, d: 'REAL' },
+      { x: 1280, y: 740, w: 150, h: 24, d: 'GLITCH' },
+      { x: 1540, y: 640, w: 180, h: 24, d: 'BOTH' },
+      { x: 1820, y: 540, w: 150, h: 24, d: 'REAL' },
+      { x: 2080, y: 640, w: 150, h: 24, d: 'GLITCH' },
+      { x: 2340, y: 530, w: 150, h: 24, d: 'REAL' },
+      { x: 2600, y: 430, w: 160, h: 24, d: 'GLITCH' },
+      { x: 2850, y: 450, w: 350, h: 80, d: 'BOTH' }
+    ],
+    moving: [
+      { x: 1020, y: 580, w: 100, h: 20, d: 'REAL', minX: 980, maxX: 1180, spd: 3.5, dir: 1 },
+      { x: 1820, y: 480, w: 100, h: 20, d: 'REAL', minX: 1780, maxX: 1980, spd: 3.5, dir: 1 }
+    ],
+    hazards: [
+      { x: 450, y: 1000, w: 2400, h: 40, d: 'BOTH' },
+      { x: 800, y: 716, w: 80, h: 24, d: 'GLITCH' },
+      { x: 2100, y: 616, w: 80, h: 24, d: 'GLITCH' }
+    ],
+    enemies: [
+      { type: 'patrol', x: 580, y: 810, w: 26, h: 26, minX: 550, maxX: 660, spd: 2.6, dir: 1, alive: true, hp: 1, maxHp: 1, d: 'REAL' },
+      { type: 'turret', x: 1590, y: 606, w: 30, h: 34, alive: true, hp: 2, maxHp: 2, shootCooldown: 1.4, timer: 0.5, d: 'BOTH' },
+      { type: 'stalker', x: 2380, y: 490, w: 26, h: 26, minX: 2350, maxX: 2470, spd: 3.6, dir: 1, alive: true, hp: 2, maxHp: 2, d: 'REAL' }
+    ],
+    shards: [
+      { x: 850, y: 690, collected: false },
+      { x: 1620, y: 590, collected: false },
+      { x: 2670, y: 380, collected: false }
+    ],
+    checkpoints: [{ x: 1560, y: 590, activated: false }],
+    boss: null
+  },
+
+  // 8. متاهة الخلل: مسارات متشعبة وأبواب زمنية
+  {
+    name: 'متاهة الخلل',
+    w: 3400, h: 1050,
+    spawn: { x: 100, y: 860 },
+    exit: { x: 3200, y: 300 },
+    chaserSpeed: 1.40,
+    platforms: [
+      { x: 0, y: 940, w: 400, h: 100, d: 'BOTH' },
+      { x: 480, y: 830, w: 140, h: 24, d: 'REAL' },
+      { x: 720, y: 730, w: 150, h: 24, d: 'GLITCH' },
+      { x: 960, y: 630, w: 150, h: 24, d: 'REAL' },
+      { x: 1200, y: 530, w: 160, h: 24, d: 'GLITCH' },
+      { x: 1460, y: 630, w: 160, h: 24, d: 'BOTH' },
+      { x: 1720, y: 530, w: 150, h: 24, d: 'REAL' },
+      { x: 1980, y: 430, w: 150, h: 24, d: 'GLITCH' },
+      { x: 2240, y: 530, w: 150, h: 24, d: 'REAL' },
+      { x: 2500, y: 430, w: 160, h: 24, d: 'GLITCH' },
+      { x: 2760, y: 350, w: 160, h: 24, d: 'REAL' },
+      { x: 3020, y: 380, w: 380, h: 80, d: 'BOTH' }
+    ],
+    moving: [
+      { x: 1200, y: 470, w: 100, h: 20, d: 'GLITCH', minX: 1150, maxX: 1350, spd: 3.4, dir: 1 },
+      { x: 2500, y: 370, w: 100, h: 20, d: 'GLITCH', minX: 2450, maxX: 2650, spd: 3.5, dir: 1 }
+    ],
+    hazards: [
+      { x: 400, y: 1000, w: 2620, h: 40, d: 'BOTH' },
+      { x: 740, y: 706, w: 70, h: 24, d: 'GLITCH' },
+      { x: 2000, y: 406, w: 70, h: 24, d: 'GLITCH' }
+    ],
+    enemies: [
+      { type: 'stalker', x: 760, y: 690, w: 26, h: 26, minX: 730, maxX: 850, spd: 3.8, dir: 1, alive: true, hp: 2, maxHp: 2, d: 'GLITCH' },
+      { type: 'turret', x: 1510, y: 596, w: 30, h: 34, alive: true, hp: 2, maxHp: 2, shootCooldown: 1.3, timer: 0.3, d: 'BOTH' },
+      { type: 'turret', x: 2790, y: 316, w: 30, h: 34, alive: true, hp: 2, maxHp: 2, shootCooldown: 1.3, timer: 0.9, d: 'REAL' }
+    ],
+    shards: [
+      { x: 780, y: 680, collected: false },
+      { x: 1530, y: 580, collected: false },
+      { x: 2830, y: 300, collected: false }
+    ],
+    checkpoints: [{ x: 1490, y: 580, activated: false }],
+    boss: null
+  },
+
+  // 9. انهيار الواقع: بيئة متدهورة تتطلب سرعة فائقة
+  {
+    name: 'انهيار الواقع',
+    w: 3600, h: 1050,
+    spawn: { x: 120, y: 880 },
+    exit: { x: 3420, y: 280 },
+    chaserSpeed: 1.50,
+    platforms: [
+      { x: 0, y: 960, w: 400, h: 100, d: 'BOTH' },
+      { x: 490, y: 860, w: 140, h: 24, d: 'REAL' },
+      { x: 730, y: 760, w: 140, h: 24, d: 'GLITCH' },
+      { x: 970, y: 660, w: 140, h: 24, d: 'REAL' },
+      { x: 1220, y: 560, w: 150, h: 24, d: 'GLITCH' },
+      { x: 1470, y: 460, w: 150, h: 24, d: 'REAL' },
+      { x: 1720, y: 560, w: 160, h: 24, d: 'BOTH' },
+      { x: 1980, y: 460, w: 150, h: 24, d: 'GLITCH' },
+      { x: 2240, y: 370, w: 150, h: 24, d: 'REAL' },
+      { x: 2500, y: 470, w: 150, h: 24, d: 'GLITCH' },
+      { x: 2760, y: 380, w: 160, h: 24, d: 'REAL' },
+      { x: 3020, y: 310, w: 160, h: 24, d: 'GLITCH' },
+      { x: 3280, y: 350, w: 320, h: 80, d: 'BOTH' }
+    ],
+    moving: [
+      { x: 1220, y: 500, w: 90, h: 20, d: 'GLITCH', minX: 1180, maxX: 1370, spd: 3.8, dir: 1 },
+      { x: 2500, y: 410, w: 90, h: 20, d: 'GLITCH', minX: 2460, maxX: 2650, spd: 4.0, dir: 1 }
+    ],
+    hazards: [
+      { x: 400, y: 1010, w: 2880, h: 40, d: 'BOTH' },
+      { x: 750, y: 736, w: 70, h: 24, d: 'GLITCH' },
+      { x: 2260, y: 346, w: 70, h: 24, d: 'REAL' }
+    ],
+    enemies: [
+      { type: 'stalker', x: 770, y: 720, w: 26, h: 26, minX: 740, maxX: 850, spd: 4.0, dir: 1, alive: true, hp: 2, maxHp: 2, d: 'GLITCH' },
+      { type: 'turret', x: 1770, y: 526, w: 30, h: 34, alive: true, hp: 2, maxHp: 2, shootCooldown: 1.2, timer: 0.2, d: 'BOTH' },
+      { type: 'stalker', x: 2790, y: 340, w: 26, h: 26, minX: 2770, maxX: 2890, spd: 4.2, dir: 1, alive: true, hp: 2, maxHp: 2, d: 'REAL' }
+    ],
+    shards: [
+      { x: 790, y: 710, collected: false },
+      { x: 1790, y: 510, collected: false },
+      { x: 3080, y: 260, collected: false }
+    ],
+    checkpoints: [{ x: 1750, y: 510, activated: false }],
+    boss: null
+  },
+
+  // 10. قلب النظام: المواجهة النهائية مع زعيم الخلل الفائق
+  {
+    name: 'قلب النظام (المواجهة الختامية)',
+    w: 2600, h: 950,
+    spawn: { x: 150, y: 740 },
+    exit: { x: 2420, y: 740 },
+    chaserSpeed: 0,
+    platforms: [
+      { x: 0, y: 820, w: 2600, h: 130, d: 'BOTH' },
+      { x: 0, y: 0, w: 50, h: 820, d: 'BOTH' },
+      { x: 2550, y: 0, w: 50, h: 820, d: 'BOTH' },
+      { x: 280, y: 650, w: 220, h: 24, d: 'REAL' },
+      { x: 640, y: 530, w: 240, h: 24, d: 'GLITCH' },
+      { x: 1040, y: 410, w: 280, h: 24, d: 'BOTH' },
+      { x: 1480, y: 530, w: 240, h: 24, d: 'GLITCH' },
+      { x: 1880, y: 650, w: 220, h: 24, d: 'REAL' }
+    ],
+    moving: [],
+    hazards: [],
+    enemies: [],
+    shards: [
+      { x: 390, y: 600, collected: false },
+      { x: 1180, y: 350, collected: false },
+      { x: 1990, y: 600, collected: false }
+    ],
+    checkpoints: [],
+    boss: { name: 'CORE OF THE GLITCH', spawnX: 1400, spawnY: 752 }
+  }
+];
+
+let currentLevelData = null;
+
+function cloneLevelData(idx) {
+  return JSON.parse(JSON.stringify(LEVEL_TEMPLATES[idx]));
+}
+
+// ==========================================
+// 6. نظام الإدخال المتزامن
+// ==========================================
+const input = {
+  left: false,
+  right: false,
+  jumpHeld: false,
+  jumpPressed: false,
+  dashTrigger: false,
+  shiftTrigger: false,
+  attackTrigger: false,
+  empTrigger: false
+};
+
+const activePointers = {
+  left: new Set(),
+  right: new Set(),
+  jump: new Set(),
+  dash: new Set(),
+  shift: new Set(),
+  atk: new Set(),
+  emp: new Set()
+};
+
+function setupMultiTouchBtn(id, actionKey, isTrigger = false) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const onDown = (e) => {
+    e.preventDefault();
+    audio.init();
+    activePointers[actionKey].add(e.pointerId);
+    el.classList.add('pressed');
+
+    if (actionKey === 'left') input.left = true;
+    if (actionKey === 'right') input.right = true;
+    if (actionKey === 'jump') {
+      input.jumpPressed = true;
+      input.jumpHeld = true;
+      hero.jumpBufferTimer = CONSTANTS.jumpBufferMax;
     }
+    if (actionKey === 'dash') input.dashTrigger = true;
+    if (actionKey === 'shift') input.shiftTrigger = true;
+    if (actionKey === 'atk') input.attackTrigger = true;
+    if (actionKey === 'emp') input.empTrigger = true;
+  };
 
-    function leaveSite() {
-      document.body.innerHTML = `<div class="min-h-screen bg-black text-white flex items-center justify-center p-6 text-center"><div><h1 class="text-xl font-bold mb-2">تمت مغادرة المتجر</h1><p class="text-gray-400 text-xs">شكراً لزيارتكم.</p></div></div>`;
+  const onUp = (e) => {
+    if (activePointers[actionKey].has(e.pointerId)) {
+      activePointers[actionKey].delete(e.pointerId);
+      if (activePointers[actionKey].size === 0) {
+        el.classList.remove('pressed');
+        if (actionKey === 'left') input.left = false;
+        if (actionKey === 'right') input.right = false;
+        if (actionKey === 'jump') input.jumpHeld = false;
+      }
     }
+  };
 
-    if (localStorage.getItem("vip_legal_gate") !== "accepted") {
-      const gate = document.getElementById("legalGate");
-      gate.classList.remove("hidden");
-      gate.classList.add("flex");
+  el.addEventListener('pointerdown', onDown);
+  el.addEventListener('pointerup', onUp);
+  el.addEventListener('pointercancel', onUp);
+  el.addEventListener('pointerleave', onUp);
+}
+
+setupMultiTouchBtn('t-left', 'left');
+setupMultiTouchBtn('t-right', 'right');
+setupMultiTouchBtn('t-jump', 'jump');
+setupMultiTouchBtn('t-dash', 'dash', true);
+setupMultiTouchBtn('t-shift', 'shift', true);
+setupMultiTouchBtn('t-atk', 'atk', true);
+setupMultiTouchBtn('t-emp', 'emp', true);
+
+window.addEventListener('keydown', (e) => {
+  audio.init();
+  if (e.repeat) return;
+  if (e.code === 'ArrowLeft' || e.code === 'KeyA') input.left = true;
+  if (e.code === 'ArrowRight' || e.code === 'KeyD') input.right = true;
+  if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+    input.jumpPressed = true;
+    input.jumpHeld = true;
+    hero.jumpBufferTimer = CONSTANTS.jumpBufferMax;
+  }
+  if (e.code === 'KeyJ' || e.code === 'ShiftLeft') input.dashTrigger = true;
+  if (e.code === 'KeyK' || e.code === 'KeyE') input.shiftTrigger = true;
+  if (e.code === 'KeyF') input.attackTrigger = true;
+  if (e.code === 'KeyQ') input.empTrigger = true;
+  if (e.code === 'Escape' || e.code === 'KeyP') togglePause();
+});
+
+window.addEventListener('keyup', (e) => {
+  if (e.code === 'ArrowLeft' || e.code === 'KeyA') input.left = false;
+  if (e.code === 'ArrowRight' || e.code === 'KeyD') input.right = false;
+  if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') input.jumpHeld = false;
+});
+
+window.addEventListener('blur', () => {
+  input.left = false;
+  input.right = false;
+  input.jumpHeld = false;
+  input.dashTrigger = false;
+  input.shiftTrigger = false;
+  input.attackTrigger = false;
+  input.empTrigger = false;
+  Object.keys(activePointers).forEach(k => activePointers[k].clear());
+  document.querySelectorAll('.touch-btn').forEach(btn => btn.classList.remove('pressed'));
+});
+
+// ==========================================
+// 7. النواة الفيزيائية والقدرات والقتال
+// ==========================================
+function checkAABB(a, b) {
+  return a.x < b.x + b.w &&
+         a.x + a.w > b.x &&
+         a.y < b.y + b.h &&
+         a.y + a.h > b.y;
+}
+
+function getActiveSolids(forDimension = sys.dimension) {
+  const lvl = currentLevelData;
+  if (!lvl) return [];
+  const solids = [];
+  const all = [...lvl.platforms, ...lvl.moving];
+  for (let i = 0; i < all.length; i++) {
+    const p = all[i];
+    if (p.d === 'BOTH' || p.d === forDimension) {
+      solids.push(p);
     }
+  }
+  return solids;
+}
 
-    function toast(message, type = "normal") {
-      const box = document.getElementById("toast");
-      const inner = document.getElementById("toastInner");
+function safeDimensionShift() {
+  const lvl = currentLevelData;
+  if (!lvl) return;
+  const nextDim = (sys.dimension === 'REAL') ? 'GLITCH' : 'REAL';
+  const candidateSolids = getActiveSolids(nextDim);
 
-      inner.innerHTML = `<i class="fas ${
-        type === "error" ? "fa-circle-xmark text-red-400"
-        : type === "success" ? "fa-circle-check text-emerald-400"
-        : "fa-info-circle text-yellow-400"
-      }"></i> <span>${esc(message)}</span>`;
-
-      inner.className = `glass border rounded-2xl px-5 py-3.5 shadow-2xl text-xs font-medium flex items-center gap-2 ${
-        type === "error" ? "border-red-800/80 text-red-200"
-        : type === "success" ? "border-emerald-800/80 text-emerald-200"
-        : "border-yellow-500/40 text-gray-200"
-      }`;
-
-      box.classList.remove("hidden");
-      requestAnimationFrame(() => box.classList.remove("opacity-0"));
-
-      clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(hideToast, 4000);
+  let hasOverlap = false;
+  for (let i = 0; i < candidateSolids.length; i++) {
+    if (checkAABB(hero, candidateSolids[i])) {
+      hasOverlap = true;
+      break;
     }
+  }
 
-    function hideToast() {
-      const box = document.getElementById("toast");
-      if (!box || box.classList.contains("hidden")) return;
-      box.classList.add("opacity-0");
-      setTimeout(() => box.classList.add("hidden"), 300);
-    }
+  let safeOffset = null;
+  if (hasOverlap) {
+    const offsets = [
+      { x: 0, y: -hero.h },
+      { x: 0, y: 16 },
+      { x: -hero.w, y: 0 },
+      { x: hero.w, y: 0 },
+      { x: -hero.w, y: -hero.h },
+      { x: hero.w, y: -hero.h }
+    ];
 
-    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal"];
-
-    function openModal(id) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.classList.remove("hidden");
-      el.classList.add("flex");
-      document.body.classList.add("modal-open");
-    }
-
-    function closeModal(id) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.classList.add("hidden");
-      el.classList.remove("flex");
-      if (!MODAL_IDS.some(m => !document.getElementById(m)?.classList.contains("hidden"))) {
-        document.body.classList.remove("modal-open");
+    for (let o of offsets) {
+      const testBox = { x: hero.x + o.x, y: hero.y + o.y, w: hero.w, h: hero.h };
+      if (testBox.x < 0 || testBox.x + testBox.w > lvl.w || testBox.y < 0 || testBox.y + testBox.h > lvl.h) {
+        continue;
+      }
+      let free = true;
+      for (let s of candidateSolids) {
+        if (checkAABB(testBox, s)) {
+          free = false;
+          break;
+        }
+      }
+      if (free) {
+        safeOffset = o;
+        break;
       }
     }
 
-    MODAL_IDS.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.addEventListener("mousedown", e => { if (e.target === el) closeModal(id); });
+    if (!safeOffset) {
+      audio.play('shift_denied');
+      triggerHaptic(50);
+      return;
+    }
+  }
+
+  if (safeOffset) {
+    hero.x += safeOffset.x;
+    hero.y += safeOffset.y;
+  }
+
+  hero.x = Math.max(0, Math.min(hero.x, lvl.w - hero.w));
+  hero.y = Math.max(0, Math.min(hero.y, lvl.h - hero.h));
+
+  sys.dimension = nextDim;
+  sys.shake = CONFIG.shake ? 8 : 0;
+  audio.play('shift');
+  triggerHaptic(30);
+  emitParticles(hero.x + hero.w / 2, hero.y + hero.h / 2, sys.dimension === 'REAL' ? '#00f0ff' : '#ff007f', 24);
+
+  const badge = document.getElementById('dim-badge');
+  if (sys.dimension === 'REAL') {
+    badge.innerText = '✦ الواقع [REALITY]';
+    badge.classList.remove('glitch-mode');
+  } else {
+    badge.innerText = '✦ السايبر [GLITCH]';
+    badge.classList.add('glitch-mode');
+  }
+}
+
+function triggerDash() {
+  if (hero.isDashing || sys.isDead || hero.dashCooldown > 0) return;
+  if (!hero.isGrounded && hero.airDashUsed) return;
+
+  hero.isDashing = true;
+  hero.dashTimer = CONSTANTS.dashDuration;
+  hero.dashCooldown = 0.35;
+  if (!hero.isGrounded) hero.airDashUsed = true;
+
+  hero.vx = hero.facing * CONSTANTS.dashSpeed;
+  hero.vy = 0;
+  hero.scaleX = 1.45;
+  hero.scaleY = 0.65;
+  sys.flash = 0.28;
+  sys.shake = CONFIG.shake ? 7 : 0;
+  audio.play('dash');
+  triggerHaptic(40);
+  emitParticles(hero.x + hero.w / 2, hero.y + hero.h / 2, '#f59e0b', 16);
+}
+
+function triggerAttack() {
+  if (hero.isAttacking || hero.attackCooldownTimer > 0 || sys.isDead) return;
+  hero.isAttacking = true;
+  hero.attackTimer = CONSTANTS.attackDuration;
+  hero.attackCooldownTimer = CONSTANTS.attackCooldown;
+  audio.play('slash');
+  triggerHaptic(28);
+
+  const slashBox = {
+    x: hero.facing === 1 ? hero.x + hero.w : hero.x - CONSTANTS.attackRangeX,
+    y: hero.y - 4,
+    w: CONSTANTS.attackRangeX,
+    h: CONSTANTS.attackRangeY
+  };
+
+  const lvl = currentLevelData;
+  if (lvl && lvl.enemies) {
+    lvl.enemies.forEach(en => {
+      if (!en.alive) return;
+      if (checkAABB(slashBox, en)) {
+        en.hp -= 1;
+        audio.play('hit');
+        triggerHaptic(45);
+        sys.shake = CONFIG.shake ? 8 : 0;
+        emitParticles(en.x + en.w / 2, en.y + en.h / 2, '#f43f5e', 18);
+        hero.energy = Math.min(CONSTANTS.maxEnergy, hero.energy + 10);
+        if (en.hp <= 0) {
+          en.alive = false;
+          emitParticles(en.x + en.w / 2, en.y + en.h / 2, '#00f0ff', 24);
+        }
+      }
     });
+  }
 
-    document.addEventListener("keydown", e => {
-      if (e.key === "Escape") MODAL_IDS.forEach(closeModal);
+  enemyProjectiles = enemyProjectiles.filter(proj => {
+    if (checkAABB(slashBox, { x: proj.x - 6, y: proj.y - 6, w: 12, h: 12 })) {
+      emitParticles(proj.x, proj.y, '#f59e0b', 10);
+      return false;
+    }
+    return true;
+  });
+
+  if (boss.active && checkAABB(slashBox, boss)) {
+    damageBoss(15);
+  }
+}
+
+function triggerEMP() {
+  if (hero.energy < CONSTANTS.empEnergyCost || hero.empWave.active || sys.isDead) return;
+  hero.energy -= CONSTANTS.empEnergyCost;
+  hero.empWave.active = true;
+  hero.empWave.x = hero.x + hero.w / 2;
+  hero.empWave.y = hero.y + hero.h / 2;
+  hero.empWave.radius = 10;
+  audio.play('emp');
+  triggerHaptic(60);
+  sys.shake = CONFIG.shake ? 12 : 0;
+
+  enemyProjectiles = enemyProjectiles.filter(proj => {
+    const d = Math.hypot(proj.x - hero.empWave.x, proj.y - hero.empWave.y);
+    if (d < CONSTANTS.empWave.maxRadius) {
+      emitParticles(proj.x, proj.y, '#a855f7', 12);
+      return false;
+    }
+    return true;
+  });
+
+  const lvl = currentLevelData;
+  if (lvl && lvl.enemies) {
+    lvl.enemies.forEach(en => {
+      if (!en.alive) return;
+      const d = Math.hypot((en.x + en.w / 2) - hero.empWave.x, (en.y + en.h / 2) - hero.empWave.y);
+      if (d < CONSTANTS.empWave.maxRadius) {
+        en.hp -= 2;
+        emitParticles(en.x + en.w / 2, en.y + en.h / 2, '#a855f7', 22);
+        if (en.hp <= 0) en.alive = false;
+      }
     });
+  }
 
-    function togglePasswordVisibility(inputId, btn) {
-      const input = document.getElementById(inputId);
-      if (!input) return;
-      const show = input.type === "password";
-      input.type = show ? "text" : "password";
-      const icon = btn.querySelector("i");
-      if (icon) {
-        icon.className = `fas fa-eye${show ? "-slash" : ""} text-xs`;
+  if (boss.active) {
+    const d = Math.hypot((boss.x + boss.w / 2) - hero.empWave.x, (boss.y + boss.h / 2) - hero.empWave.y);
+    if (d < CONSTANTS.empWave.maxRadius) {
+      damageBoss(20);
+    }
+  }
+}
+
+function damageBoss(amount) {
+  if (!boss.active || boss.invulnTimer > 0) return;
+
+  if (boss.state !== 'vulnerable') {
+    audio.play('shift_denied');
+    emitParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, '#64748b', 8);
+    return;
+  }
+
+  boss.hp -= amount;
+  boss.invulnTimer = 0.65;
+  audio.play('hit');
+  triggerHaptic(60);
+  sys.shake = CONFIG.shake ? 12 : 0;
+  emitParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, '#fbbf24', 28, 2);
+
+  hero.vy = CONSTANTS.jumpForce * 0.78;
+  hero.vx = -hero.facing * 4.5;
+
+  const hpPct = (boss.hp / boss.maxHp) * 100;
+  if (hpPct <= 25 && boss.phase < 3) {
+    boss.phase = 3;
+    onBossPhaseTransition(3);
+  } else if (hpPct <= 60 && boss.phase < 2) {
+    boss.phase = 2;
+    onBossPhaseTransition(2);
+  }
+
+  updateBossHUD();
+
+  if (boss.hp <= 0) {
+    defeatBoss();
+  }
+}
+
+function onBossPhaseTransition(newPhase) {
+  audio.play('boss_phase');
+  sys.shake = CONFIG.shake ? 18 : 0;
+  sys.flash = 0.35;
+  emitParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, newPhase === 3 ? '#ff007f' : '#a855f7', 45, 3);
+  boss.state = 'vulnerable';
+  boss.timer = 0;
+  updateBossHUD();
+}
+
+function updateBossHUD() {
+  const hpPct = Math.max(0, (boss.hp / boss.maxHp) * 100);
+  document.getElementById('boss-hp-fill').style.width = hpPct + '%';
+  document.getElementById('boss-phase-label').innerText = `المرحلة ${boss.phase} / 3`;
+  document.getElementById('boss-name-label').innerText = boss.name;
+}
+
+function defeatBoss() {
+  boss.active = false;
+  boss.shockwaves = [];
+  boss.arenaHazards = [];
+  document.getElementById('boss-hud').style.display = 'none';
+  audio.play('boss_slam');
+  sys.shake = CONFIG.shake ? 24 : 0;
+  emitParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, '#00f0ff', 65, 3.5);
+  emitParticles(boss.x + boss.w / 2, boss.y + boss.h / 2, '#ff007f', 65, 3.5);
+
+  SAVE_STATE.unlockedPrismScarf = true;
+  StorageManager.save(SAVE_STATE);
+}
+
+function hurtHero(amount = 1) {
+  if (sys.invulnTimer > 0 || sys.isDead) return;
+  hero.hp -= amount;
+  sys.invulnTimer = CONSTANTS.invulnDuration;
+  audio.play('hurt');
+  triggerHaptic(50);
+  sys.shake = CONFIG.shake ? 10 : 0;
+  emitParticles(hero.x + hero.w / 2, hero.y + hero.h / 2, '#ef4444', 16);
+
+  if (hero.hp <= 0) {
+    killHero();
+  }
+}
+
+function resetBossState(lvl) {
+  boss.shockwaves = [];
+  boss.arenaHazards = [];
+  if (lvl.boss) {
+    boss.active = true;
+    boss.name = lvl.boss.name || 'GUARDIAN OF REALITY';
+    boss.hp = boss.maxHp;
+    boss.phase = 1;
+    boss.state = 'patrol';
+    boss.timer = 0;
+    boss.telegraphTimer = 0;
+    boss.dir = 1;
+    boss.invulnTimer = 0;
+    boss.attackDim = 'BOTH';
+    boss.x = lvl.boss.spawnX;
+    boss.y = lvl.boss.spawnY;
+    document.getElementById('boss-hud').style.display = 'flex';
+    updateBossHUD();
+  } else {
+    boss.active = false;
+    document.getElementById('boss-hud').style.display = 'none';
+  }
+}
+
+function killHero() {
+  if (sys.isDead) return;
+  sys.isDead = true;
+
+  audio.play('death');
+  triggerHaptic(60);
+  sys.deaths++;
+  sys.levelDeaths++;
+  sys.campaignTotalDeaths++;
+  sys.shake = CONFIG.shake ? 16 : 0;
+  emitParticles(hero.x + hero.w / 2, hero.y + hero.h / 2, '#ef4444', 32, 1.8);
+
+  currentGhostRecord = [];
+  enemyProjectiles = [];
+
+  const lvl = currentLevelData;
+  const spawnPos = sys.currentCheckpoint || lvl.spawn;
+
+  hero.x = spawnPos.x;
+  hero.y = spawnPos.y;
+  hero.vx = 0;
+  hero.vy = 0;
+  hero.hp = CONSTANTS.maxHp;
+  hero.energy = CONSTANTS.maxEnergy;
+  hero.isDashing = false;
+  hero.canDash = true;
+  hero.airDashUsed = false;
+  hero.isAttacking = false;
+  hero.empWave.active = false;
+
+  if (lvl.chaserSpeed > 0) {
+    chaser.x = spawnPos.x - 380;
+  }
+
+  resetBossState(lvl);
+  sys.invulnTimer = 0.25;
+  sys.isDead = false;
+}
+
+function loadLevel(idx) {
+  sys.level = idx;
+  sys.isDead = false;
+  sys.invulnTimer = 0;
+  sys.activeLevelTime = 0;
+  sys.levelDeaths = 0;
+  sys.levelSplits = [];
+  sys.currentCheckpoint = null;
+  currentGhostRecord = [];
+  enemyProjectiles = [];
+  activeReplayGhost = SAVE_STATE.ghostTrails[idx] ? [...SAVE_STATE.ghostTrails[idx]] : [];
+
+  currentLevelData = cloneLevelData(idx);
+  const lvl = currentLevelData;
+
+  hero.x = lvl.spawn.x;
+  hero.y = lvl.spawn.y;
+  hero.vx = 0;
+  hero.vy = 0;
+  hero.hp = CONSTANTS.maxHp;
+  hero.energy = CONSTANTS.maxEnergy;
+  hero.canDoubleJump = true;
+  hero.canDash = true;
+  hero.airDashUsed = false;
+  hero.dashCooldown = 0;
+  hero.isDashing = false;
+  hero.isAttacking = false;
+  hero.attackTimer = 0;
+  hero.attackCooldownTimer = 0;
+  hero.empWave.active = false;
+  hero.ghosts = [];
+  sys.dimension = 'REAL';
+  sys.dimFactor = 0.0;
+  sys.shards = 0;
+  sys.totalShards = lvl.shards.length;
+
+  if (lvl.chaserSpeed > 0) {
+    chaser.x = lvl.spawn.x - 380;
+    chaser.speed = lvl.chaserSpeed;
+  } else {
+    chaser.x = -9999;
+  }
+
+  resetBossState(lvl);
+
+  for (let i = 0; i < hero.scarf.length; i++) {
+    hero.scarf[i].x = hero.x;
+    hero.scarf[i].y = hero.y + 10;
+  }
+
+  cam.x = hero.x - viewW / 2;
+  cam.y = hero.y - viewH / 2;
+  cam.lookAheadX = 0;
+
+  document.getElementById('hud-level').innerText = `المرحلة: ${idx + 1} / ${LEVEL_TEMPLATES.length}`;
+  const badge = document.getElementById('dim-badge');
+  badge.innerText = '✦ الواقع [REALITY]';
+  badge.classList.remove('glitch-mode');
+  document.getElementById('hud-delta').style.display = 'none';
+}
+
+function restartCurrentLevel() {
+  audio.init();
+  input.left = false;
+  input.right = false;
+  input.jumpHeld = false;
+  input.dashTrigger = false;
+  input.shiftTrigger = false;
+  input.attackTrigger = false;
+  input.empTrigger = false;
+  loadLevel(sys.level);
+  sys.running = true;
+  sys.paused = false;
+  document.getElementById('modal-pause').classList.add('hidden');
+}
+
+// ==========================================
+// 8. منطق الزعيم والفيزياء الثابتة 60Hz
+// ==========================================
+let ghostSampleTimer = 0;
+
+function updateBossBehavior(dt) {
+  if (!boss.active) return;
+  if (boss.invulnTimer > 0) boss.invulnTimer -= dt;
+  boss.timer += dt;
+
+  const lvl = currentLevelData;
+  const arenaLeft = 80;
+  const arenaRight = lvl.w - 100 - boss.w;
+  const groundY = 820 - boss.h;
+
+  boss.arenaHazards.forEach(h => {
+    h.timer += dt;
+    if (h.timer >= h.delay && !h.active) {
+      h.active = true;
+      audio.play('boss_slam');
+      sys.shake = CONFIG.shake ? 8 : 0;
+    }
+    if (h.active && h.timer < h.delay + h.duration) {
+      if (checkAABB(hero, h)) {
+        hurtHero(1);
       }
     }
+  });
+  boss.arenaHazards = boss.arenaHazards.filter(h => h.timer < h.delay + h.duration);
 
-    async function hashPassword(str) {
-      try {
-        const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
-      } catch (_) {
-        return btoa(str);
+  boss.shockwaves.forEach(sw => {
+    sw.x += sw.vx * 60 * dt;
+    sw.life -= dt;
+    if (sw.dim === 'BOTH' || sw.dim === sys.dimension) {
+      if (checkAABB(hero, { x: sw.x - 14, y: groundY - 10, w: 28, h: 26 })) {
+        hurtHero(1);
       }
     }
+  });
+  boss.shockwaves = boss.shockwaves.filter(sw => sw.life > 0);
 
-    function persistCart() { localStorage.setItem("vip_cart", JSON.stringify(state.cart)); }
-    function persistWishlist() { localStorage.setItem("vip_wishlist", JSON.stringify(state.wishlist)); updateWishlistUI(); }
-    function persistCustomer() {
-      if (!state.customer) { localStorage.removeItem("vip_user"); return; }
-      const { pass, createdAt, lastSeen, ...safe } = state.customer;
-      localStorage.setItem("vip_user", JSON.stringify(safe));
+  // أنماط الأطوار
+  if (boss.phase === 1) {
+    if (boss.state === 'patrol') {
+      boss.x += (boss.dir * 2.8) * 60 * dt;
+      if (boss.x > arenaRight - 200) { boss.x = arenaRight - 200; boss.dir = -1; }
+      if (boss.x < arenaLeft + 200) { boss.x = arenaLeft + 200; boss.dir = 1; }
+
+      if (boss.timer > 3.0) {
+        boss.state = 'telegraph';
+        boss.timer = 0;
+        boss.dir = (hero.x < boss.x) ? -1 : 1;
+        audio.play('boss_telegraph');
+      }
+    } else if (boss.state === 'telegraph') {
+      if (boss.timer > 0.7) {
+        boss.state = 'charge';
+        boss.timer = 0;
+        audio.play('dash');
+      }
+    } else if (boss.state === 'charge') {
+      boss.x += (boss.dir * 8.5) * 60 * dt;
+      if (boss.x > arenaRight || boss.x < arenaLeft || boss.timer > 1.2) {
+        boss.state = 'vulnerable';
+        boss.timer = 0;
+        audio.play('boss_slam');
+        sys.shake = CONFIG.shake ? 8 : 0;
+      }
+    } else if (boss.state === 'vulnerable') {
+      if (boss.timer > 2.0) {
+        boss.state = 'patrol';
+        boss.timer = 0;
+      }
     }
+  } else if (boss.phase === 2) {
+    if (boss.state === 'patrol') {
+      boss.x += (boss.dir * 3.8) * 60 * dt;
+      if (boss.x > arenaRight - 200) { boss.x = arenaRight - 200; boss.dir = -1; }
+      if (boss.x < arenaLeft + 200) { boss.x = arenaLeft + 200; boss.dir = 1; }
 
-    initApp();
+      if (boss.timer > 1.8 && boss.timer < 1.85) {
+        const pDir = (hero.x > boss.x) ? 1 : -1;
+        enemyProjectiles.push(
+          { x: boss.x + boss.w / 2, y: boss.y + 20, vx: pDir * 6.2, life: 3.2 },
+          { x: boss.x + boss.w / 2, y: boss.y + 40, vx: pDir * 5.5, life: 3.2 }
+        );
+        audio.play('turret_shot');
+      }
 
-    async function initApp() {
-      updateUserUI();
-      updateCartUI();
-      updateWishlistUI();
+      if (boss.timer > 3.2) {
+        boss.state = 'telegraph';
+        boss.timer = 0;
+        boss.dir = (hero.x < boss.x) ? -1 : 1;
+        boss.attackDim = (Math.random() > 0.5) ? 'REAL' : 'GLITCH';
+        audio.play('boss_telegraph');
+      }
+    } else if (boss.state === 'telegraph') {
+      if (boss.timer > 0.6) {
+        boss.state = 'charge';
+        boss.timer = 0;
+        audio.play('dash');
+      }
+    } else if (boss.state === 'charge') {
+      boss.x += (boss.dir * 10.5) * 60 * dt;
+      if (boss.x > arenaRight || boss.x < arenaLeft || boss.timer > 1.0) {
+        boss.state = 'vulnerable';
+        boss.timer = 0;
+        audio.play('boss_slam');
+        sys.shake = CONFIG.shake ? 9 : 0;
+      }
+    } else if (boss.state === 'vulnerable') {
+      if (boss.timer > 1.8) {
+        boss.state = 'patrol';
+        boss.timer = 0;
+      }
+    }
+  } else if (boss.phase === 3) {
+    if (boss.state === 'patrol') {
+      boss.x += (boss.dir * 4.4) * 60 * dt;
+      if (boss.x > arenaRight - 200) { boss.x = arenaRight - 200; boss.dir = -1; }
+      if (boss.x < arenaLeft + 200) { boss.x = arenaLeft + 200; boss.dir = 1; }
 
-      if (!firebaseReady || !db) return;
+      if (boss.timer > 2.6) {
+        boss.state = 'slam_prep';
+        boss.timer = 0;
+        audio.play('boss_telegraph');
 
-      auth.onAuthStateChanged(user => {
-        if (user && user.uid === ADMIN_UID) {
-          state.isAdminLoggedIn = true;
-          document.getElementById("adminSignedInAs").textContent = `مرحباً بالمدير (${user.email})`;
-          document.getElementById("adminLoginForm").classList.add("hidden");
-          document.getElementById("adminPanel").classList.remove("hidden");
-          populateAdminSettingsInputs();
-          loadOrdersOnce();
-          updateAdminDashboardStats();
-        } else {
-          state.isAdminLoggedIn = false;
-          document.getElementById("adminLoginForm").classList.remove("hidden");
-          document.getElementById("adminPanel").classList.add("hidden");
+        boss.arenaHazards.push(
+          { x: lvl.w / 2 - 300, y: 800, w: 600, h: 20, timer: 0, delay: 0.9, duration: 2.2, active: false }
+        );
+      }
+    } else if (boss.state === 'slam_prep') {
+      boss.y -= 7.5 * 60 * dt;
+      if (boss.y < 350 || boss.timer > 0.8) {
+        boss.x = Math.max(arenaLeft, Math.min(arenaRight, hero.x - boss.w / 2));
+        boss.state = 'slam_fall';
+        boss.timer = 0;
+      }
+    } else if (boss.state === 'slam_fall') {
+      boss.y += 18.0 * 60 * dt;
+      if (boss.y >= groundY) {
+        boss.y = groundY;
+        boss.state = 'vulnerable';
+        boss.timer = 0;
+        audio.play('boss_slam');
+        sys.shake = CONFIG.shake ? 18 : 0;
+        sys.flash = 0.3;
+
+        boss.shockwaves.push(
+          { x: boss.x - 10, vx: -6.5, life: 1.8, dim: 'BOTH' },
+          { x: boss.x + boss.w + 10, vx: 6.5, life: 1.8, dim: 'BOTH' }
+        );
+      }
+    } else if (boss.state === 'vulnerable') {
+      if (boss.timer > 2.2) {
+        boss.state = 'patrol';
+        boss.timer = 0;
+      }
+    }
+  }
+
+  boss.x = Math.max(arenaLeft, Math.min(arenaRight, boss.x));
+  if (boss.state !== 'slam_prep' && boss.state !== 'slam_fall') {
+    boss.y = groundY;
+  }
+
+  if (checkAABB(hero, boss)) {
+    if (boss.state === 'vulnerable') {
+      if (hero.vy > 1.5 || hero.isDashing) {
+        damageBoss(20);
+      }
+    } else {
+      const ignoresDamage = (boss.attackDim !== 'BOTH' && boss.attackDim !== sys.dimension);
+      if (!ignoresDamage) {
+        hurtHero(1);
+      }
+    }
+  }
+}
+
+function fixedPhysics(dt) {
+  if (sys.isDead) return;
+  const lvl = currentLevelData;
+  if (!lvl) return;
+
+  if (sys.invulnTimer > 0) sys.invulnTimer -= dt;
+
+  sys.activeLevelTime += dt;
+  sys.campaignTotalTime += dt;
+
+  hero.energy = Math.min(CONSTANTS.maxEnergy, hero.energy + CONSTANTS.energyRegenRate * dt);
+  if (hero.dashCooldown > 0) hero.dashCooldown -= dt;
+  if (hero.attackCooldownTimer > 0) hero.attackCooldownTimer -= dt;
+
+  const targetDimFactor = (sys.dimension === 'REAL') ? 0.0 : 1.0;
+  sys.dimFactor += (targetDimFactor - sys.dimFactor) * 0.12;
+
+  ghostSampleTimer += dt;
+  if (ghostSampleTimer >= 0.03) {
+    ghostSampleTimer = 0;
+    currentGhostRecord.push({
+      t: sys.activeLevelTime,
+      x: hero.x,
+      y: hero.y,
+      dim: sys.dimension,
+      facing: hero.facing
+    });
+  }
+
+  if (SAVE_STATE.bestTimes[sys.level]) {
+    const deltaEl = document.getElementById('hud-delta');
+    const bestT = SAVE_STATE.bestTimes[sys.level] / 1000;
+    const diff = sys.activeLevelTime - bestT;
+    if (diff <= 0) {
+      deltaEl.className = 'ahead';
+      deltaEl.innerText = diff.toFixed(2);
+    } else {
+      deltaEl.className = 'behind';
+      deltaEl.innerText = '+' + diff.toFixed(2);
+    }
+  }
+
+  if (sys.slowMoTimer > 0) {
+    sys.slowMoTimer -= dt;
+    sys.timeScale = 0.5;
+  } else {
+    sys.timeScale = 1.0;
+  }
+  const effDt = dt * sys.timeScale;
+
+  if (input.shiftTrigger) {
+    safeDimensionShift();
+    input.shiftTrigger = false;
+  }
+  if (input.dashTrigger) {
+    triggerDash();
+    input.dashTrigger = false;
+  }
+  if (input.attackTrigger) {
+    triggerAttack();
+    input.attackTrigger = false;
+  }
+  if (input.empTrigger) {
+    triggerEMP();
+    input.empTrigger = false;
+  }
+
+  if (hero.isAttacking) {
+    hero.attackTimer -= effDt;
+    if (hero.attackTimer <= 0) hero.isAttacking = false;
+  }
+
+  if (hero.empWave.active) {
+    hero.empWave.radius += 380 * effDt;
+    if (hero.empWave.radius >= hero.empWave.maxRadius) {
+      hero.empWave.active = false;
+    }
+  }
+
+  if (lvl.chaserSpeed > 0) {
+    chaser.x += lvl.chaserSpeed * 60 * effDt;
+    if (hero.x < chaser.x) {
+      killHero();
+      return;
+    }
+  }
+
+  if (lvl.moving) {
+    lvl.moving.forEach(m => {
+      m.x += (m.spd * m.dir) * 60 * effDt;
+      if (m.x > m.maxX) { m.x = m.maxX; m.dir = -1; }
+      if (m.x < m.minX) { m.x = m.minX; m.dir = 1; }
+    });
+  }
+
+  updateBossBehavior(effDt);
+
+  if (lvl.enemies) {
+    for (let i = 0; i < lvl.enemies.length; i++) {
+      const en = lvl.enemies[i];
+      if (!en.alive) continue;
+      if (en.d !== 'BOTH' && en.d !== sys.dimension) continue;
+
+      if (en.type === 'patrol') {
+        en.x += (en.spd * en.dir) * 60 * effDt;
+        if (en.x > en.maxX) { en.x = en.maxX; en.dir = -1; }
+        if (en.x < en.minX) { en.x = en.minX; en.dir = 1; }
+      } else if (en.type === 'stalker') {
+        const dist = hero.x - en.x;
+        if (Math.abs(dist) < 260) {
+          en.dir = dist > 0 ? 1 : -1;
         }
-      });
-
-      await syncStoreSettings();
-
-      if (state.customer && state.customer.phone) {
-        db.collection("store_users").doc(state.customer.phone).set({
-          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true }).catch(() => {});
-      }
-
-      if (unsubscribeProducts) unsubscribeProducts();
-
-      unsubscribeProducts = db.collection("products").onSnapshot(
-        snap => {
-          state.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          renderProducts();
-          renderAdminProducts();
-          syncCartWithStock();
-          updateAdminDashboardStats();
-        },
-        err => console.error("Firestore Error:", err)
-      );
-    }
-
-    async function syncStoreSettings() {
-      if (!firebaseReady || !db) return;
-      try {
-        const doc = await db.collection("settings").doc("store_config").get();
-        if (doc.exists) {
-          state.storeSettings = { ...state.storeSettings, ...doc.data() };
-        }
-      } catch (e) {
-        console.warn("Using default settings:", e);
-      }
-      applyStoreSettingsToUI();
-    }
-
-    function applyStoreSettingsToUI() {
-      const cfg = state.storeSettings;
-      const tickerText = cfg.tickerText || "🔥 أهلاً بكم في VIP SMOOK";
-      document.getElementById("tickerTextA").textContent = tickerText;
-      document.getElementById("tickerTextB").textContent = tickerText;
-
-      const cSelect = document.getElementById("checkoutArea");
-      if (cSelect) {
-        cSelect.innerHTML = `
-          <option value="centre_ville">توصيل سريع: وسط المدينة (Centre-ville) - ${money(cfg.shippingFeeCentre)}</option>
-          <option value="nearby">توصيل: البلديات القريبة المجاورة - ${money(cfg.shippingFeeNearby)}</option>
-          <option value="pickup">استلام ذاتي من المحل - مجاناً</option>
-        `;
-      }
-
-      const phones = cfg.storePhones || [];
-      const makePhoneBtns = () => phones.map(p => `
-        <a href="tel:${esc(p)}" class="hover:text-yellow-400 bg-gray-950 px-2 py-0.5 rounded-lg border border-gray-800 transition">
-          <i class="fas fa-phone text-[10px] ml-1"></i>${esc(p)}
-        </a>
-      `).join("");
-
-      document.getElementById("storePhonesHeaderList").innerHTML = makePhoneBtns();
-      document.getElementById("storePhonesMobileList").innerHTML = makePhoneBtns();
-      document.getElementById("storePhonesFooterList").innerHTML = makePhoneBtns();
-
-      updateCartUI();
-    }
-
-    async function saveStoreSettings() {
-      if (!firebaseReady || !state.isAdminLoggedIn) return;
-      const code = document.getElementById("adminCouponCode").value.trim().toUpperCase();
-      const percent = Number(document.getElementById("adminCouponPercent").value) || 0;
-      const target = Number(document.getElementById("adminFreeShippingTarget").value) || 3000;
-      const feeCentre = Number(document.getElementById("adminShippingCentre").value) || 200;
-      const feeNearby = Number(document.getElementById("adminShippingNearby").value) || 350;
-      const ticker = document.getElementById("adminTickerText").value.trim();
-      const phonesStr = document.getElementById("adminStorePhones").value;
-      const phones = phonesStr.split(",").map(p => p.trim()).filter(Boolean);
-
-      const newConfig = {
-        couponCode: code,
-        couponPercent: percent,
-        freeShippingTarget: target,
-        shippingFeeCentre: feeCentre,
-        shippingFeeNearby: feeNearby,
-        tickerText: ticker || state.storeSettings.tickerText,
-        storePhones: phones.length ? phones : ["0781896750"]
-      };
-
-      try {
-        await db.collection("settings").doc("store_config").set(newConfig);
-        state.storeSettings = newConfig;
-        applyStoreSettingsToUI();
-        toast("تم حفظ وتحديث إعدادات المتجر بنجاح!", "success");
-      } catch (e) {
-        toast("تعذر حفظ الإعدادات.", "error");
-      }
-    }
-
-    function applyCoupon() {
-      const enteredCode = document.getElementById("couponCodeInput").value.trim().toUpperCase();
-      const validCode = (state.storeSettings.couponCode || "").toUpperCase();
-      const percent = Number(state.storeSettings.couponPercent || 0);
-
-      if (!enteredCode) return toast("يرجى إدخال كود الخصم.", "error");
-
-      if (validCode && enteredCode === validCode && percent > 0) {
-        state.appliedDiscount = percent / 100;
-        state.appliedCoupon = validCode;
-        document.getElementById("couponAppliedMsg").classList.remove("hidden");
-        document.getElementById("couponSuccessNotice").textContent = `تم تطبيق خصم ${percent}% بنجاح!`;
-        toast(`تم تطبيق خصم ${percent}% بنجاح!`, "success");
-        updateCartUI();
-      } else {
-        toast("كود الخصم غير صالح أو غير مفعل حالياً.", "error");
-      }
-    }
-
-    function toggleWishlist(id) {
-      const idx = state.wishlist.indexOf(id);
-      if (idx > -1) {
-        state.wishlist.splice(idx, 1);
-        toast("تمت إزالة المنتج من المفضلة.", "normal");
-      } else {
-        state.wishlist.push(id);
-        toast("تمت إضافة المنتج إلى المفضلة!", "success");
-      }
-      persistWishlist();
-      renderProducts();
-    }
-
-    function toggleWishlistModal() {
-      const el = document.getElementById("wishlistModal");
-      if (el.classList.contains("hidden")) {
-        renderWishlistModal();
-        openModal("wishlistModal");
-      } else {
-        closeModal("wishlistModal");
-      }
-    }
-
-    function updateWishlistUI() {
-      const count = state.wishlist.length;
-      document.getElementById("wishlistCount").textContent = count;
-      document.getElementById("mobileWishlistBadge").textContent = count;
-    }
-
-    function renderWishlistModal() {
-      const container = document.getElementById("wishlistItems");
-      const wishProducts = state.products.filter(p => state.wishlist.includes(p.id));
-
-      if (!wishProducts.length) {
-        container.innerHTML = `<p class="text-gray-400 text-center py-8 text-xs">قائمة المفضلة فارغة حالياً.</p>`;
-        return;
-      }
-
-      container.innerHTML = wishProducts.map(p => `
-        <div class="flex items-center justify-between bg-gray-950 p-2.5 rounded-xl border border-gray-800 text-xs gap-2">
-          <div class="flex items-center gap-2 overflow-hidden">
-            <img src="${esc(imgSrc(p.image))}" onerror="imgFallback(this)" class="w-12 h-12 rounded-lg object-cover bg-gray-900 border border-gray-800 shrink-0">
-            <div class="truncate">
-              <h5 class="font-bold text-gray-200 truncate">${esc(p.name)}</h5>
-              <p class="text-amber-400 font-bold text-[11px]">${money(p.price)}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            <button onclick="addToCart('${esc(p.id)}')" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-lg text-[10px]">
-              + للسلة
-            </button>
-            <button onclick="toggleWishlist('${esc(p.id)}'); renderWishlistModal();" class="text-red-400 hover:text-red-300 p-1">
-              <i class="fas fa-trash text-xs"></i>
-            </button>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    function openQuickView(id) {
-      const p = state.products.find(x => x.id === id);
-      if (!p) return;
-
-      const stock = Math.max(0, Number(p.stock || 0));
-      const isFav = state.wishlist.includes(p.id);
-
-      document.getElementById("quickViewContent").innerHTML = `
-        <div class="flex flex-col md:flex-row gap-4 items-center">
-          <div class="w-full md:w-1/2 aspect-square rounded-2xl overflow-hidden bg-gray-950 border border-gray-800 relative">
-            <img src="${esc(imgSrc(p.image))}" onerror="imgFallback(this)" class="w-full h-full object-cover">
-            <button onclick="toggleWishlist('${esc(p.id)}'); openQuickView('${esc(p.id)}');" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center">
-              <i class="fas fa-heart ${isFav ? 'text-red-500' : 'text-gray-300'}"></i>
-            </button>
-          </div>
-          <div class="w-full md:w-1/2 space-y-3">
-            <span class="text-[10px] bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 px-2 py-0.5 rounded-full font-bold">منتج أصلي معتمد</span>
-            <h2 class="text-base font-black text-white">${esc(p.name)}</h2>
-            <div class="text-lg font-black text-amber-400">${money(p.price)}</div>
-            <p class="text-[11px] text-gray-300 leading-relaxed">توصيل سريع لوسط المدينة والمناطق القريبة مع إمكانية المعاينة والدفع كاش عند الاستلام.</p>
-            <div class="text-xs ${stock > 0 ? 'text-emerald-400' : 'text-red-400'} font-bold">
-              ${stock > 0 ? `متوفر في المخزون (${stock} قطعة)` : 'نفد من المخزون حالياً'}
-            </div>
-            <div class="flex gap-2 pt-2">
-              <button onclick="addToCart('${esc(p.id)}'); closeModal('quickViewModal');" ${stock <= 0 ? 'disabled' : ''} class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition ${stock <= 0 ? 'opacity-50 cursor-not-allowed' : ''}">
-                <i class="fas fa-cart-plus ml-1"></i> إضافة إلى السلة
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-      openModal("quickViewModal");
-    }
-
-    function renderProducts() {
-      const grid = document.getElementById("productsGrid");
-      let filtered = [...state.products];
-
-      if (state.currentCategory !== "all") {
-        filtered = filtered.filter(p => p.category === state.currentCategory);
-      }
-
-      if (state.searchQuery.trim()) {
-        const q = state.searchQuery.trim().toLowerCase();
-        filtered = filtered.filter(p => String(p.name || "").toLowerCase().includes(q));
-      }
-
-      const sortVal = document.getElementById("sortSelect").value;
-      if (sortVal === "price_low") {
-        filtered.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
-      } else if (sortVal === "price_high") {
-        filtered.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
-      } else if (sortVal === "popular") {
-        filtered.sort((a, b) => Number(b.likesCount || 0) - Number(a.likesCount || 0));
-      }
-
-      document.getElementById("productCount").textContent = `${filtered.length} منتج`;
-
-      if (!filtered.length) {
-        grid.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400 text-xs flex flex-col items-center gap-3">
-          <i class="fas fa-magnifying-glass text-2xl text-gray-600"></i>
-          <span>لا توجد منتجات مطابقة.</span>
-        </div>`;
-        return;
-      }
-
-      grid.innerHTML = filtered.map(p => {
-        const stock = Math.max(0, Number(p.stock || 0));
-        const out = stock <= 0;
-        const isWish = state.wishlist.includes(p.id);
-        const likes = Number(p.likesCount || 0);
-        const userPhone = state.customer?.phone;
-        const userLiked = userPhone && Array.isArray(p.likedBy) && p.likedBy.includes(userPhone);
-
-        return `
-          <article class="card-hover bg-gray-900/90 border border-gray-800 rounded-2xl p-3 flex flex-col justify-between overflow-hidden relative group">
-            <div>
-              <div class="relative overflow-hidden rounded-xl mb-2.5 bg-gray-950 aspect-square">
-                <img src="${esc(imgSrc(p.image))}" alt="${esc(p.name)}" loading="lazy" onerror="imgFallback(this)"
-                     class="w-full h-full object-cover group-hover:scale-105 transition duration-300 cursor-pointer"
-                     onclick="openQuickView('${esc(p.id)}')">
-                
-                <div class="absolute top-2 right-2">
-                  ${out ? `<span class="px-2 py-0.5 bg-red-950/90 border border-red-800 text-red-300 text-[9px] font-bold rounded-md">نفد المخزون</span>`
-                        : `<span class="px-2 py-0.5 bg-emerald-950/90 border border-emerald-800 text-emerald-300 text-[9px] font-bold rounded-md">متوفر</span>`}
-                </div>
-
-                <button onclick="toggleWishlist('${esc(p.id)}')" title="إضافة للمفضلة"
-                  class="absolute top-2 left-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center transition hover:scale-110">
-                  <i class="fas fa-heart text-xs ${isWish ? 'text-red-500' : 'text-gray-300'}"></i>
-                </button>
-              </div>
-
-              <div>
-                <h3 onclick="openQuickView('${esc(p.id)}')" class="font-bold text-xs text-gray-100 line-clamp-1 cursor-pointer hover:text-yellow-400 transition">${esc(p.name)}</h3>
-                <div class="flex items-center justify-between mt-1">
-                  <p class="text-amber-400 font-extrabold text-xs">${money(p.price)}</p>
-                  
-                  <button onclick="voteLikeProduct('${esc(p.id)}')" class="flex items-center gap-1 text-[11px] ${userLiked ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-emerald-400'} transition">
-                    <i class="fas fa-thumbs-up"></i>
-                    <span>${likes}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-3 pt-2 border-t border-gray-800/80">
-              <div class="flex gap-1.5">
-                <input id="qty_${esc(p.id)}" type="number" min="1" max="${stock}" value="1" ${out ? "disabled" : ""}
-                  class="w-12 p-1.5 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
-                <button onclick="addToCart('${esc(p.id)}')" ${out ? "disabled" : ""}
-                  class="flex-1 py-1.5 ${out ? "bg-gray-800 text-gray-400 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-400 text-black"} text-[11px] font-bold rounded-lg transition">
-                  ${out ? "غير متوفر" : "إضافة +"}
-                </button>
-              </div>
-            </div>
-          </article>`;
-      }).join("");
-    }
-
-    async function voteLikeProduct(id) {
-      if (!state.customer || !state.customer.phone) {
-        toast("يرجى تسجيل الدخول بحسابك أولاً لتتمكن من التفاعل!", "error");
-        toggleAuthModal();
-        return;
-      }
-      if (!firebaseReady) return toast("الخدمة غير متصلة.", "error");
-
-      const pRef = db.collection("products").doc(id);
-      try {
-        await db.runTransaction(async tx => {
-          const doc = await tx.get(pRef);
-          if (!doc.exists) return;
-          const data = doc.data();
-          const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
-          const userPhone = state.customer.phone;
-
-          if (likedBy.includes(userPhone)) {
-            tx.update(pRef, {
-              likesCount: firebase.firestore.FieldValue.increment(-1),
-              likedBy: firebase.firestore.FieldValue.arrayRemove(userPhone)
-            });
-          } else {
-            tx.update(pRef, {
-              likesCount: firebase.firestore.FieldValue.increment(1),
-              likedBy: firebase.firestore.FieldValue.arrayUnion(userPhone)
-            });
-          }
-        });
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
-    function filterCategory(cat, btn) {
-      state.currentCategory = cat;
-      document.querySelectorAll(".cat-btn").forEach(b => {
-        b.className = "cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition";
-      });
-      if (btn) btn.className = "cat-btn px-4 py-2.5 bg-yellow-500 text-black rounded-xl font-bold text-xs whitespace-nowrap transition shadow-md shadow-yellow-500/20";
-      renderProducts();
-    }
-
-    let searchDebounce;
-    function searchProducts() {
-      clearTimeout(searchDebounce);
-      searchDebounce = setTimeout(() => {
-        state.searchQuery = document.getElementById("searchInput").value;
-        renderProducts();
-      }, 200);
-    }
-
-    function toggleCart() {
-      const el = document.getElementById("cartDrawer");
-      if (el.classList.contains("hidden")) {
-        updateCartUI();
-        openModal("cartDrawer");
-      } else {
-        closeModal("cartDrawer");
-      }
-    }
-
-    function addToCart(id) {
-      const p = state.products.find(x => x.id === id);
-      if (!p) return;
-      const stock = Number(p.stock || 0);
-      const input = document.getElementById(`qty_${id}`);
-      const qty = Math.max(1, Math.floor(Number(input?.value || 1)));
-
-      if (stock <= 0) return toast("المنتج غير متوفر حالياً.", "error");
-      if (qty > stock) return toast(`الكمية المتوفرة ${stock} فقط.`, "error");
-
-      const existing = state.cart.find(x => x.id === id);
-      if (existing) {
-        if (existing.qty + qty > stock) return toast("تجاوزت المخزون المتاح.", "error");
-        existing.qty += qty;
-      } else {
-        state.cart.push({ id, name: p.name, price: Number(p.price || 0), qty });
-      }
-
-      persistCart();
-      updateCartUI();
-      if (input) input.value = 1;
-      toast(`تمت إضافة ${qty} من ${p.name} للسلة.`, "success");
-    }
-
-    function syncCartWithStock() {
-      state.cart = state.cart.map(item => {
-        const p = state.products.find(x => x.id === item.id);
-        if (!p || Number(p.stock || 0) <= 0) return null;
-        return { ...item, price: Number(p.price || 0), qty: Math.min(item.qty, Number(p.stock)) };
-      }).filter(Boolean);
-      persistCart();
-      updateCartUI();
-    }
-
-    function updateCartUI() {
-      const count = state.cart.reduce((a, x) => a + Number(x.qty || 0), 0);
-      document.getElementById("cartCount").textContent = count;
-      document.getElementById("mobileCartBadge").textContent = count;
-
-      const box = document.getElementById("cartItems");
-      if (!state.cart.length) {
-        box.innerHTML = `<p class="text-gray-400 text-center py-10 text-xs">السلة فارغة حالياً</p>`;
-        document.getElementById("subTotalDisplay").textContent = "0 د.ج";
-        document.getElementById("cartTotal").textContent = "0 د.ج";
-        document.getElementById("shippingFeeDisplay").textContent = "0 د.ج";
-        updateShippingProgress(0);
-        return;
-      }
-
-      let subtotal = 0;
-      box.innerHTML = state.cart.map(item => {
-        subtotal += item.price * item.qty;
-        return `
-          <div class="bg-gray-900 border border-gray-800 p-3 rounded-xl space-y-2">
-            <div class="flex justify-between items-start gap-2">
-              <div>
-                <h4 class="font-bold text-xs text-gray-100">${esc(item.name)}</h4>
-                <p class="text-[11px] text-amber-400 mt-0.5">${money(item.price)}</p>
-              </div>
-              <button onclick="removeFromCart('${esc(item.id)}')" class="text-red-400 hover:text-red-300 text-xs p-1">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
-            <div class="flex items-center justify-between pt-2 border-t border-gray-800 text-xs">
-              <span class="text-gray-400">الكمية: ${item.qty}</span>
-              <span class="font-bold text-amber-400">${money(item.price * item.qty)}</span>
-            </div>
-          </div>`;
-      }).join("");
-
-      const areaVal = document.getElementById("checkoutArea")?.value || "centre_ville";
-      const cfg = state.storeSettings;
-      let shippingFee = cfg.shippingFeeCentre;
-      if (areaVal === "nearby") shippingFee = cfg.shippingFeeNearby;
-      if (areaVal === "pickup") shippingFee = 0;
-
-      const freeTarget = Number(cfg.freeShippingTarget || 3000);
-      if (subtotal >= freeTarget && areaVal !== "pickup") shippingFee = 0;
-
-      let discount = subtotal * state.appliedDiscount;
-      let finalTotal = Math.max(0, subtotal - discount) + shippingFee;
-
-      document.getElementById("subTotalDisplay").textContent = money(subtotal);
-      document.getElementById("shippingFeeDisplay").textContent = shippingFee === 0 ? "مجاني 🎉" : money(shippingFee);
-
-      const discountRow = document.getElementById("discountRow");
-      if (discount > 0) {
-        discountRow.classList.remove("hidden");
-        discountRow.classList.add("flex");
-        document.getElementById("discountDisplay").textContent = `-${money(discount)}`;
-      } else {
-        discountRow.classList.add("hidden");
-      }
-
-      document.getElementById("cartTotal").textContent = money(finalTotal);
-      updateShippingProgress(subtotal);
-    }
-
-    function updateShippingProgress(subtotal) {
-      const freeTarget = Number(state.storeSettings.freeShippingTarget || 3000);
-      const pct = Math.min(100, Math.round((subtotal / freeTarget) * 100));
-      const bar = document.getElementById("shippingProgressBar");
-      const pText = document.getElementById("shippingProgressText");
-      const sText = document.getElementById("shippingText");
-
-      if (bar) bar.style.width = `${pct}%`;
-      if (pText) pText.textContent = `${pct}%`;
-      if (sText) {
-        sText.innerHTML = subtotal >= freeTarget
-          ? `<span class="text-emerald-400 font-bold">🎉 تهانينا! حصلت على توصيل مجاني!</span>`
-          : `بقي ${money(freeTarget - subtotal)} للحصول على توصيل مجاني`;
-      }
-    }
-
-    function removeFromCart(id) {
-      state.cart = state.cart.filter(x => x.id !== id);
-      persistCart();
-      updateCartUI();
-    }
-
-    function toggleAuthModal() {
-      const el = document.getElementById("authModal");
-      if (el.classList.contains("hidden")) {
-        if (state.customer) {
-          document.getElementById("authTitle").textContent = "الملف الشخصي";
-          document.getElementById("authFormContainer").classList.add("hidden");
-          document.getElementById("customerProfileContainer").classList.remove("hidden");
-          document.getElementById("profilePhoneDisplay").textContent = state.customer.phone || "";
-          document.getElementById("profileName").value = state.customer.name || "";
-          document.getElementById("profileArea").value = state.customer.area || "وسط المدينة (Centre-ville)";
-          document.getElementById("profileAddress").value = state.customer.address || "";
-          document.getElementById("profileImgBase64").value = state.customer.image || "";
-          document.getElementById("profileImgPreview").src = state.customer.image || FALLBACK_AVATAR;
-        } else {
-          document.getElementById("authTitle").textContent = "تسجيل الدخول";
-          document.getElementById("authFormContainer").classList.remove("hidden");
-          document.getElementById("customerProfileContainer").classList.add("hidden");
-        }
-        openModal("authModal");
-      } else {
-        closeModal("authModal");
-      }
-    }
-
-    async function handlePhoneAuth() {
-      if (!firebaseReady) return toast("السيرفر غير متصل.", "error");
-      const phone = document.getElementById("custPhone").value.trim();
-      const pass = document.getElementById("custPass").value.trim();
-      if (!phone || !pass) return toast("يرجى ملء كافة الحقول.", "error");
-
-      try {
-        const hashedPass = await hashPassword(pass);
-        const ref = db.collection("store_users").doc(phone);
-        const doc = await ref.get();
-
-        if (!doc.exists) {
-          const newUser = { phone, pass: hashedPass, name: "", area: "وسط المدينة (Centre-ville)", address: "", image: "" };
-          await ref.set(newUser);
-          state.customer = newUser;
-          toast("تم إنشاء حسابك بنجاح!", "success");
-        } else {
-          const data = doc.data();
-          if (data.pass !== hashedPass) return toast("كلمة المرور غير صحيحة.", "error");
-          state.customer = data;
-          toast("مرحباً بك مجدداً!", "success");
-        }
-
-        persistCustomer();
-        updateUserUI();
-        renderProducts();
-        closeModal("authModal");
-      } catch (e) {
-        toast("فشل تسجيل الدخول.", "error");
-      }
-    }
-
-    async function handleProfileImgUpload(e) {
-      const f = e.target.files[0];
-      if (!f) return;
-      try {
-        const b64 = await compressAndConvertImage(f, 200, 0.5);
-        document.getElementById("profileImgBase64").value = b64;
-        document.getElementById("profileImgPreview").src = b64;
-        toast("تمت جاهزية صورة الملف!", "success");
-      } catch (err) {
-        toast("فشل معالجة الصورة.", "error");
-      }
-    }
-
-    function saveCustomerProfile() {
-      if (!firebaseReady || !state.customer) return;
-      const name = document.getElementById("profileName").value.trim();
-      const area = document.getElementById("profileArea").value;
-      const address = document.getElementById("profileAddress").value.trim();
-      const image = document.getElementById("profileImgBase64").value;
-
-      if (!name || !address) return toast("يرجى إكمال الاسم والعنوان.", "error");
-
-      db.collection("store_users").doc(state.customer.phone).set({ name, area, address, image }, { merge: true }).then(() => {
-        state.customer = { ...state.customer, name, area, address, image };
-        persistCustomer();
-        toast("تم حفظ الملف الشخصي بنجاح.", "success");
-        updateUserUI();
-        closeModal("authModal");
-      }).catch(() => toast("تعذر حفظ التعديلات.", "error"));
-    }
-
-    function logoutCustomer() {
-      state.customer = null;
-      persistCustomer();
-      updateUserUI();
-      renderProducts();
-      closeModal("authModal");
-      toast("تم تسجيل الخروج.");
-    }
-
-    function updateUserUI() {
-      const label = document.getElementById("userAuthLabel");
-      const ordersBtn = document.getElementById("myOrdersBtn");
-      const mOrdersBtn = document.getElementById("mobileOrdersBtn");
-
-      if (state.customer) {
-        label.textContent = state.customer.name || state.customer.phone;
-        ordersBtn?.classList.remove("hidden");
-        mOrdersBtn?.classList.remove("hidden");
-      } else {
-        label.textContent = "دخول";
-        ordersBtn?.classList.add("hidden");
-        mOrdersBtn?.classList.add("hidden");
-      }
-    }
-
-    async function sendTelegramNotification(orderData) {
-      try {
-        let itemsList = orderData.items.map(i => `• ${i.name} (×${i.qty}) - ${money(i.price * i.qty)}`).join("\n");
-        let text = `🔥 *طلب جديد في VIP SMOOK!*\n\n` +
-                   `👤 *الزبون:* ${orderData.customerName}\n` +
-                   `📞 *الهاتف:* \`${orderData.customerPhone}\`\n` +
-                   `📍 *العنوان:* ${orderData.address}\n\n` +
-                   `📦 *المنتجات المطلوبة:*\n${itemsList}\n\n` +
-                   `🚚 *التوصيل:* ${orderData.shippingFee === 0 ? 'مجاني' : money(orderData.shippingFee)}\n` +
-                   `💰 *المبلغ الإجمالي:* *${money(orderData.total)}*`;
-
-        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: "Markdown" })
-        });
-      } catch (e) {
-        console.warn("إشعار تيليجرام لم يرسل:", e);
-      }
-    }
-
-    /* ================= دالة تأكيد الطلب المحدثة ================= */
-    async function submitOrderToAdmin() {
-      if (!state.cart.length) return toast("السلة فارغة.", "error");
-      if (!state.customer) {
-        toggleCart();
-        toggleAuthModal();
-        return toast("سجل دخولك أولاً لتأكيد الطلب.", "error");
-      }
-      if (!state.customer.name || !state.customer.address) {
-        toggleCart();
-        toggleAuthModal();
-        return toast("أكمل اسمك وعنوانك في الملف الشخصي أولاً.", "error");
-      }
-
-      const btn = document.getElementById("submitOrderBtn");
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> جاري التأكيد...`;
-
-      try {
-        const areaVal = document.getElementById("checkoutArea")?.value || "centre_ville";
-        const cfg = state.storeSettings;
-        let shippingFee = cfg.shippingFeeCentre;
-        let areaText = "وسط المدينة";
-
-        if (areaVal === "nearby") {
-          shippingFee = cfg.shippingFeeNearby;
-          areaText = "البلديات المجاورة";
-        } else if (areaVal === "pickup") {
-          shippingFee = 0;
-          areaText = "استلام من المحل";
-        }
-
-        const subtotal = state.cart.reduce((s, x) => s + (x.price * x.qty), 0);
-        if (subtotal >= Number(cfg.freeShippingTarget || 3000) && areaVal !== "pickup") {
-          shippingFee = 0;
-        }
-
-        const discount = subtotal * state.appliedDiscount;
-        const total = Math.max(0, subtotal - discount) + shippingFee;
-
-        const newOrderData = {
-          customerPhone: state.customer.phone,
-          customerName: state.customer.name,
-          customerImage: state.customer.image || "",
-          address: `${areaText} - ${state.customer.address}`,
-          items: [...state.cart],
-          coupon: state.appliedCoupon || null,
-          shippingFee,
-          total,
-          status: "جديد",
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-
-        // التحقق من المخزون والتحديث عبر Transaction لجميع المنتجات
-        await db.runTransaction(async tx => {
-          const reads = [];
-          for (const item of state.cart) {
-            reads.push(tx.get(db.collection("products").doc(item.id)));
-          }
-
-          const docs = await Promise.all(reads);
-
-          docs.forEach((pDoc, index) => {
-            const item = state.cart[index];
-            if (!pDoc.exists) {
-              throw new Error(`المنتج "${item.name}" لم يعد موجوداً.`);
-            }
-            const currentStock = Number(pDoc.data().stock || 0);
-            if (currentStock < item.qty) {
-              throw new Error(`المخزون غير كافٍ للمنتج: ${item.name} (المتوفر: ${currentStock})`);
-            }
+        en.x += (en.spd * en.dir) * 60 * effDt;
+        if (en.x > en.maxX) en.x = en.maxX;
+        if (en.x < en.minX) en.x = en.minX;
+      } else if (en.type === 'turret') {
+        en.timer += effDt;
+        if (en.timer >= en.shootCooldown) {
+          en.timer = 0;
+          const dir = (hero.x > en.x) ? 1 : -1;
+          enemyProjectiles.push({
+            x: en.x + en.w / 2,
+            y: en.y + 12,
+            vx: dir * 5.4,
+            life: 3.5
           });
-
-          // خصم الكميات من المخزون بعد التأكد
-          docs.forEach((pDoc, index) => {
-            const item = state.cart[index];
-            const currentStock = Number(pDoc.data().stock || 0);
-            tx.update(pDoc.ref, { stock: Math.max(0, currentStock - item.qty) });
-          });
-
-          const orderRef = db.collection("orders").doc();
-          tx.set(orderRef, newOrderData);
-        });
-
-        sendTelegramNotification(newOrderData);
-
-        state.cart = [];
-        persistCart();
-        updateCartUI();
-        closeModal("cartDrawer");
-        toast("تم تأكيد طلبك بنجاح! سنتصل بك للتسليم.", "success");
-      } catch (err) {
-        console.error("Order submit failed:", err);
-        toast(err.message || "تعذر إتمام الطلب، تحقق من توفر المخزون.", "error");
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fas fa-paper-plane"></i> تأكيد الطلب`;
-      }
-    }
-
-    function toggleMyOrders() {
-      const el = document.getElementById("myOrdersModal");
-      if (el.classList.contains("hidden")) {
-        loadMyOrders();
-        openModal("myOrdersModal");
-      } else {
-        closeModal("myOrdersModal");
-      }
-    }
-
-    async function loadMyOrders() {
-      const container = document.getElementById("myOrdersList");
-      if (!state.customer) return;
-      try {
-        const snap = await db.collection("orders").where("customerPhone", "==", state.customer.phone).get();
-        if (snap.empty) {
-          container.innerHTML = `<p class="text-gray-400 text-center py-6 text-xs">لا توجد طلبات سابقة.</p>`;
-          return;
+          audio.play('turret_shot');
         }
-        container.innerHTML = snap.docs.map(d => {
-          const o = d.data();
-          return `
-            <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 text-xs space-y-2">
-              <div class="flex justify-between items-center text-gray-400 border-b border-gray-800 pb-2">
-                <span>طلب #${d.id.slice(0, 6)}</span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${o.status === 'مكتمل' ? 'bg-emerald-950 text-emerald-300' : 'bg-amber-950 text-amber-300'}">${o.status}</span>
-              </div>
-              <div>${o.items.map(i => `<div class="flex justify-between text-gray-300"><span>${esc(i.name)} ×${i.qty}</span><span>${money(i.price * i.qty)}</span></div>`).join("")}</div>
-              <div class="flex justify-between pt-2 border-t border-gray-800 font-bold text-amber-400"><span>المجموع:</span><span>${money(o.total)}</span></div>
-            </div>`;
-        }).join("");
-      } catch (e) {
-        container.innerHTML = `<p class="text-red-400 text-center py-4 text-xs">تعذر تحميل الطلبات.</p>`;
       }
-    }
 
-    function compressAndConvertImage(file, maxWidth = 380, quality = 0.55) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = event => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            const canvas = document.createElement("canvas");
-            let width = img.width;
-            let height = img.height;
-            if (width > maxWidth) {
-              height = Math.round((height * maxWidth) / width);
-              width = maxWidth;
-            }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL("image/jpeg", quality));
-          };
-          img.onerror = reject;
-        };
-        reader.onerror = reject;
-      });
-    }
-
-    async function handleAddImageUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      try {
-        const b64 = await compressAndConvertImage(file, 380, 0.55);
-        document.getElementById("pImgBase64").value = b64;
-        document.getElementById("imgPreview").src = b64;
-        document.getElementById("imgPreviewContainer").classList.remove("hidden");
-      } catch (err) {
-        toast("فشل معالجة الصورة.", "error");
-      }
-    }
-
-    async function handleEditImageUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      try {
-        const b64 = await compressAndConvertImage(file, 380, 0.55);
-        document.getElementById("editPImgBase64").value = b64;
-        document.getElementById("editImgPreview").src = b64;
-      } catch (err) {
-        toast("فشل معالجة الصورة.", "error");
-      }
-    }
-
-    function toggleAdminModal() {
-      const el = document.getElementById("adminModal");
-      if (el.classList.contains("hidden")) {
-        if (state.isAdminLoggedIn) {
-          document.getElementById("adminLoginForm").classList.add("hidden");
-          document.getElementById("adminPanel").classList.remove("hidden");
-          populateAdminSettingsInputs();
-          loadOrdersOnce();
-          updateAdminDashboardStats();
+      if (checkAABB(hero, en)) {
+        if (hero.vy > 1.2 || hero.isDashing) {
+          en.hp -= 1;
+          audio.play('hit');
+          triggerHaptic(35);
+          sys.shake = CONFIG.shake ? 8 : 0;
+          emitParticles(en.x + en.w / 2, en.y + en.h / 2, '#00f0ff', 20);
+          hero.vy = CONSTANTS.jumpForce * 0.72;
+          hero.canDash = true;
+          hero.airDashUsed = false;
+          if (en.hp <= 0) en.alive = false;
         } else {
-          document.getElementById("adminLoginForm").classList.remove("hidden");
-          document.getElementById("adminPanel").classList.add("hidden");
+          hurtHero(1);
         }
-        openModal("adminModal");
+      }
+    }
+  }
+
+  enemyProjectiles = enemyProjectiles.filter(proj => {
+    proj.x += proj.vx * 60 * effDt;
+    proj.life -= effDt;
+
+    if (checkAABB(hero, { x: proj.x - 6, y: proj.y - 6, w: 12, h: 12 })) {
+      hurtHero(1);
+      return false;
+    }
+
+    const solids = getActiveSolids();
+    for (let s of solids) {
+      if (checkAABB({ x: proj.x - 4, y: proj.y - 4, w: 8, h: 8 }, s)) {
+        emitParticles(proj.x, proj.y, '#f59e0b', 8);
+        return false;
+      }
+    }
+
+    return proj.life > 0;
+  });
+
+  if (hero.isDashing) {
+    hero.dashTimer -= effDt;
+    hero.ghosts.push({ x: hero.x, y: hero.y, alpha: 0.75, color: '#f59e0b' });
+    if (hero.dashTimer <= 0) hero.isDashing = false;
+  } else {
+    let targetVx = 0;
+    if (input.left) {
+      targetVx = -CONSTANTS.walkSpeed;
+      hero.facing = -1;
+    } else if (input.right) {
+      targetVx = CONSTANTS.walkSpeed;
+      hero.facing = 1;
+    }
+
+    const accel = hero.isGrounded ? (targetVx !== 0 ? CONSTANTS.runAccel : CONSTANTS.runDecel) : CONSTANTS.airAccel;
+    if (hero.vx < targetVx) hero.vx = Math.min(targetVx, hero.vx + accel * effDt);
+    else if (hero.vx > targetVx) hero.vx = Math.max(targetVx, hero.vx - accel * effDt);
+
+    if (hero.isWallSliding && hero.vy > 0) {
+      hero.vy = Math.min(CONSTANTS.wallSlideSpeed, hero.vy + (CONSTANTS.gravity * 0.3) * effDt);
+    } else {
+      hero.vy = Math.min(CONSTANTS.maxFall, hero.vy + CONSTANTS.gravity * effDt);
+    }
+  }
+
+  if (hero.isGrounded && Math.abs(hero.vx) > 0.4) {
+    hero.runCycle += Math.abs(hero.vx) * 0.15;
+  } else {
+    hero.runCycle = 0;
+  }
+
+  hero.scaleX += (1 - hero.scaleX) * 0.16;
+  hero.scaleY += (1 - hero.scaleY) * 0.16;
+
+  if (hero.isGrounded) {
+    hero.coyoteTimer = CONSTANTS.coyoteMax;
+    hero.canDoubleJump = true;
+    hero.canDash = true;
+    hero.airDashUsed = false;
+  } else {
+    hero.coyoteTimer = Math.max(0, hero.coyoteTimer - effDt);
+  }
+
+  if (hero.jumpBufferTimer > 0) hero.jumpBufferTimer -= effDt;
+
+  if (hero.jumpBufferTimer > 0) {
+    if (hero.isWallSliding) {
+      hero.vy = CONSTANTS.wallJumpY;
+      hero.vx = -hero.wallDir * CONSTANTS.wallJumpX;
+      hero.facing = -hero.wallDir;
+      hero.isWallSliding = false;
+      hero.jumpBufferTimer = 0;
+      hero.canDash = true;
+      hero.airDashUsed = false;
+      hero.scaleX = 0.72;
+      hero.scaleY = 1.38;
+      audio.play('walljump');
+      triggerHaptic(20);
+      emitParticles(hero.x + (hero.wallDir === 1 ? hero.w : 0), hero.y + hero.h / 2, '#00f0ff', 14);
+    } else if (hero.coyoteTimer > 0) {
+      hero.vy = CONSTANTS.jumpForce;
+      hero.isGrounded = false;
+      hero.coyoteTimer = 0;
+      hero.jumpBufferTimer = 0;
+      hero.scaleX = 0.74;
+      hero.scaleY = 1.36;
+      audio.play('jump');
+      triggerHaptic(20);
+      emitParticles(hero.x + hero.w / 2, hero.y + hero.h, '#ffffff', 8);
+    } else if (hero.canDoubleJump) {
+      hero.vy = CONSTANTS.jumpForce * 0.92;
+      hero.canDoubleJump = false;
+      hero.jumpBufferTimer = 0;
+      hero.scaleX = 0.8;
+      hero.scaleY = 1.3;
+      audio.play('jump');
+      triggerHaptic(25);
+      emitParticles(hero.x + hero.w / 2, hero.y + hero.h, '#00f0ff', 12);
+    }
+  }
+
+  if (!input.jumpHeld && hero.vy < -3.0 && !hero.isDashing) {
+    hero.vy += 30.0 * effDt;
+  }
+
+  const solids = getActiveSolids();
+  hero.isWallSliding = false;
+  hero.wallDir = 0;
+
+  const totalDx = hero.vx * 60 * effDt;
+  const stepsX = Math.max(1, Math.ceil(Math.abs(totalDx) / CONSTANTS.subStepDist));
+  const stepDx = totalDx / stepsX;
+
+  for (let s = 0; s < stepsX; s++) {
+    hero.x += stepDx;
+    for (let i = 0; i < solids.length; i++) {
+      const p = solids[i];
+      if (checkAABB(hero, p)) {
+        if (stepDx > 0) {
+          hero.x = p.x - hero.w;
+          if (!hero.isGrounded && hero.vy > 0) {
+            hero.isWallSliding = true;
+            hero.wallDir = 1;
+          }
+        } else if (stepDx < 0) {
+          hero.x = p.x + p.w;
+          if (!hero.isGrounded && hero.vy > 0) {
+            hero.isWallSliding = true;
+            hero.wallDir = -1;
+          }
+        }
+        hero.vx = 0;
+        hero.isDashing = false;
+        break;
+      }
+    }
+  }
+
+  const totalDy = hero.vy * 60 * effDt;
+  const stepsY = Math.max(1, Math.ceil(Math.abs(totalDy) / CONSTANTS.subStepDist));
+  const stepDy = totalDy / stepsY;
+  const wasGrounded = hero.isGrounded;
+  hero.isGrounded = false;
+
+  for (let s = 0; s < stepsY; s++) {
+    hero.y += stepDy;
+    for (let i = 0; i < solids.length; i++) {
+      const p = solids[i];
+      if (checkAABB(hero, p)) {
+        if (stepDy > 0) {
+          hero.y = p.y - hero.h;
+          hero.vy = 0;
+          hero.isGrounded = true;
+          if (!wasGrounded) {
+            hero.scaleX = 1.28;
+            hero.scaleY = 0.72;
+          }
+        } else if (stepDy < 0) {
+          hero.y = p.y + p.h;
+          hero.vy = 0;
+        }
+        break;
+      }
+    }
+  }
+
+  const neckX = hero.x + (hero.facing === 1 ? 5 : 19);
+  const neckY = hero.y + 11;
+  hero.scarf[0].x = neckX;
+  hero.scarf[0].y = neckY;
+
+  for (let i = 1; i < hero.scarf.length; i++) {
+    const cur = hero.scarf[i];
+    const prev = hero.scarf[i - 1];
+    const wave = Math.sin(performance.now() * 0.012 + i) * 1.5;
+    const dragX = -hero.facing * (Math.abs(hero.vx) * 0.8 + 2.5);
+    const liftY = -hero.vy * 0.25;
+
+    cur.x += (prev.x + dragX - cur.x) * 0.38;
+    cur.y += (prev.y + liftY + wave - cur.y) * 0.38 + 0.6;
+  }
+
+  for (let i = 0; i < lvl.hazards.length; i++) {
+    const h = lvl.hazards[i];
+    if (h.d === 'BOTH' || h.d === sys.dimension) {
+      if (checkAABB(hero, h)) {
+        killHero();
+        return;
+      }
+    }
+  }
+
+  if (hero.y > lvl.h + 80) {
+    killHero();
+    return;
+  }
+
+  // تفعيل نقاط الحفظ (Checkpoints)
+  if (lvl.checkpoints) {
+    lvl.checkpoints.forEach(cp => {
+      if (!cp.activated && checkAABB(hero, { x: cp.x - 20, y: cp.y - 30, w: 40, h: 40 })) {
+        cp.activated = true;
+        sys.currentCheckpoint = { x: cp.x, y: cp.y };
+        audio.play('shard');
+        emitParticles(cp.x, cp.y, '#10b981', 15);
+      }
+    });
+  }
+
+  // جمع الشظايا
+  lvl.shards.forEach(s => {
+    if (!s.collected && checkAABB(hero, { x: s.x - 16, y: s.y - 16, w: 32, h: 32 })) {
+      s.collected = true;
+      sys.shards++;
+      hero.energy = Math.min(CONSTANTS.maxEnergy, hero.energy + 35);
+      sys.levelSplits.push(sys.activeLevelTime);
+      audio.play('shard');
+      triggerHaptic(25);
+      emitParticles(s.x, s.y, '#fbbf24', 20);
+    }
+  });
+
+  const ex = lvl.exit;
+  const canExit = (sys.shards >= sys.totalShards) && (!boss.active);
+  if (canExit && checkAABB(hero, { x: ex.x, y: ex.y, w: 38, h: 62 })) {
+    completeLevelSuccess();
+    return;
+  }
+
+  for (let i = hero.ghosts.length - 1; i >= 0; i--) {
+    hero.ghosts[i].alpha -= 0.08;
+    if (hero.ghosts[i].alpha <= 0) hero.ghosts.splice(i, 1);
+  }
+
+  const lookAheadTarget = hero.facing * Math.min(Math.abs(hero.vx) * 12, 70);
+  cam.lookAheadX += (lookAheadTarget - cam.lookAheadX) * 0.05;
+
+  cam.targetX = hero.x - viewW / 2 + hero.w / 2 + cam.lookAheadX;
+  cam.targetY = hero.y - viewH / 2 + hero.h / 2;
+  cam.x += (cam.targetX - cam.x) * cam.smooth;
+  cam.y += (cam.targetY - cam.y) * cam.smooth;
+  cam.x = Math.max(0, Math.min(cam.x, lvl.w - viewW));
+  cam.y = Math.max(0, Math.min(cam.y, lvl.h - viewH));
+
+  for (let i = 0; i < MAX_PARTICLES; i++) {
+    const p = particles[i];
+    if (p.active) {
+      p.x += p.vx * 60 * effDt;
+      p.y += p.vy * 60 * effDt;
+      p.life += effDt;
+      if (p.life >= p.maxLife) p.active = false;
+    }
+  }
+
+  document.getElementById('hp-bar-fill').style.width = (hero.hp / CONSTANTS.maxHp * 100) + '%';
+  document.getElementById('energy-bar-fill').style.width = (hero.energy / CONSTANTS.maxEnergy * 100) + '%';
+
+  const m = String(Math.floor(sys.activeLevelTime / 60)).padStart(2, '0');
+  const s = String(Math.floor(sys.activeLevelTime % 60)).padStart(2, '0');
+  const ms = String(Math.floor((sys.activeLevelTime * 100) % 100)).padStart(2, '0');
+  document.getElementById('hud-stats').innerText = `💀 ${sys.deaths} | 💎 ${sys.shards}/${sys.totalShards} | ⏱️ ${m}:${s}.${ms}`;
+}
+
+// ==========================================
+// 9. محرك الرسم المتطور والمؤثرات
+// ==========================================
+function renderCityParallax(lvlW, lvlH) {
+  const skyGrad = ctx.createLinearGradient(0, cam.y, 0, cam.y + viewH);
+  const r1 = Math.floor(4 + (18 - 4) * sys.dimFactor);
+  const g1 = Math.floor(6 + (2 - 6) * sys.dimFactor);
+  const b1 = Math.floor(16 + (28 - 16) * sys.dimFactor);
+  skyGrad.addColorStop(0, `rgb(${r1}, ${g1}, ${b1})`);
+  skyGrad.addColorStop(1, '#010204');
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(cam.x, cam.y, viewW, viewH);
+
+  ctx.save();
+  const farOffset = cam.x * 0.15;
+  const farBuildingW = 120;
+  const farColor = `rgba(${Math.floor(10 + 20 * sys.dimFactor)}, ${Math.floor(20 - 10 * sys.dimFactor)}, ${Math.floor(40 + 20 * sys.dimFactor)}, 0.4)`;
+  ctx.fillStyle = farColor;
+  for (let x = -farBuildingW; x < viewW + farBuildingW; x += farBuildingW) {
+    const worldX = Math.floor((cam.x + x - (farOffset % farBuildingW)) / farBuildingW) * farBuildingW;
+    const h = 380 + Math.sin(worldX * 0.005) * 140;
+    const by = cam.y + viewH - h;
+    ctx.fillRect(cam.x + x - (farOffset % farBuildingW), by, farBuildingW - 6, h);
+  }
+  ctx.restore();
+
+  ctx.save();
+  const midOffset = cam.x * 0.35;
+  const midW = 90;
+  for (let x = -midW; x < viewW + midW; x += midW) {
+    const worldX = Math.floor((cam.x + x - (midOffset % midW)) / midW) * midW;
+    const h = 260 + Math.sin(worldX * 0.01) * 90;
+    const bx = cam.x + x - (midOffset % midW);
+    const by = cam.y + viewH - h;
+
+    ctx.fillStyle = '#080d1a';
+    ctx.fillRect(bx, by, midW - 4, h);
+    ctx.fillStyle = (sys.dimFactor < 0.5) ? 'rgba(0, 240, 255, 0.5)' : 'rgba(255, 0, 127, 0.5)';
+    ctx.fillRect(bx, by, midW - 4, 3);
+  }
+  ctx.restore();
+}
+
+function renderPlayer() {
+  ctx.save();
+
+  if (sys.invulnTimer > 0 && Math.floor(performance.now() / 60) % 2 === 0) {
+    ctx.globalAlpha = 0.35;
+  }
+
+  ctx.translate(hero.x + hero.w / 2, hero.y + hero.h / 2);
+  ctx.scale(hero.scaleX, hero.scaleY);
+
+  const primaryCol = (sys.dimFactor < 0.5) ? '#00f0ff' : '#ff007f';
+  if (!CONFIG.lowFX) {
+    ctx.shadowColor = primaryCol;
+    ctx.shadowBlur = 12;
+  }
+
+  const legOffset1 = Math.sin(hero.runCycle) * 6;
+  const legOffset2 = Math.sin(hero.runCycle + Math.PI) * 6;
+
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 3.5;
+  ctx.lineCap = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(-4 * hero.facing, 8);
+  ctx.lineTo(-6 * hero.facing + legOffset2, 18);
+  ctx.stroke();
+
+  ctx.strokeStyle = '#64748b';
+  ctx.beginPath();
+  ctx.moveTo(4 * hero.facing, 8);
+  ctx.lineTo(6 * hero.facing + legOffset1, 18);
+  ctx.stroke();
+
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(-8, -8, 16, 18);
+  ctx.strokeStyle = primaryCol;
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(-8, -8, 16, 18);
+
+  ctx.fillStyle = primaryCol;
+  ctx.fillRect(-2, -3, 4, 6);
+
+  ctx.fillStyle = '#1e293b';
+  ctx.fillRect(-9, -18, 18, 11);
+  ctx.fillStyle = primaryCol;
+  const visorX = (hero.facing === 1) ? -1 : -8;
+  ctx.fillRect(visorX, -15, 10, 4);
+
+  if (hero.isAttacking) {
+    ctx.save();
+    ctx.strokeStyle = '#f43f5e';
+    ctx.lineWidth = 4;
+    ctx.shadowColor = '#f43f5e';
+    ctx.shadowBlur = 18;
+    ctx.beginPath();
+    const arcX = 8 * hero.facing;
+    ctx.arc(arcX, 0, 26, -Math.PI / 3, Math.PI / 3, hero.facing === -1);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = SAVE_STATE.unlockedPrismScarf
+    ? `hsl(${(performance.now() * 0.1) % 360}, 100%, 65%)`
+    : primaryCol;
+  if (!CONFIG.lowFX) {
+    ctx.shadowColor = ctx.strokeStyle;
+    ctx.shadowBlur = 12;
+  }
+  ctx.lineCap = 'round';
+  for (let i = 0; i < hero.scarf.length - 1; i++) {
+    const p1 = hero.scarf[i];
+    const p2 = hero.scarf[i + 1];
+    ctx.lineWidth = Math.max(1.5, 4.5 - i * 0.4);
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.quadraticCurveTo(p1.x, p1.y, p2.x, p2.y);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function renderBoss() {
+  if (!boss.active) return;
+  const lvl = currentLevelData;
+  ctx.save();
+
+  if (boss.state === 'telegraph' || boss.state === 'slam_prep') {
+    ctx.save();
+    ctx.strokeStyle = (boss.phase === 3) ? '#ff0055' : '#f59e0b';
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([8, 6]);
+    ctx.shadowColor = ctx.strokeStyle;
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    if (boss.state === 'telegraph') {
+      const beamTargetX = boss.dir === 1 ? boss.x + 900 : boss.x - 900;
+      ctx.moveTo(boss.x + boss.w / 2, boss.y + boss.h / 2);
+      ctx.lineTo(beamTargetX, boss.y + boss.h / 2);
+    } else {
+      ctx.moveTo(boss.x + boss.w / 2, boss.y + boss.h);
+      ctx.lineTo(boss.x + boss.w / 2, 820);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  if (boss.invulnTimer > 0 && Math.floor(performance.now() / 50) % 2 === 0) {
+    ctx.globalAlpha = 0.45;
+  }
+
+  let bossColor = '#ff0055';
+  let bossGlow = '#ff0055';
+
+  if (boss.state === 'vulnerable') {
+    bossColor = '#fbbf24';
+    bossGlow = '#f59e0b';
+  } else if (boss.phase === 2) {
+    bossColor = (boss.attackDim === 'REAL') ? '#00f0ff' : '#ff007f';
+    bossGlow = bossColor;
+  } else if (boss.phase === 3) {
+    bossColor = '#a855f7';
+    bossGlow = '#ff0055';
+  }
+
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(boss.x, boss.y, boss.w, boss.h);
+
+  ctx.strokeStyle = bossColor;
+  ctx.lineWidth = 3;
+  if (!CONFIG.lowFX) {
+    ctx.shadowColor = bossGlow;
+    ctx.shadowBlur = (boss.state === 'vulnerable') ? 25 : 15;
+  }
+  ctx.strokeRect(boss.x, boss.y, boss.w, boss.h);
+
+  ctx.fillStyle = bossColor;
+  ctx.fillRect(boss.x + boss.w / 2 - 8, boss.y + boss.h / 2 - 8, 16, 16);
+
+  ctx.fillStyle = '#ffffff';
+  const eyeX = (boss.dir === 1) ? boss.x + boss.w - 14 : boss.x + 8;
+  ctx.fillRect(eyeX, boss.y + 12, 8, 6);
+
+  if (boss.state === 'vulnerable') {
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(boss.x + boss.w / 2, boss.y + boss.h / 2, boss.w * 0.75, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+
+  boss.shockwaves.forEach(sw => {
+    ctx.save();
+    ctx.strokeStyle = '#ff007f';
+    ctx.lineWidth = 4;
+    ctx.shadowColor = '#ff007f';
+    ctx.shadowBlur = 15;
+    ctx.beginPath();
+    ctx.arc(sw.x, 820 - 10, 16, Math.PI, 0, false);
+    ctx.stroke();
+    ctx.restore();
+  });
+
+  boss.arenaHazards.forEach(h => {
+    ctx.save();
+    if (!h.active) {
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+      ctx.fillRect(h.x, h.y, h.w, h.h);
+      ctx.strokeStyle = '#ef4444';
+      ctx.setLineDash([8, 8]);
+      ctx.strokeRect(h.x, h.y, h.w, h.h);
+    } else {
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.85)';
+      ctx.shadowColor = '#f43f5e';
+      ctx.shadowBlur = 20;
+      ctx.fillRect(h.x, h.y, h.w, h.h);
+    }
+    ctx.restore();
+  });
+}
+
+function render() {
+  ctx.save();
+  ctx.scale(dpr, dpr);
+
+  let sx = 0, sy = 0;
+  if (CONFIG.shake && sys.shake > 0) {
+    sx = (Math.random() - 0.5) * sys.shake;
+    sy = (Math.random() - 0.5) * sys.shake;
+    sys.shake *= 0.88;
+    if (sys.shake < 0.2) sys.shake = 0;
+  }
+  ctx.translate(-Math.floor(cam.x + sx), -Math.floor(cam.y + sy));
+
+  const lvl = currentLevelData;
+  if (!lvl) {
+    ctx.restore();
+    return;
+  }
+
+  renderCityParallax(lvl.w, lvl.h);
+
+  ctx.save();
+  ctx.strokeStyle = (sys.dimFactor < 0.5) ? 'rgba(0, 240, 255, 0.08)' : 'rgba(255, 0, 127, 0.08)';
+  ctx.lineWidth = 1;
+  const step = 64;
+  for (let x = 0; x < lvl.w; x += step) {
+    if (x >= cam.x - step && x <= cam.x + viewW + step) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0); ctx.lineTo(x, lvl.h);
+      ctx.stroke();
+    }
+  }
+  for (let y = 0; y < lvl.h; y += step) {
+    if (y >= cam.y - step && y <= cam.y + viewH + step) {
+      ctx.beginPath();
+      ctx.moveTo(0, y); ctx.lineTo(lvl.w, y);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+
+  if (CONFIG.ghost && activeReplayGhost.length > 0) {
+    let targetSample = null;
+    for (let i = 0; i < activeReplayGhost.length; i++) {
+      if (activeReplayGhost[i].t >= sys.activeLevelTime) {
+        targetSample = activeReplayGhost[i];
+        break;
+      }
+    }
+    if (targetSample) {
+      ctx.save();
+      ctx.globalAlpha = 0.28;
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(targetSample.x, targetSample.y, hero.w, hero.h);
+      ctx.restore();
+    }
+  }
+
+  if (lvl.chaserSpeed > 0 && chaser.x > -1000) {
+    ctx.save();
+    const grad = ctx.createLinearGradient(chaser.x - 140, 0, chaser.x, 0);
+    grad.addColorStop(0, 'rgba(239, 68, 68, 0)');
+    grad.addColorStop(1, 'rgba(239, 68, 68, 0.65)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(chaser.x - 140, 0, 140, lvl.h);
+
+    ctx.strokeStyle = '#ef4444';
+    if (!CONFIG.lowFX) {
+      ctx.shadowColor = '#f43f5e';
+      ctx.shadowBlur = 20;
+    }
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(chaser.x, 0);
+    ctx.lineTo(chaser.x, lvl.h);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // رسم نقاط الحفظ (Checkpoints)
+  if (lvl.checkpoints) {
+    lvl.checkpoints.forEach(cp => {
+      ctx.save();
+      ctx.fillStyle = cp.activated ? '#10b981' : '#64748b';
+      ctx.shadowColor = cp.activated ? '#10b981' : 'transparent';
+      ctx.shadowBlur = 12;
+      ctx.fillRect(cp.x - 8, cp.y - 20, 16, 20);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(cp.x - 4, cp.y - 16, 8, 4);
+      ctx.restore();
+    });
+  }
+
+  const allPlatforms = [...lvl.platforms, ...lvl.moving];
+  allPlatforms.forEach(p => {
+    if (p.x + p.w < cam.x - 40 || p.x > cam.x + viewW + 40 || p.y + p.h < cam.y - 40 || p.y > cam.y + viewH + 40) return;
+
+    const active = (p.d === 'BOTH' || p.d === sys.dimension);
+    ctx.save();
+    if (!active) {
+      ctx.globalAlpha = 0.22;
+      ctx.strokeStyle = (p.d === 'REAL') ? '#00f0ff' : '#ff007f';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.strokeRect(p.x, p.y, p.w, p.h);
+    } else {
+      if (p.d === 'BOTH') {
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(p.x, p.y, p.w, p.h);
+      } else if (p.d === 'REAL') {
+        ctx.fillStyle = '#0369a1';
+        if (!CONFIG.lowFX) {
+          ctx.shadowColor = '#00f0ff';
+          ctx.shadowBlur = 12;
+        }
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+        ctx.fillStyle = '#00f0ff';
+        ctx.fillRect(p.x, p.y, p.w, 3);
       } else {
-        closeModal("adminModal");
-      }
-    }
-
-    function populateAdminSettingsInputs() {
-      const cfg = state.storeSettings;
-      document.getElementById("adminCouponCode").value = cfg.couponCode || "";
-      document.getElementById("adminCouponPercent").value = cfg.couponPercent || 0;
-      document.getElementById("adminFreeShippingTarget").value = cfg.freeShippingTarget || 3000;
-      document.getElementById("adminShippingCentre").value = cfg.shippingFeeCentre || 200;
-      document.getElementById("adminShippingNearby").value = cfg.shippingFeeNearby || 350;
-      document.getElementById("adminTickerText").value = cfg.tickerText || "";
-      document.getElementById("adminStorePhones").value = (cfg.storePhones || []).join(", ");
-    }
-
-    async function loginAdmin() {
-      if (!firebaseReady || !auth) return toast("خدمة الاتصال غير مفعلة.", "error");
-      const email = document.getElementById("adminUserInput").value.trim().toLowerCase();
-      const pass = document.getElementById("adminPassInput").value.trim();
-      const btn = document.getElementById("adminLoginSubmitBtn");
-
-      if (!email || !pass) return toast("يرجى إدخال البريد وكلمة المرور.", "error");
-
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري التحقق...`;
-
-      try {
-        const cred = await auth.signInWithEmailAndPassword(email, pass);
-        if (cred.user.uid !== ADMIN_UID) {
-          await auth.signOut();
-          return toast("هذا الحساب لا يملك صلاحيات الإدارة.", "error");
+        ctx.fillStyle = '#be185d';
+        if (!CONFIG.lowFX) {
+          ctx.shadowColor = '#ff007f';
+          ctx.shadowBlur = 14;
         }
-        toast("مرحباً بك في لوحة الإدارة!", "success");
-      } catch (error) {
-        toast("بيانات الدخول غير صحيحة.", "error");
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = "دخول المدير المعتمد";
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+        ctx.fillStyle = '#ff007f';
+        ctx.fillRect(p.x, p.y, p.w, 3);
       }
     }
+    ctx.restore();
+  });
 
-    async function logoutAdmin() {
-      if (auth) await auth.signOut();
-      state.isAdminLoggedIn = false;
-      document.getElementById("adminLoginForm").classList.remove("hidden");
-      document.getElementById("adminPanel").classList.add("hidden");
-      toast("تم تسجيل الخروج بنجاح.");
-    }
-
-    function updateAdminDashboardStats() {
-      document.getElementById("statTotalProducts").textContent = state.products.length;
-      document.getElementById("statLowStock").textContent = state.products.filter(p => Number(p.stock || 0) <= 3).length;
-    }
-
-    function switchAdminTab(tab) {
-      document.querySelectorAll(".admin-tab").forEach(b => {
-        b.className = "admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap";
-      });
-      ["storeSettings", "orders", "customers", "manage", "add"].forEach(t => {
-        const el = document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
-        if (el) el.classList.add("hidden");
-      });
-
-      const cap = tab.charAt(0).toUpperCase() + tab.slice(1);
-      const btn = document.getElementById(`tab${cap}Btn`);
-      if (btn) btn.className = "admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap shadow-md shadow-yellow-500/20";
-      const target = document.getElementById(`adminTab${cap}`);
-      if (target) target.classList.remove("hidden");
-
-      if (tab === "customers") loadAdminCustomers();
-      if (tab === "storeSettings") populateAdminSettingsInputs();
-    }
-
-    async function loadOrdersOnce() {
-      if (!firebaseReady) return;
-      const list = document.getElementById("adminOrdersList");
-      const filter = document.getElementById("adminOrderFilter").value;
-      try {
-        let ref = db.collection("orders");
-        if (filter !== "all") ref = ref.where("status", "==", filter);
-        const snap = await ref.get();
-
-        const orders = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-          .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-
-        document.getElementById("statPendingOrders").textContent = orders.filter(o => o.status === "جديد").length;
-
-        if (!orders.length) {
-          list.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">لا توجد طلبات.</p>`;
-          return;
+  if (lvl.enemies) {
+    lvl.enemies.forEach(en => {
+      if (!en.alive || (en.d !== 'BOTH' && en.d !== sys.dimension)) return;
+      ctx.save();
+      if (en.type === 'turret') {
+        ctx.fillStyle = '#64748b';
+        ctx.fillRect(en.x, en.y, en.w, en.h);
+        ctx.fillStyle = '#f43f5e';
+        ctx.beginPath();
+        ctx.arc(en.x + en.w / 2, en.y + 12, 6, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (en.type === 'stalker') {
+        ctx.fillStyle = '#a855f7';
+        if (!CONFIG.lowFX) {
+          ctx.shadowColor = '#a855f7';
+          ctx.shadowBlur = 14;
         }
-
-        list.innerHTML = orders.map(o => `
-          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 text-xs space-y-2">
-            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-              <div>
-                <span class="font-bold text-yellow-400">${esc(o.customerName)}</span>
-                <span class="text-gray-400 font-mono text-[10px]">(${esc(o.customerPhone)})</span>
-              </div>
-              <select onchange="updateOrderStatus('${o.id}', this.value)" class="bg-gray-900 border border-gray-700 text-[10px] p-1 rounded text-white font-bold">
-                <option value="جديد" ${o.status === "جديد" ? "selected" : ""}>جديد</option>
-                <option value="مكتمل" ${o.status === "مكتمل" ? "selected" : ""}>مكتمل</option>
-              </select>
-            </div>
-            <div class="text-[11px] text-gray-400">العنوان: ${esc(o.address)}</div>
-            <div>${(o.items || []).map(i => `<div class="flex justify-between text-gray-300"><span>${esc(i.name)} ×${i.qty}</span><span>${money(i.price * i.qty)}</span></div>`).join("")}</div>
-            <div class="flex justify-between pt-1 border-t border-gray-800 font-bold">
-              <span>الإجمالي:</span>
-              <span class="text-amber-400">${money(o.total)}</span>
-            </div>
-          </div>`).join("");
-      } catch (e) {
-        list.innerHTML = `<p class="text-xs text-red-400 text-center py-4">فشل تحميل الطلبات.</p>`;
+        ctx.fillRect(en.x, en.y, en.w, en.h);
+        ctx.fillStyle = '#fff';
+        const eyeX = (en.dir === 1) ? en.x + en.w - 7 : en.x + 3;
+        ctx.fillRect(eyeX, en.y + 7, 5, 5);
+      } else {
+        ctx.fillStyle = '#ff0055';
+        if (!CONFIG.lowFX) {
+          ctx.shadowColor = '#ff0055';
+          ctx.shadowBlur = 12;
+        }
+        ctx.fillRect(en.x, en.y, en.w, en.h);
+        ctx.fillStyle = '#fff';
+        const eyeX = (en.dir === 1) ? en.x + en.w - 7 : en.x + 3;
+        ctx.fillRect(eyeX, en.y + 7, 5, 5);
       }
-    }
+      ctx.restore();
+    });
+  }
 
-    function updateOrderStatus(id, status) {
-      db.collection("orders").doc(id).update({ status }).then(() => {
-        toast("تم تحديث حالة الطلب.", "success");
-        loadOrdersOnce();
-      });
+  enemyProjectiles.forEach(proj => {
+    ctx.save();
+    ctx.fillStyle = '#f43f5e';
+    if (!CONFIG.lowFX) {
+      ctx.shadowColor = '#f43f5e';
+      ctx.shadowBlur = 12;
     }
+    ctx.beginPath();
+    ctx.arc(proj.x, proj.y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
 
-    async function loadAdminCustomers() {
-      const list = document.getElementById("adminCustomersList");
-      try {
-        const snap = await db.collection("store_users").get();
-        document.getElementById("statTotalCustomers").textContent = snap.size;
-        list.innerHTML = snap.docs.map(d => {
-          const c = d.data();
-          return `
-            <div class="flex justify-between items-center bg-gray-950 p-2.5 rounded-xl border border-gray-800 text-xs">
-              <div class="flex items-center gap-2">
-                <img src="${esc(c.image || FALLBACK_AVATAR)}" class="w-8 h-8 rounded-full object-cover border border-yellow-500/40">
-                <div>
-                  <p class="font-bold text-gray-200">${esc(c.name || "بدون اسم")} <span class="text-amber-400 font-normal">(${esc(c.phone)})</span></p>
-                  <p class="text-gray-400 text-[10px]">العنوان: ${esc(c.area || "")} - ${esc(c.address || "")}</p>
-                </div>
-              </div>
-            </div>`;
-        }).join("");
-      } catch (e) {
-        list.innerHTML = `<p class="text-xs text-red-400 text-center py-4">تعذر جلب الزبائن.</p>`;
+  if (hero.empWave.active) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(168, 85, 247, 0.75)';
+    ctx.lineWidth = 4;
+    if (!CONFIG.lowFX) {
+      ctx.shadowColor = '#a855f7';
+      ctx.shadowBlur = 20;
+    }
+    ctx.beginPath();
+    ctx.arc(hero.empWave.x, hero.empWave.y, hero.empWave.radius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  renderBoss();
+
+  lvl.hazards.forEach(h => {
+    if (h.d === 'BOTH' || h.d === sys.dimension) {
+      ctx.save();
+      ctx.fillStyle = '#ef4444';
+      if (!CONFIG.lowFX) {
+        ctx.shadowColor = '#f43f5e';
+        ctx.shadowBlur = 12;
       }
+      const count = Math.floor(h.w / 16);
+      for (let i = 0; i < count; i++) {
+        ctx.beginPath();
+        ctx.moveTo(h.x + i * 16, h.y + h.h);
+        ctx.lineTo(h.x + i * 16 + 8, h.y);
+        ctx.lineTo(h.x + (i + 1) * 16, h.y + h.h);
+        ctx.fill();
+      }
+      ctx.restore();
     }
+  });
 
-    function renderAdminProducts() {
-      document.getElementById("adminProductsList").innerHTML = state.products.map(p => `
-        <div class="flex items-center justify-between bg-gray-950 p-2.5 rounded-xl border border-gray-800 text-xs">
-          <div class="flex items-center gap-2 truncate">
-            <img src="${esc(imgSrc(p.image))}" onerror="imgFallback(this)" class="w-10 h-10 object-cover rounded-lg bg-gray-900 border border-gray-800 shrink-0">
-            <div class="truncate">
-              <h5 class="font-bold text-gray-200 truncate">${esc(p.name)}</h5>
-              <p class="text-[10px] text-amber-400">${money(p.price)} - المخزون: ${p.stock}</p>
-            </div>
-          </div>
-          <div class="flex gap-1.5 shrink-0">
-            <button onclick="openEditModal('${esc(p.id)}')" class="px-2.5 py-1 bg-yellow-500/20 text-yellow-400 rounded-lg text-[10px] font-bold">تعديل</button>
-            <button onclick="deleteProduct('${esc(p.id)}')" class="px-2.5 py-1 bg-red-950 text-red-400 rounded-lg text-[10px] font-bold">حذف</button>
-          </div>
-        </div>
-      `).join("");
+  lvl.shards.forEach(s => {
+    if (!s.collected) {
+      ctx.save();
+      ctx.fillStyle = '#fbbf24';
+      if (!CONFIG.lowFX) {
+        ctx.shadowColor = '#f59e0b';
+        ctx.shadowBlur = 16;
+      }
+      const wave = Math.sin(performance.now() * 0.006) * 4;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y + wave, 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     }
+  });
 
-    function filterAdminProductsList() {
-      const q = document.getElementById("adminStockSearch").value.toLowerCase().trim();
-      const filtered = state.products.filter(p => (p.name || "").toLowerCase().includes(q));
-      document.getElementById("adminProductsList").innerHTML = filtered.map(p => `
-        <div class="flex items-center justify-between bg-gray-950 p-2.5 rounded-xl border border-gray-800 text-xs">
-          <div class="truncate">
-            <h5 class="font-bold text-gray-200 truncate">${esc(p.name)}</h5>
-            <p class="text-[10px] text-amber-400">${money(p.price)} - المخزون: ${p.stock}</p>
-          </div>
-          <div class="flex gap-1.5 shrink-0">
-            <button onclick="openEditModal('${esc(p.id)}')" class="px-2.5 py-1 bg-yellow-500/20 text-yellow-400 rounded-lg text-[10px] font-bold">تعديل</button>
-            <button onclick="deleteProduct('${esc(p.id)}')" class="px-2.5 py-1 bg-red-950 text-red-400 rounded-lg text-[10px] font-bold">حذف</button>
-          </div>
-        </div>
-      `).join("");
+  const ex = lvl.exit;
+  const opened = (sys.shards >= sys.totalShards) && (!boss.active);
+  ctx.save();
+  ctx.strokeStyle = opened ? '#10b981' : '#475569';
+  ctx.lineWidth = 3.5;
+  if (!CONFIG.lowFX && opened) {
+    ctx.shadowColor = '#34d399';
+    ctx.shadowBlur = 20;
+  }
+  ctx.strokeRect(ex.x, ex.y, 38, 62);
+  if (opened) {
+    ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
+    ctx.fillRect(ex.x, ex.y, 38, 62);
+  }
+  ctx.restore();
+
+  hero.ghosts.forEach(g => {
+    ctx.save();
+    ctx.globalAlpha = g.alpha * 0.7;
+    ctx.fillStyle = g.color;
+    ctx.fillRect(g.x, g.y, hero.w, hero.h);
+    ctx.restore();
+  });
+
+  renderPlayer();
+
+  for (let i = 0; i < MAX_PARTICLES; i++) {
+    const p = particles[i];
+    if (p.active) {
+      ctx.save();
+      ctx.globalAlpha = 1 - (p.life / p.maxLife);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x, p.y, p.size, p.size);
+      ctx.restore();
     }
+  }
 
-    function addProduct() {
-      const name = document.getElementById("pName").value.trim();
-      const price = Number(document.getElementById("pPrice").value);
-      const stock = Number(document.getElementById("pStock").value);
-      const category = document.getElementById("pCategory").value;
-      const image = document.getElementById("pImgBase64").value.trim();
+  if (sys.flash > 0) {
+    ctx.fillStyle = `rgba(255, 255, 255, ${sys.flash})`;
+    ctx.fillRect(cam.x, cam.y, viewW, viewH);
+    sys.flash -= 0.04;
+  }
 
-      if (!name || isNaN(price) || isNaN(stock)) return toast("يرجى ملء الاسم والسعر والمخزون.", "error");
+  ctx.restore();
+}
 
-      db.collection("products").add({
-        name,
-        price,
-        stock,
-        category,
-        image: image || FALLBACK_IMG,
-        likesCount: 0,
-        likedBy: [],
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      }).then(() => {
-        toast("تمت إضافة المنتج بنجاح!", "success");
-        document.getElementById("pName").value = "";
-        document.getElementById("pPrice").value = "";
-        document.getElementById("pStock").value = "";
-        document.getElementById("pImgBase64").value = "";
-        document.getElementById("imgPreviewContainer").classList.add("hidden");
-      }).catch(() => toast("تعذر إضافة المنتج. تأكد من صلاحية الإدارة.", "error"));
+// ==========================================
+// 10. الحلقة المركزية ونظام التدفق
+// ==========================================
+let lastTime = performance.now();
+let accumulator = 0;
+
+function engineLoop(now) {
+  let delta = (now - lastTime) / 1000;
+  if (delta > CONSTANTS.maxAccum) delta = CONSTANTS.maxAccum;
+  lastTime = now;
+
+  if (sys.running && !sys.paused) {
+    accumulator += delta;
+    while (accumulator >= CONSTANTS.fixedStep) {
+      fixedPhysics(CONSTANTS.fixedStep);
+      accumulator -= CONSTANTS.fixedStep;
     }
+  }
 
-    function openEditModal(id) {
-      const p = state.products.find(x => x.id === id);
-      if (!p) return;
-      document.getElementById("editPId").value = p.id;
-      document.getElementById("editPName").value = p.name || "";
-      document.getElementById("editPPrice").value = p.price || 0;
-      document.getElementById("editPStock").value = p.stock || 0;
-      document.getElementById("editPCategory").value = p.category || "tobacco";
-      document.getElementById("editPImgBase64").value = p.image || "";
-      document.getElementById("editImgPreview").src = imgSrc(p.image);
-      openModal("editProductModal");
-    }
+  render();
+  requestAnimationFrame(engineLoop);
+}
 
-    function closeEditModal() {
-      closeModal("editProductModal");
-    }
+function evaluateStagePerformance(timeSeconds, deaths) {
+  if (deaths === 0 && timeSeconds < 55) return { rank: 'S+', title: 'أسطورة السايبر التنافسية!' };
+  if (deaths <= 2 && timeSeconds < 85) return { rank: 'S', title: 'خبير الأبعاد الخارق' };
+  if (deaths <= 6 && timeSeconds < 120) return { rank: 'A', title: 'عدّاء رقمي محترف' };
+  if (deaths <= 12) return { rank: 'B', title: 'مقاتل صامد' };
+  return { rank: 'C', title: 'ناجٍ بصعوبة' };
+}
 
-    function saveProductEdits() {
-      const id = document.getElementById("editPId").value;
-      const name = document.getElementById("editPName").value.trim();
-      const price = Number(document.getElementById("editPPrice").value);
-      const stock = Number(document.getElementById("editPStock").value);
-      const category = document.getElementById("editPCategory").value;
-      const image = document.getElementById("editPImgBase64").value.trim();
+function evaluateCampaignPerformance(totalTimeSeconds, totalDeaths) {
+  if (totalDeaths === 0 && totalTimeSeconds < 500) return { rank: 'S+', title: 'سيد الأبعاد المطلق (Grandmaster S+)!' };
+  if (totalDeaths <= 10 && totalTimeSeconds < 750) return { rank: 'S', title: 'أسطورة السايبر الكبرى' };
+  if (totalDeaths <= 25 && totalTimeSeconds < 1100) return { rank: 'A', title: 'قاهر الفجوة الرقمية' };
+  if (totalDeaths <= 50) return { rank: 'B', title: 'بطل الصمود السيبراني' };
+  return { rank: 'C', title: 'ناجٍ من انهيار الواقع' };
+}
 
-      const updates = { name, price, stock, category };
-      if (image) updates.image = image;
+function completeLevelSuccess() {
+  const lvlTimeMs = Math.round(sys.activeLevelTime * 1000);
+  const evalResult = evaluateStagePerformance(sys.activeLevelTime, sys.levelDeaths);
 
-      db.collection("products").doc(id).update(updates).then(() => {
-        toast("تم حفظ التعديلات!", "success");
-        closeEditModal();
-      }).catch(() => toast("فشل حفظ التعديلات. تأكد من القواعد وصلاحية المدير.", "error"));
-    }
+  const prevBest = SAVE_STATE.bestTimes[sys.level];
+  if (!prevBest || lvlTimeMs < prevBest) {
+    SAVE_STATE.bestTimes[sys.level] = lvlTimeMs;
+    SAVE_STATE.bestRanks[sys.level] = evalResult.rank;
+    SAVE_STATE.bestSplits[sys.level] = [...sys.levelSplits];
+    SAVE_STATE.ghostTrails[sys.level] = [...currentGhostRecord];
+    StorageManager.save(SAVE_STATE);
+  }
 
-    function deleteProduct(id) {
-      if (!confirm("هل أنت متأكد من حذف هذا المنتج نهائياً؟")) return;
-      db.collection("products").doc(id).delete().then(() => toast("تم حذف المنتج.", "success")).catch(() => toast("فشل الحذف.", "error"));
-    }
-  </script>
+  if (sys.level + 1 < LEVEL_TEMPLATES.length) {
+    loadLevel(sys.level + 1);
+  } else {
+    finishCampaign();
+  }
+}
+
+function finishCampaign() {
+  sys.running = false;
+  const m = String(Math.floor(sys.campaignTotalTime / 60)).padStart(2, '0');
+  const s = String(Math.floor(sys.campaignTotalTime % 60)).padStart(2, '0');
+  const ms = String(Math.floor((sys.campaignTotalTime * 100) % 100)).padStart(2, '0');
+
+  const finalEval = evaluateCampaignPerformance(sys.campaignTotalTime, sys.campaignTotalDeaths);
+
+  document.getElementById('rank-slot').innerHTML = `
+    <div class="rank-text">${finalEval.rank}</div>
+    <div class="reward-box">✨ مبروك! أنهيت الـ 10 مراحل وفزت بوشاح المنشور النيوني الأسطوري</div>
+  `;
+  document.getElementById('menu-title').innerText = "🏆 اكتمال الحملة السيبرانية الكبرى!";
+  document.getElementById('menu-desc').innerText =
+    `تم إنهاء جميع المراحل الـ 10 وهزيمة زعماء الواقع والخلل!\n` +
+    `مجموع أزمنة الحملة: ${m}:${s}.${ms}\n` +
+    `إجمالي وفيات الحملة: ${sys.campaignTotalDeaths}\nالتقييم العام النهائي: رتبة ${finalEval.rank}`;
+  document.getElementById('btn-start').innerText = 'بدء تحدٍ تنافسي جديد';
+  document.getElementById('modal-menu').classList.remove('hidden');
+}
+
+function startNewCampaign() {
+  audio.init();
+  if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+  document.getElementById('modal-menu').classList.add('hidden');
+  document.getElementById('rank-slot').innerHTML = '';
+
+  sys.deaths = 0;
+  sys.campaignTotalDeaths = 0;
+  sys.campaignTotalTime = 0;
+
+  loadLevel(0);
+  sys.running = true;
+  sys.paused = false;
+}
+
+function togglePause() {
+  if (!sys.running) return;
+  sys.paused = !sys.paused;
+  const modal = document.getElementById('modal-pause');
+  if (sys.paused) {
+    modal.classList.remove('hidden');
+  } else {
+    modal.classList.add('hidden');
+    lastTime = performance.now();
+  }
+}
+
+document.getElementById('btn-start').addEventListener('click', startNewCampaign);
+document.getElementById('btn-pause-open').addEventListener('click', togglePause);
+document.getElementById('btn-resume').addEventListener('click', togglePause);
+document.getElementById('btn-restart-now').addEventListener('click', restartCurrentLevel);
+document.getElementById('btn-exit-main').addEventListener('click', () => {
+  sys.running = false;
+  sys.paused = false;
+  audio.stopMusic();
+  document.getElementById('modal-pause').classList.add('hidden');
+  document.getElementById('modal-menu').classList.remove('hidden');
+});
+
+const modalSettings = document.getElementById('modal-settings');
+document.getElementById('btn-open-settings').addEventListener('click', () => {
+  document.getElementById('cfg-lowfx').checked = CONFIG.lowFX;
+  document.getElementById('cfg-shake').checked = CONFIG.shake;
+  document.getElementById('cfg-ghost').checked = CONFIG.ghost;
+  document.getElementById('cfg-audio').checked = CONFIG.audio;
+  document.getElementById('cfg-haptic').checked = CONFIG.haptic;
+  document.getElementById('cfg-touch-alpha').value = Math.round(CONFIG.touchAlpha * 100);
+  modalSettings.classList.remove('hidden');
+});
+
+document.getElementById('btn-save-cfg').addEventListener('click', () => {
+  CONFIG.lowFX = document.getElementById('cfg-lowfx').checked;
+  CONFIG.shake = document.getElementById('cfg-shake').checked;
+  CONFIG.ghost = document.getElementById('cfg-ghost').checked;
+  CONFIG.audio = document.getElementById('cfg-audio').checked;
+  CONFIG.haptic = document.getElementById('cfg-haptic').checked;
+  CONFIG.touchAlpha = parseInt(document.getElementById('cfg-touch-alpha').value) / 100;
+
+  document.querySelectorAll('.touch-btn').forEach(btn => {
+    btn.style.opacity = CONFIG.touchAlpha;
+  });
+
+  if (!CONFIG.audio) audio.stopMusic();
+  else if (sys.running && !sys.paused) audio.startMusic();
+
+  StorageManager.save(SAVE_STATE);
+  modalSettings.classList.add('hidden');
+});
+
+// تشغيل حلقة المحرك
+requestAnimationFrame(engineLoop);
+</script>
 </body>
 </html>
