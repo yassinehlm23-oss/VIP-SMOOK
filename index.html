@@ -142,6 +142,22 @@
     </div>
   </header>
 
+  <!-- Ad Banner 728x90 (Top Header Banner) -->
+  <div class="max-w-6xl mx-auto px-4 my-3 flex justify-center">
+    <div class="overflow-hidden rounded-xl bg-gray-950/60 border border-gray-800/80 p-1 flex justify-center">
+      <script>
+        atOptions = {
+          'key' : '63f0c12144e680fec7df278e8f5d1767',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      </script>
+      <script src="https://bicea.org/22/63f0c12144e680fec7df278e8f5d1767"></script>
+    </div>
+  </div>
+
   <!-- Main Container -->
   <main class="max-w-6xl mx-auto px-4 py-6 min-h-[80vh] safe-bottom">
 
@@ -172,6 +188,22 @@
         </button>
       </div>
     </section>
+
+    <!-- Ad Banner 300x250 (Mid Section Banner) -->
+    <div class="my-6 flex justify-center">
+      <div class="overflow-hidden rounded-xl bg-gray-950/60 border border-gray-800/80 p-2 flex justify-center">
+        <script>
+          atOptions = {
+            'key' : 'b8431248371af1074dbae7ea26f4d4dc',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://bicea.org/22/b8431248371af1074dbae7ea26f4d4dc"></script>
+      </div>
+    </div>
 
     <!-- Categories & Sorting -->
     <section class="mb-6">
@@ -1466,7 +1498,6 @@
       }
     }
 
-    /* ================= دالة تأكيد الطلب المحدثة ================= */
     async function submitOrderToAdmin() {
       if (!state.cart.length) return toast("السلة فارغة.", "error");
       if (!state.customer) {
@@ -1519,7 +1550,6 @@
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        // التحقق من المخزون والتحديث عبر Transaction لجميع المنتجات
         await db.runTransaction(async tx => {
           const reads = [];
           for (const item of state.cart) {
@@ -1539,7 +1569,6 @@
             }
           });
 
-          // خصم الكميات من المخزون بعد التأكد
           docs.forEach((pDoc, index) => {
             const item = state.cart[index];
             const currentStock = Number(pDoc.data().stock || 0);
