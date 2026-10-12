@@ -104,10 +104,10 @@
           <span class="block text-[9px] text-gray-400 tracking-widest font-semibold uppercase">Official Store</span>
         </button>
 
-        <!-- Search Bar -->
+        <!-- Search Bar (تحديث: أحداث متعددة لدعم لوحات مفاتيح الهواتف) -->
         <div class="flex-1 max-w-md mx-2 relative">
           <i class="fas fa-search absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
-          <input id="searchInput" oninput="searchProducts()" type="search" placeholder="ابحث عن منتج..." autocomplete="off" autocorrect="off" spellcheck="false"
+          <input id="searchInput" oninput="searchProducts()" onkeyup="searchProducts()" onsearch="searchProducts()" type="search" placeholder="ابحث عن منتج..." autocomplete="off" autocorrect="off" spellcheck="false"
             class="w-full pr-9 pl-3 py-2 bg-gray-900/80 border border-gray-800 rounded-xl text-xs text-gray-200 focus:outline-none focus:border-yellow-500/60 transition">
         </div>
 
@@ -618,8 +618,15 @@
           </button>
         </div>
 
-        <!-- 2. Orders Tab -->
+        <!-- 2. Orders Tab (تحديث: مسح تلقائي كل 24 ساعة + تنظيف يدوي) -->
         <div id="adminTabOrders" class="hidden space-y-3">
+          <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-xl p-2.5 text-[11px] flex items-center justify-between">
+            <span class="flex items-center gap-1.5"><i class="fas fa-clock-rotate-left"></i> يتم مسح وحذف الطلبات تلقائياً بعد مرور 24 ساعة.</span>
+            <button onclick="cleanOldOrdersManual()" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-lg text-[10px] transition">
+              تنظيف الطلبات الآن
+            </button>
+          </div>
+
           <div class="flex justify-between items-center">
             <div class="flex items-center gap-2">
               <h4 class="text-xs font-bold text-gray-300">قائمة الطلبات:</h4>
@@ -636,7 +643,7 @@
           </div>
         </div>
 
-        <!-- 3. Customers Tab -->
+        <!-- 3. Customers Tab (تحديث: عرض آخر تواجد وحذف الحسابات الزائدة) -->
         <div id="adminTabCustomers" class="hidden space-y-3">
           <div class="flex justify-between items-center">
             <h4 class="text-xs font-bold text-gray-300">قائمة الزبائن المسجلين:</h4>
@@ -865,6 +872,136 @@
       localStorage.setItem("vip_user", JSON.stringify(safe));
     }
 
+    /* -------------------------------------------------------------
+       تعديل 1: نظام البحث المتطور والمصحح للمشاكل والأحرف الخفية
+    ------------------------------------------------------------- */
+    function normalizeSearchText(text) {
+      if (!text) return "";
+      return String(text)
+        .replace(/[\u200E\u200F\u200B\u200C\u200D\u202A-\u202E\uFEFF]/g, "") // إزالة الأحرف الخفية لاتجاه النص
+        .toLowerCase()
+        .replace(/[أإآٱ]/g, "ا")
+        .replace(/ة/g, "ه")
+        .replace(/[ىي]/g, "ي")
+        .replace(/[\u064B-\u065F\u0670]/g, "") // حذف التشكيل
+        .replace(/[^\w\s\u0600-\u06FF]/g, " ")
+        .trim();
+    }
+
+    // قاموس الربط بين البحث العربي والأسماء اللاتينية
+    const SEARCH_SYNONYMS = {
+      "مارلبورو": "marlboro",
+      "مالبورو": "marlboro",
+      "روثمان": "rothmans",
+      "روثمانز": "rothmans",
+      "روتمان": "rothmans",
+      "ريم": "rym",
+      "قولواز": "gauloises",
+      "غولواز": "gauloises",
+      "جلواز": "gauloises",
+      "وينستون": "winston",
+      "ونستون": "winston",
+      "فيليب": "philipmorris philip",
+      "ماسا": "masa",
+      "احمر": "red",
+      "حمر": "red",
+      "ازرق": "bleu blue",
+      "فضي": "silver",
+      "سيلفر": "silver",
+      "ابيض": "white light lights",
+      "تبغ": "tobacco",
+      "سجائر": "tobacco",
+      "دخان": "tobacco",
+      "شمة": "tobacco",
+      "مشروبات": "drinks",
+      "عصير": "drinks",
+      "حلويات": "sweets",
+      "مقرمشات": "sweets",
+      "شيبس": "sweets"
+    };
+
+    function productMatchesSearch(product, rawQuery) {
+      const normQuery = normalizeSearchText(rawQuery);
+      if (!normQuery) return true;
+
+      const normName = normalizeSearchText(product.name);
+      const normCat = normalizeSearchText(product.category);
+
+      // تطابق مباشر مع اسم المنتج أو القسم
+      if (normName.includes(normQuery) || normCat.includes(normQuery)) return true;
+
+      const tokens = normQuery.split(/\s+/).filter(Boolean);
+      const expandedTokens = [...tokens];
+
+      tokens.forEach(tok => {
+        for (const [k, v] of Object.entries(SEARCH_SYNONYMS)) {
+          const normK = normalizeSearchText(k);
+          if (normK.includes(tok) || tok.includes(normK)) {
+            expandedTokens.push(...v.split(/\s+/));
+          }
+        }
+      });
+
+      return expandedTokens.some(tok => normName.includes(tok) || normCat.includes(tok));
+    }
+
+    /* -------------------------------------------------------------
+       تعديل 4: مسح وحذف الطلبات تلقائياً كل 24 ساعة
+    ------------------------------------------------------------- */
+    async function cleanupOldOrders() {
+      if (!firebaseReady || !db) return;
+      try {
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const snap = await db.collection("orders").get();
+        if (snap.empty) return;
+
+        const batch = db.batch();
+        let deletedCount = 0;
+
+        snap.forEach(doc => {
+          const data = doc.data();
+          let orderTime = null;
+          if (data.createdAt?.toDate) {
+            orderTime = data.createdAt.toDate();
+          } else if (data.createdAt?.seconds) {
+            orderTime = new Date(data.createdAt.seconds * 1000);
+          } else if (data.createdAt) {
+            orderTime = new Date(data.createdAt);
+          }
+
+          if (orderTime && orderTime < twentyFourHoursAgo) {
+            batch.delete(doc.ref);
+            deletedCount++;
+          }
+        });
+
+        if (deletedCount > 0) {
+          await batch.commit();
+          console.log(`تم مسح ${deletedCount} طلب مضى عليها أكثر من 24 ساعة.`);
+        }
+      } catch (e) {
+        console.warn("خطأ أثناء تنظيف الطلبات القديمة:", e);
+      }
+    }
+
+    async function cleanOldOrdersManual() {
+      toast("جاري تنظيف الطلبات الأقدم من 24 ساعة...", "normal");
+      await cleanupOldOrders();
+      await loadOrdersOnce();
+      toast("اكتمل تنظيف الطلبات القديمة بنجاح!", "success");
+    }
+
+    async function deleteSingleOrder(orderId) {
+      if (!confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟")) return;
+      try {
+        await db.collection("orders").doc(orderId).delete();
+        toast("تم حذف الطلب.", "success");
+        loadOrdersOnce();
+      } catch (e) {
+        toast("فشل حذف الطلب.", "error");
+      }
+    }
+
     initApp();
 
     async function initApp() {
@@ -892,11 +1029,16 @@
 
       await syncStoreSettings();
 
+      // تحديث آخر تواجد للزبون في الموقع
       if (state.customer && state.customer.phone) {
         db.collection("store_users").doc(state.customer.phone).set({
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true }).catch(() => {});
       }
+
+      // تشغيل فحص تنظيف الطلبات كل 24 ساعة تلقائياً
+      cleanupOldOrders();
+      setInterval(cleanupOldOrders, 10 * 60 * 1000); // تكرار كل 10 دقائق
 
       if (unsubscribeProducts) unsubscribeProducts();
 
@@ -1100,14 +1242,13 @@
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
       let filtered = [...state.products];
+      const hasSearch = Boolean(state.searchQuery && state.searchQuery.trim());
 
-      if (state.currentCategory !== "all") {
+      // عند البحث، يتم البحث في كافة المنتجات دون تقييد القسم
+      if (hasSearch) {
+        filtered = filtered.filter(p => productMatchesSearch(p, state.searchQuery));
+      } else if (state.currentCategory !== "all") {
         filtered = filtered.filter(p => p.category === state.currentCategory);
-      }
-
-      if (state.searchQuery.trim()) {
-        const q = state.searchQuery.trim().toLowerCase();
-        filtered = filtered.filter(p => String(p.name || "").toLowerCase().includes(q));
       }
 
       const sortVal = document.getElementById("sortSelect").value;
@@ -1232,7 +1373,7 @@
       searchDebounce = setTimeout(() => {
         state.searchQuery = document.getElementById("searchInput").value;
         renderProducts();
-      }, 200);
+      }, 150);
     }
 
     function toggleCart() {
@@ -1269,6 +1410,50 @@
       toast(`تمت إضافة ${qty} من ${p.name} للسلة.`, "success");
     }
 
+    /* -------------------------------------------------------------
+       تعديل 2: تمكين الزبائن من تعديل الكمية مباشرة من السلة
+    ------------------------------------------------------------- */
+    function changeCartQty(id, delta) {
+      const item = state.cart.find(x => x.id === id);
+      if (!item) return;
+      const p = state.products.find(x => x.id === id);
+      const stock = p ? Number(p.stock || 0) : 999;
+
+      const newQty = item.qty + delta;
+      if (newQty <= 0) {
+        removeFromCart(id);
+        return;
+      }
+      if (newQty > stock) {
+        toast(`الكمية المتوفرة في المخزون هي ${stock} فقط.`, "error");
+        return;
+      }
+      item.qty = newQty;
+      persistCart();
+      updateCartUI();
+    }
+
+    function setCartQty(id, val) {
+      const item = state.cart.find(x => x.id === id);
+      if (!item) return;
+      const p = state.products.find(x => x.id === id);
+      const stock = p ? Number(p.stock || 0) : 999;
+
+      let newQty = parseInt(val, 10);
+      if (isNaN(newQty) || newQty <= 0) {
+        removeFromCart(id);
+        return;
+      }
+      if (newQty > stock) {
+        toast(`الكمية المتوفرة في المخزون هي ${stock} فقط.`, "error");
+        item.qty = stock;
+      } else {
+        item.qty = newQty;
+      }
+      persistCart();
+      updateCartUI();
+    }
+
     function syncCartWithStock() {
       state.cart = state.cart.map(item => {
         const p = state.products.find(x => x.id === item.id);
@@ -1297,6 +1482,9 @@
       let subtotal = 0;
       box.innerHTML = state.cart.map(item => {
         subtotal += item.price * item.qty;
+        const p = state.products.find(x => x.id === item.id);
+        const maxStock = p ? Number(p.stock || 999) : 999;
+
         return `
           <div class="bg-gray-900 border border-gray-800 p-3 rounded-xl space-y-2">
             <div class="flex justify-between items-start gap-2">
@@ -1308,8 +1496,21 @@
                 <i class="fas fa-trash"></i>
               </button>
             </div>
+            
+            <!-- أزرار تعديل الكمية للزبون داخل السلة -->
             <div class="flex items-center justify-between pt-2 border-t border-gray-800 text-xs">
-              <span class="text-gray-400">الكمية: ${item.qty}</span>
+              <div class="flex items-center gap-1.5 bg-gray-950 px-2 py-1 rounded-xl border border-gray-800">
+                <button onclick="changeCartQty('${esc(item.id)}', -1)" title="إنقاص الكمية" 
+                  class="w-6 h-6 rounded-lg bg-gray-800 hover:bg-gray-700 text-white flex items-center justify-center font-bold text-xs active:scale-95 transition">
+                  <i class="fas fa-minus text-[10px]"></i>
+                </button>
+                <input type="number" min="1" max="${maxStock}" value="${item.qty}" onchange="setCartQty('${esc(item.id)}', this.value)"
+                  class="w-10 text-center bg-transparent text-white font-black text-xs focus:outline-none">
+                <button onclick="changeCartQty('${esc(item.id)}', 1)" title="زيادة الكمية" 
+                  class="w-6 h-6 rounded-lg bg-amber-500 hover:bg-amber-400 text-black flex items-center justify-center font-bold text-xs active:scale-95 transition">
+                  <i class="fas fa-plus text-[10px]"></i>
+                </button>
+              </div>
               <span class="font-bold text-amber-400">${money(item.price * item.qty)}</span>
             </div>
           </div>`;
@@ -1401,13 +1602,22 @@
         const doc = await ref.get();
 
         if (!doc.exists) {
-          const newUser = { phone, pass: hashedPass, name: "", area: "وسط المدينة (Centre-ville)", address: "", image: "" };
+          const newUser = {
+            phone,
+            pass: hashedPass,
+            name: "",
+            area: "وسط المدينة (Centre-ville)",
+            address: "",
+            image: "",
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+          };
           await ref.set(newUser);
           state.customer = newUser;
           toast("تم إنشاء حسابك بنجاح!", "success");
         } else {
           const data = doc.data();
           if (data.pass !== hashedPass) return toast("كلمة المرور غير صحيحة.", "error");
+          await ref.set({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
           state.customer = data;
           toast("مرحباً بك مجدداً!", "success");
         }
@@ -1443,7 +1653,10 @@
 
       if (!name || !address) return toast("يرجى إكمال الاسم والعنوان.", "error");
 
-      db.collection("store_users").doc(state.customer.phone).set({ name, area, address, image }, { merge: true }).then(() => {
+      db.collection("store_users").doc(state.customer.phone).set({
+        name, area, address, image,
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true }).then(() => {
         state.customer = { ...state.customer, name, area, address, image };
         persistCustomer();
         toast("تم حفظ الملف الشخصي بنجاح.", "success");
@@ -1768,6 +1981,7 @@
       if (target) target.classList.remove("hidden");
 
       if (tab === "customers") loadAdminCustomers();
+      if (tab === "orders") loadOrdersOnce();
       if (tab === "storeSettings") populateAdminSettingsInputs();
     }
 
@@ -1775,6 +1989,10 @@
       if (!firebaseReady) return;
       const list = document.getElementById("adminOrdersList");
       const filter = document.getElementById("adminOrderFilter").value;
+      
+      // تنظيف الطلبات القديمة التي تجاوزت 24 ساعة أولاً
+      await cleanupOldOrders();
+
       try {
         let ref = db.collection("orders");
         if (filter !== "all") ref = ref.where("status", "==", filter);
@@ -1786,7 +2004,7 @@
         document.getElementById("statPendingOrders").textContent = orders.filter(o => o.status === "جديد").length;
 
         if (!orders.length) {
-          list.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">لا توجد طلبات.</p>`;
+          list.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">لا توجد طلبات حالياً.</p>`;
           return;
         }
 
@@ -1797,10 +2015,15 @@
                 <span class="font-bold text-yellow-400">${esc(o.customerName)}</span>
                 <span class="text-gray-400 font-mono text-[10px]">(${esc(o.customerPhone)})</span>
               </div>
-              <select onchange="updateOrderStatus('${o.id}', this.value)" class="bg-gray-900 border border-gray-700 text-[10px] p-1 rounded text-white font-bold">
-                <option value="جديد" ${o.status === "جديد" ? "selected" : ""}>جديد</option>
-                <option value="مكتمل" ${o.status === "مكتمل" ? "selected" : ""}>مكتمل</option>
-              </select>
+              <div class="flex items-center gap-1.5">
+                <select onchange="updateOrderStatus('${o.id}', this.value)" class="bg-gray-900 border border-gray-700 text-[10px] p-1 rounded text-white font-bold">
+                  <option value="جديد" ${o.status === "جديد" ? "selected" : ""}>جديد</option>
+                  <option value="مكتمل" ${o.status === "مكتمل" ? "selected" : ""}>مكتمل</option>
+                </select>
+                <button onclick="deleteSingleOrder('${o.id}')" title="حذف الطلب" class="p-1 text-red-400 hover:text-red-300">
+                  <i class="fas fa-trash-can text-xs"></i>
+                </button>
+              </div>
             </div>
             <div class="text-[11px] text-gray-400">العنوان: ${esc(o.address)}</div>
             <div>${(o.items || []).map(i => `<div class="flex justify-between text-gray-300"><span>${esc(i.name)} ×${i.qty}</span><span>${money(i.price * i.qty)}</span></div>`).join("")}</div>
@@ -1821,26 +2044,74 @@
       });
     }
 
+    /* -------------------------------------------------------------
+       تعديل 3: عرض توقيت تواجد الزبون وحذف الحسابات الزائدة
+    ------------------------------------------------------------- */
+    function formatLastSeen(ts) {
+      if (!ts) return "غير متوفر";
+      let date = null;
+      if (ts.toDate) date = ts.toDate();
+      else if (ts.seconds) date = new Date(ts.seconds * 1000);
+      else date = new Date(ts);
+      if (!date || isNaN(date.getTime())) return "غير متوفر";
+
+      const diffMs = Date.now() - date.getTime();
+      const diffMin = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMin / 60);
+      const diffDays = Math.floor(diffHours / 24);
+
+      if (diffMin < 2) return "متصل الآن (أو منذ لحظات)";
+      if (diffMin < 60) return `منذ ${diffMin} دقيقة`;
+      if (diffHours < 24) return `منذ ${diffHours} ساعة`;
+      if (diffDays < 7) return `منذ ${diffDays} يوم`;
+      return date.toLocaleDateString("ar-DZ", { day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    }
+
     async function loadAdminCustomers() {
       const list = document.getElementById("adminCustomersList");
       try {
         const snap = await db.collection("store_users").get();
         document.getElementById("statTotalCustomers").textContent = snap.size;
-        list.innerHTML = snap.docs.map(d => {
-          const c = d.data();
-          return `
-            <div class="flex justify-between items-center bg-gray-950 p-2.5 rounded-xl border border-gray-800 text-xs">
-              <div class="flex items-center gap-2">
-                <img src="${esc(c.image || FALLBACK_AVATAR)}" class="w-8 h-8 rounded-full object-cover border border-yellow-500/40">
-                <div>
-                  <p class="font-bold text-gray-200">${esc(c.name || "بدون اسم")} <span class="text-amber-400 font-normal">(${esc(c.phone)})</span></p>
-                  <p class="text-gray-400 text-[10px]">العنوان: ${esc(c.area || "")} - ${esc(c.address || "")}</p>
-                </div>
+
+        if (snap.empty) {
+          list.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">لا يوجد زبائن مسجلون.</p>`;
+          return;
+        }
+
+        const customers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        customers.sort((a, b) => (b.lastSeen?.seconds || 0) - (a.lastSeen?.seconds || 0));
+
+        list.innerHTML = customers.map(c => `
+          <div class="flex justify-between items-center bg-gray-950 p-2.5 rounded-xl border border-gray-800 text-xs gap-2">
+            <div class="flex items-center gap-2 truncate">
+              <img src="${esc(c.image || FALLBACK_AVATAR)}" class="w-9 h-9 rounded-full object-cover border border-yellow-500/40 shrink-0">
+              <div class="truncate">
+                <p class="font-bold text-gray-200 truncate">${esc(c.name || "بدون اسم")} <span class="text-amber-400 font-normal">(${esc(c.phone || c.id)})</span></p>
+                <p class="text-gray-400 text-[10px] truncate">العنوان: ${esc(c.area || "")} - ${esc(c.address || "")}</p>
+                <p class="text-emerald-400 text-[10px] flex items-center gap-1 mt-0.5">
+                  <i class="fas fa-clock text-[9px]"></i> آخر تواجد: <span>${formatLastSeen(c.lastSeen)}</span>
+                </p>
               </div>
-            </div>`;
-        }).join("");
+            </div>
+            <div class="shrink-0">
+              <button onclick="deleteCustomerAccount('${esc(c.id)}')" class="px-2.5 py-1.5 bg-red-950/80 hover:bg-red-900 border border-red-800 text-red-300 rounded-lg text-[10px] font-bold flex items-center gap-1 transition">
+                <i class="fas fa-trash-can"></i> حذف
+              </button>
+            </div>
+          </div>`).join("");
       } catch (e) {
         list.innerHTML = `<p class="text-xs text-red-400 text-center py-4">تعذر جلب الزبائن.</p>`;
+      }
+    }
+
+    async function deleteCustomerAccount(phone) {
+      if (!confirm(`هل أنت متأكد من حذف حساب الزبون (${phone}) نهائياً؟`)) return;
+      try {
+        await db.collection("store_users").doc(phone).delete();
+        toast("تم حذف حساب الزبون بنجاح.", "success");
+        loadAdminCustomers();
+      } catch (e) {
+        toast("تعذر حذف حساب الزبون.", "error");
       }
     }
 
@@ -1947,4 +2218,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
