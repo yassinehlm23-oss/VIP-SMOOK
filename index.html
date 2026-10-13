@@ -142,22 +142,6 @@
     </div>
   </header>
 
-  <!-- Ad Banner 728x90 -->
-  <div class="max-w-6xl mx-auto px-4 my-3 flex justify-center">
-    <div class="overflow-hidden rounded-xl bg-gray-950/60 border border-gray-800/80 p-1 flex justify-center">
-      <script>
-        atOptions = {
-          'key' : '63f0c12144e680fec7df278e8f5d1767',
-          'format' : 'iframe',
-          'height' : 90,
-          'width' : 728,
-          'params' : {}
-        };
-      </script>
-      <script src="https://bicea.org/22/63f0c12144e680fec7df278e8f5d1767"></script>
-    </div>
-  </div>
-
   <!-- Main Container -->
   <main class="max-w-6xl mx-auto px-4 py-6 min-h-[80vh] safe-bottom">
 
@@ -188,22 +172,6 @@
         </button>
       </div>
     </section>
-
-    <!-- Ad Banner 300x250 -->
-    <div class="my-6 flex justify-center">
-      <div class="overflow-hidden rounded-xl bg-gray-950/60 border border-gray-800/80 p-2 flex justify-center">
-        <script>
-          atOptions = {
-            'key' : 'b8431248371af1074dbae7ea26f4d4dc',
-            'format' : 'iframe',
-            'height' : 250,
-            'width' : 300,
-            'params' : {}
-          };
-        </script>
-        <script src="https://bicea.org/22/b8431248371af1074dbae7ea26f4d4dc"></script>
-      </div>
-    </div>
 
     <!-- Categories & Sorting -->
     <section class="mb-6">
@@ -924,9 +892,6 @@
       localStorage.setItem("vip_user", JSON.stringify(safe));
     }
 
-    /* -------------------------------------------------------------
-       1. محرك البحث الذكي والمصحح للأحرف الخفية والمترادفات
-    ------------------------------------------------------------- */
     function normalizeSearchText(text) {
       if (!text) return "";
       return String(text)
@@ -994,9 +959,6 @@
       return expandedTokens.some(tok => normName.includes(tok) || normCat.includes(tok));
     }
 
-    /* -------------------------------------------------------------
-       2. مسح وحذف الطلبات تلقائياً بعد مرور 24 ساعة
-    ------------------------------------------------------------- */
     async function cleanupOldOrders() {
       if (!firebaseReady || !db) return;
       try {
@@ -1026,7 +988,6 @@
 
         if (deletedCount > 0) {
           await batch.commit();
-          console.log(`تم مسح ${deletedCount} طلب قديم مضى عليها 24 ساعة.`);
         }
       } catch (e) {
         console.warn("خطأ أثناء تنظيف الطلبات القديمة:", e);
@@ -1051,9 +1012,6 @@
       }
     }
 
-    /* -------------------------------------------------------------
-       3. مساعد Google Gemini + المحرك الذكي المباشر لبيانات المتجر
-    ------------------------------------------------------------- */
     function toggleGeminiChat() {
       const box = document.getElementById("geminiChatBox");
       const isHidden = box.classList.contains("hidden");
@@ -1067,18 +1025,15 @@
       }
     }
 
-    // محرك ذكي بديل يقرأ بيانات المتجر مباشرة ويجيب بدقة
     function generateSmartStoreReply(q) {
       const raw = q.trim();
       const norm = normalizeSearchText(raw);
       const cfg = state.storeSettings;
 
-      // 1. الترحيب
       if (/^(hi|hello|مرحبا|سلام|السلام|أهلا|اهلا|الو|صباح|مساء|صحا)/i.test(norm) || norm.length <= 3) {
         return "أهلاً وسهلاً بك في متجر VIP SMOOK! 👋 مرحباً بك دائماً. كيف يمكنني مساعدتك؟ يمكنك سؤالي عن سعر أي منتج، أو تكلفة التوصيل، أو طريقة الطلب.";
       }
 
-      // 2. البحث عن سعر منتج معين
       let matchedProduct = null;
       const cleanQ = norm.replace(/(كم|سعر|سومة|كاش|ثمن|عندكم|كاين|شحال|اعطيني|بكم)/g, " ").trim();
       const words = cleanQ.split(/\s+/).filter(w => w.length > 1);
@@ -1096,22 +1051,18 @@
         return `سعر منتج **${matchedProduct.name}** هو **${money(matchedProduct.price)}**.\nالحالة: ${stock > 0 ? `متوفر في المخزون (${stock} علبة/قطعة)` : 'نفد من المخزون حالياً'}.\n\n💡 يمكنك إضافته للسلة وتحديد الكمية التي تناسبك مباشرة! 🛒`;
       }
 
-      // 3. أسئلة التوصيل
       if (norm.includes("توصيل") || norm.includes("livraison") || norm.includes("بلاصة") || norm.includes("مكان")) {
         return `🚚 تفاصيل وأسعار التوصيل في متجرنا:\n• وسط المدينة (Centre-ville): ${money(cfg.shippingFeeCentre)}\n• البلديات والمناطق المجاورة: ${money(cfg.shippingFeeNearby)}\n• استلام مباشر من المحل: مجاناً\n🎉 توصيل مجاني تلقائي لكل طلب يتجاوز ${money(cfg.freeShippingTarget)}!`;
       }
 
-      // 4. الدفع
       if (norm.includes("دفع") || norm.includes("كاش") || norm.includes("دراهم") || norm.includes("خلص")) {
         return "💵 طريقة الدفع لدينا هي: **الدفع نقداً (كاش) عند الاستلام**، يد بيد بعد أن تعاين طلبك وتتأكد منه تماماً.";
       }
 
-      // 5. تعديل الكمية أو السلة
       if (norm.includes("كمية") || norm.includes("سلة") || norm.includes("نقص") || norm.includes("زيد") || norm.includes("تكفي")) {
         return "🛒 لتعديل كمية المنتجات: افتح السلة في الأعلى، واضغط على زر (+) للزيادة أو (-) للإنقاص لتعديل المجموع بما يناسب ميزانيتك قبل تأكيد الطلب.";
       }
 
-      // 6. رد عام يعرض أبرز المنتجات
       const sample = state.products.slice(0, 4).map(p => `• ${p.name}: ${money(p.price)}`).join("\n");
       return `مرحباً بك! لدينا تشكيلة متنوعة في المتجر:\n${sample}\n\nاسألني عن اسم أي منتج بالتحديد لأعطيك سعره فوراً، أو اتصل بنا مباشرة على: ${cfg.storePhones?.join(" أو ")}.`;
     }
@@ -1124,7 +1075,6 @@
       const msgContainer = document.getElementById("geminiMessages");
       const sendBtn = document.getElementById("geminiSendBtn");
 
-      // إظهار رسالة الزبون
       msgContainer.innerHTML += `
         <div class="flex justify-start">
           <div class="bg-amber-500 text-black font-semibold p-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow">
@@ -1135,7 +1085,6 @@
       input.value = "";
       msgContainer.scrollTop = msgContainer.scrollHeight;
 
-      // مؤشر التفكير
       const loadingId = "gemini_loading_" + Date.now();
       msgContainer.innerHTML += `
         <div id="${loadingId}" class="flex justify-end">
@@ -1164,7 +1113,6 @@ ${availableProducts || "المتجر متوفر"}
 - تعديل الكمية: من أزرار (+) و (-) داخل السلة.
 `;
 
-        // تجربة أحدث النماذج المعتمدة من Google مع دعم ترويسة x-goog-api-key
         const activeModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash-latest"];
         
         for (const model of activeModels) {
@@ -1194,7 +1142,6 @@ ${availableProducts || "المتجر متوفر"}
         console.warn("Gemini remote error:", err);
       }
 
-      // إذا لم يستجب الذكاء الاصطناعي، يتم الرد فوراً من المحرك المحلي المباشر لبيانات المتجر
       if (!reply) {
         reply = generateSmartStoreReply(msgText);
       }
@@ -1618,9 +1565,6 @@ ${availableProducts || "المتجر متوفر"}
       toast(`تمت إضافة ${qty} من ${p.name} للسلة.`, "success");
     }
 
-    /* -------------------------------------------------------------
-       تعديل كمية المنتجات من السلة مباشرة بواسطة الزبون
-    ------------------------------------------------------------- */
     function changeCartQty(id, delta) {
       const item = state.cart.find(x => x.id === id);
       if (!item) return;
@@ -2250,9 +2194,6 @@ ${availableProducts || "المتجر متوفر"}
       });
     }
 
-    /* -------------------------------------------------------------
-       توقيت آخر تواجد للزبون وحذف الحسابات
-    ------------------------------------------------------------- */
     function formatLastSeen(ts) {
       if (!ts) return "غير متوفر";
       let date = null;
