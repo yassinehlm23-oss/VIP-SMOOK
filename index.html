@@ -667,7 +667,7 @@
     </button>
 
     <!-- Chat Box -->
-    <div id="geminiChatBox" class="hidden fixed md:absolute bottom-20 md:bottom-16 left-3 right-3 md:left-0 md:right-auto md:w-96 h-[460px] max-h-[75vh] bg-gray-950/95 border border-yellow-500/40 rounded-3xl shadow-2xl flex-col overflow-hidden backdrop-blur-xl">
+    <div id="geminiChatBox" class="hidden fixed md:absolute bottom-20 md:bottom-16 left-3 right-3 md:left-0 md:right-auto md:w-96 h-[480px] max-h-[78vh] bg-gray-950/95 border border-yellow-500/40 rounded-3xl shadow-2xl flex-col overflow-hidden backdrop-blur-xl">
       <!-- Header -->
       <div class="bg-gray-900/90 p-3.5 border-b border-gray-800 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
@@ -677,25 +677,37 @@
           <div>
             <h4 class="text-xs font-black text-yellow-400">مساعد VIP SMOOK الذكي</h4>
             <span class="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> مدعوم بالذكاء الاصطناعي
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> متصل وجاهز للخدمة
             </span>
           </div>
         </div>
-        <button onclick="toggleGeminiChat()" class="text-gray-400 hover:text-white p-1 text-sm">
-          <i class="fas fa-xmark"></i>
-        </button>
+        <div class="flex items-center gap-1">
+          <button onclick="clearGeminiChatHistory()" title="بدء محادثة جديدة" class="text-gray-400 hover:text-yellow-400 p-1 text-xs transition">
+            <i class="fas fa-rotate-right"></i>
+          </button>
+          <button onclick="toggleGeminiChat()" class="text-gray-400 hover:text-white p-1 text-sm">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
       </div>
 
       <!-- Messages Area -->
       <div id="geminiMessages" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs no-scrollbar">
         <div class="bg-gray-900 border border-gray-800 text-gray-200 p-3 rounded-2xl rounded-tr-none leading-relaxed">
-          مرحباً بك في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 كيف يمكنني مساعدتك؟ يمكنك سؤالي عن توفر المنتجات، أسعارها، ميزانيتك، التوصيل، أو طريقة تعديل الطلب.
+          مرحباً بك في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 كيف يمكنني مساعدتك اليوم؟ يمكنك سؤالي عن المنتجات والأسعار، التوصيل، حساب إجمالي ميزانيتك، أو اقتراح أفضل الخيارات المتاحة.
         </div>
+      </div>
+
+      <!-- Quick Suggestion Chips -->
+      <div class="px-3 py-1.5 bg-gray-950/80 border-t border-gray-900 flex gap-1.5 overflow-x-auto no-scrollbar text-[10px]">
+        <button onclick="quickSendAI('ما هي المنتجات الأكثر طلباً؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🔥 الأكثر طلباً</button>
+        <button onclick="quickSendAI('كيف يتم التوصيل والدفع؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🚚 التوصيل والدفع</button>
+        <button onclick="quickSendAI('هل يوجد كود تخفيض نشط؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🏷️ كود الخصم</button>
       </div>
 
       <!-- Input Area -->
       <div class="p-2.5 bg-gray-900/90 border-t border-gray-800 flex items-center gap-2">
-        <input id="geminiInput" type="text" placeholder="اكتب سؤالك هنا..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
+        <input id="geminiInput" type="text" placeholder="اكتب سؤالك أو استفسارك هنا..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
                class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-yellow-500">
         <button onclick="sendGeminiMessage()" id="geminiSendBtn" 
                 class="w-8 h-8 bg-amber-500 hover:bg-amber-400 text-black rounded-xl flex items-center justify-center font-bold transition">
@@ -722,6 +734,9 @@
 
     // مفتاح Gemini API الجديد مرمز برمجياً
     const GEMINI_API_KEY = atob("QVEuQWI4Uk42SVExX280VDhwVHFZb2ctYXJtVUR5UUhOSGdtVFVMU2ljQ2tqbE9lSkJnU1E=");
+
+    // سجل محادثة الذكاء الاصطناعي متعدد الأدوار
+    let geminiChatHistory = [];
 
     const firebaseConfig = {
       apiKey: "AIzaSyC8Sh1-ufVJ_voLCcu3_W89011oQYEGn60",
@@ -1012,6 +1027,9 @@
       }
     }
 
+    /* -------------------------------------------------------------
+       تطوير نموذج الذكاء الاصطناعي (Gemini + Local Engine المطور)
+    ------------------------------------------------------------- */
     function toggleGeminiChat() {
       const box = document.getElementById("geminiChatBox");
       const isHidden = box.classList.contains("hidden");
@@ -1025,46 +1043,111 @@
       }
     }
 
+    function clearGeminiChatHistory() {
+      geminiChatHistory = [];
+      const msgContainer = document.getElementById("geminiMessages");
+      msgContainer.innerHTML = `
+        <div class="bg-gray-900 border border-gray-800 text-gray-200 p-3 rounded-2xl rounded-tr-none leading-relaxed">
+          مرحباً بك مجدداً في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 بدأت محادثة جديدة. كيف يمكنني مساعدتك الآن؟
+        </div>
+      `;
+      toast("تم بدء محادثة جديدة مع المساعد الذكي.", "normal");
+    }
+
+    function quickSendAI(text) {
+      const input = document.getElementById("geminiInput");
+      input.value = text;
+      sendGeminiMessage();
+    }
+
+    function findRelevantProducts(q, limit = 3) {
+      const norm = normalizeSearchText(q);
+      const words = norm.replace(/(كم|سعر|سومة|كاش|ثمن|عندكم|كاين|شحال|اعطيني|بكم|اريد|حاب|شراء|علبة)/g, " ")
+                        .split(/\s+/)
+                        .filter(w => w.length > 1);
+
+      let scored = state.products.map(p => {
+        let score = 0;
+        const pNorm = normalizeSearchText(p.name);
+        const catNorm = normalizeSearchText(p.category);
+
+        if (pNorm === norm) score += 10;
+        if (pNorm.includes(norm)) score += 6;
+
+        words.forEach(w => {
+          if (pNorm.includes(w)) score += 3;
+          if (catNorm.includes(w)) score += 1;
+        });
+
+        return { product: p, score };
+      }).filter(x => x.score > 0);
+
+      scored.sort((a, b) => b.score - a.score);
+      return scored.slice(0, limit).map(x => x.product);
+    }
+
     function generateSmartStoreReply(q) {
       const raw = q.trim();
       const norm = normalizeSearchText(raw);
       const cfg = state.storeSettings;
 
-      if (/^(hi|hello|مرحبا|سلام|السلام|أهلا|اهلا|الو|صباح|مساء|صحا)/i.test(norm) || norm.length <= 3) {
-        return "أهلاً وسهلاً بك في متجر VIP SMOOK! 👋 مرحباً بك دائماً. كيف يمكنني مساعدتك؟ يمكنك سؤالي عن سعر أي منتج، أو تكلفة التوصيل، أو طريقة الطلب.";
+      if (/^(hi|hello|مرحبا|سلام|السلام|أهلا|اهلا|الو|صباح|مساء|صحا|سلام عليكم|صباح الخير)/i.test(norm) && norm.length <= 15) {
+        return {
+          text: `أهلاً وسهلاً بك في **VIP SMOOK**! 👋\nأنا مساعدك الذكي الشخصي. يمكنك أن تسألني عن أي منتج، تكلفة التوصيل، العروض، أو أساعدك في اختيار طلبك!`,
+          actions: []
+        };
       }
 
-      let matchedProduct = null;
-      const cleanQ = norm.replace(/(كم|سعر|سومة|كاش|ثمن|عندكم|كاين|شحال|اعطيني|بكم)/g, " ").trim();
-      const words = cleanQ.split(/\s+/).filter(w => w.length > 1);
-
-      for (const p of state.products) {
-        const pNorm = normalizeSearchText(p.name);
-        if (words.some(w => pNorm.includes(w))) {
-          matchedProduct = p;
-          break;
+      if (norm.includes("خصم") || norm.includes("كود") || norm.includes("تخفيض") || norm.includes("برومو") || norm.includes("promo")) {
+        if (cfg.couponCode && Number(cfg.couponPercent) > 0) {
+          return {
+            text: `🎉 لدينا كود خصم فعال حالياً!\nاستخدم الكود: **${cfg.couponCode}** للحصول على تخفيض **${cfg.couponPercent}%** على طلبك عند الدفع في السلة.`,
+            actions: []
+          };
+        } else {
+          return {
+            text: `حالياً لا يوجد كود خصم نشط، ولكن أسعارنا منافسة ومحدثة مع توصيل مجاني للطلبات فوق ${money(cfg.freeShippingTarget)}! 🎁`,
+            actions: []
+          };
         }
       }
 
-      if (matchedProduct) {
-        const stock = Number(matchedProduct.stock || 0);
-        return `سعر منتج **${matchedProduct.name}** هو **${money(matchedProduct.price)}**.\nالحالة: ${stock > 0 ? `متوفر في المخزون (${stock} علبة/قطعة)` : 'نفد من المخزون حالياً'}.\n\n💡 يمكنك إضافته للسلة وتحديد الكمية التي تناسبك مباشرة! 🛒`;
+      if (norm.includes("توصيل") || norm.includes("livraison") || norm.includes("بلاصة") || norm.includes("مكان") || norm.includes("وين توصل")) {
+        return {
+          text: `🚚 **تفاصيل التوصيل السريع:**\n• وسط المدينة (Centre-ville): **${money(cfg.shippingFeeCentre)}**\n• البلديات والمناطق المجاورة: **${money(cfg.shippingFeeNearby)}**\n• استلام مجاني ومباشر من المحل\n\n🎉 **مفاجأة:** أي طلب بقيمة **${money(cfg.freeShippingTarget)}** أو أكثر يحصل على **توصيل مجاني فوري**!`,
+          actions: []
+        };
       }
 
-      if (norm.includes("توصيل") || norm.includes("livraison") || norm.includes("بلاصة") || norm.includes("مكان")) {
-        return `🚚 تفاصيل وأسعار التوصيل في متجرنا:\n• وسط المدينة (Centre-ville): ${money(cfg.shippingFeeCentre)}\n• البلديات والمناطق المجاورة: ${money(cfg.shippingFeeNearby)}\n• استلام مباشر من المحل: مجاناً\n🎉 توصيل مجاني تلقائي لكل طلب يتجاوز ${money(cfg.freeShippingTarget)}!`;
+      if (norm.includes("دفع") || norm.includes("كاش") || norm.includes("دراهم") || norm.includes("خلص") || norm.includes("كيف ادفع")) {
+        return {
+          text: `💵 **طريقة الدفع:**\nالدفع نقداً **(كاش عند الاستلام)** فقط! يد بيد بعد أن تستلم طلبيتك وتتفحصها بنفسك للتأكد من سلامتها.`,
+          actions: []
+        };
       }
 
-      if (norm.includes("دفع") || norm.includes("كاش") || norm.includes("دراهم") || norm.includes("خلص")) {
-        return "💵 طريقة الدفع لدينا هي: **الدفع نقداً (كاش) عند الاستلام**، يد بيد بعد أن تعاين طلبك وتتأكد منه تماماً.";
+      if (norm.includes("اكثر") || norm.includes("شائع") || norm.includes("مطلوب") || norm.includes("افضل") || norm.includes("جديد")) {
+        const top = [...state.products].sort((a, b) => Number(b.likesCount || 0) - Number(a.likesCount || 0)).slice(0, 3);
+        if (top.length) {
+          return {
+            text: `🔥 إليك أكثر المنتجات طلباً وإعجاباً في متجرنا اليوم:`,
+            actions: top
+          };
+        }
       }
 
-      if (norm.includes("كمية") || norm.includes("سلة") || norm.includes("نقص") || norm.includes("زيد") || norm.includes("تكفي")) {
-        return "🛒 لتعديل كمية المنتجات: افتح السلة في الأعلى، واضغط على زر (+) للزيادة أو (-) للإنقاص لتعديل المجموع بما يناسب ميزانيتك قبل تأكيد الطلب.";
+      const matched = findRelevantProducts(q, 3);
+      if (matched.length > 0) {
+        return {
+          text: `وجدت لك المنتجات التالية المتوفرة والمطابقة لطلبك:`,
+          actions: matched
+        };
       }
 
-      const sample = state.products.slice(0, 4).map(p => `• ${p.name}: ${money(p.price)}`).join("\n");
-      return `مرحباً بك! لدينا تشكيلة متنوعة في المتجر:\n${sample}\n\nاسألني عن اسم أي منتج بالتحديد لأعطيك سعره فوراً، أو اتصل بنا مباشرة على: ${cfg.storePhones?.join(" أو ")}.`;
+      return {
+        text: `مرحباً بك! لم أعثر على منتج بهذا الاسم بالتحديد.\nيمكنك تصفح الأقسام في المتجر، أو الاتصال بفريقنا مباشرة للطلب الخاص: ${cfg.storePhones?.join(" أو ")}.`,
+        actions: []
+      };
     }
 
     async function sendGeminiMessage() {
@@ -1075,9 +1158,10 @@
       const msgContainer = document.getElementById("geminiMessages");
       const sendBtn = document.getElementById("geminiSendBtn");
 
+      // عرض رسالة الزبون
       msgContainer.innerHTML += `
         <div class="flex justify-start">
-          <div class="bg-amber-500 text-black font-semibold p-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow">
+          <div class="bg-amber-500 text-black font-semibold p-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow text-xs">
             ${esc(msgText)}
           </div>
         </div>
@@ -1085,6 +1169,7 @@
       input.value = "";
       msgContainer.scrollTop = msgContainer.scrollHeight;
 
+      // مؤشر التفكير
       const loadingId = "gemini_loading_" + Date.now();
       msgContainer.innerHTML += `
         <div id="${loadingId}" class="flex justify-end">
@@ -1096,21 +1181,36 @@
       msgContainer.scrollTop = msgContainer.scrollHeight;
       sendBtn.disabled = true;
 
-      let reply = null;
+      // تحديث سياق المحادثة
+      geminiChatHistory.push({ role: "user", parts: [{ text: msgText }] });
+      if (geminiChatHistory.length > 8) geminiChatHistory = geminiChatHistory.slice(-8);
+
+      let replyText = null;
+      let matchedProductsForAction = findRelevantProducts(msgText, 2);
 
       try {
-        const availableProducts = state.products
-          .map(p => `- ${p.name}: بسعر ${p.price} د.ج (المخزون: ${p.stock})`)
-          .join("\n");
+        const availableProductsSummary = state.products.map(p => 
+          `• [ID:${p.id}] ${p.name} | السعر: ${p.price} د.ج | المخزون: ${p.stock > 0 ? p.stock + ' قطعة' : 'نفد'} | القسم: ${p.category}`
+        ).join("\n");
 
+        const cfg = state.storeSettings;
         const systemPrompt = `
-أنت المساعد الذكي الرسمي لمتجر "VIP SMOOK". أجب باختصار ولباقة بالعربية البسيطة أو بالعامية الجزائرية.
-بيانات المتجر:
-- المنتجات المتوفرة:
-${availableProducts || "المتجر متوفر"}
-- التوصيل: وسط المدينة (${state.storeSettings.shippingFeeCentre} د.ج)، المناطق المجاورة (${state.storeSettings.shippingFeeNearby} د.ج)، ومجاني فوق ${state.storeSettings.freeShippingTarget} د.ج.
-- الدفع: كاش عند الاستلام.
-- تعديل الكمية: من أزرار (+) و (-) داخل السلة.
+أنت المساعد الذكي والمستشار الرسمي لمتجر "VIP SMOOK" الفاخر.
+أسلوبك: ودود، احترافي، ذكي، لبق ومباشر. تجيب بالعربية الفصحى البسيطة أو بالعامية الجزائرية المحترمة حسب لغة الزبون.
+
+معلومات المتجر الدقيقة:
+- المنتجات والمخزون المحدث لحظياً:
+${availableProductsSummary || "لا توجد منتجات مسجلة حالياً."}
+- التوصيل: وسط المدينة (${cfg.shippingFeeCentre} د.ج)، البلديات المجاورة (${cfg.shippingFeeNearby} د.ج)، استلام مجاني من المحل.
+- التوصيل المجاني: تلقائي لأي طلب إجمالي بقيمة ${cfg.freeShippingTarget} د.ج فما فوق.
+- الدفع: نقداً (كاش) عند الاستلام بعد معاينة الطلب.
+- كود الخصم الحالي: ${cfg.couponCode ? `الكود '${cfg.couponCode}' يمنح خصم ${cfg.couponPercent}%` : 'لا يوجد كود خصم نشط حالياً'}.
+- هواتف المحل: ${cfg.storePhones?.join(" - ")}.
+
+قواعد الرد:
+1. إذا سأل الزبون عن سعر أو توفر منتج، أعطه السعر بدقة وما إذا كان متوفراً واقترح عليه إضافته للسلة.
+2. إذا سأل الزبون عن منتجات تناسب ميزانية معينة (مثال: عندي 1000 د.ج واش نشري)، اقترح عليه تشكيلة حقيقية من قائمة المنتجات أعلاه لا تتجاوز ميزانيته.
+3. كن مختصراً وواضحاً وتجنب الإطالة غير المفيدة.
 `;
 
         const activeModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash-latest"];
@@ -1118,6 +1218,14 @@ ${availableProducts || "المتجر متوفر"}
         for (const model of activeModels) {
           try {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+            
+            // إرسال سجل المحادثة مع موجه النظام
+            const contents = [
+              { role: "user", parts: [{ text: systemPrompt }] },
+              { role: "model", parts: [{ text: "مفهوم تماماً، أنا جاهز لمساعدة زبائن VIP SMOOK بأعلى دقة واحترافية." }] },
+              ...geminiChatHistory
+            ];
+
             const response = await fetch(url, {
               method: "POST",
               headers: {
@@ -1125,14 +1233,18 @@ ${availableProducts || "المتجر متوفر"}
                 "x-goog-api-key": GEMINI_API_KEY
               },
               body: JSON.stringify({
-                contents: [{ role: "user", parts: [{ text: `${systemPrompt}\n\nسؤال الزبون: ${msgText}` }] }]
+                contents: contents,
+                generationConfig: {
+                  temperature: 0.6,
+                  maxOutputTokens: 600
+                }
               })
             });
 
             if (response.ok) {
               const data = await response.json();
               if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-                reply = data.candidates[0].content.parts[0].text;
+                replyText = data.candidates[0].content.parts[0].text;
                 break;
               }
             }
@@ -1142,16 +1254,44 @@ ${availableProducts || "المتجر متوفر"}
         console.warn("Gemini remote error:", err);
       }
 
-      if (!reply) {
-        reply = generateSmartStoreReply(msgText);
+      // في حال تعذر الاتصال بـ API، تفعيل المحرك المحلي فائق السرعة
+      if (!replyText) {
+        const local = generateSmartStoreReply(msgText);
+        replyText = local.text;
+        matchedProductsForAction = local.actions || [];
       }
+
+      // حفظ رد الذكاء الاصطناعي في سجل المحادثة
+      geminiChatHistory.push({ role: "model", parts: [{ text: replyText }] });
 
       document.getElementById(loadingId)?.remove();
 
+      // بناء بطاقات المنتجات المقترحة تفاعلياً داخل الدردشة
+      let actionsHTML = "";
+      if (matchedProductsForAction && matchedProductsForAction.length > 0) {
+        actionsHTML = `
+          <div class="mt-2.5 pt-2 border-t border-gray-800 space-y-1.5">
+            <span class="text-[10px] text-yellow-400 font-bold block mb-1">⚡ خيارات مقترحة سريعة:</span>
+            ${matchedProductsForAction.map(p => `
+              <div class="flex items-center justify-between bg-gray-950 p-2 rounded-xl border border-gray-800 text-[11px]">
+                <div class="truncate pl-1">
+                  <span class="font-bold text-gray-200 block truncate">${esc(p.name)}</span>
+                  <span class="text-amber-400 font-mono text-[10px]">${money(p.price)}</span>
+                </div>
+                <button onclick="addToCart('${esc(p.id)}')" class="shrink-0 px-2 py-1 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-lg text-[10px] transition">
+                  + للسلة
+                </button>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+
       msgContainer.innerHTML += `
         <div class="flex justify-end">
-          <div class="bg-gray-900 border border-gray-800 text-gray-200 p-3 rounded-2xl rounded-tr-none max-w-[85%] leading-relaxed whitespace-pre-line shadow">
-            ${esc(reply)}
+          <div class="bg-gray-900 border border-gray-800 text-gray-200 p-3 rounded-2xl rounded-tr-none max-w-[88%] leading-relaxed whitespace-pre-line shadow text-xs">
+            ${esc(replyText)}
+            ${actionsHTML}
           </div>
         </div>
       `;
