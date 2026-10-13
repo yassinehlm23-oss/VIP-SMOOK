@@ -50,7 +50,7 @@
     }
   </style>
 </head>
-<body class="bg-[#070a12] text-gray-100 min-h-screen pb-16 md:pb-0">
+<body class="bg-[#070a12] text-gray-100 min-h-screen pb-20 md:pb-0">
 
   <!-- Ticker Banner -->
   <div class="marquee-wrap bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-black text-[11px] font-black py-1 overflow-hidden relative shadow-md" dir="ltr">
@@ -93,41 +93,41 @@
 
   <!-- Header -->
   <header class="sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md border-b border-yellow-500/20">
-    <div class="max-w-6xl mx-auto px-4 py-3">
+    <div class="max-w-6xl mx-auto px-4 py-2.5">
       <div class="flex items-center justify-between gap-3">
 
         <!-- Logo -->
-        <button ondblclick="toggleAdminModal()" onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="text-right cursor-pointer select-none" title="اضغط مرتين لفتح لوحة التحكم">
-          <span class="font-black text-xl md:text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">
+        <button ondblclick="toggleAdminModal()" onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="text-right cursor-pointer select-none shrink-0" title="اضغط مرتين لفتح لوحة التحكم">
+          <span class="font-black text-lg md:text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500">
             VIP SMOOK
           </span>
-          <span class="block text-[9px] text-gray-400 tracking-widest font-semibold uppercase">Official Store</span>
+          <span class="block text-[8px] md:text-[9px] text-gray-400 tracking-widest font-semibold uppercase">Official Store</span>
         </button>
 
         <!-- Search Bar -->
-        <div class="flex-1 max-w-md mx-2 relative">
+        <div class="flex-1 max-w-md relative">
           <i class="fas fa-search absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
           <input id="searchInput" oninput="searchProducts()" onkeyup="searchProducts()" onsearch="searchProducts()" type="search" placeholder="ابحث عن منتج..." autocomplete="off" autocorrect="off" spellcheck="false"
-            class="w-full pr-9 pl-3 py-2 bg-gray-900/80 border border-gray-800 rounded-xl text-xs text-gray-200 focus:outline-none focus:border-yellow-500/60 transition">
+            class="w-full pr-9 pl-3 py-2 bg-gray-900/90 border border-gray-800 rounded-xl text-xs text-gray-200 focus:outline-none focus:border-yellow-500/60 transition">
         </div>
 
-        <!-- Phone & Desktop Nav Buttons -->
-        <div class="flex items-center gap-2">
+        <!-- Desktop Nav Buttons (Hidden on Mobile) -->
+        <div class="hidden md:flex items-center gap-2">
           <div id="storePhonesHeader" class="hidden lg:flex items-center gap-1.5 bg-gray-900/80 border border-gray-800 px-2.5 py-1.5 rounded-xl text-xs text-yellow-400 font-semibold">
             <i class="fas fa-phone-volume text-[11px]"></i>
             <span id="storePhonesHeaderList" class="flex gap-2"></span>
           </div>
 
-          <button onclick="toggleWishlistModal()" class="hidden md:flex px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition relative">
+          <button onclick="toggleWishlistModal()" class="flex px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition relative">
             <i class="fas fa-heart text-red-500 ml-1"></i> المفضلة
             <span id="wishlistCount" class="bg-red-500/20 text-red-400 text-[10px] px-1.5 py-0.2 rounded-full font-bold mr-1">0</span>
           </button>
 
-          <button id="myOrdersBtn" onclick="toggleMyOrders()" class="hidden md:flex px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition">
+          <button id="myOrdersBtn" onclick="toggleMyOrders()" class="flex px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition">
             <i class="fas fa-box-archive text-yellow-500 ml-1"></i> طلباتي
           </button>
 
-          <button id="userAuthBtn" onclick="toggleAuthModal()" class="hidden md:flex px-3.5 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-yellow-500/30 rounded-xl text-yellow-400 transition font-medium items-center gap-1.5">
+          <button id="userAuthBtn" onclick="toggleAuthModal()" class="flex px-3.5 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-yellow-500/30 rounded-xl text-yellow-400 transition font-medium items-center gap-1.5">
             <i class="fas fa-user-circle text-sm"></i> <span id="userAuthLabel">دخول</span>
           </button>
 
@@ -143,19 +143,21 @@
   </header>
 
   <!-- Main Container -->
-  <main class="max-w-6xl mx-auto px-4 py-6 min-h-[80vh] safe-bottom">
+  <main class="max-w-6xl mx-auto px-4 py-5 min-h-[80vh] safe-bottom">
 
-    <!-- Store Phones Bar -->
-    <div id="storePhonesMobileBar" class="mb-4 bg-gray-900/80 border border-yellow-500/30 rounded-2xl p-2.5 flex items-center justify-between text-xs">
-      <div class="flex items-center gap-2 text-yellow-400 font-bold">
-        <i class="fas fa-phone-alt"></i>
+    <!-- Store Phones Bar (Organized for mobile) -->
+    <div id="storePhonesMobileBar" class="mb-5 bg-gray-900/90 border border-yellow-500/20 rounded-2xl p-3 flex flex-col sm:flex-row items-center justify-between gap-2.5 shadow-md">
+      <div class="flex items-center gap-2 text-yellow-400 font-bold text-xs">
+        <div class="w-7 h-7 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+          <i class="fas fa-phone-alt text-[11px]"></i>
+        </div>
         <span>للاتصال والطلب المباشر:</span>
       </div>
-      <div id="storePhonesMobileList" class="flex flex-wrap gap-2 text-white font-mono text-[11px]"></div>
+      <div id="storePhonesMobileList" class="flex flex-wrap items-center justify-center gap-2 text-white font-mono text-xs w-full sm:w-auto"></div>
     </div>
 
     <!-- Hero Banner -->
-    <section class="mb-6 rounded-3xl bg-gradient-to-r from-amber-950/50 via-gray-900 to-amber-900/30 border border-yellow-500/30 p-6 md:p-8 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+    <section class="mb-6 rounded-3xl bg-gradient-to-r from-amber-950/40 via-gray-900 to-amber-900/30 border border-yellow-500/30 p-6 md:p-8 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
       <div class="space-y-2 text-center md:text-right">
         <span class="px-3 py-1 bg-yellow-500/10 text-yellow-400 text-xs font-bold rounded-full border border-yellow-500/30 inline-flex items-center gap-1">
           <i class="fas fa-location-dot text-[10px]"></i> توصيل مباشر لوسط المدينة والمناطق المجاورة
@@ -163,11 +165,11 @@
         <h1 class="text-xl md:text-3xl font-black text-white leading-tight">عروض وأسعار محدّثة لحظة بلحظة</h1>
         <p class="text-xs md:text-sm text-gray-300">اختر منتجاتك وسنصلك في أسرع وقت مع خيار المعاينة والدفع كاش عند الاستلام.</p>
       </div>
-      <div class="flex flex-col sm:flex-row items-center gap-3 shrink-0">
-        <button onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="w-full sm:w-auto px-5 py-3 bg-yellow-500 text-black font-extrabold text-xs rounded-xl hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/20">
+      <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto shrink-0">
+        <button onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="w-full sm:w-auto px-6 py-3 bg-yellow-500 text-black font-extrabold text-xs rounded-xl hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/20">
           استكشف المنتجات
         </button>
-        <button onclick="toggleCart()" class="w-full sm:w-auto px-5 py-3 bg-gray-900 border border-gray-700 text-white font-bold text-xs rounded-xl hover:bg-gray-800 transition">
+        <button onclick="toggleCart()" class="w-full sm:w-auto px-6 py-3 bg-gray-900 border border-gray-700 text-white font-bold text-xs rounded-xl hover:bg-gray-800 transition">
           عرض السلة
         </button>
       </div>
@@ -175,28 +177,28 @@
 
     <!-- Categories & Sorting -->
     <section class="mb-6">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
-        <h2 class="text-base md:text-lg font-black text-gray-100 flex items-center gap-2">
+      <div class="flex items-center justify-between gap-3 mb-3">
+        <h2 class="text-sm md:text-lg font-black text-gray-100 flex items-center gap-2">
           <i class="fas fa-layer-group text-yellow-500 text-sm"></i> الأقسام والمنتجات
         </h2>
 
         <div class="flex items-center gap-2">
-          <select id="sortSelect" onchange="renderProducts()" class="bg-gray-900 border border-gray-800 text-gray-300 text-xs rounded-xl p-2 focus:outline-none focus:border-yellow-500">
+          <select id="sortSelect" onchange="renderProducts()" class="bg-gray-900 border border-gray-800 text-gray-300 text-xs rounded-xl py-1.5 px-2.5 focus:outline-none focus:border-yellow-500">
             <option value="default">الترتيب الافتراضي</option>
             <option value="price_low">السعر: من الأقل للأعلى</option>
             <option value="price_high">السعر: من الأعلى للأقل</option>
             <option value="popular">الأكثر إعجاباً</option>
           </select>
 
-          <span id="productCount" class="text-xs text-gray-400 font-medium bg-gray-900 px-2.5 py-1.5 rounded-xl border border-gray-800"></span>
+          <span id="productCount" class="text-[11px] text-gray-400 font-medium bg-gray-900 px-2 py-1.5 rounded-xl border border-gray-800 whitespace-nowrap"></span>
         </div>
       </div>
 
       <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-        <button onclick="filterCategory('all', this)" class="cat-btn px-4 py-2.5 bg-yellow-500 text-black rounded-xl font-bold text-xs whitespace-nowrap transition shadow-md shadow-yellow-500/20">الكل</button>
-        <button onclick="filterCategory('tobacco', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">سجائر وتبغ</button>
-        <button onclick="filterCategory('drinks', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">مشروبات</button>
-        <button onclick="filterCategory('sweets', this)" class="cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">حلويات ومقرمشات</button>
+        <button onclick="filterCategory('all', this)" class="cat-btn px-4 py-2 bg-yellow-500 text-black rounded-xl font-bold text-xs whitespace-nowrap transition shadow-md shadow-yellow-500/20">الكل</button>
+        <button onclick="filterCategory('tobacco', this)" class="cat-btn px-4 py-2 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">سجائر وتبغ</button>
+        <button onclick="filterCategory('drinks', this)" class="cat-btn px-4 py-2 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">مشروبات</button>
+        <button onclick="filterCategory('sweets', this)" class="cat-btn px-4 py-2 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition">حلويات ومقرمشات</button>
       </div>
 
       <div id="categoryDeliveryNotice" class="hidden mt-3 bg-amber-500/10 border border-amber-500/40 text-amber-300 rounded-2xl p-3 text-xs flex items-center gap-2">
@@ -214,8 +216,8 @@
     </div>
   </main>
 
-  <!-- Mobile Navigation -->
-  <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-gray-950/95 border-t border-gray-800 backdrop-blur-lg px-2 py-2 flex justify-around items-center text-[10px] text-gray-400">
+  <!-- Mobile Navigation (Fixed Bottom) -->
+  <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-gray-950/95 border-t border-gray-800/80 backdrop-blur-lg px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 shadow-2xl">
     <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center gap-1 text-yellow-400">
       <i class="fas fa-store text-base"></i>
       <span>الرئيسية</span>
@@ -501,7 +503,7 @@
         </button>
       </div>
 
-      <!-- Admin Main Panel -->
+      <!-- Admin Panel Content -->
       <div id="adminPanel" class="hidden space-y-4">
         <div class="flex items-center justify-between bg-gray-950 p-3 rounded-xl border border-gray-800 text-xs">
           <span id="adminSignedInAs" class="text-gray-300 font-semibold">مرحباً بالمدير</span>
@@ -656,8 +658,8 @@
     </div>
   </div>
 
-  <!-- Gemini AI Chat Widget -->
-  <div id="geminiChatWidget" class="fixed bottom-20 md:bottom-6 left-4 z-40">
+  <!-- Gemini AI Chat Widget (Repositioned to not block categories) -->
+  <div id="geminiChatWidget" class="fixed bottom-24 md:bottom-8 left-4 z-40">
     <!-- Floating Button -->
     <button onclick="toggleGeminiChat()" id="geminiToggleBtn" 
             class="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-tr from-amber-600 via-yellow-500 to-amber-400 text-black rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition duration-300 relative border-2 border-black/50">
@@ -667,7 +669,7 @@
     </button>
 
     <!-- Chat Box -->
-    <div id="geminiChatBox" class="hidden fixed md:absolute bottom-20 md:bottom-16 left-3 right-3 md:left-0 md:right-auto md:w-96 h-[480px] max-h-[78vh] bg-gray-950/95 border border-yellow-500/40 rounded-3xl shadow-2xl flex-col overflow-hidden backdrop-blur-xl">
+    <div id="geminiChatBox" class="hidden fixed md:absolute bottom-24 md:bottom-16 left-3 right-3 md:left-0 md:right-auto md:w-96 h-[480px] max-h-[75vh] bg-gray-950/95 border border-yellow-500/40 rounded-3xl shadow-2xl flex-col overflow-hidden backdrop-blur-xl">
       <!-- Header -->
       <div class="bg-gray-900/90 p-3.5 border-b border-gray-800 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
@@ -732,10 +734,8 @@
     const TELEGRAM_BOT_TOKEN = "8306019686:AAEVN6Stiinu6cefq3OP_e9JwquGswckfVo";
     const TELEGRAM_CHAT_ID = "6481958888";
 
-    // مفتاح Gemini API الجديد مرمز برمجياً
     const GEMINI_API_KEY = atob("QVEuQWI4Uk42SVExX280VDhwVHFZb2ctYXJtVUR5UUhOSGdtVFVMU2ljQ2tqbE9lSkJnU1E=");
 
-    // سجل محادثة الذكاء الاصطناعي متعدد الأدوار
     let geminiChatHistory = [];
 
     const firebaseConfig = {
@@ -1027,9 +1027,6 @@
       }
     }
 
-    /* -------------------------------------------------------------
-       تطوير نموذج الذكاء الاصطناعي (Gemini + Local Engine المطور)
-    ------------------------------------------------------------- */
     function toggleGeminiChat() {
       const box = document.getElementById("geminiChatBox");
       const isHidden = box.classList.contains("hidden");
@@ -1158,7 +1155,6 @@
       const msgContainer = document.getElementById("geminiMessages");
       const sendBtn = document.getElementById("geminiSendBtn");
 
-      // عرض رسالة الزبون
       msgContainer.innerHTML += `
         <div class="flex justify-start">
           <div class="bg-amber-500 text-black font-semibold p-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow text-xs">
@@ -1169,7 +1165,6 @@
       input.value = "";
       msgContainer.scrollTop = msgContainer.scrollHeight;
 
-      // مؤشر التفكير
       const loadingId = "gemini_loading_" + Date.now();
       msgContainer.innerHTML += `
         <div id="${loadingId}" class="flex justify-end">
@@ -1181,7 +1176,6 @@
       msgContainer.scrollTop = msgContainer.scrollHeight;
       sendBtn.disabled = true;
 
-      // تحديث سياق المحادثة
       geminiChatHistory.push({ role: "user", parts: [{ text: msgText }] });
       if (geminiChatHistory.length > 8) geminiChatHistory = geminiChatHistory.slice(-8);
 
@@ -1219,7 +1213,6 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
           try {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
             
-            // إرسال سجل المحادثة مع موجه النظام
             const contents = [
               { role: "user", parts: [{ text: systemPrompt }] },
               { role: "model", parts: [{ text: "مفهوم تماماً، أنا جاهز لمساعدة زبائن VIP SMOOK بأعلى دقة واحترافية." }] },
@@ -1254,19 +1247,16 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
         console.warn("Gemini remote error:", err);
       }
 
-      // في حال تعذر الاتصال بـ API، تفعيل المحرك المحلي فائق السرعة
       if (!replyText) {
         const local = generateSmartStoreReply(msgText);
         replyText = local.text;
         matchedProductsForAction = local.actions || [];
       }
 
-      // حفظ رد الذكاء الاصطناعي في سجل المحادثة
       geminiChatHistory.push({ role: "model", parts: [{ text: replyText }] });
 
       document.getElementById(loadingId)?.remove();
 
-      // بناء بطاقات المنتجات المقترحة تفاعلياً داخل الدردشة
       let actionsHTML = "";
       if (matchedProductsForAction && matchedProductsForAction.length > 0) {
         actionsHTML = `
@@ -1380,8 +1370,9 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
 
       const phones = cfg.storePhones || [];
       const makePhoneBtns = () => phones.map(p => `
-        <a href="tel:${esc(p)}" class="hover:text-yellow-400 bg-gray-950 px-2 py-0.5 rounded-lg border border-gray-800 transition">
-          <i class="fas fa-phone text-[10px] ml-1"></i>${esc(p)}
+        <a href="tel:${esc(p)}" class="hover:text-yellow-400 bg-gray-950 px-2.5 py-1 rounded-xl border border-gray-800 transition flex items-center gap-1.5 text-xs text-yellow-400/90 hover:border-yellow-500/40">
+          <i class="fas fa-phone text-[10px]"></i>
+          <span>${esc(p)}</span>
         </a>
       `).join("");
 
@@ -1656,9 +1647,9 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
     function filterCategory(cat, btn) {
       state.currentCategory = cat;
       document.querySelectorAll(".cat-btn").forEach(b => {
-        b.className = "cat-btn px-4 py-2.5 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition";
+        b.className = "cat-btn px-4 py-2 bg-gray-900 text-gray-300 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-semibold whitespace-nowrap transition";
       });
-      if (btn) btn.className = "cat-btn px-4 py-2.5 bg-yellow-500 text-black rounded-xl font-bold text-xs whitespace-nowrap transition shadow-md shadow-yellow-500/20";
+      if (btn) btn.className = "cat-btn px-4 py-2 bg-yellow-500 text-black rounded-xl font-bold text-xs whitespace-nowrap transition shadow-md shadow-yellow-500/20";
       renderProducts();
     }
 
