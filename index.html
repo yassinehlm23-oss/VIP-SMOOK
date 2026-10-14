@@ -7,6 +7,15 @@
   <meta name="description" content="VIP SMOOK - المتجر الفاخر للتسوق والتوصيل السريع لوسط المدينة والمناطق القريبة. عروض حصرية ودفع عند الاستلام.">
   <title>VIP SMOOK | المتجر الرسمي الفاخر</title>
 
+  <!-- إعدادات تطبيق الويب التقدمي المتكامل (PWA) للأندرويد والآيفون -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="VIP SMOOK">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
+
   <!-- Tailwind CSS & FontAwesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1678,9 +1687,6 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
       );
     }
 
-    /* -------------------------------------------------------------
-       استخراج أرقام الهواتف وتحويلها إلى أزرار اتصال مباشرة ومنفصلة
-    ------------------------------------------------------------- */
     function parsePhonesList(rawPhones) {
       if (!rawPhones) return [];
       let str = "";
@@ -1722,7 +1728,6 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
         `;
       }
 
-      // تحويل الأرقام إلى أزرار اتصال منفصلة ومباشرة
       const phones = parsePhonesList(cfg.storePhones);
       const makePhoneBtns = () => phones.map(p => `
         <a href="tel:${esc(p)}" 
@@ -2854,6 +2859,17 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
     function deleteProduct(id) {
       if (!confirm("هل أنت متأكد من حذف هذا المنتج نهائياً؟")) return;
       db.collection("products").doc(id).delete().then(() => toast("تم حذف المنتج.", "success")).catch(() => toast("فشل الحذف.", "error"));
+    }
+
+    /* -------------------------------------------------------------
+       تسجيل تطبيق الويب التقدمي (PWA Service Worker)
+    ------------------------------------------------------------- */
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(() => console.log('تطبيق VIP SMOOK جاهز للعمل كتطبيق مستقل!'))
+          .catch(err => console.warn('PWA registration error:', err));
+      });
     }
   </script>
 </body>
