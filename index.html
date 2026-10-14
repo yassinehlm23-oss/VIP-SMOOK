@@ -120,6 +120,13 @@
             class="w-full pr-9 pl-3 py-2 bg-gray-900/90 border border-gray-800 rounded-xl text-xs text-gray-200 focus:outline-none focus:border-yellow-500/60 transition">
         </div>
 
+        <!-- Notification Bell Button (Mobile & Desktop) -->
+        <button onclick="requestNotificationPermission()" id="notifBellBtn" title="تفعيل إشعارات العروض والرسائل"
+          class="px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-yellow-500/30 rounded-xl text-yellow-400 transition flex items-center gap-1.5 shrink-0">
+          <i id="notifBellIcon" class="fas fa-bell animate-bounce"></i>
+          <span id="notifBellLabel" class="hidden sm:inline text-[11px] font-bold">تفعيل الإشعارات</span>
+        </button>
+
         <!-- Desktop Nav Buttons -->
         <div class="hidden md:flex items-center gap-2">
           <div id="storePhonesHeader" class="hidden lg:flex items-center gap-1.5 bg-gray-900/80 border border-gray-800 px-2.5 py-1.5 rounded-xl text-xs text-yellow-400 font-semibold">
@@ -129,6 +136,7 @@
 
           <button onclick="toggleSupportChat()" class="flex px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-amber-500/30 rounded-xl text-yellow-400 transition relative items-center gap-1">
             <i class="fas fa-comments"></i> <span>محادثة المدير</span>
+            <span id="desktopChatBadge" class="hidden w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
           </button>
 
           <button onclick="toggleWishlistModal()" class="flex px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition relative">
@@ -157,6 +165,22 @@
 
   <!-- Main Container -->
   <main class="max-w-6xl mx-auto px-4 py-5 min-h-[80vh] safe-bottom">
+
+    <!-- Banner لتفعيل الإشعارات للزبائن -->
+    <div id="notifPromptBanner" class="mb-4 bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/15 border border-yellow-500/40 rounded-2xl p-3 flex items-center justify-between gap-3 shadow-lg">
+      <div class="flex items-center gap-2.5 text-xs">
+        <div class="w-8 h-8 rounded-xl bg-yellow-500 text-black flex items-center justify-center shrink-0 font-bold shadow">
+          <i class="fas fa-bell"></i>
+        </div>
+        <div>
+          <p class="font-extrabold text-yellow-400">فعّل إشعارات المتجر الفورية!</p>
+          <p class="text-[11px] text-gray-300">ليصلك تنبيه فوري عند وصول منتجات جديدة أو تغير الأسعار أو رد المدير عليك.</p>
+        </div>
+      </div>
+      <button onclick="requestNotificationPermission()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-black font-black text-xs rounded-xl transition shrink-0 shadow">
+        تفعيل الآن
+      </button>
+    </div>
 
     <!-- Store Phones Bar (أرقام الاتصال المفصولة والمباشرة) -->
     <div id="storePhonesMobileBar" class="mb-5 bg-gray-900/95 border border-yellow-500/30 rounded-2xl p-3 flex flex-col items-center justify-between gap-3 shadow-lg">
@@ -241,7 +265,7 @@
     <button onclick="toggleSupportChat()" class="flex flex-col items-center gap-1 relative text-amber-400">
       <i class="fas fa-headset text-base"></i>
       <span>المدير</span>
-      <span id="mobileChatBadge" class="hidden absolute -top-1 -right-1 bg-amber-500 text-black text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">!</span>
+      <span id="mobileChatBadge" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center animate-bounce">!</span>
     </button>
     <button onclick="toggleWishlistModal()" class="flex flex-col items-center gap-1 relative">
       <i class="fas fa-heart text-base text-red-400"></i>
@@ -313,7 +337,7 @@
       <!-- Messages Stream -->
       <div id="supportMessages" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs no-scrollbar">
         <div class="bg-gray-900 border border-gray-800 text-gray-300 p-3 rounded-2xl rounded-tr-none leading-relaxed">
-          أهلاً بك! 👋 يمكنك هنا كتابة استفسارك، وسيرد عليك مدير المتجر مباشرة.
+          أهلاً بك! 👋 يمكنك هنا كتابة استفسارك، وسيرد عليك مدير المتجر مباشرة ويصلك إشعار بالرد.
         </div>
       </div>
 
@@ -526,7 +550,7 @@
         <span class="text-[11px] text-gray-400">معاينة الصورة</span>
       </div>
       <button onclick="saveProductEdits()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition text-xs shadow-md">
-        حفظ التعديلات
+        حفظ التعديلات وإشعار الزبائن
       </button>
     </div>
   </div>
@@ -537,7 +561,7 @@
       <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
         <div>
           <h3 class="text-base font-bold text-yellow-400 flex items-center gap-2"><i class="fas fa-user-shield"></i> لوحة التحكم والإدارة الشاملة</h3>
-          <p class="text-[10px] text-gray-400">إدارة الإعدادات، المنتجات، المبيعات والزبائن</p>
+          <p class="text-[10px] text-gray-400">إدارة الإعدادات، الإشعارات، المنتجات، المبيعات والزبائن</p>
         </div>
         <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
       </div>
@@ -591,7 +615,7 @@
         </div>
 
         <div class="flex border-b border-gray-800 gap-2 pb-2 overflow-x-auto no-scrollbar">
-          <button onclick="switchAdminTab('storeSettings')" id="tabStoreSettingsBtn" class="admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap shadow-md shadow-yellow-500/20">⚙️ إعدادات المتجر والعروض</button>
+          <button onclick="switchAdminTab('storeSettings')" id="tabStoreSettingsBtn" class="admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap shadow-md shadow-yellow-500/20">⚙️ الإعدادات والإشعارات</button>
           <button onclick="switchAdminTab('chats')" id="tabChatsBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap flex items-center gap-1.5">
             💬 محادثات الزبائن <span id="adminUnreadChatBadge" class="hidden w-2 h-2 rounded-full bg-red-500"></span>
           </button>
@@ -601,9 +625,24 @@
           <button onclick="switchAdminTab('add')" id="tabAddBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">+ إضافة منتج</button>
         </div>
 
-        <!-- 1. Store Settings Tab -->
+        <!-- 1. Store Settings & Push Broadcast Tab -->
         <div id="adminTabStoreSettings" class="space-y-4 bg-gray-950/80 p-4 rounded-2xl border border-gray-800 text-xs">
-          <h4 class="text-sm font-bold text-yellow-400 border-b border-gray-800 pb-2">تحكم المدير في العروض والأسعار والإعلانات</h4>
+          
+          <!-- صندوق إرسال إشعار فوري لكل الزبائن -->
+          <div class="bg-gradient-to-r from-amber-950/50 to-gray-900 p-3.5 rounded-2xl border border-yellow-500/40 space-y-2.5">
+            <h5 class="font-black text-yellow-400 flex items-center gap-2 text-xs">
+              <i class="fas fa-bell"></i> إرسال إشعار فوري لجميع الزبائن (Push Notification)
+            </h5>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+              <input type="text" id="broadcastTitleInput" placeholder="عنوان الإشعار (مثال: 🔥 عرض خاص اليوم!)" class="p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+              <input type="text" id="broadcastBodyInput" placeholder="نص الإشعار (مثال: تخفيض جديد ووصول سلعة جديدة)" class="md:col-span-2 p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+            </div>
+            <button onclick="sendAdminBroadcastNotification()" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-black rounded-xl text-xs transition shadow">
+              🚀 إرسال الإشعار لجميع الزبائن الآن
+            </button>
+          </div>
+
+          <h4 class="text-sm font-bold text-yellow-400 border-b border-gray-800 pb-2 pt-2">تحكم المدير في العروض والأسعار والإعلانات</h4>
 
           <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
             <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-tag text-yellow-400"></i> إعدادات كود الخصم</h5>
@@ -643,7 +682,7 @@
           </div>
 
           <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-phone text-yellow-400"></i> أرقام هاتف المحل (مفصولة بفاصلة أو شرطة)</h5>
+            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-phone text-yellow-400"></i> أرقام هاتف المحل (مفصولة بفاصلة)</h5>
             <input type="text" id="adminStorePhones" placeholder="0781896750, 0799034615, 0697223805" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white font-mono">
           </div>
 
@@ -680,7 +719,7 @@
                        class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-yellow-500 disabled:opacity-40">
                 <button onclick="sendAdminReply()" id="adminReplySendBtn" disabled
                         class="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-black font-extrabold rounded-xl text-xs transition">
-                  إرسال
+                  إرسال وإشعار الزبون
                 </button>
               </div>
             </div>
@@ -750,7 +789,7 @@
             <span class="text-xs text-emerald-400">تم تجهيز الصورة بنجاح!</span>
           </div>
           <button onclick="addProduct()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs transition">
-            حفظ ونشر المنتج
+            حفظ ونشر المنتج وإرسال إشعار للزبائن
           </button>
         </div>
       </div>
@@ -795,7 +834,7 @@
       <!-- Messages Area -->
       <div id="geminiMessages" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs no-scrollbar">
         <div class="bg-gray-900 border border-gray-800 text-gray-200 p-3 rounded-2xl rounded-tr-none leading-relaxed">
-          مرحباً بك في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 كيف يمكنني مساعدتك اليوم؟ يمكنك سؤالي عن المنتجات والأسعار، التوصيل، حساب إجمالي ميزانيتك، أو التحدث مع المدير.
+          مرحباً بك في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 كيف يمكنني مساعدتك اليوم؟ يمكنك سؤالي عن المنتجات والأسعار، التوصيل، أو التحدث مع المدير.
         </div>
       </div>
 
@@ -828,6 +867,7 @@
   <script>
     const FALLBACK_IMG = "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=500&q=80";
     const FALLBACK_AVATAR = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
+    const APP_ICON = "1792015651400.jpg";
 
     const ADMIN_UID = "Mb1v98Csl6bVd9fnzUSTdMTGaCT2";
     const TELEGRAM_BOT_TOKEN = "8306019686:AAEVN6Stiinu6cefq3OP_e9JwquGswckfVo";
@@ -837,8 +877,10 @@
 
     let geminiChatHistory = [];
     let unsubscribeSupportChat = null;
+    let unsubscribeBackgroundChat = null;
     let unsubscribeAdminChatList = null;
     let unsubscribeAdminActiveChat = null;
+    let unsubscribeBroadcasts = null;
     let currentAdminActivePhone = null;
 
     const firebaseConfig = {
@@ -889,6 +931,178 @@
     };
 
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    /* -------------------------------------------------------------
+       نظام الإشعارات الفورية والتنبيهات الصوتية للزبائن (Push Notifications)
+    ------------------------------------------------------------- */
+    function playNotificationSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+      } catch (_) {}
+    }
+
+    function updateNotifUI() {
+      const banner = document.getElementById("notifPromptBanner");
+      const btn = document.getElementById("notifBellBtn");
+      const icon = document.getElementById("notifBellIcon");
+      const label = document.getElementById("notifBellLabel");
+
+      if (!("Notification" in window)) {
+        if (banner) banner.classList.add("hidden");
+        return;
+      }
+
+      if (Notification.permission === "granted") {
+        if (banner) banner.classList.add("hidden");
+        if (icon) icon.className = "fas fa-bell text-emerald-400";
+        if (label) label.textContent = "الإشعارات مفعلة";
+        if (btn) btn.className = "px-3 py-2 bg-gray-900 text-xs border border-emerald-500/30 rounded-xl text-emerald-400 flex items-center gap-1.5 shrink-0";
+      } else {
+        if (banner) banner.classList.remove("hidden");
+      }
+    }
+
+    async function requestNotificationPermission() {
+      if (!("Notification" in window)) {
+        toast("لتفعيل الإشعارات على الآيفون: افتح التطبيق من الشاشة الرئيسية أولاً.", "normal");
+        return;
+      }
+
+      try {
+        const perm = await Notification.requestPermission();
+        updateNotifUI();
+        if (perm === "granted") {
+          playNotificationSound();
+          showSystemNotification("VIP SMOOK 🔔", "تم تفعيل الإشعارات بنجاح! ستصلك تنبيهات المنتجات الجديدة والرسائل فوراً.");
+          toast("تم تفعيل إشعارات المتجر بنجاح! 🔔", "success");
+        } else {
+          toast("يرجى السماح بالإشعارات من إعدادات المتصفح لتصلك التنبيهات.", "error");
+        }
+      } catch (e) {
+        toast("اضغط السماح عند ظهور نافذة الإشعارات.", "normal");
+      }
+    }
+
+    function showSystemNotification(title, body) {
+      playNotificationSound();
+      toast(`${title}: ${body}`, "success");
+
+      if ("Notification" in window && Notification.permission === "granted") {
+        if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+          navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification(title, {
+              body: body,
+              icon: APP_ICON,
+              badge: APP_ICON,
+              vibrate: [200, 100, 200],
+              dir: "rtl",
+              lang: "ar"
+            });
+          }).catch(() => {
+            new Notification(title, { body, icon: APP_ICON });
+          });
+        } else {
+          new Notification(title, { body, icon: APP_ICON });
+        }
+      }
+    }
+
+    // إرسال إشعار عام في قاعدة البيانات ليصل لكل الزبائن فوراً
+    async function triggerStoreBroadcast(title, body) {
+      if (!firebaseReady || !db) return;
+      try {
+        await db.collection("settings").doc("latest_broadcast").set({
+          id: "notif_" + Date.now(),
+          title: title,
+          body: body,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (e) {
+        console.warn("Broadcast error:", e);
+      }
+    }
+
+    async function sendAdminBroadcastNotification() {
+      const title = document.getElementById("broadcastTitleInput").value.trim() || "🔥 إشعار جديد من VIP SMOOK";
+      const body = document.getElementById("broadcastBodyInput").value.trim();
+      if (!body) return toast("يرجى كتابة نص الإشعار أولاً.", "error");
+
+      await triggerStoreBroadcast(title, body);
+      document.getElementById("broadcastTitleInput").value = "";
+      document.getElementById("broadcastBodyInput").value = "";
+      toast("تم إرسال الإشعار لجميع الزبائن بنجاح! 🚀", "success");
+    }
+
+    // الاستماع المستمر للإشعارات العامة والرسائل الجديدة للزبون
+    function startRealtimeNotificationsListener() {
+      if (!firebaseReady || !db) return;
+
+      // 1. الاستماع لإشعارات المنتجات الجديدة وتغيير الأسعار والعروض
+      let initialBroadcastLoad = true;
+      if (unsubscribeBroadcasts) unsubscribeBroadcasts();
+      unsubscribeBroadcasts = db.collection("settings").doc("latest_broadcast")
+        .onSnapshot(doc => {
+          if (!doc.exists) {
+            initialBroadcastLoad = false;
+            return;
+          }
+          const data = doc.data();
+          const lastSeenId = localStorage.getItem("vip_last_broadcast_id");
+
+          if (initialBroadcastLoad) {
+            initialBroadcastLoad = false;
+            if (data.id) localStorage.setItem("vip_last_broadcast_id", data.id);
+            return;
+          }
+
+          if (data.id && data.id !== lastSeenId) {
+            localStorage.setItem("vip_last_broadcast_id", data.id);
+            showSystemNotification(data.title || "VIP SMOOK", data.body || "تحديث جديد في المتجر!");
+          }
+        });
+
+      // 2. الاستماع لردود المدير في الدردشة حتى لو كانت نافذة الدردشة مغلقة
+      const chatId = getCustomerChatId();
+      let initialChatLoad = true;
+      if (unsubscribeBackgroundChat) unsubscribeBackgroundChat();
+      unsubscribeBackgroundChat = db.collection("support_chats").doc(chatId)
+        .onSnapshot(doc => {
+          if (!doc.exists) {
+            initialChatLoad = false;
+            return;
+          }
+          const data = doc.data();
+          const msgStamp = data.updatedAt?.seconds || Date.now();
+          const lastSeenStamp = Number(localStorage.getItem("vip_last_chat_stamp") || 0);
+
+          if (initialChatLoad) {
+            initialChatLoad = false;
+            localStorage.setItem("vip_last_chat_stamp", String(msgStamp));
+            return;
+          }
+
+          if (data.lastSender === "admin" && msgStamp > lastSeenStamp) {
+            localStorage.setItem("vip_last_chat_stamp", String(msgStamp));
+            const chatModal = document.getElementById("supportChatModal");
+            if (chatModal.classList.contains("hidden")) {
+              document.getElementById("mobileChatBadge")?.classList.remove("hidden");
+              document.getElementById("desktopChatBadge")?.classList.remove("hidden");
+            }
+            showSystemNotification("💬 رسالة جديدة من مدير VIP SMOOK", data.lastMessage || "لديك رد جديد من الإدارة");
+          }
+        });
+    }
 
     function esc(value) {
       return String(value ?? "").replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' })[m]);
@@ -1146,6 +1360,8 @@
     function toggleSupportChat() {
       const modal = document.getElementById("supportChatModal");
       if (modal.classList.contains("hidden")) {
+        document.getElementById("mobileChatBadge")?.classList.add("hidden");
+        document.getElementById("desktopChatBadge")?.classList.add("hidden");
         openModal("supportChatModal");
         listenToCustomerSupportChat();
         setTimeout(() => { document.getElementById("supportMsgInput")?.focus(); }, 100);
@@ -1366,6 +1582,7 @@
         }, { merge: true });
 
         await batch.commit();
+        toast("تم إرسال الرد وإشعار الزبون!", "success");
       } catch (err) {
         toast("فشل إرسال الرد.", "error");
       }
@@ -1642,6 +1859,7 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
       updateUserUI();
       updateCartUI();
       updateWishlistUI();
+      updateNotifUI();
 
       if (!firebaseReady || !db) return;
 
@@ -1663,6 +1881,7 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
       });
 
       await syncStoreSettings();
+      startRealtimeNotificationsListener();
 
       if (state.customer && state.customer.phone) {
         db.collection("store_users").doc(state.customer.phone).set({
@@ -2268,6 +2487,7 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
         persistCustomer();
         updateUserUI();
         renderProducts();
+        startRealtimeNotificationsListener();
         closeModal("authModal");
       } catch (e) {
         toast("فشل تسجيل الدخول.", "error");
@@ -2813,7 +3033,8 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
         likedBy: [],
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        toast("تمت إضافة المنتج بنجاح!", "success");
+        triggerStoreBroadcast("✨ منتج جديد في VIP SMOOK!", `توفر الآن: ${name} بسعر ${money(price)}`);
+        toast("تمت إضافة المنتج وإشعار الزبائن بنجاح!", "success");
         document.getElementById("pName").value = "";
         document.getElementById("pPrice").value = "";
         document.getElementById("pStock").value = "";
@@ -2851,7 +3072,8 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
       if (image) updates.image = image;
 
       db.collection("products").doc(id).update(updates).then(() => {
-        toast("تم حفظ التعديلات!", "success");
+        triggerStoreBroadcast("🔔 تحديث في VIP SMOOK!", `تم تحديث ${name} - السعر الحالي: ${money(price)}`);
+        toast("تم حفظ التعديلات وإشعار الزبائن!", "success");
         closeEditModal();
       }).catch(() => toast("فشل حفظ التعديلات. تأكد من القواعد وصلاحية المدير.", "error"));
     }
