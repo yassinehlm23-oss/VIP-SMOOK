@@ -149,15 +149,15 @@
   <!-- Main Container -->
   <main class="max-w-6xl mx-auto px-4 py-5 min-h-[80vh] safe-bottom">
 
-    <!-- Store Phones Bar -->
-    <div id="storePhonesMobileBar" class="mb-5 bg-gray-900/90 border border-yellow-500/20 rounded-2xl p-3 flex flex-col sm:flex-row items-center justify-between gap-2.5 shadow-md">
+    <!-- Store Phones Bar (أرقام الاتصال المفصولة والمباشرة) -->
+    <div id="storePhonesMobileBar" class="mb-5 bg-gray-900/95 border border-yellow-500/30 rounded-2xl p-3 flex flex-col items-center justify-between gap-3 shadow-lg">
       <div class="flex items-center gap-2 text-yellow-400 font-bold text-xs">
         <div class="w-7 h-7 rounded-lg bg-yellow-500/10 flex items-center justify-center">
           <i class="fas fa-phone-alt text-[11px]"></i>
         </div>
-        <span>للاتصال والطلب المباشر:</span>
+        <span>للاتصال والطلب المباشر (اضغط للاتصال فوراً):</span>
       </div>
-      <div id="storePhonesMobileList" class="flex flex-wrap items-center justify-center gap-2 text-white font-mono text-xs w-full sm:w-auto"></div>
+      <div id="storePhonesMobileList" class="flex flex-wrap items-center justify-center gap-2.5 text-white font-mono text-xs w-full"></div>
     </div>
 
     <!-- Hero Banner -->
@@ -634,8 +634,8 @@
           </div>
 
           <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-phone text-yellow-400"></i> أرقام هاتف المحل (مفصولة بفاصلة)</h5>
-            <input type="text" id="adminStorePhones" placeholder="0781896750, 0661234567" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white font-mono">
+            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-phone text-yellow-400"></i> أرقام هاتف المحل (مفصولة بفاصلة أو شرطة)</h5>
+            <input type="text" id="adminStorePhones" placeholder="0781896750, 0799034615, 0697223805" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white font-mono">
           </div>
 
           <button onclick="saveStoreSettings()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition shadow-md">
@@ -873,7 +873,7 @@
         shippingFeeCentre: 200,
         shippingFeeNearby: 350,
         tickerText: "🔥 أهلاً بكم في VIP SMOOK - التوصيل سريع ومباشر لوسط المدينة والمناطق القريبة!",
-        storePhones: ["0781896750"]
+        storePhones: ["0697223805", "0799034615", "0781896750"]
       },
       appliedDiscount: 0,
       appliedCoupon: null
@@ -1122,7 +1122,7 @@
     }
 
     /* -------------------------------------------------------------
-       نظام الدردشة الحية مع المدير (محادثة مباشرة بين الزبون والمدير)
+       نظام الدردشة الحية مع المدير
     ------------------------------------------------------------- */
     function getCustomerChatId() {
       if (state.customer && state.customer.phone) return state.customer.phone;
@@ -1222,7 +1222,6 @@
 
         await batch.commit();
 
-        // إشعار فوري لتيليجرام المدير
         fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1240,7 +1239,7 @@
     }
 
     /* -------------------------------------------------------------
-       إدارة محادثات الدعم الفني من جهة المدير (Admin Live Chat Panel)
+       إدارة محادثات الدعم الفني من جهة المدير
     ------------------------------------------------------------- */
     function loadAdminChatList() {
       if (!firebaseReady || !db || !state.isAdminLoggedIn) return;
@@ -1298,7 +1297,6 @@
       btn.disabled = false;
       input.focus();
 
-      // تعليم المحادثة كمقروءة من قبل المدير
       db.collection("support_chats").doc(phone).set({ unreadByAdmin: false }, { merge: true }).catch(() => {});
 
       if (unsubscribeAdminActiveChat) unsubscribeAdminActiveChat();
@@ -1680,6 +1678,22 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
       );
     }
 
+    /* -------------------------------------------------------------
+       استخراج أرقام الهواتف وتحويلها إلى أزرار اتصال مباشرة ومنفصلة
+    ------------------------------------------------------------- */
+    function parsePhonesList(rawPhones) {
+      if (!rawPhones) return [];
+      let str = "";
+      if (Array.isArray(rawPhones)) {
+        str = rawPhones.join(",");
+      } else {
+        str = String(rawPhones);
+      }
+      return str.split(/[,_\s\/]+/)
+        .map(p => p.trim())
+        .filter(p => p.length >= 8);
+    }
+
     async function syncStoreSettings() {
       if (!firebaseReady || !db) return;
       try {
@@ -1708,10 +1722,12 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
         `;
       }
 
-      const phones = cfg.storePhones || [];
+      // تحويل الأرقام إلى أزرار اتصال منفصلة ومباشرة
+      const phones = parsePhonesList(cfg.storePhones);
       const makePhoneBtns = () => phones.map(p => `
-        <a href="tel:${esc(p)}" class="hover:text-yellow-400 bg-gray-950 px-2.5 py-1 rounded-xl border border-gray-800 transition flex items-center gap-1.5 text-xs text-yellow-400/90 hover:border-yellow-500/40">
-          <i class="fas fa-phone text-[10px]"></i>
+        <a href="tel:${esc(p)}" 
+           class="px-3.5 py-2 bg-gradient-to-r from-gray-900 to-gray-950 hover:from-amber-950/60 hover:to-gray-900 border border-yellow-500/40 hover:border-yellow-400 text-yellow-400 rounded-xl transition duration-200 flex items-center justify-center gap-2 shadow-md active:scale-95 text-xs font-bold font-mono">
+          <i class="fas fa-phone-alt text-[10px] text-yellow-500"></i>
           <span>${esc(p)}</span>
         </a>
       `).join("");
@@ -1732,7 +1748,7 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
       const feeNearby = Number(document.getElementById("adminShippingNearby").value) || 350;
       const ticker = document.getElementById("adminTickerText").value.trim();
       const phonesStr = document.getElementById("adminStorePhones").value;
-      const phones = phonesStr.split(",").map(p => p.trim()).filter(Boolean);
+      const phones = parsePhonesList(phonesStr);
 
       const newConfig = {
         couponCode: code,
@@ -1741,7 +1757,7 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
         shippingFeeCentre: feeCentre,
         shippingFeeNearby: feeNearby,
         tickerText: ticker || state.storeSettings.tickerText,
-        storePhones: phones.length ? phones : ["0781896750"]
+        storePhones: phones.length ? phones : ["0697223805", "0799034615", "0781896750"]
       };
 
       try {
