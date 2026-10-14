@@ -111,12 +111,16 @@
             class="w-full pr-9 pl-3 py-2 bg-gray-900/90 border border-gray-800 rounded-xl text-xs text-gray-200 focus:outline-none focus:border-yellow-500/60 transition">
         </div>
 
-        <!-- Desktop Nav Buttons (Hidden on Mobile) -->
+        <!-- Desktop Nav Buttons -->
         <div class="hidden md:flex items-center gap-2">
           <div id="storePhonesHeader" class="hidden lg:flex items-center gap-1.5 bg-gray-900/80 border border-gray-800 px-2.5 py-1.5 rounded-xl text-xs text-yellow-400 font-semibold">
             <i class="fas fa-phone-volume text-[11px]"></i>
             <span id="storePhonesHeaderList" class="flex gap-2"></span>
           </div>
+
+          <button onclick="toggleSupportChat()" class="flex px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-amber-500/30 rounded-xl text-yellow-400 transition relative items-center gap-1">
+            <i class="fas fa-comments"></i> <span>محادثة المدير</span>
+          </button>
 
           <button onclick="toggleWishlistModal()" class="flex px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition relative">
             <i class="fas fa-heart text-red-500 ml-1"></i> المفضلة
@@ -145,7 +149,7 @@
   <!-- Main Container -->
   <main class="max-w-6xl mx-auto px-4 py-5 min-h-[80vh] safe-bottom">
 
-    <!-- Store Phones Bar (Organized for mobile) -->
+    <!-- Store Phones Bar -->
     <div id="storePhonesMobileBar" class="mb-5 bg-gray-900/90 border border-yellow-500/20 rounded-2xl p-3 flex flex-col sm:flex-row items-center justify-between gap-2.5 shadow-md">
       <div class="flex items-center gap-2 text-yellow-400 font-bold text-xs">
         <div class="w-7 h-7 rounded-lg bg-yellow-500/10 flex items-center justify-center">
@@ -168,6 +172,9 @@
       <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto shrink-0">
         <button onclick="filterCategory('all', document.querySelector('.cat-btn'))" class="w-full sm:w-auto px-6 py-3 bg-yellow-500 text-black font-extrabold text-xs rounded-xl hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/20">
           استكشف المنتجات
+        </button>
+        <button onclick="toggleSupportChat()" class="w-full sm:w-auto px-6 py-3 bg-yellow-500/10 border border-yellow-500/40 text-yellow-400 font-bold text-xs rounded-xl hover:bg-yellow-500/20 transition flex items-center justify-center gap-1.5">
+          <i class="fas fa-headset"></i> محادثة الإدارة
         </button>
         <button onclick="toggleCart()" class="w-full sm:w-auto px-6 py-3 bg-gray-900 border border-gray-700 text-white font-bold text-xs rounded-xl hover:bg-gray-800 transition">
           عرض السلة
@@ -216,11 +223,16 @@
     </div>
   </main>
 
-  <!-- Mobile Navigation (Fixed Bottom) -->
+  <!-- Mobile Navigation -->
   <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-gray-950/95 border-t border-gray-800/80 backdrop-blur-lg px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 shadow-2xl">
     <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="flex flex-col items-center gap-1 text-yellow-400">
       <i class="fas fa-store text-base"></i>
       <span>الرئيسية</span>
+    </button>
+    <button onclick="toggleSupportChat()" class="flex flex-col items-center gap-1 relative text-amber-400">
+      <i class="fas fa-headset text-base"></i>
+      <span>المدير</span>
+      <span id="mobileChatBadge" class="hidden absolute -top-1 -right-1 bg-amber-500 text-black text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">!</span>
     </button>
     <button onclick="toggleWishlistModal()" class="flex flex-col items-center gap-1 relative">
       <i class="fas fa-heart text-base text-red-400"></i>
@@ -264,6 +276,46 @@
       </div>
       <div id="wishlistItems" class="space-y-3">
         <p class="text-gray-400 text-center py-8 text-xs">قائمة المفضلة فارغة حالياً.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Customer Support Chat Modal (Customer Side) -->
+  <div id="supportChatModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 md:p-4">
+    <div class="bg-gray-950 border border-yellow-500/40 rounded-3xl w-full max-w-md h-[550px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative">
+      <!-- Header -->
+      <div class="bg-gray-900 p-3.5 border-b border-gray-800 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center border border-yellow-500/30 font-bold">
+            <i class="fas fa-headset text-sm"></i>
+          </div>
+          <div>
+            <h4 class="text-xs font-black text-yellow-400">محادثة مدير المتجر المباشرة</h4>
+            <span class="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> خدمة زبائن VIP الرسمية
+            </span>
+          </div>
+        </div>
+        <button onclick="toggleSupportChat()" class="text-gray-400 hover:text-white p-1 text-base">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Messages Stream -->
+      <div id="supportMessages" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs no-scrollbar">
+        <div class="bg-gray-900 border border-gray-800 text-gray-300 p-3 rounded-2xl rounded-tr-none leading-relaxed">
+          أهلاً بك! 👋 يمكنك هنا كتابة استفسارك، وسيرد عليك مدير المتجر مباشرة.
+        </div>
+      </div>
+
+      <!-- Input Bar -->
+      <div class="p-2.5 bg-gray-900 border-t border-gray-800 flex items-center gap-2">
+        <input id="supportMsgInput" type="text" placeholder="اكتب رسالتك للمدير هنا..." onkeydown="if(event.key==='Enter') sendSupportMessage()"
+               class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-500">
+        <button onclick="sendSupportMessage()" id="supportSendBtn" 
+                class="w-9 h-9 bg-amber-500 hover:bg-amber-400 text-black rounded-xl flex items-center justify-center font-bold transition shrink-0">
+          <i class="fas fa-paper-plane text-xs"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -531,6 +583,9 @@
 
         <div class="flex border-b border-gray-800 gap-2 pb-2 overflow-x-auto no-scrollbar">
           <button onclick="switchAdminTab('storeSettings')" id="tabStoreSettingsBtn" class="admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap shadow-md shadow-yellow-500/20">⚙️ إعدادات المتجر والعروض</button>
+          <button onclick="switchAdminTab('chats')" id="tabChatsBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap flex items-center gap-1.5">
+            💬 محادثات الزبائن <span id="adminUnreadChatBadge" class="hidden w-2 h-2 rounded-full bg-red-500"></span>
+          </button>
           <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الطلبات الواردة</button>
           <button onclick="switchAdminTab('customers')" id="tabCustomersBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الزبائن المسجلون</button>
           <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">إدارة وتعديل المخزون</button>
@@ -588,7 +643,42 @@
           </button>
         </div>
 
-        <!-- 2. Orders Tab -->
+        <!-- 2. Admin Live Support Chats Tab -->
+        <div id="adminTabChats" class="hidden space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 h-[450px]">
+            <!-- Customers Conversations List -->
+            <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 flex flex-col">
+              <div class="flex justify-between items-center pb-2 border-b border-gray-800 mb-2">
+                <span class="text-xs font-bold text-yellow-400">محادثات الزبائن</span>
+                <button onclick="loadAdminChatList()" class="text-[11px] text-gray-400 hover:text-white"><i class="fas fa-rotate"></i></button>
+              </div>
+              <div id="adminChatRoomsList" class="flex-1 overflow-y-auto space-y-1.5 no-scrollbar text-xs">
+                <p class="text-gray-500 text-center py-8 text-[11px]">لا توجد محادثات نشطة حالياً.</p>
+              </div>
+            </div>
+
+            <!-- Active Chat Screen -->
+            <div class="md:col-span-2 bg-gray-950 rounded-2xl border border-gray-800 flex flex-col overflow-hidden">
+              <div id="adminActiveChatHeader" class="bg-gray-900 p-2.5 border-b border-gray-800 text-xs font-bold text-yellow-400 flex justify-between items-center">
+                <span>اختر زبوناً للبدء في الرد عليه</span>
+                <span id="adminActiveChatPhone" class="text-gray-400 font-mono text-[11px]"></span>
+              </div>
+              <div id="adminChatMessagesBox" class="flex-1 p-3 overflow-y-auto space-y-2 text-xs no-scrollbar bg-black/30">
+                <p class="text-gray-500 text-center py-16 text-xs">انقر على أي محادثة على اليمين لفتحها.</p>
+              </div>
+              <div class="p-2.5 bg-gray-900 border-t border-gray-800 flex gap-2">
+                <input id="adminReplyInput" type="text" placeholder="اكتب ردك للزبون..." onkeydown="if(event.key==='Enter') sendAdminReply()" disabled
+                       class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-yellow-500 disabled:opacity-40">
+                <button onclick="sendAdminReply()" id="adminReplySendBtn" disabled
+                        class="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-black font-extrabold rounded-xl text-xs transition">
+                  إرسال
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Orders Tab -->
         <div id="adminTabOrders" class="hidden space-y-3">
           <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-xl p-2.5 text-[11px] flex items-center justify-between">
             <span class="flex items-center gap-1.5"><i class="fas fa-clock-rotate-left"></i> يتم مسح وحذف الطلبات تلقائياً بعد مرور 24 ساعة.</span>
@@ -613,7 +703,7 @@
           </div>
         </div>
 
-        <!-- 3. Customers Tab -->
+        <!-- 4. Customers Tab -->
         <div id="adminTabCustomers" class="hidden space-y-3">
           <div class="flex justify-between items-center">
             <h4 class="text-xs font-bold text-gray-300">قائمة الزبائن المسجلين:</h4>
@@ -622,14 +712,14 @@
           <div id="adminCustomersList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- 4. Manage Stock Tab -->
+        <!-- 5. Manage Stock Tab -->
         <div id="adminTabManage" class="hidden space-y-3">
           <input id="adminStockSearch" oninput="filterAdminProductsList()" type="search" placeholder="ابحث عن منتج لتعديله..."
             class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
           <div id="adminProductsList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- 5. Add Product Tab -->
+        <!-- 6. Add Product Tab -->
         <div id="adminTabAdd" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <div class="grid grid-cols-2 gap-2">
@@ -658,7 +748,7 @@
     </div>
   </div>
 
-  <!-- Gemini AI Chat Widget (Repositioned to not block categories) -->
+  <!-- Gemini AI Chat Widget -->
   <div id="geminiChatWidget" class="fixed bottom-24 md:bottom-8 left-4 z-40">
     <!-- Floating Button -->
     <button onclick="toggleGeminiChat()" id="geminiToggleBtn" 
@@ -696,7 +786,7 @@
       <!-- Messages Area -->
       <div id="geminiMessages" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs no-scrollbar">
         <div class="bg-gray-900 border border-gray-800 text-gray-200 p-3 rounded-2xl rounded-tr-none leading-relaxed">
-          مرحباً بك في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 كيف يمكنني مساعدتك اليوم؟ يمكنك سؤالي عن المنتجات والأسعار، التوصيل، حساب إجمالي ميزانيتك، أو اقتراح أفضل الخيارات المتاحة.
+          مرحباً بك في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 كيف يمكنني مساعدتك اليوم؟ يمكنك سؤالي عن المنتجات والأسعار، التوصيل، حساب إجمالي ميزانيتك، أو التحدث مع المدير.
         </div>
       </div>
 
@@ -704,7 +794,7 @@
       <div class="px-3 py-1.5 bg-gray-950/80 border-t border-gray-900 flex gap-1.5 overflow-x-auto no-scrollbar text-[10px]">
         <button onclick="quickSendAI('ما هي المنتجات الأكثر طلباً؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🔥 الأكثر طلباً</button>
         <button onclick="quickSendAI('كيف يتم التوصيل والدفع؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🚚 التوصيل والدفع</button>
-        <button onclick="quickSendAI('هل يوجد كود تخفيض نشط؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🏷️ كود الخصم</button>
+        <button onclick="toggleSupportChat()" class="px-2.5 py-1 bg-amber-500/20 text-yellow-400 rounded-lg border border-yellow-500/30 whitespace-nowrap font-bold">💬 محادثة المدير</button>
       </div>
 
       <!-- Input Area -->
@@ -737,6 +827,10 @@
     const GEMINI_API_KEY = atob("QVEuQWI4Uk42SVExX280VDhwVHFZb2ctYXJtVUR5UUhOSGdtVFVMU2ljQ2tqbE9lSkJnU1E=");
 
     let geminiChatHistory = [];
+    let unsubscribeSupportChat = null;
+    let unsubscribeAdminChatList = null;
+    let unsubscribeAdminActiveChat = null;
+    let currentAdminActivePhone = null;
 
     const firebaseConfig = {
       apiKey: "AIzaSyC8Sh1-ufVJ_voLCcu3_W89011oQYEGn60",
@@ -850,7 +944,7 @@
       setTimeout(() => box.classList.add("hidden"), 300);
     }
 
-    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal"];
+    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal", "supportChatModal"];
 
     function openModal(id) {
       const el = document.getElementById(id);
@@ -1027,6 +1121,252 @@
       }
     }
 
+    /* -------------------------------------------------------------
+       نظام الدردشة الحية مع المدير (محادثة مباشرة بين الزبون والمدير)
+    ------------------------------------------------------------- */
+    function getCustomerChatId() {
+      if (state.customer && state.customer.phone) return state.customer.phone;
+      let guestId = localStorage.getItem("vip_guest_chat_id");
+      if (!guestId) {
+        guestId = "guest_" + Math.random().toString(36).substring(2, 9);
+        localStorage.setItem("vip_guest_chat_id", guestId);
+      }
+      return guestId;
+    }
+
+    function toggleSupportChat() {
+      const modal = document.getElementById("supportChatModal");
+      if (modal.classList.contains("hidden")) {
+        openModal("supportChatModal");
+        listenToCustomerSupportChat();
+        setTimeout(() => { document.getElementById("supportMsgInput")?.focus(); }, 100);
+      } else {
+        closeModal("supportChatModal");
+        if (unsubscribeSupportChat) unsubscribeSupportChat();
+      }
+    }
+
+    function listenToCustomerSupportChat() {
+      if (!firebaseReady || !db) return;
+      const chatId = getCustomerChatId();
+      const container = document.getElementById("supportMessages");
+
+      if (unsubscribeSupportChat) unsubscribeSupportChat();
+
+      unsubscribeSupportChat = db.collection("support_chats")
+        .doc(chatId)
+        .collection("messages")
+        .orderBy("createdAt", "asc")
+        .onSnapshot(snap => {
+          if (snap.empty) {
+            container.innerHTML = `
+              <div class="bg-gray-900 border border-gray-800 text-gray-300 p-3 rounded-2xl rounded-tr-none leading-relaxed">
+                أهلاً بك في خدمة زبائن <strong class="text-yellow-400">VIP SMOOK</strong>! 👋<br>
+                اكتب أي استفسار أو طلب خاص هنا، وسيقوم مدير المتجر بالرد عليك مباشرة.
+              </div>
+            `;
+            return;
+          }
+
+          container.innerHTML = snap.docs.map(doc => {
+            const m = doc.data();
+            const isAdmin = m.sender === "admin";
+            return `
+              <div class="flex ${isAdmin ? 'justify-start' : 'justify-end'}">
+                <div class="${isAdmin ? 'bg-yellow-500/15 border border-yellow-500/30 text-yellow-300 rounded-tl-none' : 'bg-amber-500 text-black font-semibold rounded-tr-none'} p-2.5 rounded-2xl max-w-[85%] leading-relaxed text-xs">
+                  ${isAdmin ? '<span class="text-[9px] text-yellow-400 font-black block mb-0.5"><i class="fas fa-shield-halved ml-1"></i> مدير المتجر</span>' : ''}
+                  ${esc(m.text)}
+                </div>
+              </div>
+            `;
+          }).join("");
+          container.scrollTop = container.scrollHeight;
+        });
+    }
+
+    async function sendSupportMessage() {
+      const input = document.getElementById("supportMsgInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      if (!firebaseReady || !db) return toast("خدمة الدردشة غير متصلة.", "error");
+
+      const chatId = getCustomerChatId();
+      const senderName = state.customer?.name || (state.customer?.phone ? `زبون: ${state.customer.phone}` : "زائر المتجر");
+      const senderPhone = state.customer?.phone || chatId;
+
+      input.value = "";
+
+      try {
+        const msgData = {
+          text,
+          sender: "customer",
+          senderName,
+          senderPhone,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        const batch = db.batch();
+        const chatDocRef = db.collection("support_chats").doc(chatId);
+        const msgDocRef = chatDocRef.collection("messages").doc();
+
+        batch.set(msgDocRef, msgData);
+        batch.set(chatDocRef, {
+          lastMessage: text,
+          lastSender: "customer",
+          customerPhone: senderPhone,
+          customerName: senderName,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          unreadByAdmin: true
+        }, { merge: true });
+
+        await batch.commit();
+
+        // إشعار فوري لتيليجرام المدير
+        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: `💬 *رسالة محادثة جديدة في المتجر!*\n\n👤 *المرسل:* ${senderName}\n📞 *الهاتف:* \`${senderPhone}\`\n\n✉️ *الرسالة:*\n${text}\n\n👉 *يمكنك الرد عليه مباشرة من لوحة التحكم.*`,
+            parse_mode: "Markdown"
+          })
+        }).catch(() => {});
+
+      } catch (err) {
+        console.error("Support message error:", err);
+        toast("تعذر إرسال الرسالة، يرجى المحاولة لاحقاً.", "error");
+      }
+    }
+
+    /* -------------------------------------------------------------
+       إدارة محادثات الدعم الفني من جهة المدير (Admin Live Chat Panel)
+    ------------------------------------------------------------- */
+    function loadAdminChatList() {
+      if (!firebaseReady || !db || !state.isAdminLoggedIn) return;
+      const listContainer = document.getElementById("adminChatRoomsList");
+
+      if (unsubscribeAdminChatList) unsubscribeAdminChatList();
+
+      unsubscribeAdminChatList = db.collection("support_chats")
+        .orderBy("updatedAt", "desc")
+        .onSnapshot(snap => {
+          if (snap.empty) {
+            listContainer.innerHTML = `<p class="text-gray-500 text-center py-8 text-[11px]">لا توجد محادثات نشطة حالياً.</p>`;
+            return;
+          }
+
+          let hasUnread = false;
+          listContainer.innerHTML = snap.docs.map(doc => {
+            const data = doc.data();
+            const phone = doc.id;
+            const name = data.customerName || phone;
+            const isUnread = data.unreadByAdmin === true;
+            if (isUnread) hasUnread = true;
+            const isSelected = currentAdminActivePhone === phone;
+
+            return `
+              <div onclick="openAdminChatRoom('${phone}', '${esc(name)}')" 
+                   class="p-2.5 rounded-xl cursor-pointer border transition ${isSelected ? 'bg-yellow-500/20 border-yellow-500/50' : 'bg-gray-900 border-gray-800 hover:border-gray-700'}">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="font-bold text-gray-200 text-xs truncate">${esc(name)}</span>
+                  ${isUnread ? '<span class="px-1.5 py-0.2 bg-red-600 text-white rounded-full text-[9px] font-black">جديد</span>' : ''}
+                </div>
+                <p class="text-gray-400 text-[10px] truncate">${esc(data.lastMessage || "")}</p>
+              </div>
+            `;
+          }).join("");
+
+          const badge = document.getElementById("adminUnreadChatBadge");
+          if (badge) {
+            if (hasUnread) badge.classList.remove("hidden");
+            else badge.classList.add("hidden");
+          }
+        });
+    }
+
+    function openAdminChatRoom(phone, name) {
+      currentAdminActivePhone = phone;
+      document.getElementById("adminActiveChatHeader").innerHTML = `
+        <span class="text-yellow-400">محادثة الزبون: <strong>${esc(name)}</strong></span>
+        <span class="text-gray-400 font-mono text-[11px]">${esc(phone)}</span>
+      `;
+
+      const input = document.getElementById("adminReplyInput");
+      const btn = document.getElementById("adminReplySendBtn");
+      input.disabled = false;
+      btn.disabled = false;
+      input.focus();
+
+      // تعليم المحادثة كمقروءة من قبل المدير
+      db.collection("support_chats").doc(phone).set({ unreadByAdmin: false }, { merge: true }).catch(() => {});
+
+      if (unsubscribeAdminActiveChat) unsubscribeAdminActiveChat();
+
+      const messagesBox = document.getElementById("adminChatMessagesBox");
+
+      unsubscribeAdminActiveChat = db.collection("support_chats")
+        .doc(phone)
+        .collection("messages")
+        .orderBy("createdAt", "asc")
+        .onSnapshot(snap => {
+          if (snap.empty) {
+            messagesBox.innerHTML = `<p class="text-gray-500 text-center py-10 text-xs">لا توجد رسائل سابقة في هذه المحادثة.</p>`;
+            return;
+          }
+
+          messagesBox.innerHTML = snap.docs.map(doc => {
+            const m = doc.data();
+            const isAdmin = m.sender === "admin";
+            return `
+              <div class="flex ${isAdmin ? 'justify-end' : 'justify-start'}">
+                <div class="${isAdmin ? 'bg-amber-500 text-black font-semibold rounded-tr-none' : 'bg-gray-800 text-gray-200 rounded-tl-none'} p-2 rounded-xl max-w-[80%] text-xs shadow leading-relaxed">
+                  ${!isAdmin ? `<span class="text-[9px] text-yellow-400 block font-bold mb-0.5">${esc(m.senderName || "الزبون")}</span>` : ''}
+                  ${esc(m.text)}
+                </div>
+              </div>
+            `;
+          }).join("");
+          messagesBox.scrollTop = messagesBox.scrollHeight;
+        });
+
+      loadAdminChatList();
+    }
+
+    async function sendAdminReply() {
+      if (!currentAdminActivePhone) return;
+      const input = document.getElementById("adminReplyInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = "";
+
+      try {
+        const batch = db.batch();
+        const chatRef = db.collection("support_chats").doc(currentAdminActivePhone);
+        const msgRef = chatRef.collection("messages").doc();
+
+        batch.set(msgRef, {
+          text,
+          sender: "admin",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        batch.set(chatRef, {
+          lastMessage: text,
+          lastSender: "admin",
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        await batch.commit();
+      } catch (err) {
+        toast("فشل إرسال الرد.", "error");
+      }
+    }
+
+    /* -------------------------------------------------------------
+       تطوير نموذج الذكاء الاصطناعي (Gemini)
+    ------------------------------------------------------------- */
     function toggleGeminiChat() {
       const box = document.getElementById("geminiChatBox");
       const isHidden = box.classList.contains("hidden");
@@ -1203,8 +1543,7 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
 
 قواعد الرد:
 1. إذا سأل الزبون عن سعر أو توفر منتج، أعطه السعر بدقة وما إذا كان متوفراً واقترح عليه إضافته للسلة.
-2. إذا سأل الزبون عن منتجات تناسب ميزانية معينة (مثال: عندي 1000 د.ج واش نشري)، اقترح عليه تشكيلة حقيقية من قائمة المنتجات أعلاه لا تتجاوز ميزانيته.
-3. كن مختصراً وواضحاً وتجنب الإطالة غير المفيدة.
+2. إذا سأل الزبون عن التحدث مع المدير، وجهه لفتح نافذة "محادثة المدير" للتواصل الحي والمباشر معه.
 `;
 
         const activeModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash-latest"];
@@ -1307,6 +1646,7 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
           document.getElementById("adminPanel").classList.remove("hidden");
           populateAdminSettingsInputs();
           loadOrdersOnce();
+          loadAdminChatList();
           updateAdminDashboardStats();
         } else {
           state.isAdminLoggedIn = false;
@@ -2186,6 +2526,7 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
           document.getElementById("adminPanel").classList.remove("hidden");
           populateAdminSettingsInputs();
           loadOrdersOnce();
+          loadAdminChatList();
           updateAdminDashboardStats();
         } else {
           document.getElementById("adminLoginForm").classList.remove("hidden");
@@ -2251,7 +2592,7 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
       document.querySelectorAll(".admin-tab").forEach(b => {
         b.className = "admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap";
       });
-      ["storeSettings", "orders", "customers", "manage", "add"].forEach(t => {
+      ["storeSettings", "chats", "orders", "customers", "manage", "add"].forEach(t => {
         const el = document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
         if (el) el.classList.add("hidden");
       });
@@ -2264,6 +2605,7 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
 
       if (tab === "customers") loadAdminCustomers();
       if (tab === "orders") loadOrdersOnce();
+      if (tab === "chats") loadAdminChatList();
       if (tab === "storeSettings") populateAdminSettingsInputs();
     }
 
@@ -2371,7 +2713,10 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
                 </p>
               </div>
             </div>
-            <div class="shrink-0">
+            <div class="shrink-0 flex items-center gap-1.5">
+              <button onclick="openAdminChatRoom('${esc(c.phone || c.id)}', '${esc(c.name || c.phone || c.id)}'); switchAdminTab('chats');" class="px-2.5 py-1.5 bg-amber-500/20 text-yellow-400 hover:bg-amber-500/30 rounded-lg text-[10px] font-bold flex items-center gap-1 transition">
+                <i class="fas fa-comments"></i> مراسلة
+              </button>
               <button onclick="deleteCustomerAccount('${esc(c.id)}')" class="px-2.5 py-1.5 bg-red-950/80 hover:bg-red-900 border border-red-800 text-red-300 rounded-lg text-[10px] font-bold flex items-center gap-1 transition">
                 <i class="fas fa-trash-can"></i> حذف
               </button>
