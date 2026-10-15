@@ -10,18 +10,18 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// استقبال الإشعارات في الخلفية عندما يكون التطبيق مغلقاً
 messaging.onBackgroundMessage((payload) => {
-  const title = payload.notification?.title || "VIP SMOOK 🔔";
-  const options = {
-    body: payload.notification?.body || "لديك تحديث جديد في المتجر",
+  const notificationTitle = payload.notification?.title || "VIP SMOOK 🔔";
+  const notificationOptions = {
+    body: payload.notification?.body || "لديك تحديث جديد في المتجر.",
     icon: "./1792015651400.jpg",
     badge: "./1792015651400.jpg",
     vibrate: [200, 100, 200],
     dir: "rtl",
     lang: "ar"
   };
-  self.registration.showNotification(title, options);
+
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 self.addEventListener('notificationclick', (event) => {
