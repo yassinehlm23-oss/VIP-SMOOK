@@ -1,44 +1,29 @@
-const CACHE_NAME = 'vip-smook-v2';
-const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
-  './manifest.json',
-  './1792015651400.jpg'
-];
+importScripts('https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/9.22.1/firebase-messaging-compat.js');
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
-  );
-  self.skipWaiting();
+firebase.initializeApp({
+  apiKey: "AIzaSyC8Sh1-ufVJ_voLCcu3_W89011oQYEGn60",
+  projectId: "vip-smook",
+  messagingSenderId: "823462448927",
+  appId: "1:823462448927:web:2d9a8b705cac3c6fef6a2a"
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
-    })
-  );
-  self.clients.claim();
+const messaging = firebase.messaging();
+
+// استقبال الإشعارات في الخلفية عندما يكون التطبيق مغلقاً
+messaging.onBackgroundMessage((payload) => {
+  const title = payload.notification?.title || "VIP SMOOK 🔔";
+  const options = {
+    body: payload.notification?.body || "لديك تحديث جديد في المتجر",
+    icon: "./1792015651400.jpg",
+    badge: "./1792015651400.jpg",
+    vibrate: [200, 100, 200],
+    dir: "rtl",
+    lang: "ar"
+  };
+  self.registration.showNotification(title, options);
 });
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
-    })
-  );
-});
-
-// فتح التطبيق مباشرة عند ضغط الزبون على الإشعار في هاتفه
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
