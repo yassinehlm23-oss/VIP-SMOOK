@@ -24,6 +24,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-messaging-compat.js"></script>
 
   <style>
     * { box-sizing: border-box; }
@@ -872,6 +873,7 @@
     const ADMIN_UID = "Mb1v98Csl6bVd9fnzUSTdMTGaCT2";
     const TELEGRAM_BOT_TOKEN = "8306019686:AAEVN6Stiinu6cefq3OP_e9JwquGswckfVo";
     const TELEGRAM_CHAT_ID = "6481958888";
+    const VAPID_KEY = "BDfCKYaSN4yogxqHgf5Ab4qP5CHqQRNF-bYxMKQlx1Qi3n8MSZhCVtlS_z4-PQYEmUlPjCYQYXeonSdXRWFrpJg";
 
     const GEMINI_API_KEY = atob("QVEuQWI4Uk42SVExX280VDhwVHFZb2ctYXJtVUR5UUhOSGdtVFVMU2ljQ2tqbE9lSkJnU1E=");
 
@@ -896,12 +898,16 @@
     let firebaseReady = false;
     let db = null;
     let auth = null;
+    let messaging = null;
     let unsubscribeProducts = null;
 
     try {
       if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
       db = firebase.firestore();
       auth = firebase.auth();
+      if (firebase.messaging && firebase.messaging.isSupported()) {
+        messaging = firebase.messaging();
+      }
       firebaseReady = true;
     } catch (e) {
       console.error("Firebase init failed:", e);
@@ -973,6 +979,32 @@
       }
     }
 
+    async function syncFcmToken() {
+      if (!messaging || !("Notification" in window) || Notification.permission !== "granted") return;
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        const token = await messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+        if (token) {
+          localStorage.setItem("vip_fcm_token", token);
+          const docId = state.customer?.phone || getCustomerChatId();
+          if (firebaseReady && db) {
+            await db.collection("fcm_tokens").doc(docId).set({
+              token: token,
+              phone: state.customer?.phone || null,
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+            if (state.customer?.phone) {
+              await db.collection("store_users").doc(state.customer.phone).set({
+                fcmToken: token
+              }, { merge: true });
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("FCM Token sync warning:", err);
+      }
+    }
+
     async function requestNotificationPermission() {
       if (!("Notification" in window)) {
         toast("لتفعيل الإشعارات على الآيفون: افتح التطبيق من الشاشة الرئيسية أولاً.", "normal");
@@ -984,6 +1016,7 @@
         updateNotifUI();
         if (perm === "granted") {
           playNotificationSound();
+          await syncFcmToken();
           showSystemNotification("VIP SMOOK 🔔", "تم تفعيل الإشعارات بنجاح! ستصلك تنبيهات المنتجات الجديدة والرسائل فوراً.");
           toast("تم تفعيل إشعارات المتجر بنجاح! 🔔", "success");
         } else {
@@ -1047,6 +1080,14 @@
     // الاستماع المستمر للإشعارات العامة والرسائل الجديدة للزبون
     function startRealtimeNotificationsListener() {
       if (!firebaseReady || !db) return;
+
+      if (messaging) {
+        messaging.onMessage(payload => {
+          const title = payload.notification?.title || "VIP SMOOK 🔔";
+          const body = payload.notification?.body || "لديك تحديث جديد في المتجر!";
+          showSystemNotification(title, body);
+        });
+      }
 
       // 1. الاستماع لإشعارات المنتجات الجديدة وتغيير الأسعار والعروض
       let initialBroadcastLoad = true;
@@ -1882,6 +1923,7 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
 
       await syncStoreSettings();
       startRealtimeNotificationsListener();
+      syncFcmToken();
 
       if (state.customer && state.customer.phone) {
         db.collection("store_users").doc(state.customer.phone).set({
@@ -2488,6 +2530,7 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
         updateUserUI();
         renderProducts();
         startRealtimeNotificationsListener();
+        syncFcmToken();
         closeModal("authModal");
       } catch (e) {
         toast("فشل تسجيل الدخول.", "error");
