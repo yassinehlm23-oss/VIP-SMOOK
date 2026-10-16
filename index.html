@@ -317,7 +317,6 @@
   <!-- Live Customer Support Chat Modal (Customer Side) -->
   <div id="supportChatModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 md:p-4">
     <div class="bg-gray-950 border border-yellow-500/40 rounded-3xl w-full max-w-md h-[550px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative">
-      <!-- Header -->
       <div class="bg-gray-900 p-3.5 border-b border-gray-800 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
           <div class="w-9 h-9 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center border border-yellow-500/30 font-bold">
@@ -335,14 +334,12 @@
         </button>
       </div>
 
-      <!-- Messages Stream -->
       <div id="supportMessages" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs no-scrollbar">
         <div class="bg-gray-900 border border-gray-800 text-gray-300 p-3 rounded-2xl rounded-tr-none leading-relaxed">
           أهلاً بك! 👋 يمكنك هنا كتابة استفسارك، وسيرد عليك مدير المتجر مباشرة ويصلك إشعار بالرد.
         </div>
       </div>
 
-      <!-- Input Bar -->
       <div class="p-2.5 bg-gray-900 border-t border-gray-800 flex items-center gap-2">
         <input id="supportMsgInput" type="text" placeholder="اكتب رسالتك للمدير هنا..." onkeydown="if(event.key==='Enter') sendSupportMessage()"
                class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-500">
@@ -635,7 +632,6 @@
 
         <!-- 1. Store Settings & Push Broadcast Tab -->
         <div id="adminTabStoreSettings" class="space-y-4 bg-gray-950/80 p-4 rounded-2xl border border-gray-800 text-xs hidden">
-          <!-- صندوق إرسال إشعار فوري لكل الزبائن -->
           <div class="bg-gradient-to-r from-amber-950/50 to-gray-900 p-3.5 rounded-2xl border border-yellow-500/40 space-y-2.5">
             <h5 class="font-black text-yellow-400 flex items-center gap-2 text-xs">
               <i class="fas fa-bell"></i> إرسال إشعار فوري لجميع الزبائن (Push Notification)
@@ -698,10 +694,9 @@
           </button>
         </div>
 
-        <!-- 2. Admin Live Support Chats Tab (تصميم Messenger فائق الأناقة والاحترافية) -->
+        <!-- 2. Admin Live Support Chats Tab (Messenger UI) -->
         <div id="adminTabChats" class="space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 h-[480px]">
-            <!-- قائمة الزبائن والمحادثات -->
             <div class="bg-gray-950 p-2.5 rounded-2xl border border-gray-800 flex flex-col h-full overflow-hidden">
               <div class="flex justify-between items-center pb-2.5 border-b border-gray-800/80 mb-2 px-1">
                 <span class="text-xs font-black text-yellow-400 flex items-center gap-1.5">
@@ -716,9 +711,7 @@
               </div>
             </div>
 
-            <!-- شاشة الدردشة النشطة بنمط ماسنجر -->
             <div class="md:col-span-2 bg-[#0b101b] rounded-2xl border border-gray-800 flex flex-col overflow-hidden h-full shadow-inner relative">
-              <!-- Messenger Chat Header -->
               <div id="adminActiveChatHeader" class="bg-gray-900/90 backdrop-blur-md p-3 border-b border-gray-800 text-xs flex justify-between items-center shadow-sm">
                 <div class="flex items-center gap-2.5">
                   <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white text-xs shadow">
@@ -734,7 +727,6 @@
                 <span id="adminActiveChatPhone" class="text-gray-400 font-mono text-[11px] bg-gray-950 px-2 py-1 rounded-lg border border-gray-800"></span>
               </div>
 
-              <!-- Messenger Messages Area -->
               <div id="adminChatMessagesBox" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs no-scrollbar bg-gradient-to-b from-gray-950 to-[#070b14]">
                 <div class="text-gray-500 text-center py-20 text-xs flex flex-col items-center justify-center gap-2">
                   <i class="fab fa-facebook-messenger text-3xl text-gray-700"></i>
@@ -742,7 +734,6 @@
                 </div>
               </div>
 
-              <!-- Messenger Chat Input Bar -->
               <div class="p-2.5 bg-gray-900/95 border-t border-gray-800 flex items-center gap-2">
                 <input id="adminReplyInput" type="text" placeholder="اكتب ردك للزبون هنا..." onkeydown="if(event.key==='Enter') sendAdminReply()" disabled
                        class="flex-1 bg-gray-950 border border-gray-800 focus:border-blue-500 rounded-full px-4 py-2.5 text-xs text-white focus:outline-none transition disabled:opacity-40">
@@ -755,7 +746,7 @@
           </div>
         </div>
 
-        <!-- 3. Orders Tab (مع إضافة وقت وتاريخ وصول الطلبية بدقة) -->
+        <!-- 3. Orders Tab -->
         <div id="adminTabOrders" class="hidden space-y-3">
           <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-xl p-2.5 text-[11px] flex items-center justify-between">
             <span class="flex items-center gap-1.5"><i class="fas fa-clock-rotate-left"></i> يتم مسح وحذف الطلبات تلقائياً بعد مرور 24 ساعة.</span>
@@ -825,7 +816,7 @@
     </div>
   </div>
 
-  <!-- Gemini AI Chat Widget -->
+  <!-- Gemini AI Chat Widget (نسخة فائقة الذكاء ومطورة) -->
   <div id="geminiChatWidget" class="fixed bottom-24 md:bottom-8 left-4 z-40">
     <button onclick="toggleGeminiChat()" id="geminiToggleBtn" 
             class="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-tr from-amber-600 via-yellow-500 to-amber-400 text-black rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition duration-300 relative border-2 border-black/50">
@@ -834,14 +825,14 @@
       <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-black rounded-full"></span>
     </button>
 
-    <div id="geminiChatBox" class="hidden fixed md:absolute bottom-24 md:bottom-16 left-3 right-3 md:left-0 md:right-auto md:w-96 h-[480px] max-h-[75vh] bg-gray-950/95 border border-yellow-500/40 rounded-3xl shadow-2xl flex-col overflow-hidden backdrop-blur-xl">
+    <div id="geminiChatBox" class="hidden fixed md:absolute bottom-24 md:bottom-16 left-3 right-3 md:left-0 md:right-auto md:w-96 h-[500px] max-h-[75vh] bg-gray-950/95 border border-yellow-500/40 rounded-3xl shadow-2xl flex-col overflow-hidden backdrop-blur-xl">
       <div class="bg-gray-900/90 p-3.5 border-b border-gray-800 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center border border-yellow-500/30">
             <i class="fas fa-sparkles text-xs"></i>
           </div>
           <div>
-            <h4 class="text-xs font-black text-yellow-400">مساعد VIP SMOOK الذكي</h4>
+            <h4 class="text-xs font-black text-yellow-400">مساعد VIP SMOOK الذكي (Pro)</h4>
             <span class="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> متصل وجاهز للخدمة
             </span>
@@ -859,21 +850,22 @@
 
       <div id="geminiMessages" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs no-scrollbar">
         <div class="bg-gray-900 border border-gray-800 text-gray-200 p-3 rounded-2xl rounded-tr-none leading-relaxed">
-          مرحباً بك في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 كيف يمكنني مساعدتك اليوم؟ يمكنك سؤالي عن المنتجات والأسعار، التوصيل، أو التحدث مع المدير.
+          مرحباً بك في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 أنا مستشارك الذكي. اسألني عن أي سلعة، الأسعار الحالية، أو التوصيل وسأساعدك باختيار طلبك وإضافته للسلة فوراً!
         </div>
       </div>
 
       <div class="px-3 py-1.5 bg-gray-950/80 border-t border-gray-900 flex gap-1.5 overflow-x-auto no-scrollbar text-[10px]">
-        <button onclick="quickSendAI('ما هي المنتجات الأكثر طلباً؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🔥 الأكثر طلباً</button>
-        <button onclick="quickSendAI('كيف يتم التوصيل والدفع؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🚚 التوصيل والدفع</button>
+        <button onclick="quickSendAI('واش هي السلع الأكثر طلباً اليوم؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🔥 الأكثر طلباً</button>
+        <button onclick="quickSendAI('شحال التوصيل ووقتاش يوصلني؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🚚 التوصيل السريع</button>
+        <button onclick="quickSendAI('كاين كود برومو ديرلي تخفيض؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🎁 كود الخصم</button>
         <button onclick="toggleSupportChat()" class="px-2.5 py-1 bg-amber-500/20 text-yellow-400 rounded-lg border border-yellow-500/30 whitespace-nowrap font-bold">💬 محادثة المدير</button>
       </div>
 
       <div class="p-2.5 bg-gray-900/90 border-t border-gray-800 flex items-center gap-2">
-        <input id="geminiInput" type="text" placeholder="اكتب سؤالك أو استفسارك هنا..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
+        <input id="geminiInput" type="text" placeholder="اكتب سؤالك (مثال: شحال دير مارلبورو حمرا؟)..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
                class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-yellow-500">
         <button onclick="sendGeminiMessage()" id="geminiSendBtn" 
-                class="w-8 h-8 bg-amber-500 hover:bg-amber-400 text-black rounded-xl flex items-center justify-center font-bold transition">
+                class="w-8 h-8 bg-amber-500 hover:bg-amber-400 text-black rounded-xl flex items-center justify-center font-bold transition shrink-0">
           <i class="fas fa-paper-plane text-xs"></i>
         </button>
       </div>
@@ -1400,9 +1392,6 @@
       }
     }
 
-    /* -------------------------------------------------------------
-       دالة تنسيق وقت وتاريخ الطلبية والرسائل بدقة (جديد)
-    ------------------------------------------------------------- */
     function formatOrderDateTime(ts) {
       if (!ts) return "غير محدد";
       let d = null;
@@ -1425,9 +1414,6 @@
       return `${dateStr} في ${timeStr}`;
     }
 
-    /* -------------------------------------------------------------
-       نظام الدردشة الحية مع المدير
-    ------------------------------------------------------------- */
     function getCustomerChatId() {
       if (state.customer && state.customer.phone) return state.customer.phone;
       let guestId = localStorage.getItem("vip_guest_chat_id");
@@ -1547,9 +1533,6 @@
       }
     }
 
-    /* -------------------------------------------------------------
-       إدارة محادثات الدعم الفني من جهة المدير بنمط Messenger
-    ------------------------------------------------------------- */
     function loadAdminChatList() {
       if (!firebaseReady || !db || !state.isAdminLoggedIn) return;
       const listContainer = document.getElementById("adminChatRoomsList");
@@ -1691,7 +1674,7 @@
     }
 
     /* -------------------------------------------------------------
-       تطوير نموذج الذكاء الاصطناعي (Gemini)
+       تطوير وتحديث الذكاء الاصطناعي (Gemini Pro Store Assistant)
     ------------------------------------------------------------- */
     function toggleGeminiChat() {
       const box = document.getElementById("geminiChatBox");
@@ -1711,7 +1694,7 @@
       const msgContainer = document.getElementById("geminiMessages");
       msgContainer.innerHTML = `
         <div class="bg-gray-900 border border-gray-800 text-gray-200 p-3 rounded-2xl rounded-tr-none leading-relaxed">
-          مرحباً بك مجدداً في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 بدأت محادثة جديدة. كيف يمكنني مساعدتك الآن؟
+          مرحباً بك مجدداً في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 تم بدء محادثة جديدة. كيف يمكنني مساعدتك الآن؟
         </div>
       `;
       toast("تم بدء محادثة جديدة مع المساعد الذكي.", "normal");
@@ -1725,21 +1708,25 @@
 
     function findRelevantProducts(q, limit = 3) {
       const norm = normalizeSearchText(q);
-      const words = norm.replace(/(كم|سعر|سومة|كاش|ثمن|عندكم|كاين|شحال|اعطيني|بكم|اريد|حاب|شراء|علبة)/g, " ")
-                        .split(/\s+/)
-                        .filter(w => w.length > 1);
+      const stopWords = ["كم", "سعر", "سومة", "كاش", "ثمن", "عندكم", "كاين", "شحال", "اعطيني", "بكم", "اريد", "حاب", "شراء", "علبة", "باكية", "باكي", "قرعة", "واش", "فيه", "راه"];
+      const words = norm.split(/\s+/).filter(w => w.length > 1 && !stopWords.includes(w));
 
       let scored = state.products.map(p => {
         let score = 0;
         const pNorm = normalizeSearchText(p.name);
         const catNorm = normalizeSearchText(p.category);
 
-        if (pNorm === norm) score += 10;
-        if (pNorm.includes(norm)) score += 6;
+        if (pNorm === norm) score += 15;
+        if (pNorm.includes(norm) && norm.length > 2) score += 10;
 
         words.forEach(w => {
-          if (pNorm.includes(w)) score += 3;
-          if (catNorm.includes(w)) score += 1;
+          if (pNorm.includes(w)) score += 4;
+          if (catNorm.includes(w)) score += 2;
+          for (const [k, v] of Object.entries(SEARCH_SYNONYMS)) {
+            if (k.includes(w) || w.includes(k)) {
+              if (pNorm.includes(v)) score += 4;
+            }
+          }
         });
 
         return { product: p, score };
@@ -1754,9 +1741,9 @@
       const norm = normalizeSearchText(raw);
       const cfg = state.storeSettings;
 
-      if (/^(hi|hello|مرحبا|سلام|السلام|أهلا|اهلا|الو|صباح|مساء|صحا|سلام عليكم|صباح الخير)/i.test(norm) && norm.length <= 15) {
+      if (/^(hi|hello|مرحبا|سلام|السلام|أهلا|اهلا|الو|صباح|مساء|صحا|سلام عليكم|صباح الخير|سلام خويا|مساء الخير)/i.test(norm) && norm.length <= 25) {
         return {
-          text: `أهلاً وسهلاً بك في **VIP SMOOK**! 👋\nأنا مساعدك الذكي الشخصي. يمكنك أن تسألني عن أي منتج، تكلفة التوصيل، العروض، أو أساعدك في اختيار طلبك!`,
+          text: `أهلاً وسهلاً بك في متجر **VIP SMOOK** الرسمي! 👋\nأنا المساعد الذكي للمتجر. يمكنك سؤالي عن أسعار السجائر، التبغ، المشروبات، أو تفاصيل التوصيل السريع والدفع كاش عند الاستلام!`,
           actions: []
         };
       }
@@ -1764,28 +1751,36 @@
       if (norm.includes("خصم") || norm.includes("كود") || norm.includes("تخفيض") || norm.includes("برومو") || norm.includes("promo")) {
         if (cfg.couponCode && Number(cfg.couponPercent) > 0) {
           return {
-            text: `🎉 لدينا كود خصم فعال حالياً!\nاستخدم الكود: **${cfg.couponCode}** للحصول على تخفيض **${cfg.couponPercent}%** على طلبك عند الدفع في السلة.`,
+            text: `🎉 **كود خصم حصري فعال الآن!**\nاستخدم الكود: **${cfg.couponCode}** للحصول على تخفيض فوري بنسبة **${cfg.couponPercent}%** في سلة المشتريات.`,
             actions: []
           };
         } else {
           return {
-            text: `حالياً لا يوجد كود خصم نشط، ولكن أسعارنا منافسة ومحدثة مع توصيل مجاني للطلبات فوق ${money(cfg.freeShippingTarget)}! 🎁`,
+            text: `حالياً لا يوجد كود خصم، لكن جميع أسعارنا محدثة وتنافسية، والتوصيل **مجاني بالكامل** عند وصول طلبك إلى ${money(cfg.freeShippingTarget)}! 🎁`,
             actions: []
           };
         }
       }
 
-      if (norm.includes("توصيل") || norm.includes("livraison") || norm.includes("بلاصة") || norm.includes("مكان") || norm.includes("وين توصل")) {
+      if (norm.includes("توصيل") || norm.includes("livraison") || norm.includes("بلاصة") || norm.includes("مكان") || norm.includes("وين توصل") || norm.includes("توصلو")) {
         return {
-          text: `🚚 **تفاصيل التوصيل السريع:**\n• وسط المدينة (Centre-ville): **${money(cfg.shippingFeeCentre)}**\n• البلديات والمناطق المجاورة: **${money(cfg.shippingFeeNearby)}**\n• استلام مجاني ومباشر من المحل\n\n🎉 **مفاجأة:** أي طلب بقيمة **${money(cfg.freeShippingTarget)}** أو أكثر يحصل على **توصيل مجاني فوري**!`,
+          text: `🚚 **خيارات التوصيل السريع والمباشر:**\n• وسط المدينة (Centre-ville): **${money(cfg.shippingFeeCentre)}**\n• البلديات والمناطق المجاورة: **${money(cfg.shippingFeeNearby)}**\n• استلام فوري من المحل: **مجاناً**\n\n🎉 **توصيل مجاني:** يصبح التوصيل مجانياً تلقائياً لأي طلب بقيمة **${money(cfg.freeShippingTarget)}** أو أكثر!`,
           actions: []
         };
       }
 
-      if (norm.includes("دفع") || norm.includes("كاش") || norm.includes("دراهم") || norm.includes("خلص") || norm.includes("كيف ادفع")) {
+      if (norm.includes("دفع") || norm.includes("كاش") || norm.includes("دراهم") || norm.includes("خلص") || norm.includes("كيفاش نخلص")) {
         return {
-          text: `💵 **طريقة الدفع:**\nالدفع نقداً **(كاش عند الاستلام)** فقط! يد بيد بعد أن تستلم طلبيتك وتتفحصها بنفسك للتأكد من سلامتها.`,
+          text: `💵 **طريقة الدفع:**\nالدفع **نقداً كاش عند الاستلام (يداً بيد)** بعد معاينة مشترياتك والتأكد منها بنفسك!`,
           actions: []
+        };
+      }
+
+      if (norm.includes("مدير") || norm.includes("نهدر مع") || norm.includes("صاحب المحل") || norm.includes("مسؤول") || norm.includes("مشكل")) {
+        return {
+          text: `تفضل بالتواصل المباشر مع مدير المتجر الآن! انقر على زر "محادثة المدير" أدناه وسيرد عليك مباشرة في أي وقت:`,
+          actions: [],
+          openManagerChat: true
         };
       }
 
@@ -1793,7 +1788,7 @@
         const top = [...state.products].sort((a, b) => Number(b.likesCount || 0) - Number(a.likesCount || 0)).slice(0, 3);
         if (top.length) {
           return {
-            text: `🔥 إليك أكثر المنتجات طلباً وإعجاباً في متجرنا اليوم:`,
+            text: `🔥 إليك أكثر السلع طلباً وإعجاباً اليوم في VIP SMOOK:`,
             actions: top
           };
         }
@@ -1802,13 +1797,13 @@
       const matched = findRelevantProducts(q, 3);
       if (matched.length > 0) {
         return {
-          text: `وجدت لك المنتجات التالية المتوفرة والمطابقة لطلبك:`,
+          text: `وجدت لك المنتجات التالية المتوفرة في المخزون:`,
           actions: matched
         };
       }
 
       return {
-        text: `مرحباً بك! لم أعثر على منتج بهذا الاسم بالتحديد.\nيمكنك تصفح الأقسام في المتجر، أو الاتصال بفريقنا مباشرة للطلب الخاص: ${cfg.storePhones?.join(" أو ")}.`,
+        text: `أهلاً بك! لم أعثر على سلعة مطابقة تماماً لما طلبت.\nيمكنك البحث في شريط البحث بالأعلى، أو الاتصال بنا مباشرة على: ${cfg.storePhones?.join(" - ")}.`,
         actions: []
       };
     }
@@ -1834,8 +1829,8 @@
       const loadingId = "gemini_loading_" + Date.now();
       msgContainer.innerHTML += `
         <div id="${loadingId}" class="flex justify-end">
-          <div class="bg-gray-900 border border-gray-800 text-gray-400 p-2.5 rounded-2xl rounded-tr-none text-[11px] flex items-center gap-1.5">
-            <i class="fas fa-circle-notch fa-spin text-yellow-400"></i> جاري التفكير...
+          <div class="bg-gray-900 border border-gray-800 text-gray-400 p-2.5 rounded-2xl rounded-tr-none text-[11px] flex items-center gap-1.5 shadow">
+            <i class="fas fa-circle-notch fa-spin text-yellow-400"></i> جاري التفكير الذكي...
           </div>
         </div>
       `;
@@ -1846,30 +1841,35 @@
       if (geminiChatHistory.length > 8) geminiChatHistory = geminiChatHistory.slice(-8);
 
       let replyText = null;
-      let matchedProductsForAction = findRelevantProducts(msgText, 2);
+      let matchedProductsForAction = findRelevantProducts(msgText, 3);
+      let showManagerBtn = false;
 
       try {
         const availableProductsSummary = state.products.map(p => 
-          `• [ID:${p.id}] ${p.name} | السعر: ${p.price} د.ج | المخزون: ${p.stock > 0 ? p.stock + ' قطعة' : 'نفد'} | القسم: ${p.category}`
+          `• [ID:${p.id}] ${p.name} | السعر: ${p.price} د.ج | المخزون: ${p.stock > 0 ? p.stock + ' متوفر' : 'غير متوفر'} | القسم: ${p.category}`
         ).join("\n");
 
         const cfg = state.storeSettings;
-        const systemPrompt = `
-أنت المساعد الذكي والمستشار الرسمي لمتجر "VIP SMOOK" الفاخر.
-أسلوبك: ودود، احترافي، ذكي، لبق ومباشر. تجيب بالعربية الفصحى البسيطة أو بالعامية الجزائرية المحترمة حسب لغة الزبون.
+        const cartTotalNow = state.cart.reduce((s, x) => s + (x.price * x.qty), 0);
 
-معلومات المتجر الدقيقة:
-- المنتجات والمخزون المحدث لحظياً:
-${availableProductsSummary || "لا توجد منتجات مسجلة حالياً."}
+        const systemPrompt = `
+أنت المساعد الذكي الخبير لمتجر "VIP SMOOK" الرسمي الفاخر.
+هدفك: مساعدة الزبون بذكاء ودقة، الإجابة عن المنتجات وتوفرها، الأسعار، وحثه على إكمال الطلب، وتوجيهه للإدارة إذا كان لديه طلب خاص.
+أسلوبك: راقٍ، مهذب، سريع البديهة، تفهم العامية الجزائرية والفصحى تماماً.
+
+بيانات المتجر المحدثة لحظياً:
+- السلع والمخزون والأسعار:
+${availableProductsSummary || "جاري جلب المنتجات."}
 - التوصيل: وسط المدينة (${cfg.shippingFeeCentre} د.ج)، البلديات المجاورة (${cfg.shippingFeeNearby} د.ج)، استلام مجاني من المحل.
-- التوصيل المجاني: تلقائي لأي طلب إجمالي بقيمة ${cfg.freeShippingTarget} د.ج فما فوق.
-- الدفع: نقداً (كاش) عند الاستلام بعد معاينة الطلب.
-- كود الخصم الحالي: ${cfg.couponCode ? `الكود '${cfg.couponCode}' يمنح خصم ${cfg.couponPercent}%` : 'لا يوجد كود خصم نشط حالياً'}.
+- حد التوصيل المجاني: ${cfg.freeShippingTarget} د.ج (سلة الزبون الحالية: ${cartTotalNow} د.ج).
+- الدفع: نقداً كاش عند الاستلام فقط بعد المعاينة.
+- كود الخصم: ${cfg.couponCode ? `كود '${cfg.couponCode}' يمنح خصم ${cfg.couponPercent}%` : 'لا يوجد كود نشط'}.
 - هواتف المحل: ${cfg.storePhones?.join(" - ")}.
 
-قواعد الرد:
-1. إذا سأل الزبون عن سعر أو توفر منتج، أعطه السعر بدقة وما إذا كان متوفراً واقترح عليه إضافته للسلة.
-2. إذا سأل الزبون عن التحدث مع المدير، وجهه لفتح نافذة "محادثة المدير" للتواصل الحي والمباشر معه.
+تعليمات هامة:
+1. اذكر الأسعار بدقة بالدينار الجزائري (د.ج).
+2. إذا سأل عن منتج معين، أجب باختصار واعرض له ميزاته وسعره.
+3. إذا طلب الزبون التحدث مع المدير أو مسألة لا تستطيع حلها، شجعه على فتح "محادثة المدير".
 `;
 
         const activeModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash-latest"];
@@ -1880,16 +1880,13 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
             
             const contents = [
               { role: "user", parts: [{ text: systemPrompt }] },
-              { role: "model", parts: [{ text: "مفهوم تماماً، أنا جاهز لمساعدة زبائن VIP SMOOK بأعلى دقة واحترافية." }] },
+              { role: "model", parts: [{ text: "أهلاً بك! أنا جاهز تماماً لخدمة زبائن VIP SMOOK بأعلى معايير الذكاء والدقة." }] },
               ...geminiChatHistory
             ];
 
             const response = await fetch(url, {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "x-goog-api-key": GEMINI_API_KEY
-              },
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 contents: contents,
                 generationConfig: {
@@ -1909,35 +1906,45 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
           } catch (_) {}
         }
       } catch (err) {
-        console.warn("Gemini remote error:", err);
+        console.warn("AI fallback used:", err);
       }
 
       if (!replyText) {
         const local = generateSmartStoreReply(msgText);
         replyText = local.text;
         matchedProductsForAction = local.actions || [];
+        showManagerBtn = local.openManagerChat || false;
       }
 
       geminiChatHistory.push({ role: "model", parts: [{ text: replyText }] });
-
       document.getElementById(loadingId)?.remove();
 
       let actionsHTML = "";
       if (matchedProductsForAction && matchedProductsForAction.length > 0) {
         actionsHTML = `
           <div class="mt-2.5 pt-2 border-t border-gray-800 space-y-1.5">
-            <span class="text-[10px] text-yellow-400 font-bold block mb-1">⚡ خيارات مقترحة سريعة:</span>
+            <span class="text-[10px] text-yellow-400 font-bold block mb-1">⚡ خيارات وسلع مقترحة لطلبك:</span>
             ${matchedProductsForAction.map(p => `
-              <div class="flex items-center justify-between bg-gray-950 p-2 rounded-xl border border-gray-800 text-[11px]">
+              <div class="flex items-center justify-between bg-gray-950 p-2 rounded-xl border border-gray-800 text-[11px] gap-2 shadow-inner">
                 <div class="truncate pl-1">
                   <span class="font-bold text-gray-200 block truncate">${esc(p.name)}</span>
-                  <span class="text-amber-400 font-mono text-[10px]">${money(p.price)}</span>
+                  <span class="text-amber-400 font-mono text-[10px] font-bold">${money(p.price)}</span>
                 </div>
-                <button onclick="addToCart('${esc(p.id)}')" class="shrink-0 px-2 py-1 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-lg text-[10px] transition">
+                <button onclick="addToCart('${esc(p.id)}')" class="shrink-0 px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-lg text-[10px] transition shadow">
                   + للسلة
                 </button>
               </div>
             `).join("")}
+          </div>
+        `;
+      }
+
+      if (showManagerBtn) {
+        actionsHTML += `
+          <div class="mt-2.5 pt-2">
+            <button onclick="toggleSupportChat()" class="w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5">
+              <i class="fab fa-facebook-messenger"></i> فتح محادثة المدير المباشرة
+            </button>
           </div>
         `;
       }
@@ -2958,9 +2965,6 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
       if (tab === "storeSettings") populateAdminSettingsInputs();
     }
 
-    /* -------------------------------------------------------------
-       تحميل وعرض الطلبات مع التوقيت الدقيق وتنسيق أنيق
-    ------------------------------------------------------------- */
     async function loadOrdersOnce() {
       if (!firebaseReady) return;
       const list = document.getElementById("adminOrdersList");
@@ -2992,7 +2996,6 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
               <div>
                 <span class="font-extrabold text-yellow-400 text-sm">${esc(o.customerName)}</span>
                 <span class="text-gray-400 font-mono text-[11px] block mt-0.5">(${esc(o.customerPhone)})</span>
-                <!-- حقل توقيت وتاريخ إرسال الطلبية المطلوب بدقة -->
                 <div class="text-[10px] text-emerald-400 font-semibold flex items-center gap-1.5 mt-1 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded-md w-max">
                   <i class="fas fa-clock text-[9px]"></i>
                   <span>أُرسلت: ${formattedDate}</span>
@@ -3205,9 +3208,6 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
       db.collection("products").doc(id).delete().then(() => toast("تم حذف المنتج.", "success")).catch(() => toast("فشل الحذف.", "error"));
     }
 
-    /* -------------------------------------------------------------
-       تسجيل تطبيق الويب التقدمي (PWA Service Worker)
-    ------------------------------------------------------------- */
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
