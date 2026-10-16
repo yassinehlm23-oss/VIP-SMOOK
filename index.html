@@ -596,30 +596,37 @@
           <button onclick="logoutAdmin()" class="px-3 py-1 bg-red-950 text-red-400 hover:bg-red-900 rounded-lg text-[11px]">خروج</button>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
-            <span class="text-[10px] text-gray-400 block">إجمالي المنتجات</span>
-            <span id="statTotalProducts" class="text-base font-black text-yellow-400">0</span>
+        <!-- Stats Cards Grid -->
+        <div class="grid grid-cols-2 gap-3 text-center">
+          <div class="bg-gray-950 p-4 rounded-2xl border border-gray-800 shadow-inner flex flex-col justify-center items-center">
+            <span class="text-[11px] text-gray-400 block mb-1">إجمالي المنتجات</span>
+            <span id="statTotalProducts" class="text-xl font-black text-yellow-400">58</span>
           </div>
-          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
-            <span class="text-[10px] text-gray-400 block">طلبات جديدة</span>
-            <span id="statPendingOrders" class="text-base font-black text-amber-400">0</span>
+          <div class="bg-gray-950 p-4 rounded-2xl border border-gray-800 shadow-inner flex flex-col justify-center items-center">
+            <span class="text-[11px] text-gray-400 block mb-1">طلبات جديدة</span>
+            <span id="statPendingOrders" class="text-xl font-black text-amber-400">3</span>
           </div>
-          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
-            <span class="text-[10px] text-gray-400 block">الزبائن المسجلون</span>
-            <span id="statTotalCustomers" class="text-base font-black text-emerald-400">0</span>
+          <div class="bg-gray-950 p-4 rounded-2xl border border-gray-800 shadow-inner flex flex-col justify-center items-center">
+            <span class="text-[11px] text-gray-400 block mb-1">منخفض المخزون</span>
+            <span id="statLowStock" class="text-xl font-black text-red-400">1</span>
           </div>
-          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800">
-            <span class="text-[10px] text-gray-400 block">منخفض المخزون</span>
-            <span id="statLowStock" class="text-base font-black text-red-400">0</span>
+          <div class="bg-gray-950 p-4 rounded-2xl border border-gray-800 shadow-inner flex flex-col justify-center items-center">
+            <span class="text-[11px] text-gray-400 block mb-1">الزبائن المسجلون</span>
+            <span id="statTotalCustomers" class="text-xl font-black text-emerald-400">0</span>
           </div>
         </div>
 
-        <div class="flex border-b border-gray-800 gap-2 pb-2 overflow-x-auto no-scrollbar">
-          <button onclick="switchAdminTab('storeSettings')" id="tabStoreSettingsBtn" class="admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap shadow-md shadow-yellow-500/20">⚙️ الإعدادات والإشعارات</button>
-          <button onclick="switchAdminTab('chats')" id="tabChatsBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap flex items-center gap-1.5">
-            💬 محادثات الزبائن <span id="adminUnreadChatBadge" class="hidden w-2 h-2 rounded-full bg-red-500"></span>
+        <!-- Action Control Buttons Row (تنسيق منظم ومرتب للأزرار كما طلبت) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+          <button onclick="switchAdminTab('chats')" id="tabChatsBtn" class="admin-tab py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition active:scale-95">
+            <i class="fas fa-comments text-base"></i> محادثات الزبائن <span id="adminUnreadChatBadge" class="hidden w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
           </button>
+          <button onclick="switchAdminTab('storeSettings')" id="tabStoreSettingsBtn" class="admin-tab py-3 px-4 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-200 font-bold rounded-2xl text-xs flex items-center justify-center gap-2 transition active:scale-95">
+            <i class="fas fa-gear text-yellow-400 text-sm"></i> الإعدادات والإشعارات
+          </button>
+        </div>
+
+        <div class="flex border-b border-gray-800 gap-2 pb-2 overflow-x-auto no-scrollbar pt-2">
           <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الطلبات الواردة</button>
           <button onclick="switchAdminTab('customers')" id="tabCustomersBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الزبائن المسجلون</button>
           <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">إدارة وتعديل المخزون</button>
@@ -627,7 +634,7 @@
         </div>
 
         <!-- 1. Store Settings & Push Broadcast Tab -->
-        <div id="adminTabStoreSettings" class="space-y-4 bg-gray-950/80 p-4 rounded-2xl border border-gray-800 text-xs">
+        <div id="adminTabStoreSettings" class="space-y-4 bg-gray-950/80 p-4 rounded-2xl border border-gray-800 text-xs hidden">
           
           <!-- صندوق إرسال إشعار فوري لكل الزبائن -->
           <div class="bg-gradient-to-r from-amber-950/50 to-gray-900 p-3.5 rounded-2xl border border-yellow-500/40 space-y-2.5">
@@ -692,8 +699,8 @@
           </button>
         </div>
 
-        <!-- 2. Admin Live Support Chats Tab -->
-        <div id="adminTabChats" class="hidden space-y-3">
+        <!-- 2. Admin Live Support Chats Tab (افتراضي عند فتح لوحة التحكم) -->
+        <div id="adminTabChats" class="space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 h-[450px]">
             <!-- Customers Conversations List -->
             <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 flex flex-col">
