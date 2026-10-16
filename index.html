@@ -558,7 +558,7 @@
 
   <!-- Admin Dashboard Modal -->
   <div id="adminModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] hidden items-center justify-center p-4">
-    <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-4xl modal-scroll">
+    <div class="bg-gray-900 border border-yellow-500/30 p-4 md:p-6 rounded-3xl w-full max-w-4xl modal-scroll">
       <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
         <div>
           <h3 class="text-base font-bold text-yellow-400 flex items-center gap-2"><i class="fas fa-user-shield"></i> لوحة التحكم والإدارة الشاملة</h3>
@@ -598,36 +598,36 @@
 
         <!-- Stats Cards Grid -->
         <div class="grid grid-cols-2 gap-3 text-center">
-          <div class="bg-gray-950 p-4 rounded-2xl border border-gray-800 shadow-inner flex flex-col justify-center items-center">
-            <span class="text-[11px] text-gray-400 block mb-1">إجمالي المنتجات</span>
-            <span id="statTotalProducts" class="text-xl font-black text-yellow-400">58</span>
+          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 shadow-inner flex flex-col justify-center items-center">
+            <span class="text-[11px] text-gray-400 block mb-0.5">إجمالي المنتجات</span>
+            <span id="statTotalProducts" class="text-xl font-black text-yellow-400">0</span>
           </div>
-          <div class="bg-gray-950 p-4 rounded-2xl border border-gray-800 shadow-inner flex flex-col justify-center items-center">
-            <span class="text-[11px] text-gray-400 block mb-1">طلبات جديدة</span>
-            <span id="statPendingOrders" class="text-xl font-black text-amber-400">3</span>
+          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 shadow-inner flex flex-col justify-center items-center">
+            <span class="text-[11px] text-gray-400 block mb-0.5">طلبات جديدة</span>
+            <span id="statPendingOrders" class="text-xl font-black text-amber-400">0</span>
           </div>
-          <div class="bg-gray-950 p-4 rounded-2xl border border-gray-800 shadow-inner flex flex-col justify-center items-center">
-            <span class="text-[11px] text-gray-400 block mb-1">منخفض المخزون</span>
-            <span id="statLowStock" class="text-xl font-black text-red-400">1</span>
+          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 shadow-inner flex flex-col justify-center items-center">
+            <span class="text-[11px] text-gray-400 block mb-0.5">منخفض المخزون</span>
+            <span id="statLowStock" class="text-xl font-black text-red-400">0</span>
           </div>
-          <div class="bg-gray-950 p-4 rounded-2xl border border-gray-800 shadow-inner flex flex-col justify-center items-center">
-            <span class="text-[11px] text-gray-400 block mb-1">الزبائن المسجلون</span>
+          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 shadow-inner flex flex-col justify-center items-center">
+            <span class="text-[11px] text-gray-400 block mb-0.5">الزبائن المسجلون</span>
             <span id="statTotalCustomers" class="text-xl font-black text-emerald-400">0</span>
           </div>
         </div>
 
-        <!-- Action Control Buttons Row (تنسيق منظم ومرتب للأزرار كما طلبت) -->
+        <!-- Action Control Buttons Row -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
           <button onclick="switchAdminTab('chats')" id="tabChatsBtn" class="admin-tab py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition active:scale-95">
-            <i class="fas fa-comments text-base"></i> محادثات الزبائن <span id="adminUnreadChatBadge" class="hidden w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
+            <i class="fab fa-facebook-messenger text-base"></i> محادثات الزبائن <span id="adminUnreadChatBadge" class="hidden w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
           </button>
-          <button onclick="switchAdminTab('storeSettings')" id="tabStoreSettingsBtn" class="admin-tab py-3 px-4 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-200 font-bold rounded-2xl text-xs flex items-center justify-center gap-2 transition active:scale-95">
-            <i class="fas fa-gear text-yellow-400 text-sm"></i> الإعدادات والإشعارات
+          <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="admin-tab py-3 px-4 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-200 font-bold rounded-2xl text-xs flex items-center justify-center gap-2 transition active:scale-95">
+            <i class="fas fa-boxes-stacked text-yellow-400 text-sm"></i> الطلبات الواردة
           </button>
         </div>
 
         <div class="flex border-b border-gray-800 gap-2 pb-2 overflow-x-auto no-scrollbar pt-2">
-          <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الطلبات الواردة</button>
+          <button onclick="switchAdminTab('storeSettings')" id="tabStoreSettingsBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الإعدادات والإشعارات</button>
           <button onclick="switchAdminTab('customers')" id="tabCustomersBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الزبائن المسجلون</button>
           <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">إدارة وتعديل المخزون</button>
           <button onclick="switchAdminTab('add')" id="tabAddBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">+ إضافة منتج</button>
@@ -635,7 +635,6 @@
 
         <!-- 1. Store Settings & Push Broadcast Tab -->
         <div id="adminTabStoreSettings" class="space-y-4 bg-gray-950/80 p-4 rounded-2xl border border-gray-800 text-xs hidden">
-          
           <!-- صندوق إرسال إشعار فوري لكل الزبائن -->
           <div class="bg-gradient-to-r from-amber-950/50 to-gray-900 p-3.5 rounded-2xl border border-yellow-500/40 space-y-2.5">
             <h5 class="font-black text-yellow-400 flex items-center gap-2 text-xs">
@@ -699,42 +698,64 @@
           </button>
         </div>
 
-        <!-- 2. Admin Live Support Chats Tab (افتراضي عند فتح لوحة التحكم) -->
+        <!-- 2. Admin Live Support Chats Tab (تصميم Messenger فائق الأناقة والاحترافية) -->
         <div id="adminTabChats" class="space-y-3">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 h-[450px]">
-            <!-- Customers Conversations List -->
-            <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 flex flex-col">
-              <div class="flex justify-between items-center pb-2 border-b border-gray-800 mb-2">
-                <span class="text-xs font-bold text-yellow-400">محادثات الزبائن</span>
-                <button onclick="loadAdminChatList()" class="text-[11px] text-gray-400 hover:text-white"><i class="fas fa-rotate"></i></button>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 h-[480px]">
+            <!-- قائمة الزبائن والمحادثات -->
+            <div class="bg-gray-950 p-2.5 rounded-2xl border border-gray-800 flex flex-col h-full overflow-hidden">
+              <div class="flex justify-between items-center pb-2.5 border-b border-gray-800/80 mb-2 px-1">
+                <span class="text-xs font-black text-yellow-400 flex items-center gap-1.5">
+                  <i class="fab fa-facebook-messenger text-blue-500"></i> محادثات الزبائن
+                </span>
+                <button onclick="loadAdminChatList()" class="text-[11px] text-gray-400 hover:text-white p-1 rounded-lg hover:bg-gray-900 transition">
+                  <i class="fas fa-rotate"></i>
+                </button>
               </div>
-              <div id="adminChatRoomsList" class="flex-1 overflow-y-auto space-y-1.5 no-scrollbar text-xs">
+              <div id="adminChatRoomsList" class="flex-1 overflow-y-auto space-y-2 no-scrollbar pr-0.5">
                 <p class="text-gray-500 text-center py-8 text-[11px]">لا توجد محادثات نشطة حالياً.</p>
               </div>
             </div>
 
-            <!-- Active Chat Screen -->
-            <div class="md:col-span-2 bg-gray-950 rounded-2xl border border-gray-800 flex flex-col overflow-hidden">
-              <div id="adminActiveChatHeader" class="bg-gray-900 p-2.5 border-b border-gray-800 text-xs font-bold text-yellow-400 flex justify-between items-center">
-                <span>اختر زبوناً للبدء في الرد عليه</span>
-                <span id="adminActiveChatPhone" class="text-gray-400 font-mono text-[11px]"></span>
+            <!-- شاشة الدردشة النشطة بنمط ماسنجر -->
+            <div class="md:col-span-2 bg-[#0b101b] rounded-2xl border border-gray-800 flex flex-col overflow-hidden h-full shadow-inner relative">
+              <!-- Messenger Chat Header -->
+              <div id="adminActiveChatHeader" class="bg-gray-900/90 backdrop-blur-md p-3 border-b border-gray-800 text-xs flex justify-between items-center shadow-sm">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white text-xs shadow">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <div>
+                    <span class="text-white font-bold block">محادثة الزبون</span>
+                    <span class="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> متصل في الدردشة
+                    </span>
+                  </div>
+                </div>
+                <span id="adminActiveChatPhone" class="text-gray-400 font-mono text-[11px] bg-gray-950 px-2 py-1 rounded-lg border border-gray-800"></span>
               </div>
-              <div id="adminChatMessagesBox" class="flex-1 p-3 overflow-y-auto space-y-2 text-xs no-scrollbar bg-black/30">
-                <p class="text-gray-500 text-center py-16 text-xs">انقر على أي محادثة على اليمين لفتحها.</p>
+
+              <!-- Messenger Messages Area -->
+              <div id="adminChatMessagesBox" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs no-scrollbar bg-gradient-to-b from-gray-950 to-[#070b14]">
+                <div class="text-gray-500 text-center py-20 text-xs flex flex-col items-center justify-center gap-2">
+                  <i class="fab fa-facebook-messenger text-3xl text-gray-700"></i>
+                  <span>اختر زبوناً من القائمة على اليمين لبدء المحادثة</span>
+                </div>
               </div>
-              <div class="p-2.5 bg-gray-900 border-t border-gray-800 flex gap-2">
-                <input id="adminReplyInput" type="text" placeholder="اكتب ردك للزبون..." onkeydown="if(event.key==='Enter') sendAdminReply()" disabled
-                       class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-yellow-500 disabled:opacity-40">
+
+              <!-- Messenger Chat Input Bar -->
+              <div class="p-2.5 bg-gray-900/95 border-t border-gray-800 flex items-center gap-2">
+                <input id="adminReplyInput" type="text" placeholder="اكتب ردك للزبون هنا..." onkeydown="if(event.key==='Enter') sendAdminReply()" disabled
+                       class="flex-1 bg-gray-950 border border-gray-800 focus:border-blue-500 rounded-full px-4 py-2.5 text-xs text-white focus:outline-none transition disabled:opacity-40">
                 <button onclick="sendAdminReply()" id="adminReplySendBtn" disabled
-                        class="px-4 py-2 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-black font-extrabold rounded-xl text-xs transition">
-                  إرسال وإشعار الزبون
+                        class="w-9 h-9 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 disabled:opacity-40 text-white font-bold rounded-full flex items-center justify-center transition shadow-md active:scale-95 shrink-0">
+                  <i class="fas fa-paper-plane text-xs"></i>
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 3. Orders Tab -->
+        <!-- 3. Orders Tab (مع إضافة وقت وتاريخ وصول الطلبية بدقة) -->
         <div id="adminTabOrders" class="hidden space-y-3">
           <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-xl p-2.5 text-[11px] flex items-center justify-between">
             <span class="flex items-center gap-1.5"><i class="fas fa-clock-rotate-left"></i> يتم مسح وحذف الطلبات تلقائياً بعد مرور 24 ساعة.</span>
@@ -806,7 +827,6 @@
 
   <!-- Gemini AI Chat Widget -->
   <div id="geminiChatWidget" class="fixed bottom-24 md:bottom-8 left-4 z-40">
-    <!-- Floating Button -->
     <button onclick="toggleGeminiChat()" id="geminiToggleBtn" 
             class="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-tr from-amber-600 via-yellow-500 to-amber-400 text-black rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition duration-300 relative border-2 border-black/50">
       <i class="fas fa-robot text-lg md:text-xl"></i>
@@ -814,9 +834,7 @@
       <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-black rounded-full"></span>
     </button>
 
-    <!-- Chat Box -->
     <div id="geminiChatBox" class="hidden fixed md:absolute bottom-24 md:bottom-16 left-3 right-3 md:left-0 md:right-auto md:w-96 h-[480px] max-h-[75vh] bg-gray-950/95 border border-yellow-500/40 rounded-3xl shadow-2xl flex-col overflow-hidden backdrop-blur-xl">
-      <!-- Header -->
       <div class="bg-gray-900/90 p-3.5 border-b border-gray-800 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center border border-yellow-500/30">
@@ -839,21 +857,18 @@
         </div>
       </div>
 
-      <!-- Messages Area -->
       <div id="geminiMessages" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs no-scrollbar">
         <div class="bg-gray-900 border border-gray-800 text-gray-200 p-3 rounded-2xl rounded-tr-none leading-relaxed">
           مرحباً بك في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 كيف يمكنني مساعدتك اليوم؟ يمكنك سؤالي عن المنتجات والأسعار، التوصيل، أو التحدث مع المدير.
         </div>
       </div>
 
-      <!-- Quick Suggestion Chips -->
       <div class="px-3 py-1.5 bg-gray-950/80 border-t border-gray-900 flex gap-1.5 overflow-x-auto no-scrollbar text-[10px]">
         <button onclick="quickSendAI('ما هي المنتجات الأكثر طلباً؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🔥 الأكثر طلباً</button>
         <button onclick="quickSendAI('كيف يتم التوصيل والدفع؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🚚 التوصيل والدفع</button>
         <button onclick="toggleSupportChat()" class="px-2.5 py-1 bg-amber-500/20 text-yellow-400 rounded-lg border border-yellow-500/30 whitespace-nowrap font-bold">💬 محادثة المدير</button>
       </div>
 
-      <!-- Input Area -->
       <div class="p-2.5 bg-gray-900/90 border-t border-gray-800 flex items-center gap-2">
         <input id="geminiInput" type="text" placeholder="اكتب سؤالك أو استفسارك هنا..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
                class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-yellow-500">
@@ -945,9 +960,6 @@
 
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    /* -------------------------------------------------------------
-       نظام الإشعارات الفورية والتنبيهات الصوتية للزبائن (Push Notifications)
-    ------------------------------------------------------------- */
     function playNotificationSound() {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1058,7 +1070,6 @@
       }
     }
 
-    // إرسال إشعار عام في قاعدة البيانات ليصل لكل الزبائن فوراً
     async function triggerStoreBroadcast(title, body) {
       if (!firebaseReady || !db) return;
       try {
@@ -1084,7 +1095,6 @@
       toast("تم إرسال الإشعار لجميع الزبائن بنجاح! 🚀", "success");
     }
 
-    // الاستماع المستمر للإشعارات العامة والرسائل الجديدة للزبون
     function startRealtimeNotificationsListener() {
       if (!firebaseReady || !db) return;
 
@@ -1096,7 +1106,6 @@
         });
       }
 
-      // 1. الاستماع لإشعارات المنتجات الجديدة وتغيير الأسعار والعروض
       let initialBroadcastLoad = true;
       if (unsubscribeBroadcasts) unsubscribeBroadcasts();
       unsubscribeBroadcasts = db.collection("settings").doc("latest_broadcast")
@@ -1120,7 +1129,6 @@
           }
         });
 
-      // 2. الاستماع لردود المدير في الدردشة حتى لو كانت نافذة الدردشة مغلقة
       const chatId = getCustomerChatId();
       let initialChatLoad = true;
       if (unsubscribeBackgroundChat) unsubscribeBackgroundChat();
@@ -1393,6 +1401,31 @@
     }
 
     /* -------------------------------------------------------------
+       دالة تنسيق وقت وتاريخ الطلبية والرسائل بدقة (جديد)
+    ------------------------------------------------------------- */
+    function formatOrderDateTime(ts) {
+      if (!ts) return "غير محدد";
+      let d = null;
+      if (ts.toDate) d = ts.toDate();
+      else if (ts.seconds) d = new Date(ts.seconds * 1000);
+      else d = new Date(ts);
+      if (!d || isNaN(d.getTime())) return "غير محدد";
+
+      const now = new Date();
+      const diffMs = now.getTime() - d.getTime();
+      const diffMins = Math.floor(diffMs / (1000 * 60));
+      const diffHours = Math.floor(diffMins / 60);
+
+      const timeStr = d.toLocaleTimeString("ar-DZ", { hour: '2-digit', minute: '2-digit' });
+      const dateStr = d.toLocaleDateString("ar-DZ", { day: 'numeric', month: 'numeric' });
+
+      if (diffMins < 1) return `الآن (${timeStr})`;
+      if (diffMins < 60) return `منذ ${diffMins} دقيقة (${timeStr})`;
+      if (diffHours < 24 && now.getDate() === d.getDate()) return `اليوم الساعة ${timeStr}`;
+      return `${dateStr} في ${timeStr}`;
+    }
+
+    /* -------------------------------------------------------------
        نظام الدردشة الحية مع المدير
     ------------------------------------------------------------- */
     function getCustomerChatId() {
@@ -1444,11 +1477,14 @@
           container.innerHTML = snap.docs.map(doc => {
             const m = doc.data();
             const isAdmin = m.sender === "admin";
+            const timeStr = m.createdAt ? formatOrderDateTime(m.createdAt) : "";
             return `
-              <div class="flex ${isAdmin ? 'justify-start' : 'justify-end'}">
-                <div class="${isAdmin ? 'bg-yellow-500/15 border border-yellow-500/30 text-yellow-300 rounded-tl-none' : 'bg-amber-500 text-black font-semibold rounded-tr-none'} p-2.5 rounded-2xl max-w-[85%] leading-relaxed text-xs">
-                  ${isAdmin ? '<span class="text-[9px] text-yellow-400 font-black block mb-0.5"><i class="fas fa-shield-halved ml-1"></i> مدير المتجر</span>' : ''}
-                  ${esc(m.text)}
+              <div class="flex ${isAdmin ? 'justify-start' : 'justify-end'} items-end gap-1.5 my-1">
+                ${isAdmin ? '<div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0 mb-1"><i class="fas fa-headset"></i></div>' : ''}
+                <div class="${isAdmin ? 'bg-gray-800 text-gray-100 rounded-2xl rounded-bl-sm' : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl rounded-br-sm font-medium'} px-3.5 py-2 max-w-[80%] leading-relaxed text-xs shadow-sm">
+                  ${isAdmin ? '<span class="text-[9px] text-blue-400 font-black block mb-0.5">مدير المتجر</span>' : ''}
+                  <div>${esc(m.text)}</div>
+                  <span class="text-[8px] opacity-60 block text-left mt-0.5">${timeStr}</span>
                 </div>
               </div>
             `;
@@ -1512,7 +1548,7 @@
     }
 
     /* -------------------------------------------------------------
-       إدارة محادثات الدعم الفني من جهة المدير
+       إدارة محادثات الدعم الفني من جهة المدير بنمط Messenger
     ------------------------------------------------------------- */
     function loadAdminChatList() {
       if (!firebaseReady || !db || !state.isAdminLoggedIn) return;
@@ -1536,15 +1572,22 @@
             const isUnread = data.unreadByAdmin === true;
             if (isUnread) hasUnread = true;
             const isSelected = currentAdminActivePhone === phone;
+            const timeAgo = data.updatedAt ? formatOrderDateTime(data.updatedAt) : "";
 
             return `
               <div onclick="openAdminChatRoom('${phone}', '${esc(name)}')" 
-                   class="p-2.5 rounded-xl cursor-pointer border transition ${isSelected ? 'bg-yellow-500/20 border-yellow-500/50' : 'bg-gray-900 border-gray-800 hover:border-gray-700'}">
-                <div class="flex justify-between items-center mb-1">
-                  <span class="font-bold text-gray-200 text-xs truncate">${esc(name)}</span>
-                  ${isUnread ? '<span class="px-1.5 py-0.2 bg-red-600 text-white rounded-full text-[9px] font-black">جديد</span>' : ''}
+                   class="p-2.5 rounded-2xl cursor-pointer border transition flex items-center gap-2.5 ${isSelected ? 'bg-gradient-to-r from-blue-900/40 to-gray-900 border-blue-500/60 shadow-md' : 'bg-gray-900/90 border-gray-800/90 hover:border-gray-700'}">
+                <div class="relative w-10 h-10 rounded-full bg-gradient-to-tr from-amber-600 to-yellow-400 flex items-center justify-center font-bold text-black text-xs shrink-0 shadow">
+                  ${esc(name.substring(0, 1)).toUpperCase() || '<i class="fas fa-user"></i>'}
+                  ${isUnread ? '<span class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-600 border-2 border-gray-900 rounded-full"></span>' : ''}
                 </div>
-                <p class="text-gray-400 text-[10px] truncate">${esc(data.lastMessage || "")}</p>
+                <div class="flex-1 truncate">
+                  <div class="flex justify-between items-center mb-0.5">
+                    <span class="font-bold text-gray-100 text-xs truncate ${isUnread ? 'text-white font-black' : ''}">${esc(name)}</span>
+                    <span class="text-[9px] text-gray-500 font-mono">${timeAgo}</span>
+                  </div>
+                  <p class="text-[11px] truncate ${isUnread ? 'text-blue-400 font-bold' : 'text-gray-400'}">${esc(data.lastMessage || "بدء المحادثة")}</p>
+                </div>
               </div>
             `;
           }).join("");
@@ -1560,8 +1603,15 @@
     function openAdminChatRoom(phone, name) {
       currentAdminActivePhone = phone;
       document.getElementById("adminActiveChatHeader").innerHTML = `
-        <span class="text-yellow-400">محادثة الزبون: <strong>${esc(name)}</strong></span>
-        <span class="text-gray-400 font-mono text-[11px]">${esc(phone)}</span>
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white text-xs shadow">
+            ${esc(name.substring(0,1)).toUpperCase() || '<i class="fas fa-user"></i>'}
+          </div>
+          <div>
+            <span class="text-white font-extrabold text-xs block">${esc(name)}</span>
+            <span class="text-gray-400 font-mono text-[10px]">${esc(phone)}</span>
+          </div>
+        </div>
       `;
 
       const input = document.getElementById("adminReplyInput");
@@ -1589,11 +1639,15 @@
           messagesBox.innerHTML = snap.docs.map(doc => {
             const m = doc.data();
             const isAdmin = m.sender === "admin";
+            const timeStr = m.createdAt ? formatOrderDateTime(m.createdAt) : "";
+
             return `
-              <div class="flex ${isAdmin ? 'justify-end' : 'justify-start'}">
-                <div class="${isAdmin ? 'bg-amber-500 text-black font-semibold rounded-tr-none' : 'bg-gray-800 text-gray-200 rounded-tl-none'} p-2 rounded-xl max-w-[80%] text-xs shadow leading-relaxed">
+              <div class="flex ${isAdmin ? 'justify-start' : 'justify-end'} items-end gap-1.5 my-1">
+                ${isAdmin ? '<div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0 mb-1"><i class="fas fa-shield-halved"></i></div>' : ''}
+                <div class="${isAdmin ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl rounded-bl-sm font-medium' : 'bg-gray-800 text-gray-200 rounded-2xl rounded-br-sm'} px-3.5 py-2 max-w-[80%] leading-relaxed text-xs shadow-sm">
                   ${!isAdmin ? `<span class="text-[9px] text-yellow-400 block font-bold mb-0.5">${esc(m.senderName || "الزبون")}</span>` : ''}
-                  ${esc(m.text)}
+                  <div>${esc(m.text)}</div>
+                  <span class="text-[8px] opacity-60 block text-left mt-0.5">${timeStr}</span>
                 </div>
               </div>
             `;
@@ -1630,7 +1684,7 @@
         }, { merge: true });
 
         await batch.commit();
-        toast("تم إرسال الرد وإشعار الزبون!", "success");
+        toast("تم إرسال الرد بنجاح!", "success");
       } catch (err) {
         toast("فشل إرسال الرد.", "error");
       }
@@ -2742,10 +2796,14 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
         }
         container.innerHTML = snap.docs.map(d => {
           const o = d.data();
+          const orderDate = o.createdAt ? formatOrderDateTime(o.createdAt) : "غير محدد";
           return `
             <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 text-xs space-y-2">
               <div class="flex justify-between items-center text-gray-400 border-b border-gray-800 pb-2">
-                <span>طلب #${d.id.slice(0, 6)}</span>
+                <div>
+                  <span class="font-bold text-gray-200">طلب #${d.id.slice(0, 6)}</span>
+                  <span class="block text-[10px] text-gray-500 mt-0.5"><i class="fas fa-clock ml-1"></i> ${orderDate}</span>
+                </div>
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold ${o.status === 'مكتمل' ? 'bg-emerald-950 text-emerald-300' : 'bg-amber-950 text-amber-300'}">${o.status}</span>
               </div>
               <div>${o.items.map(i => `<div class="flex justify-between text-gray-300"><span>${esc(i.name)} ×${i.qty}</span><span>${money(i.price * i.qty)}</span></div>`).join("")}</div>
@@ -2900,6 +2958,9 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
       if (tab === "storeSettings") populateAdminSettingsInputs();
     }
 
+    /* -------------------------------------------------------------
+       تحميل وعرض الطلبات مع التوقيت الدقيق وتنسيق أنيق
+    ------------------------------------------------------------- */
     async function loadOrdersOnce() {
       if (!firebaseReady) return;
       const list = document.getElementById("adminOrdersList");
@@ -2922,30 +2983,41 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
           return;
         }
 
-        list.innerHTML = orders.map(o => `
-          <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 text-xs space-y-2">
-            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+        list.innerHTML = orders.map(o => {
+          const formattedDate = o.createdAt ? formatOrderDateTime(o.createdAt) : "غير محدد";
+
+          return `
+          <div class="bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs space-y-2.5 shadow-sm">
+            <div class="flex justify-between items-start border-b border-gray-800 pb-2">
               <div>
-                <span class="font-bold text-yellow-400">${esc(o.customerName)}</span>
-                <span class="text-gray-400 font-mono text-[10px]">(${esc(o.customerPhone)})</span>
+                <span class="font-extrabold text-yellow-400 text-sm">${esc(o.customerName)}</span>
+                <span class="text-gray-400 font-mono text-[11px] block mt-0.5">(${esc(o.customerPhone)})</span>
+                <!-- حقل توقيت وتاريخ إرسال الطلبية المطلوب بدقة -->
+                <div class="text-[10px] text-emerald-400 font-semibold flex items-center gap-1.5 mt-1 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded-md w-max">
+                  <i class="fas fa-clock text-[9px]"></i>
+                  <span>أُرسلت: ${formattedDate}</span>
+                </div>
               </div>
               <div class="flex items-center gap-1.5">
-                <select onchange="updateOrderStatus('${o.id}', this.value)" class="bg-gray-900 border border-gray-700 text-[10px] p-1 rounded text-white font-bold">
+                <select onchange="updateOrderStatus('${o.id}', this.value)" class="bg-gray-900 border border-gray-700 text-[10px] p-1.5 rounded-lg text-white font-bold">
                   <option value="جديد" ${o.status === "جديد" ? "selected" : ""}>جديد</option>
                   <option value="مكتمل" ${o.status === "مكتمل" ? "selected" : ""}>مكتمل</option>
                 </select>
-                <button onclick="deleteSingleOrder('${o.id}')" title="حذف الطلب" class="p-1 text-red-400 hover:text-red-300">
+                <button onclick="deleteSingleOrder('${o.id}')" title="حذف الطلب" class="p-1.5 text-red-400 hover:text-red-300 bg-red-950/40 rounded-lg border border-red-900/50">
                   <i class="fas fa-trash-can text-xs"></i>
                 </button>
               </div>
             </div>
-            <div class="text-[11px] text-gray-400">العنوان: ${esc(o.address)}</div>
-            <div>${(o.items || []).map(i => `<div class="flex justify-between text-gray-300"><span>${esc(i.name)} ×${i.qty}</span><span>${money(i.price * i.qty)}</span></div>`).join("")}</div>
-            <div class="flex justify-between pt-1 border-t border-gray-800 font-bold">
-              <span>الإجمالي:</span>
-              <span class="text-amber-400">${money(o.total)}</span>
+            <div class="text-[11px] text-gray-300 bg-gray-900/60 p-2 rounded-xl border border-gray-900">
+              <i class="fas fa-location-dot text-amber-400 ml-1"></i> العنوان: ${esc(o.address)}
             </div>
-          </div>`).join("");
+            <div class="space-y-1">${(o.items || []).map(i => `<div class="flex justify-between text-gray-300 text-[11px]"><span>${esc(i.name)} ×${i.qty}</span><span class="font-mono">${money(i.price * i.qty)}</span></div>`).join("")}</div>
+            <div class="flex justify-between pt-2 border-t border-gray-800 font-bold">
+              <span>الإجمالي:</span>
+              <span class="text-amber-400 font-black text-sm">${money(o.total)}</span>
+            </div>
+          </div>`;
+        }).join("");
       } catch (e) {
         list.innerHTML = `<p class="text-xs text-red-400 text-center py-4">فشل تحميل الطلبات.</p>`;
       }
@@ -3005,8 +3077,8 @@ ${availableProductsSummary || "لا توجد منتجات مسجلة حاليا�
               </div>
             </div>
             <div class="shrink-0 flex items-center gap-1.5">
-              <button onclick="openAdminChatRoom('${esc(c.phone || c.id)}', '${esc(c.name || c.phone || c.id)}'); switchAdminTab('chats');" class="px-2.5 py-1.5 bg-amber-500/20 text-yellow-400 hover:bg-amber-500/30 rounded-lg text-[10px] font-bold flex items-center gap-1 transition">
-                <i class="fas fa-comments"></i> مراسلة
+              <button onclick="openAdminChatRoom('${esc(c.phone || c.id)}', '${esc(c.name || c.phone || c.id)}'); switchAdminTab('chats');" class="px-2.5 py-1.5 bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 rounded-lg text-[10px] font-bold flex items-center gap-1 transition">
+                <i class="fab fa-facebook-messenger"></i> مراسلة
               </button>
               <button onclick="deleteCustomerAccount('${esc(c.id)}')" class="px-2.5 py-1.5 bg-red-950/80 hover:bg-red-900 border border-red-800 text-red-300 rounded-lg text-[10px] font-bold flex items-center gap-1 transition">
                 <i class="fas fa-trash-can"></i> حذف
