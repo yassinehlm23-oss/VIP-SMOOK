@@ -58,6 +58,33 @@
     @media (prefers-reduced-motion: reduce) {
       .marquee-track { animation: none; }
     }
+
+    /* تأثير وميض وتوهج Gemini Shimmer */
+    .gemini-gradient-text {
+      background: linear-gradient(135deg, #4285f4 0%, #9b72cb 50%, #d96570 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gemini-shimmer {
+      background: linear-gradient(90deg, rgba(66,133,244,0.15) 0%, rgba(155,114,203,0.3) 50%, rgba(217,101,112,0.15) 100%);
+      background-size: 200% 100%;
+      animation: geminiShimmer 2s infinite linear;
+    }
+    @keyframes geminiShimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .typing-cursor::after {
+      content: '▋';
+      display: inline-block;
+      color: #9b72cb;
+      animation: blink 0.8s infinite;
+      margin-right: 2px;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
   </style>
 </head>
 <body class="bg-[#070a12] text-gray-100 min-h-screen pb-20 md:pb-0">
@@ -351,7 +378,7 @@
     </div>
   </div>
 
-  <!-- Authentication / Profile Modal (بدون شعار إنستغرام) -->
+  <!-- Authentication / Profile Modal -->
   <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-gray-900 border border-yellow-500/30 p-5 md:p-6 rounded-3xl w-full max-w-sm modal-scroll relative shadow-2xl">
       <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
@@ -659,7 +686,7 @@
           </div>
         </div>
 
-        <!-- Action Control Buttons Row (زر فتح واجهة المحادثات المنفردة بدون أيقونة ماسنجر) -->
+        <!-- Action Control Buttons Row -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
           <button onclick="openStandaloneChat()" id="tabChatsBtn" class="py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition active:scale-95">
             <i class="fas fa-comments text-base"></i> محادثات الزبائن <span id="adminUnreadChatBadge" class="hidden w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
@@ -810,15 +837,10 @@
     </div>
   </div>
 
-  <!-- ========================================================
-       واجهة التحدث مع الزبائن المنفردة والمستقلة بالكامل (Messenger Style)
-       ======================================================== -->
+  <!-- واجهة التحدث مع الزبائن المنفردة للمدير -->
   <div id="standaloneChatModal" class="fixed inset-0 z-[95] bg-black/90 backdrop-blur-md hidden items-center justify-center p-0 md:p-4">
     <div class="w-full h-full md:max-w-4xl md:h-[90vh] bg-[#0c121e] border-0 md:border border-gray-800 md:rounded-3xl flex overflow-hidden shadow-2xl relative">
-      
-      <!-- العمود الأول: قائمة محادثات الزبائن -->
       <div id="chatSidebar" class="w-full md:w-80 bg-gray-950 border-l border-gray-800/80 flex flex-col h-full shrink-0">
-        <!-- ترويسة القائمة -->
         <div class="p-3.5 border-b border-gray-800/80 flex items-center justify-between">
           <div class="flex items-center gap-2">
             <button onclick="closeStandaloneChat()" class="text-gray-400 hover:text-white p-1 text-base rounded-lg hover:bg-gray-900 transition">
@@ -833,7 +855,6 @@
           </button>
         </div>
 
-        <!-- شريط البحث السريع في المحادثات -->
         <div class="p-2.5 border-b border-gray-900 bg-gray-950/90">
           <div class="relative">
             <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-[11px]"></i>
@@ -842,15 +863,12 @@
           </div>
         </div>
 
-        <!-- قائمة المحادثات -->
         <div id="adminChatRoomsList" class="flex-1 overflow-y-auto space-y-1.5 p-2 no-scrollbar">
           <p class="text-gray-500 text-center py-10 text-xs">لا توجد محادثات نشطة حالياً.</p>
         </div>
       </div>
 
-      <!-- العمود الثاني: صندوق الرسائل المنفرد للزبون المختار -->
       <div id="chatMainArea" class="hidden md:flex flex-1 flex-col h-full bg-[#070b14] relative">
-        <!-- ترويسة المحادثة النشطة -->
         <div id="adminActiveChatHeader" class="bg-gray-900/95 backdrop-blur-md px-4 py-3 border-b border-gray-800 flex items-center justify-between shadow-sm z-10">
           <div class="flex items-center gap-3">
             <button onclick="backToChatSidebarMobile()" class="md:hidden text-gray-400 hover:text-white p-1.5 text-base">
@@ -874,7 +892,6 @@
           </div>
         </div>
 
-        <!-- مساحة عرض الرسائل بتصميم فقاعات ماسنجر -->
         <div id="adminChatMessagesBox" class="flex-1 p-4 overflow-y-auto space-y-2.5 text-xs no-scrollbar bg-gradient-to-b from-gray-950/60 to-[#070b14]">
           <div class="text-gray-500 text-center py-28 text-xs flex flex-col items-center justify-center gap-3">
             <div class="w-16 h-16 rounded-full bg-gray-900 flex items-center justify-center text-gray-700 text-2xl">
@@ -884,7 +901,6 @@
           </div>
         </div>
 
-        <!-- شريط كتابة الرسالة والإرسال -->
         <div class="p-3 bg-gray-950 border-t border-gray-800/90 flex items-center gap-2">
           <input id="adminReplyInput" type="text" placeholder="اكتب ردك للزبون هنا..." onkeydown="if(event.key==='Enter') sendAdminReply()" disabled
                  class="flex-1 bg-gray-900 border border-gray-800 focus:border-yellow-500 rounded-full px-4 py-2.5 text-xs text-white focus:outline-none transition disabled:opacity-40">
@@ -894,63 +910,92 @@
           </button>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- Gemini AI Chat Widget -->
+  <!-- ========================================================
+       Gemini AI Chat Widget (نسخة فائقة التطور بتصميم وتجربة Google Gemini)[span_3](start_span)[span_3](end_span)
+       ======================================================== -->
   <div id="geminiChatWidget" class="fixed bottom-24 md:bottom-8 left-4 z-40">
+    <!-- Gemini Floating Trigger Button[span_4](start_span)[span_4](end_span) -->
     <button onclick="toggleGeminiChat()" id="geminiToggleBtn" 
-            class="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-tr from-amber-600 via-yellow-500 to-amber-400 text-black rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition duration-300 relative border-2 border-black/50">
-      <i class="fas fa-robot text-lg md:text-xl"></i>
-      <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-black rounded-full animate-ping"></span>
-      <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-black rounded-full"></span>
+            class="w-13 h-13 md:w-14 md:h-14 p-0.5 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-rose-400 shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 relative border border-white/20">
+      <div class="w-full h-full bg-[#0a0f1d] rounded-full flex items-center justify-center">
+        <i class="fas fa-sparkles text-lg text-transparent bg-clip-text bg-gradient-to-tr from-blue-400 via-purple-300 to-rose-400"></i>
+      </div>
+      <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-blue-500 border-2 border-black rounded-full animate-ping"></span>
+      <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-gradient-to-r from-blue-500 to-purple-500 border-2 border-black rounded-full"></span>
     </button>
 
-    <div id="geminiChatBox" class="hidden fixed md:absolute bottom-24 md:bottom-16 left-3 right-3 md:left-0 md:right-auto md:w-96 h-[500px] max-h-[75vh] bg-gray-950/95 border border-yellow-500/40 rounded-3xl shadow-2xl flex-col overflow-hidden backdrop-blur-xl">
-      <div class="bg-gray-900/90 p-3.5 border-b border-gray-800 flex items-center justify-between">
+    <!-- Gemini Dedicated Modal / Window[span_5](start_span)[span_5](end_span) -->
+    <div id="geminiChatBox" class="hidden fixed md:absolute bottom-20 md:bottom-16 left-3 right-3 md:left-0 md:right-auto md:w-[420px] h-[580px] max-h-[82vh] bg-[#0c101d]/95 border border-purple-500/30 rounded-3xl shadow-2xl flex-col overflow-hidden backdrop-blur-2xl">
+      
+      <!-- Top Glowing Border Line -->
+      <div class="h-1 w-full bg-gradient-to-r from-blue-500 via-purple-500 to-rose-400"></div>
+
+      <!-- Gemini Header[span_6](start_span)[span_6](end_span) -->
+      <div class="bg-[#11162a]/90 px-4 py-3 border-b border-gray-800/80 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center border border-yellow-500/30">
-            <i class="fas fa-sparkles text-xs"></i>
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600/30 via-purple-600/30 to-rose-600/30 border border-purple-500/40 flex items-center justify-center shadow-inner">
+            <i class="fas fa-sparkles text-sm text-purple-300"></i>
           </div>
           <div>
-            <h4 class="text-xs font-black text-yellow-400">مساعد VIP SMOOK الذكي (Pro)</h4>
-            <span class="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> متصل وجاهز للخدمة
+            <div class="flex items-center gap-1.5">
+              <h4 class="text-xs font-black text-white tracking-wide">VIP SMOOK <span class="gemini-gradient-text font-black">Gemini</span></h4>
+              <span class="text-[9px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold">Pro 2.5</span>
+            </div>
+            <span class="text-[10px] text-gray-400 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ذكاء متصل لحظياً ببيانات المتجر
             </span>
           </div>
         </div>
-        <div class="flex items-center gap-1">
-          <button onclick="clearGeminiChatHistory()" title="بدء محادثة جديدة" class="text-gray-400 hover:text-yellow-400 p-1 text-xs transition">
+
+        <div class="flex items-center gap-1.5">
+          <button onclick="clearGeminiChatHistory()" title="بدء محادثة جديدة" class="w-7 h-7 rounded-lg bg-gray-900/80 hover:bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center text-xs transition border border-gray-800">
             <i class="fas fa-rotate-right"></i>
           </button>
-          <button onclick="toggleGeminiChat()" class="text-gray-400 hover:text-white p-1 text-sm">
+          <button onclick="toggleGeminiChat()" class="w-7 h-7 rounded-lg bg-gray-900/80 hover:bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center text-xs transition border border-gray-800">
             <i class="fas fa-xmark"></i>
           </button>
         </div>
       </div>
 
-      <div id="geminiMessages" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs no-scrollbar">
-        <div class="bg-gray-900 border border-gray-800 text-gray-200 p-3 rounded-2xl rounded-tr-none leading-relaxed">
-          مرحباً بك في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 أنا مستشارك الذكي. اسألني عن أي سلعة، الأسعار الحالية، أو التوصيل وسأساعدك باختيار طلبك وإضافته للسلة فوراً!
+      <!-- Messages Area[span_7](start_span)[span_7](end_span) -->
+      <div id="geminiMessages" class="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs no-scrollbar bg-gradient-to-b from-[#0c101d] to-[#070913]">
+        <!-- Welcome Gemini Bubble[span_8](start_span)[span_8](end_span) -->
+        <div class="flex items-start gap-2.5">
+          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shrink-0 mt-0.5 shadow">
+            <i class="fas fa-sparkles text-white text-[11px]"></i>
+          </div>
+          <div class="bg-[#151b2e] border border-gray-800 text-gray-200 p-3.5 rounded-2xl rounded-tr-none leading-relaxed shadow-lg max-w-[90%]">
+            <p class="font-extrabold text-white text-xs mb-1">أهلاً بك! 👋 أنا مساعدك الذكي المطور بنظام Gemini[span_9](start_span)[span_9](end_span).</p>
+            <p class="text-gray-300 text-[11px] leading-relaxed">
+              يمكنني إخبارك بالأسعار الحالية، توفر السلع في المخزون، تفاصيل التوصيل السريع لوسط المدينة، أو مساعدتك في اختيار وإضافة أي منتج مباشرة إلى سلتك!
+            </p>
+          </div>
         </div>
       </div>
 
-      <div class="px-3 py-1.5 bg-gray-950/80 border-t border-gray-900 flex gap-1.5 overflow-x-auto no-scrollbar text-[10px]">
-        <button onclick="quickSendAI('واش هي السلع الأكثر طلباً اليوم؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🔥 الأكثر طلباً</button>
-        <button onclick="quickSendAI('شحال التوصيل ووقتاش يوصلني؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🚚 التوصيل السريع</button>
-        <button onclick="quickSendAI('كاين كود برومو ديرلي تخفيض؟')" class="px-2.5 py-1 bg-gray-900 hover:bg-gray-800 text-gray-300 rounded-lg border border-gray-800 whitespace-nowrap">🎁 كود الخصم</button>
-        <button onclick="toggleSupportChat()" class="px-2.5 py-1 bg-amber-500/20 text-yellow-400 rounded-lg border border-yellow-500/30 whitespace-nowrap font-bold">💬 محادثة المدير</button>
+      <!-- Quick Suggested Chips[span_10](start_span)[span_10](end_span) -->
+      <div class="px-3 py-1.5 bg-[#0e1322] border-t border-gray-800/80 flex gap-1.5 overflow-x-auto no-scrollbar text-[10px]">
+        <button onclick="quickSendAI('واش هي السلع الأكثر طلباً اليوم؟')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">✨ الأكثر طلباً</button>
+        <button onclick="quickSendAI('شحال التوصيل ووقتاش يوصلني؟')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">🚚 التوصيل السريع</button>
+        <button onclick="quickSendAI('كاين كود برومو ديرلي تخفيض؟')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">🎁 كود الخصم</button>
+        <button onclick="toggleSupportChat()" class="px-3 py-1 bg-amber-500/15 text-amber-300 rounded-full border border-amber-500/30 whitespace-nowrap font-bold hover:bg-amber-500/25 transition">💬 محادثة المدير</button>
       </div>
 
-      <div class="p-2.5 bg-gray-900/90 border-t border-gray-800 flex items-center gap-2">
-        <input id="geminiInput" type="text" placeholder="اكتب سؤالك (مثال: شحال دير مارلبورو حمرا؟)..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
-               class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-yellow-500">
-        <button onclick="sendGeminiMessage()" id="geminiSendBtn" 
-                class="w-8 h-8 bg-amber-500 hover:bg-amber-400 text-black rounded-xl flex items-center justify-center font-bold transition shrink-0">
-          <i class="fas fa-paper-plane text-xs"></i>
-        </button>
+      <!-- Gemini Pill Input Bar[span_11](start_span)[span_11](end_span) -->
+      <div class="p-3 bg-[#0d1222] border-t border-gray-800/80">
+        <div class="flex items-center gap-2 bg-[#14192b] border border-gray-800 rounded-2xl px-3 py-1.5 focus-within:border-purple-500/70 transition shadow-inner">
+          <input id="geminiInput" type="text" placeholder="اسأل Gemini عن أي سلعة أو سعر..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
+                 class="flex-1 bg-transparent py-1.5 text-xs text-white focus:outline-none placeholder-gray-500">
+          <button onclick="sendGeminiMessage()" id="geminiSendBtn" title="إرسال"
+                  class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-purple-600 to-rose-500 hover:opacity-90 text-white flex items-center justify-center transition shadow active:scale-95 shrink-0">
+            <i class="fas fa-arrow-up text-xs"></i>
+          </button>
+        </div>
       </div>
+
     </div>
   </div>
 
@@ -974,6 +1019,7 @@
     const GEMINI_API_KEY = atob("QVEuQWI4Uk42SVExX280VDhwVHFZb2ctYXJtVUR5UUhOSGdtVFVMU2ljQ2tqbE9lSkJnU1E=");
 
     let geminiChatHistory = [];
+    let isGeminiResponding = false;
     let unsubscribeSupportChat = null;
     let unsubscribeBackgroundChat = null;
     let unsubscribeAdminChatList = null;
@@ -1617,7 +1663,7 @@
     }
 
     /* -------------------------------------------------------------
-       نظام واجهة محادثات الزبائن المنفردة للمدير (Messenger Style)
+       نظام واجهة محادثات الزبائن المنفردة للمدير
     ------------------------------------------------------------- */
     function openStandaloneChat() {
       closeModal("adminModal");
@@ -1813,7 +1859,7 @@
     }
 
     /* -------------------------------------------------------------
-       تطوير وتحديث الذكاء الاصطناعي (Gemini Pro Store Assistant)
+       تطوير وتحديث الذكاء الاصطناعي بنظام Google Gemini Pro المتطور[span_12](start_span)[span_12](end_span)
     ------------------------------------------------------------- */
     function toggleGeminiChat() {
       const box = document.getElementById("geminiChatBox");
@@ -1832,17 +1878,32 @@
       geminiChatHistory = [];
       const msgContainer = document.getElementById("geminiMessages");
       msgContainer.innerHTML = `
-        <div class="bg-gray-900 border border-gray-800 text-gray-200 p-3 rounded-2xl rounded-tr-none leading-relaxed">
-          مرحباً بك مجدداً في <strong class="text-yellow-400">VIP SMOOK</strong>! 👋 تم بدء محادثة جديدة. كيف يمكنني مساعدتك الآن؟
+        <div class="flex items-start gap-2.5">
+          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shrink-0 mt-0.5 shadow">
+            <i class="fas fa-sparkles text-white text-[11px]"></i>
+          </div>
+          <div class="bg-[#151b2e] border border-gray-800 text-gray-200 p-3.5 rounded-2xl rounded-tr-none leading-relaxed shadow-lg max-w-[90%]">
+            <p class="font-extrabold text-white text-xs mb-1">مرحباً بك مجدداً في Gemini! ✨[span_13](start_span)[span_13](end_span)</p>
+            <p class="text-gray-300 text-[11px]">تم بدء محادثة جديدة وفارغة. كيف يمكنني مساعدتك الآن؟</p>
+          </div>
         </div>
       `;
-      toast("تم بدء محادثة جديدة مع المساعد الذكي.", "normal");
+      toast("تم بدء محادثة جديدة مع Gemini بنجاح.", "normal");
     }
 
     function quickSendAI(text) {
       const input = document.getElementById("geminiInput");
       input.value = text;
       sendGeminiMessage();
+    }
+
+    function copyToClipboard(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const icon = btn.querySelector("i");
+        if (icon) icon.className = "fas fa-check text-emerald-400";
+        toast("تم نسخ الرد بنجاح!", "success");
+        setTimeout(() => { if (icon) icon.className = "fas fa-copy"; }, 2000);
+      }).catch(() => toast("تعذر النسخ.", "error"));
     }
 
     function findRelevantProducts(q, limit = 3) {
@@ -1882,7 +1943,7 @@
 
       if (/^(hi|hello|مرحبا|سلام|السلام|أهلا|اهلا|الو|صباح|مساء|صحا|سلام عليكم|صباح الخير|سلام خويا|مساء الخير)/i.test(norm) && norm.length <= 25) {
         return {
-          text: `أهلاً وسهلاً بك في متجر **VIP SMOOK** الرسمي! 👋\nأنا المساعد الذكي للمتجر. يمكنك سؤالي عن أسعار السجائر، التبغ، المشروبات، أو تفاصيل التوصيل السريع والدفع كاش عند الاستلام!`,
+          text: `أهلاً وسهلاً بك في متجر VIP SMOOK! 👋 أنا مستشارك الذكي Gemini[span_14](start_span)[span_14](end_span). يمكنك الاستفسار عن أسعار وتوفر المنتجات، العروض الحالية، أو التوصيل السريع والدفع كاش عند الاستلام!`,
           actions: []
         };
       }
@@ -1895,7 +1956,7 @@
           };
         } else {
           return {
-            text: `حالياً لا يوجد كود خصم، لكن جميع أسعارنا محدثة وتنافسية، والتوصيل **مجاني بالكامل** عند وصول طلبك إلى ${money(cfg.freeShippingTarget)}! 🎁`,
+            text: `حالياً لا يوجد كود خصم نشط، ولكن التوصيل **مجاني بالكامل** عند وصول طلبك إلى ${money(cfg.freeShippingTarget)}! 🎁`,
             actions: []
           };
         }
@@ -1903,7 +1964,7 @@
 
       if (norm.includes("توصيل") || norm.includes("livraison") || norm.includes("بلاصة") || norm.includes("مكان") || norm.includes("وين توصل") || norm.includes("توصلو")) {
         return {
-          text: `🚚 **خيارات التوصيل السريع والمباشر:**\n• وسط المدينة (Centre-ville): **${money(cfg.shippingFeeCentre)}**\n• البلديات والمناطق المجاورة: **${money(cfg.shippingFeeNearby)}**\n• استلام فوري من المحل: **مجاناً**\n\n🎉 **توصيل مجاني:** يصبح التوصيل مجانياً تلقائياً لأي طلب بقيمة **${money(cfg.freeShippingTarget)}** أو أكثر!`,
+          text: `🚚 **خيارات التوصيل المتوفرة لدينا:**\n• وسط المدينة (Centre-ville): **${money(cfg.shippingFeeCentre)}**\n• البلديات والمناطق المجاورة: **${money(cfg.shippingFeeNearby)}**\n• استلام فوري من المحل: **مجاناً**\n\n🎉 ويصبح التوصيل مجانياً تلقائياً لأي طلب بقيمة **${money(cfg.freeShippingTarget)}** أو أكثر!`,
           actions: []
         };
       }
@@ -1917,7 +1978,7 @@
 
       if (norm.includes("مدير") || norm.includes("نهدر مع") || norm.includes("صاحب المحل") || norm.includes("مسؤول") || norm.includes("مشكل")) {
         return {
-          text: `تفضل بالتواصل المباشر مع مدير المتجر الآن! انقر على زر "محادثة المدير" أدناه وسيرد عليك مباشرة في أي وقت:`,
+          text: `تفضل بالتواصل المباشر مع إدارة المتجر الآن عبر الزر أدناه وسيرد عليك المدير في أقرب وقت:`,
           actions: [],
           openManagerChat: true
         };
@@ -1936,7 +1997,7 @@
       const matched = findRelevantProducts(q, 3);
       if (matched.length > 0) {
         return {
-          text: `وجدت لك المنتجات التالية المتوفرة في المخزون:`,
+          text: `وجدت لك هذه المنتجات المتوفرة في المخزون:`,
           actions: matched
         };
       }
@@ -1947,7 +2008,30 @@
       };
     }
 
+    // دالة محاكاة الكتابة الحية الحرفية (Gemini Typewriter Effect)
+    function streamGeminiText(elementId, fullText, speed = 12) {
+      return new Promise((resolve) => {
+        const el = document.getElementById(elementId);
+        if (!el) return resolve();
+        el.classList.add("typing-cursor");
+        let i = 0;
+        const timer = setInterval(() => {
+          if (i < fullText.length) {
+            el.textContent += fullText.charAt(i);
+            i++;
+            const box = document.getElementById("geminiMessages");
+            if (box) box.scrollTop = box.scrollHeight;
+          } else {
+            clearInterval(timer);
+            el.classList.remove("typing-cursor");
+            resolve();
+          }
+        }, speed);
+      });
+    }
+
     async function sendGeminiMessage() {
+      if (isGeminiResponding) return;
       const input = document.getElementById("geminiInput");
       const msgText = input.value.trim();
       if (!msgText) return;
@@ -1955,9 +2039,10 @@
       const msgContainer = document.getElementById("geminiMessages");
       const sendBtn = document.getElementById("geminiSendBtn");
 
+      // فقاعة المستخدم العصرية
       msgContainer.innerHTML += `
         <div class="flex justify-start">
-          <div class="bg-amber-500 text-black font-semibold p-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow text-xs">
+          <div class="bg-[#1c2438] border border-gray-700/60 text-white font-medium p-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow text-xs">
             ${esc(msgText)}
           </div>
         </div>
@@ -1965,16 +2050,22 @@
       input.value = "";
       msgContainer.scrollTop = msgContainer.scrollHeight;
 
+      // شريط التفكير والوميض الخاص بـ Gemini (Shimmer Loader)
+      isGeminiResponding = true;
+      sendBtn.disabled = true;
       const loadingId = "gemini_loading_" + Date.now();
       msgContainer.innerHTML += `
-        <div id="${loadingId}" class="flex justify-end">
-          <div class="bg-gray-900 border border-gray-800 text-gray-400 p-2.5 rounded-2xl rounded-tr-none text-[11px] flex items-center gap-1.5 shadow">
-            <i class="fas fa-circle-notch fa-spin text-yellow-400"></i> جاري التفكير الذكي...
+        <div id="${loadingId}" class="flex items-start gap-2.5">
+          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shrink-0 mt-0.5 shadow animate-pulse">
+            <i class="fas fa-sparkles text-white text-[11px]"></i>
+          </div>
+          <div class="gemini-shimmer border border-purple-500/30 text-purple-200 p-3 rounded-2xl rounded-tr-none text-xs flex items-center gap-2 shadow-lg">
+            <span class="w-2 h-2 rounded-full bg-purple-400 animate-ping"></span>
+            <span class="font-bold">جيميناي يفكر ويحلل طلبك...</span>
           </div>
         </div>
       `;
       msgContainer.scrollTop = msgContainer.scrollHeight;
-      sendBtn.disabled = true;
 
       geminiChatHistory.push({ role: "user", parts: [{ text: msgText }] });
       if (geminiChatHistory.length > 8) geminiChatHistory = geminiChatHistory.slice(-8);
@@ -1992,10 +2083,8 @@
         const cartTotalNow = state.cart.reduce((s, x) => s + (x.price * x.qty), 0);
 
         const systemPrompt = `
-أنت المساعد الذكي الخبير لمتجر "VIP SMOOK" الرسمي الفاخر.
-هدفك: مساعدة الزبون بذكاء ودقة، الإجابة عن المنتجات وتوفرها، الأسعار، وحثه على إكمال الطلب، وتوجيهه للإدارة إذا كان لديه طلب خاص.
-أسلوبك: راقٍ، مهذب، سريع البديهة، تفهم العامية الجزائرية والفصحى تماماً.
-
+أنت المساعد الذكي الخبير "Gemini" لمتجر VIP SMOOK الرسمي الفاخر.
+أسلوبك: فائق الذكاء، راقٍ ومرح، يفهم الدارجة الجزائرية والفصحى بطلاقة وسلاسة تامة.
 بيانات المتجر المحدثة لحظياً:
 - السلع والمخزون والأسعار:
 ${availableProductsSummary || "جاري جلب المنتجات."}
@@ -2005,33 +2094,25 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
 - كود الخصم: ${cfg.couponCode ? `كود '${cfg.couponCode}' يمنح خصم ${cfg.couponPercent}%` : 'لا يوجد كود نشط'}.
 - هواتف المحل: ${cfg.storePhones?.join(" - ")}.
 
-تعليمات هامة:
+تعليمات صارمة:
 1. اذكر الأسعار بدقة بالدينار الجزائري (د.ج).
-2. إذا سأل عن منتج معين، أجب باختصار واعرض له ميزاته وسعره.
-3. إذا طلب الزبون التحدث مع المدير أو مسألة لا تستطيع حلها، شجعه على فتح "محادثة المدير".
+2. اجعل إجابتك ذكية وسريعة ومباشرة ومفيدة دون حشو زائد.
 `;
 
         const activeModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash-latest"];
-        
         for (const model of activeModels) {
           try {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
-            
-            const contents = [
-              { role: "user", parts: [{ text: systemPrompt }] },
-              { role: "model", parts: [{ text: "أهلاً بك! أنا جاهز تماماً لخدمة زبائن VIP SMOOK بأعلى معايير الذكاء والدقة." }] },
-              ...geminiChatHistory
-            ];
-
             const response = await fetch(url, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                contents: contents,
-                generationConfig: {
-                  temperature: 0.6,
-                  maxOutputTokens: 600
-                }
+                contents: [
+                  { role: "user", parts: [{ text: systemPrompt }] },
+                  { role: "model", parts: [{ text: "أهلاً بك! أنا Gemini ومستعد لمساعدتك باحترافية." }] },
+                  ...geminiChatHistory
+                ],
+                generationConfig: { temperature: 0.65, maxOutputTokens: 500 }
               })
             });
 
@@ -2045,7 +2126,7 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
           } catch (_) {}
         }
       } catch (err) {
-        console.warn("AI fallback used:", err);
+        console.warn("AI online fallback used:", err);
       }
 
       if (!replyText) {
@@ -2058,18 +2139,19 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
       geminiChatHistory.push({ role: "model", parts: [{ text: replyText }] });
       document.getElementById(loadingId)?.remove();
 
+      // توليد بطاقات السلع المقترحة
       let actionsHTML = "";
       if (matchedProductsForAction && matchedProductsForAction.length > 0) {
         actionsHTML = `
-          <div class="mt-2.5 pt-2 border-t border-gray-800 space-y-1.5">
-            <span class="text-[10px] text-yellow-400 font-bold block mb-1">⚡ خيارات وسلع مقترحة لطلبك:</span>
+          <div class="mt-3 pt-2.5 border-t border-gray-800/80 space-y-2">
+            <span class="text-[10px] text-purple-300 font-bold block mb-1">⚡ سلع متوفرة في المتجر لطلبك:</span>
             ${matchedProductsForAction.map(p => `
-              <div class="flex items-center justify-between bg-gray-950 p-2 rounded-xl border border-gray-800 text-[11px] gap-2 shadow-inner">
+              <div class="flex items-center justify-between bg-[#0b0f1a] p-2 rounded-xl border border-gray-800 text-[11px] gap-2 shadow">
                 <div class="truncate pl-1">
                   <span class="font-bold text-gray-200 block truncate">${esc(p.name)}</span>
                   <span class="text-amber-400 font-mono text-[10px] font-bold">${money(p.price)}</span>
                 </div>
-                <button onclick="addToCart('${esc(p.id)}')" class="shrink-0 px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-lg text-[10px] transition shadow">
+                <button onclick="addToCart('${esc(p.id)}')" class="shrink-0 px-3 py-1 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold rounded-lg text-[10px] transition shadow">
                   + للسلة
                 </button>
               </div>
@@ -2081,22 +2163,39 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
       if (showManagerBtn) {
         actionsHTML += `
           <div class="mt-2.5 pt-2">
-            <button onclick="toggleSupportChat()" class="w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5">
-              <i class="fas fa-comments"></i> فتح محادثة المدير المباشرة
+            <button onclick="toggleSupportChat()" class="w-full py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5">
+              <i class="fas fa-comments"></i> التحدث مع مدير المتجر مباشرة
             </button>
           </div>
         `;
       }
 
+      const replyBubbleId = "gemini_txt_" + Date.now();
+      const escapedCleanText = replyText.replace(/"/g, '&quot;');
+
       msgContainer.innerHTML += `
-        <div class="flex justify-end">
-          <div class="bg-gray-900 border border-gray-800 text-gray-200 p-3 rounded-2xl rounded-tr-none max-w-[88%] leading-relaxed whitespace-pre-line shadow text-xs">
-            ${esc(replyText)}
+        <div class="flex items-start gap-2.5">
+          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shrink-0 mt-0.5 shadow">
+            <i class="fas fa-sparkles text-white text-[11px]"></i>
+          </div>
+          <div class="bg-[#13182a] border border-gray-800 text-gray-200 p-3.5 rounded-2xl rounded-tr-none max-w-[90%] leading-relaxed shadow-lg">
+            <div id="${replyBubbleId}" class="text-xs whitespace-pre-line leading-relaxed font-normal"></div>
             ${actionsHTML}
+            <div class="flex items-center gap-3 pt-2 mt-2 border-t border-gray-800/60 text-[10px] text-gray-400">
+              <button onclick="copyToClipboard('${escapedCleanText}', this)" class="hover:text-white flex items-center gap-1 transition" title="نسخ الرد">
+                <i class="fas fa-copy"></i> <span>نسخ</span>
+              </button>
+              <button onclick="quickSendAI('${esc(msgText)}')" class="hover:text-white flex items-center gap-1 transition" title="إعادة التوليد">
+                <i class="fas fa-rotate"></i> <span>إعادة المحاولة</span>
+              </button>
+            </div>
           </div>
         </div>
       `;
 
+      await streamGeminiText(replyBubbleId, replyText, 10);
+
+      isGeminiResponding = false;
       sendBtn.disabled = false;
       msgContainer.scrollTop = msgContainer.scrollHeight;
     }
