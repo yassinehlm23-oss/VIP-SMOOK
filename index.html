@@ -148,7 +148,7 @@
             class="w-full pr-9 pl-3 py-2 bg-gray-900/90 border border-gray-800 rounded-xl text-xs text-gray-200 focus:outline-none focus:border-yellow-500/60 transition">
         </div>
 
-        <!-- Notification Bell Button (Mobile & Desktop) -->
+        <!-- Notification Bell Button -->
         <button onclick="requestNotificationPermission()" id="notifBellBtn" title="تفعيل إشعارات العروض والرسائل"
           class="px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-yellow-500/30 rounded-xl text-yellow-400 transition flex items-center gap-1.5 shrink-0">
           <i id="notifBellIcon" class="fas fa-bell animate-bounce"></i>
@@ -914,10 +914,10 @@
   </div>
 
   <!-- ========================================================
-       Gemini AI Chat Widget (نسخة فائقة التطور بتصميم وتجربة Google Gemini)[span_3](start_span)[span_3](end_span)
+       Gemini AI Chat Widget (نسخة فائقة التطور بتصميم وتجربة Google Gemini)
        ======================================================== -->
   <div id="geminiChatWidget" class="fixed bottom-24 md:bottom-8 left-4 z-40">
-    <!-- Gemini Floating Trigger Button[span_4](start_span)[span_4](end_span) -->
+    <!-- Gemini Floating Trigger Button -->
     <button onclick="toggleGeminiChat()" id="geminiToggleBtn" 
             class="w-13 h-13 md:w-14 md:h-14 p-0.5 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-rose-400 shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 relative border border-white/20">
       <div class="w-full h-full bg-[#0a0f1d] rounded-full flex items-center justify-center">
@@ -927,13 +927,13 @@
       <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-gradient-to-r from-blue-500 to-purple-500 border-2 border-black rounded-full"></span>
     </button>
 
-    <!-- Gemini Dedicated Modal / Window[span_5](start_span)[span_5](end_span) -->
+    <!-- Gemini Dedicated Modal / Window -->
     <div id="geminiChatBox" class="hidden fixed md:absolute bottom-20 md:bottom-16 left-3 right-3 md:left-0 md:right-auto md:w-[420px] h-[580px] max-h-[82vh] bg-[#0c101d]/95 border border-purple-500/30 rounded-3xl shadow-2xl flex-col overflow-hidden backdrop-blur-2xl">
       
       <!-- Top Glowing Border Line -->
       <div class="h-1 w-full bg-gradient-to-r from-blue-500 via-purple-500 to-rose-400"></div>
 
-      <!-- Gemini Header[span_6](start_span)[span_6](end_span) -->
+      <!-- Gemini Header -->
       <div class="bg-[#11162a]/90 px-4 py-3 border-b border-gray-800/80 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600/30 via-purple-600/30 to-rose-600/30 border border-purple-500/40 flex items-center justify-center shadow-inner">
@@ -960,23 +960,23 @@
         </div>
       </div>
 
-      <!-- Messages Area[span_7](start_span)[span_7](end_span) -->
+      <!-- Messages Area -->
       <div id="geminiMessages" class="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs no-scrollbar bg-gradient-to-b from-[#0c101d] to-[#070913]">
-        <!-- Welcome Gemini Bubble[span_8](start_span)[span_8](end_span) -->
+        <!-- Welcome Gemini Bubble -->
         <div class="flex items-start gap-2.5">
           <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shrink-0 mt-0.5 shadow">
             <i class="fas fa-sparkles text-white text-[11px]"></i>
           </div>
           <div class="bg-[#151b2e] border border-gray-800 text-gray-200 p-3.5 rounded-2xl rounded-tr-none leading-relaxed shadow-lg max-w-[90%]">
-            <p class="font-extrabold text-white text-xs mb-1">أهلاً بك! 👋 أنا مساعدك الذكي المطور بنظام Gemini[span_9](start_span)[span_9](end_span).</p>
+            <p class="font-extrabold text-white text-xs mb-1">أهلاً بك! 👋 أنا مساعدك الذكي المطور بنظام Gemini.</p>
             <p class="text-gray-300 text-[11px] leading-relaxed">
-              يمكنني إخبارك بالأسعار الحالية، توفر السلع في المخزون، تفاصيل التوصيل السريع لوسط المدينة، أو مساعدتك في اختيار وإضافة أي منتج مباشرة إلى سلتك!
+              يمكنك سؤالي عن أي شيء يدور ببالك، أو الاستفسار عن الأسعار الحالية، توفر السلع في المخزون، وتفاصيل التوصيل السريع لوسط المدينة!
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Quick Suggested Chips[span_10](start_span)[span_10](end_span) -->
+      <!-- Quick Suggested Chips -->
       <div class="px-3 py-1.5 bg-[#0e1322] border-t border-gray-800/80 flex gap-1.5 overflow-x-auto no-scrollbar text-[10px]">
         <button onclick="quickSendAI('واش هي السلع الأكثر طلباً اليوم؟')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">✨ الأكثر طلباً</button>
         <button onclick="quickSendAI('شحال التوصيل ووقتاش يوصلني؟')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">🚚 التوصيل السريع</button>
@@ -984,10 +984,10 @@
         <button onclick="toggleSupportChat()" class="px-3 py-1 bg-amber-500/15 text-amber-300 rounded-full border border-amber-500/30 whitespace-nowrap font-bold hover:bg-amber-500/25 transition">💬 محادثة المدير</button>
       </div>
 
-      <!-- Gemini Pill Input Bar[span_11](start_span)[span_11](end_span) -->
+      <!-- Gemini Pill Input Bar -->
       <div class="p-3 bg-[#0d1222] border-t border-gray-800/80">
         <div class="flex items-center gap-2 bg-[#14192b] border border-gray-800 rounded-2xl px-3 py-1.5 focus-within:border-purple-500/70 transition shadow-inner">
-          <input id="geminiInput" type="text" placeholder="اسأل Gemini عن أي سلعة أو سعر..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
+          <input id="geminiInput" type="text" placeholder="اسأل Gemini عن أي شيء أو سلعة..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
                  class="flex-1 bg-transparent py-1.5 text-xs text-white focus:outline-none placeholder-gray-500">
           <button onclick="sendGeminiMessage()" id="geminiSendBtn" title="إرسال"
                   class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-purple-600 to-rose-500 hover:opacity-90 text-white flex items-center justify-center transition shadow active:scale-95 shrink-0">
@@ -1859,7 +1859,7 @@
     }
 
     /* -------------------------------------------------------------
-       تطوير وتحديث الذكاء الاصطناعي بنظام Google Gemini Pro المتطور[span_12](start_span)[span_12](end_span)
+       تطوير وتحديث الذكاء الاصطناعي بنظام Google Gemini Pro المتطور
     ------------------------------------------------------------- */
     function toggleGeminiChat() {
       const box = document.getElementById("geminiChatBox");
@@ -1883,8 +1883,8 @@
             <i class="fas fa-sparkles text-white text-[11px]"></i>
           </div>
           <div class="bg-[#151b2e] border border-gray-800 text-gray-200 p-3.5 rounded-2xl rounded-tr-none leading-relaxed shadow-lg max-w-[90%]">
-            <p class="font-extrabold text-white text-xs mb-1">مرحباً بك مجدداً في Gemini! ✨[span_13](start_span)[span_13](end_span)</p>
-            <p class="text-gray-300 text-[11px]">تم بدء محادثة جديدة وفارغة. كيف يمكنني مساعدتك الآن؟</p>
+            <p class="font-extrabold text-white text-xs mb-1">مرحباً بك مجدداً في Gemini! ✨</p>
+            <p class="text-gray-300 text-[11px]">تم بدء محادثة جديدة. يمكنك سؤالي عن أي شيء يدور في ذهنك أو عن منتجات المتجر!</p>
           </div>
         </div>
       `;
@@ -1941,75 +1941,83 @@
       const norm = normalizeSearchText(raw);
       const cfg = state.storeSettings;
 
-      if (/^(hi|hello|مرحبا|سلام|السلام|أهلا|اهلا|الو|صباح|مساء|صحا|سلام عليكم|صباح الخير|سلام خويا|مساء الخير)/i.test(norm) && norm.length <= 25) {
+      // الإجابة الذكية على الوقت والتاريخ مباشرة
+      if (norm.includes("ساعة") || norm.includes("وقت") || norm.includes("تاريخ") || norm.includes("اليوم")) {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString("ar-DZ", { hour: '2-digit', minute: '2-digit' });
+        const dateStr = now.toLocaleDateString("ar-DZ", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         return {
-          text: `أهلاً وسهلاً بك في متجر VIP SMOOK! 👋 أنا مستشارك الذكي Gemini[span_14](start_span)[span_14](end_span). يمكنك الاستفسار عن أسعار وتوفر المنتجات، العروض الحالية، أو التوصيل السريع والدفع كاش عند الاستلام!`,
+          text: `⏰ الساعة الآن تشير إلى **${timeStr}**.\n📅 واليوم هو: **${dateStr}**.\n\nتفضل، هل لديك أي استفسار آخر أو تود معرفة عروض المتجر؟`,
           actions: []
         };
       }
 
+      // التحية
+      if (/^(hi|hello|مرحبا|سلام|السلام|أهلا|اهلا|الو|صباح|مساء|صحا|سلام عليكم|صباح الخير|سلام خويا|مساء الخير)/i.test(norm) && norm.length <= 30) {
+        return {
+          text: `أهلاً وسهلاً بك! 👋 أنا مساعدك الذكي Gemini. يمكنك سؤالي عن أي شيء يدور ببالك، أو الاستفسار عن أسعار السلع، التوصيل السريع والدفع كاش عند الاستلام!`,
+          actions: []
+        };
+      }
+
+      // أسئلة الخصم والعروض
       if (norm.includes("خصم") || norm.includes("كود") || norm.includes("تخفيض") || norm.includes("برومو") || norm.includes("promo")) {
         if (cfg.couponCode && Number(cfg.couponPercent) > 0) {
           return {
-            text: `🎉 **كود خصم حصري فعال الآن!**\nاستخدم الكود: **${cfg.couponCode}** للحصول على تخفيض فوري بنسبة **${cfg.couponPercent}%** في سلة المشتريات.`,
+            text: `🎉 **كود خصم حصري فعال الآن!**\nاستخدم الكود: **${cfg.couponCode}** للحصول على تخفيض فوري بنسبة **${cfg.couponPercent}%** في السلة.`,
             actions: []
           };
         } else {
           return {
-            text: `حالياً لا يوجد كود خصم نشط، ولكن التوصيل **مجاني بالكامل** عند وصول طلبك إلى ${money(cfg.freeShippingTarget)}! 🎁`,
+            text: `حالياً لا يوجد كود خصم، لكن التوصيل **مجاني بالكامل** عند وصول طلبك إلى ${money(cfg.freeShippingTarget)}! 🎁`,
             actions: []
           };
         }
       }
 
-      if (norm.includes("توصيل") || norm.includes("livraison") || norm.includes("بلاصة") || norm.includes("مكان") || norm.includes("وين توصل") || norm.includes("توصلو")) {
+      // أسئلة التوصيل
+      if (norm.includes("توصيل") || norm.includes("livraison") || norm.includes("وين توصل") || norm.includes("توصلو")) {
         return {
-          text: `🚚 **خيارات التوصيل المتوفرة لدينا:**\n• وسط المدينة (Centre-ville): **${money(cfg.shippingFeeCentre)}**\n• البلديات والمناطق المجاورة: **${money(cfg.shippingFeeNearby)}**\n• استلام فوري من المحل: **مجاناً**\n\n🎉 ويصبح التوصيل مجانياً تلقائياً لأي طلب بقيمة **${money(cfg.freeShippingTarget)}** أو أكثر!`,
+          text: `🚚 **خيارات التوصيل:**\n• وسط المدينة: **${money(cfg.shippingFeeCentre)}**\n• المناطق المجاورة: **${money(cfg.shippingFeeNearby)}**\n• استلام من المحل: **مجاناً**\n\n🎉 مجاني بالكامل للطلبات التي تفوق ${money(cfg.freeShippingTarget)}!`,
           actions: []
         };
       }
 
-      if (norm.includes("دفع") || norm.includes("كاش") || norm.includes("دراهم") || norm.includes("خلص") || norm.includes("كيفاش نخلص")) {
+      // أسئلة الدفع
+      if (norm.includes("دفع") || norm.includes("كاش") || norm.includes("خلص")) {
         return {
-          text: `💵 **طريقة الدفع:**\nالدفع **نقداً كاش عند الاستلام (يداً بيد)** بعد معاينة مشترياتك والتأكد منها بنفسك!`,
+          text: `💵 **طريقة الدفع:** الدفع **نقداً كاش عند الاستلام يداً بيد** بعد معاينة طلبك والتأكد منه.`,
           actions: []
         };
       }
 
-      if (norm.includes("مدير") || norm.includes("نهدر مع") || norm.includes("صاحب المحل") || norm.includes("مسؤول") || norm.includes("مشكل")) {
+      // التواصل مع المدير
+      if (norm.includes("مدير") || norm.includes("نهدر مع") || norm.includes("صاحب المحل")) {
         return {
-          text: `تفضل بالتواصل المباشر مع إدارة المتجر الآن عبر الزر أدناه وسيرد عليك المدير في أقرب وقت:`,
+          text: `تفضل بالتواصل المباشر مع مدير المتجر الآن:`,
           actions: [],
           openManagerChat: true
         };
       }
 
-      if (norm.includes("اكثر") || norm.includes("شائع") || norm.includes("مطلوب") || norm.includes("افضل") || norm.includes("جديد")) {
-        const top = [...state.products].sort((a, b) => Number(b.likesCount || 0) - Number(a.likesCount || 0)).slice(0, 3);
-        if (top.length) {
-          return {
-            text: `🔥 إليك أكثر السلع طلباً وإعجاباً اليوم في VIP SMOOK:`,
-            actions: top
-          };
-        }
-      }
-
+      // البحث عن السلع المتوفرة إذا كان السؤال عن سلعة
       const matched = findRelevantProducts(q, 3);
       if (matched.length > 0) {
         return {
-          text: `وجدت لك هذه المنتجات المتوفرة في المخزون:`,
+          text: `إليك ما وجدته بخصوص طلبك في المخزون:`,
           actions: matched
         };
       }
 
+      // الرد الذكي الشامل لأي سؤال عام
       return {
-        text: `أهلاً بك! لم أعثر على سلعة مطابقة تماماً لما طلبت.\nيمكنك البحث في شريط البحث بالأعلى، أو الاتصال بنا مباشرة على: ${cfg.storePhones?.join(" - ")}.`,
+        text: `أنا هنا لمساعدتك والإجابة عن كل استفساراتك بكل سرور! بخصوص سؤالك:\n"${raw}"\nيمكنك سؤالي عن أي معلومة عامة أو استكشاف منتجات المتجر وأسعارها بالدينار الجزائري 🛍️`,
         actions: []
       };
     }
 
-    // دالة محاكاة الكتابة الحية الحرفية (Gemini Typewriter Effect)
-    function streamGeminiText(elementId, fullText, speed = 12) {
+    // دالة محاكاة الكتابة الحية الحرفية
+    function streamGeminiText(elementId, fullText, speed = 10) {
       return new Promise((resolve) => {
         const el = document.getElementById(elementId);
         if (!el) return resolve();
@@ -2039,7 +2047,6 @@
       const msgContainer = document.getElementById("geminiMessages");
       const sendBtn = document.getElementById("geminiSendBtn");
 
-      // فقاعة المستخدم العصرية
       msgContainer.innerHTML += `
         <div class="flex justify-start">
           <div class="bg-[#1c2438] border border-gray-700/60 text-white font-medium p-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow text-xs">
@@ -2050,7 +2057,6 @@
       input.value = "";
       msgContainer.scrollTop = msgContainer.scrollHeight;
 
-      // شريط التفكير والوميض الخاص بـ Gemini (Shimmer Loader)
       isGeminiResponding = true;
       sendBtn.disabled = true;
       const loadingId = "gemini_loading_" + Date.now();
@@ -2061,7 +2067,7 @@
           </div>
           <div class="gemini-shimmer border border-purple-500/30 text-purple-200 p-3 rounded-2xl rounded-tr-none text-xs flex items-center gap-2 shadow-lg">
             <span class="w-2 h-2 rounded-full bg-purple-400 animate-ping"></span>
-            <span class="font-bold">جيميناي يفكر ويحلل طلبك...</span>
+            <span class="font-bold">جيميناي يكتب الرد...</span>
           </div>
         </div>
       `;
@@ -2074,29 +2080,26 @@
       let matchedProductsForAction = findRelevantProducts(msgText, 3);
       let showManagerBtn = false;
 
+      const currentTimeStr = new Date().toLocaleTimeString("ar-DZ", { hour: '2-digit', minute: '2-digit' });
+      const currentDateStr = new Date().toLocaleDateString("ar-DZ", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
       try {
         const availableProductsSummary = state.products.map(p => 
-          `• [ID:${p.id}] ${p.name} | السعر: ${p.price} د.ج | المخزون: ${p.stock > 0 ? p.stock + ' متوفر' : 'غير متوفر'} | القسم: ${p.category}`
+          `• ${p.name} | السعر: ${p.price} د.ج | المخزون: ${p.stock > 0 ? p.stock : 'نفد'}`
         ).join("\n");
 
         const cfg = state.storeSettings;
-        const cartTotalNow = state.cart.reduce((s, x) => s + (x.price * x.qty), 0);
-
         const systemPrompt = `
-أنت المساعد الذكي الخبير "Gemini" لمتجر VIP SMOOK الرسمي الفاخر.
-أسلوبك: فائق الذكاء، راقٍ ومرح، يفهم الدارجة الجزائرية والفصحى بطلاقة وسلاسة تامة.
-بيانات المتجر المحدثة لحظياً:
-- السلع والمخزون والأسعار:
-${availableProductsSummary || "جاري جلب المنتجات."}
-- التوصيل: وسط المدينة (${cfg.shippingFeeCentre} د.ج)، البلديات المجاورة (${cfg.shippingFeeNearby} د.ج)، استلام مجاني من المحل.
-- حد التوصيل المجاني: ${cfg.freeShippingTarget} د.ج (سلة الزبون الحالية: ${cartTotalNow} د.ج).
-- الدفع: نقداً كاش عند الاستلام فقط بعد المعاينة.
-- كود الخصم: ${cfg.couponCode ? `كود '${cfg.couponCode}' يمنح خصم ${cfg.couponPercent}%` : 'لا يوجد كود نشط'}.
-- هواتف المحل: ${cfg.storePhones?.join(" - ")}.
+أنت المساعد الذكي Google Gemini لمتجر VIP SMOOK.
+أنت ذكاء اصطناعي شامل وعام: أجب عن أي سؤال يطرحه المستخدم بذكاء وطلاقة وثقافة عالية سواء كان سؤالاً عاماً (الوقت، التاريخ، معلومات عامة، ثقافة، نصائح، ترحيب) أو سؤالاً خاصاً بالمتجر ومنتجاته وأسعاره.
 
-تعليمات صارمة:
-1. اذكر الأسعار بدقة بالدينار الجزائري (د.ج).
-2. اجعل إجابتك ذكية وسريعة ومباشرة ومفيدة دون حشو زائد.
+بيانات مهمة:
+- الوقت الحالي الآن عند المستخدم: ${currentTimeStr}
+- التاريخ الحالي: ${currentDateStr}
+- سلع المتجر الحالية:
+${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
+- التوصيل: وسط المدينة (${cfg.shippingFeeCentre} د.ج)، البلديات المجاورة (${cfg.shippingFeeNearby} د.ج)، مجاني فوق ${cfg.freeShippingTarget} د.ج.
+- أسلوبك: ودود، سريع، متقن للعربية واللهجة الجزائرية بذكاء دون حشو.
 `;
 
         const activeModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash-latest"];
@@ -2109,10 +2112,10 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
               body: JSON.stringify({
                 contents: [
                   { role: "user", parts: [{ text: systemPrompt }] },
-                  { role: "model", parts: [{ text: "أهلاً بك! أنا Gemini ومستعد لمساعدتك باحترافية." }] },
+                  { role: "model", parts: [{ text: "مفهوم، أنا مساعد Gemini الشامل والذكي وجاهز للإجابة عن كل الأسئلة." }] },
                   ...geminiChatHistory
                 ],
-                generationConfig: { temperature: 0.65, maxOutputTokens: 500 }
+                generationConfig: { temperature: 0.7, maxOutputTokens: 600 }
               })
             });
 
@@ -2126,7 +2129,7 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
           } catch (_) {}
         }
       } catch (err) {
-        console.warn("AI online fallback used:", err);
+        console.warn("AI online error:", err);
       }
 
       if (!replyText) {
@@ -2139,7 +2142,6 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
       geminiChatHistory.push({ role: "model", parts: [{ text: replyText }] });
       document.getElementById(loadingId)?.remove();
 
-      // توليد بطاقات السلع المقترحة
       let actionsHTML = "";
       if (matchedProductsForAction && matchedProductsForAction.length > 0) {
         actionsHTML = `
