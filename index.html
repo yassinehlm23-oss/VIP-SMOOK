@@ -711,89 +711,27 @@
           </div>
         </div>
 
-        <!-- Action Control Buttons Row -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+        <!-- Action Control Buttons Row: أزرار الواجهات المنفردة للمدير -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
           <button onclick="openStandaloneChat()" id="tabChatsBtn" class="py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition active:scale-95">
             <i class="fas fa-comments text-base"></i> محادثات الزبائن <span id="adminUnreadChatBadge" class="hidden w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
           </button>
-          <button onclick="openStandaloneOrders()" id="tabOrdersBtn" class="admin-tab py-3 px-4 bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black rounded-2xl text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow-md shadow-amber-500/20">
-            <i class="fas fa-boxes-stacked text-black text-sm"></i> الطلبات الواردة (واجهة منفردة)
+          <button onclick="openStandaloneOrders()" id="tabOrdersBtn" class="py-3 px-4 bg-gray-950 hover:bg-gray-900 border border-yellow-500/40 text-yellow-400 font-black rounded-2xl text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow">
+            <i class="fas fa-boxes-stacked text-sm"></i> الطلبات الواردة
+          </button>
+          <button onclick="openStandaloneSettings()" id="tabOpenSettingsBtn" class="py-3 px-4 bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black rounded-2xl text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow-md shadow-amber-500/20">
+            <i class="fas fa-sliders text-sm"></i> الإعدادات والإشعارات
           </button>
         </div>
 
         <div class="flex border-b border-gray-800 gap-2 pb-2 overflow-x-auto no-scrollbar pt-2">
-          <button onclick="switchAdminTab('storeSettings')" id="tabStoreSettingsBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الإعدادات والإشعارات</button>
-          <button onclick="switchAdminTab('customers')" id="tabCustomersBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">الزبائن المسجلون</button>
+          <button onclick="switchAdminTab('customers')" id="tabCustomersBtn" class="admin-tab px-3.5 py-2 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap shadow-md shadow-yellow-500/20">الزبائن المسجلون</button>
           <button onclick="switchAdminTab('manage')" id="tabManageBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">إدارة وتعديل المخزون</button>
           <button onclick="switchAdminTab('add')" id="tabAddBtn" class="admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap">+ إضافة منتج</button>
         </div>
 
-        <!-- 1. Store Settings & Push Broadcast Tab -->
-        <div id="adminTabStoreSettings" class="space-y-4 bg-gray-950/80 p-4 rounded-2xl border border-gray-800 text-xs hidden">
-          <div class="bg-gradient-to-r from-amber-950/50 to-gray-900 p-3.5 rounded-2xl border border-yellow-500/40 space-y-2.5">
-            <h5 class="font-black text-yellow-400 flex items-center gap-2 text-xs">
-              <i class="fas fa-bell"></i> إرسال إشعار فوري لجميع الزبائن (Push Notification)
-            </h5>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-              <input type="text" id="broadcastTitleInput" placeholder="عنوان الإشعار (مثال: 🔥 عرض خاص اليوم!)" class="p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-              <input type="text" id="broadcastBodyInput" placeholder="نص الإشعار (مثال: تخفيض جديد ووصول سلعة جديدة)" class="md:col-span-2 p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-            </div>
-            <button onclick="sendAdminBroadcastNotification()" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-black rounded-xl text-xs transition shadow">
-              🚀 إرسال الإشعار لجميع الزبائن الآن
-            </button>
-          </div>
-
-          <h4 class="text-sm font-bold text-yellow-400 border-b border-gray-800 pb-2 pt-2">تحكم المدير في العروض والأسعار والإعلانات</h4>
-
-          <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-tag text-yellow-400"></i> إعدادات كود الخصم</h5>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <div>
-                <label class="text-[10px] text-gray-400 block mb-1">كود الخصم (اتركه فارغاً للتعطيل):</label>
-                <input type="text" id="adminCouponCode" placeholder="مثال: SALE20" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white uppercase">
-              </div>
-              <div>
-                <label class="text-[10px] text-gray-400 block mb-1">نسبة الخصم (%):</label>
-                <input type="number" min="1" max="100" id="adminCouponPercent" placeholder="10" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-truck text-yellow-400"></i> إعدادات التوصيل</h5>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-              <div>
-                <label class="text-[10px] text-gray-400 block mb-1">حد التوصيل المجاني (د.ج):</label>
-                <input type="number" min="0" id="adminFreeShippingTarget" placeholder="3000" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-              </div>
-              <div>
-                <label class="text-[10px] text-gray-400 block mb-1">سعر توصيل وسط المدينة (د.ج):</label>
-                <input type="number" min="0" id="adminShippingCentre" placeholder="200" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-              </div>
-              <div>
-                <label class="text-[10px] text-gray-400 block mb-1">سعر توصيل المناطق المجاورة (د.ج):</label>
-                <input type="number" min="0" id="adminShippingNearby" placeholder="350" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-bullhorn text-yellow-400"></i> نص الشريط الإعلاني</h5>
-            <input type="text" id="adminTickerText" placeholder="اكتب النص الإعلاني..." class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-          </div>
-
-          <div class="bg-gray-900 p-3 rounded-xl border border-gray-800 space-y-2">
-            <h5 class="font-bold text-white flex items-center gap-2"><i class="fas fa-phone text-yellow-400"></i> أرقام هاتف المحل (مفصولة بفاصلة)</h5>
-            <input type="text" id="adminStorePhones" placeholder="0781896750, 0799034615, 0697223805" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white font-mono">
-          </div>
-
-          <button onclick="saveStoreSettings()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition shadow-md">
-            حفظ وتطبيق إعدادات المتجر
-          </button>
-        </div>
-
-        <!-- 2. Customers Tab -->
-        <div id="adminTabCustomers" class="hidden space-y-3">
+        <!-- 1. Customers Tab -->
+        <div id="adminTabCustomers" class="space-y-3">
           <div class="flex justify-between items-center">
             <h4 class="text-xs font-bold text-gray-300">قائمة الزبائن المسجلين:</h4>
             <button onclick="loadAdminCustomers()" class="text-xs text-yellow-400 flex items-center gap-1"><i class="fas fa-rotate"></i> تحديث</button>
@@ -801,14 +739,14 @@
           <div id="adminCustomersList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- 3. Manage Stock Tab -->
+        <!-- 2. Manage Stock Tab -->
         <div id="adminTabManage" class="hidden space-y-3">
           <input id="adminStockSearch" oninput="filterAdminProductsList()" type="search" placeholder="ابحث عن منتج لتعديله..."
             class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
           <div id="adminProductsList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- 4. Add Product Tab -->
+        <!-- 3. Add Product Tab -->
         <div id="adminTabAdd" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <div class="grid grid-cols-2 gap-2">
@@ -833,6 +771,124 @@
             حفظ ونشر المنتج وإرسال إشعار للزبائن
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- الواجهة المنفردة المخصصة للإعدادات والإشعارات للمدير -->
+  <div id="standaloneSettingsModal" class="fixed inset-0 z-[95] bg-[#090d16] hidden flex-col overflow-hidden">
+    <!-- شريط علوي -->
+    <header class="bg-[#101726] border-b border-gray-800 px-4 py-3 shrink-0 flex items-center justify-between shadow-md">
+      <div class="flex items-center gap-3">
+        <button onclick="closeStandaloneSettings()" class="w-9 h-9 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center justify-center transition text-sm">
+          <i class="fas fa-arrow-right"></i>
+        </button>
+        <div>
+          <h2 class="text-sm md:text-base font-black text-white flex items-center gap-2">
+            <i class="fas fa-sliders text-amber-400"></i>
+            <span>إعدادات المتجر والإشعارات الفورية</span>
+          </h2>
+          <span class="text-[10px] text-gray-400">لوحة التحكم في الأسعار، التوصيل، الإعلانات وتنبيهات الزبائن</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="saveStoreSettings()" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold rounded-xl text-xs transition shadow-md active:scale-95 flex items-center gap-1.5">
+          <i class="fas fa-floppy-disk"></i> <span>حفظ التعديلات</span>
+        </button>
+        <button onclick="closeStandaloneSettings()" class="w-9 h-9 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white flex items-center justify-center transition text-sm">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- محتوى الإعدادات مقسم في بطاقات أنيقة -->
+    <div class="flex-1 overflow-y-auto p-4 md:p-6 no-scrollbar">
+      <div class="max-w-4xl mx-auto space-y-5">
+
+        <!-- بطاقة 1: مركز إرسال الإشعار الفوري لجميع الزبائن -->
+        <div class="bg-gradient-to-r from-amber-950/40 via-gray-900 to-[#101726] border border-yellow-500/40 rounded-2xl p-4 md:p-5 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-black text-yellow-400 text-xs md:text-sm flex items-center gap-2">
+              <i class="fas fa-bullhorn text-amber-400"></i> إرسال إشعار فوري لجميع الزبائن (Push Notification)
+            </h3>
+            <span class="text-[10px] bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 px-2 py-0.5 rounded-full font-bold">بث مباشر 🔔</span>
+          </div>
+          <p class="text-[11px] text-gray-300">يظهر التنبيه فوراً على شاشات هواتف جميع الزبائن الذين قاموا بتفعيل الإشعارات في متجرك.</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-1">
+            <input type="text" id="broadcastTitleInput" placeholder="عنوان الإشعار (مثال: 🔥 تخفيضات اليوم!)" class="p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
+            <input type="text" id="broadcastBodyInput" placeholder="نص الإشعار (مثال: وصول سلعة جديدة وبأسعار حصرية)" class="md:col-span-2 p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
+          </div>
+          <button onclick="sendAdminBroadcastNotification()" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-black rounded-xl text-xs transition shadow-lg shadow-yellow-500/20 active:scale-95 flex items-center justify-center gap-2">
+            <i class="fas fa-paper-plane"></i> <span>🚀 إرسال التنبيه لجميع الزبائن الآن</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- بطاقة 2: إعدادات كود الخصم -->
+          <div class="bg-[#121927] border border-gray-800 rounded-2xl p-4 shadow-md space-y-3">
+            <div class="flex items-center gap-2 text-white font-bold text-xs border-b border-gray-800/80 pb-2">
+              <i class="fas fa-tags text-yellow-400 text-sm"></i>
+              <span>نظام كود الخصم (Coupon Code)</span>
+            </div>
+            <div>
+              <label class="text-[11px] text-gray-400 font-semibold block mb-1">كود الخصم (اتركه فارغاً لإلغائه):</label>
+              <input type="text" id="adminCouponCode" placeholder="مثال: SALE20" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white uppercase focus:outline-none focus:border-yellow-500 font-mono">
+            </div>
+            <div>
+              <label class="text-[11px] text-gray-400 font-semibold block mb-1">نسبة التخفيض المئوية (%):</label>
+              <input type="number" min="0" max="100" id="adminCouponPercent" placeholder="10" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500 font-mono">
+            </div>
+          </div>
+
+          <!-- بطاقة 3: إعدادات أسعار التوصيل والتوصيل المجاني -->
+          <div class="bg-[#121927] border border-gray-800 rounded-2xl p-4 shadow-md space-y-3">
+            <div class="flex items-center gap-2 text-white font-bold text-xs border-b border-gray-800/80 pb-2">
+              <i class="fas fa-truck-fast text-yellow-400 text-sm"></i>
+              <span>إعدادات التوصيل والشحن</span>
+            </div>
+            <div>
+              <label class="text-[11px] text-gray-400 font-semibold block mb-1">حد التوصيل المجاني (د.ج):</label>
+              <input type="number" min="0" id="adminFreeShippingTarget" placeholder="3000" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500 font-mono">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] text-gray-400 font-semibold block mb-1">توصيل وسط المدينة:</label>
+                <input type="number" min="0" id="adminShippingCentre" placeholder="200" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500 font-mono">
+              </div>
+              <div>
+                <label class="text-[10px] text-gray-400 font-semibold block mb-1">المناطق المجاورة:</label>
+                <input type="number" min="0" id="adminShippingNearby" placeholder="350" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500 font-mono">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- بطاقة 4: الشريط الإعلاني المتحرك -->
+        <div class="bg-[#121927] border border-gray-800 rounded-2xl p-4 shadow-md space-y-2.5">
+          <div class="flex items-center gap-2 text-white font-bold text-xs border-b border-gray-800/80 pb-2">
+            <i class="fas fa-scroll text-yellow-400 text-sm"></i>
+            <span>نص الشريط الإعلاني المتحرك بأعلى المتجر</span>
+          </div>
+          <input type="text" id="adminTickerText" placeholder="اكتب النص الإعلاني الترحيبي هنا..." class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
+        </div>
+
+        <!-- بطاقة 5: أرقام هاتف المتجر للاتصال والطلب السريع -->
+        <div class="bg-[#121927] border border-gray-800 rounded-2xl p-4 shadow-md space-y-2.5">
+          <div class="flex items-center gap-2 text-white font-bold text-xs border-b border-gray-800/80 pb-2">
+            <i class="fas fa-phone-volume text-yellow-400 text-sm"></i>
+            <span>أرقام هاتف المحل الرسمية للاتصال المباشر</span>
+          </div>
+          <input type="text" id="adminStorePhones" placeholder="0781896750, 0799034615, 0697223805" class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white font-mono focus:outline-none focus:border-yellow-500">
+          <p class="text-[10px] text-gray-400">افصل بين كل رقم هاتف بفاصلة (,) لتظهر كأزرار اتصال فورية للزبائن في المتجر.</p>
+        </div>
+
+        <div class="pt-2 pb-6">
+          <button onclick="saveStoreSettings()" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold rounded-2xl text-xs transition shadow-lg shadow-amber-500/20 active:scale-95 flex items-center justify-center gap-2">
+            <i class="fas fa-check-circle text-sm"></i> <span>حفظ وتطبيق جميع الإعدادات فوراً في المتجر</span>
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -971,7 +1027,7 @@
           </button>
 
           <button onclick="sendAdminReply()" id="adminReplySendBtn" disabled
-                  class="w-10 h-10 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-black font-bold rounded-full flex items-center justify-center transition shadow-md active:scale-95 shrink-0">
+                  class="w-10 h-10 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-full flex items-center justify-center transition shadow-md active:scale-95 shrink-0">
             <i class="fas fa-paper-plane text-xs"></i>
           </button>
         </div>
@@ -1408,7 +1464,7 @@
       setTimeout(() => box.classList.add("hidden"), 300);
     }
 
-    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal", "supportChatModal", "standaloneChatModal", "standaloneOrdersModal"];
+    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal", "supportChatModal", "standaloneChatModal", "standaloneOrdersModal", "standaloneSettingsModal"];
 
     function openModal(id) {
       const el = document.getElementById(id);
@@ -2136,6 +2192,20 @@
           toast("فشل إرسال الفوكال.", "error");
         }
       };
+    }
+
+    /* -------------------------------------------------------------
+       الواجهة المنفردة المخصصة للإعدادات والإشعارات
+    ------------------------------------------------------------- */
+    function openStandaloneSettings() {
+      closeModal("adminModal");
+      populateAdminSettingsInputs();
+      openModal("standaloneSettingsModal");
+    }
+
+    function closeStandaloneSettings() {
+      closeModal("standaloneSettingsModal");
+      openModal("adminModal");
     }
 
     /* -------------------------------------------------------------
@@ -3682,7 +3752,7 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
       document.querySelectorAll(".admin-tab").forEach(b => {
         b.className = "admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap";
       });
-      ["storeSettings", "customers", "manage", "add"].forEach(t => {
+      ["customers", "manage", "add"].forEach(t => {
         const el = document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
         if (el) el.classList.add("hidden");
       });
@@ -3694,7 +3764,6 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
       if (target) target.classList.remove("hidden");
 
       if (tab === "customers") loadAdminCustomers();
-      if (tab === "storeSettings") populateAdminSettingsInputs();
     }
 
     function formatLastSeen(ts) {
