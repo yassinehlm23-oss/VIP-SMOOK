@@ -716,8 +716,8 @@
           <button onclick="openStandaloneChat()" id="tabChatsBtn" class="py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition active:scale-95">
             <i class="fas fa-comments text-base"></i> محادثات الزبائن <span id="adminUnreadChatBadge" class="hidden w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
           </button>
-          <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="admin-tab py-3 px-4 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-200 font-bold rounded-2xl text-xs flex items-center justify-center gap-2 transition active:scale-95">
-            <i class="fas fa-boxes-stacked text-yellow-400 text-sm"></i> الطلبات الواردة
+          <button onclick="openStandaloneOrders()" id="tabOrdersBtn" class="admin-tab py-3 px-4 bg-gradient-to-r from-yellow-500 to-amber-500 text-black font-black rounded-2xl text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow-md shadow-amber-500/20">
+            <i class="fas fa-boxes-stacked text-black text-sm"></i> الطلبات الواردة (واجهة منفردة)
           </button>
         </div>
 
@@ -792,32 +792,7 @@
           </button>
         </div>
 
-        <!-- 2. Orders Tab -->
-        <div id="adminTabOrders" class="hidden space-y-3">
-          <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-xl p-2.5 text-[11px] flex items-center justify-between">
-            <span class="flex items-center gap-1.5"><i class="fas fa-clock-rotate-left"></i> يتم مسح وحذف الطلبات تلقائياً بعد مرور 24 ساعة.</span>
-            <button onclick="cleanOldOrdersManual()" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-lg text-[10px] transition">
-              تنظيف الطلبات الآن
-            </button>
-          </div>
-
-          <div class="flex justify-between items-center">
-            <div class="flex items-center gap-2">
-              <h4 class="text-xs font-bold text-gray-300">قائمة الطلبات:</h4>
-              <select id="adminOrderFilter" onchange="loadOrdersOnce()" class="bg-gray-950 border border-gray-800 rounded-lg text-[11px] p-1 text-gray-300">
-                <option value="all">كل الطلبات</option>
-                <option value="جديد">الجديدة فقط</option>
-                <option value="مكتمل">المكتملة</option>
-              </select>
-            </div>
-            <button onclick="loadOrdersOnce()" class="text-xs text-yellow-400 flex items-center gap-1"><i class="fas fa-rotate"></i> تحديث</button>
-          </div>
-          <div id="adminOrdersList" class="space-y-3">
-            <p class="text-xs text-gray-400 text-center py-6">جاري جلب الطلبات...</p>
-          </div>
-        </div>
-
-        <!-- 3. Customers Tab -->
+        <!-- 2. Customers Tab -->
         <div id="adminTabCustomers" class="hidden space-y-3">
           <div class="flex justify-between items-center">
             <h4 class="text-xs font-bold text-gray-300">قائمة الزبائن المسجلين:</h4>
@@ -826,14 +801,14 @@
           <div id="adminCustomersList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- 4. Manage Stock Tab -->
+        <!-- 3. Manage Stock Tab -->
         <div id="adminTabManage" class="hidden space-y-3">
           <input id="adminStockSearch" oninput="filterAdminProductsList()" type="search" placeholder="ابحث عن منتج لتعديله..."
             class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
           <div id="adminProductsList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- 5. Add Product Tab -->
+        <!-- 4. Add Product Tab -->
         <div id="adminTabAdd" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <div class="grid grid-cols-2 gap-2">
@@ -858,6 +833,65 @@
             حفظ ونشر المنتج وإرسال إشعار للزبائن
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- الواجهة المنفردة المخصصة للطلبات بنمط إدارة الطلبات المتقدم -->
+  <div id="standaloneOrdersModal" class="fixed inset-0 z-[95] bg-[#0b0e14] hidden flex-col overflow-hidden">
+    <!-- شريط علوي للواجهة المنفردة -->
+    <header class="bg-[#131923] border-b border-gray-800 px-4 py-3 shrink-0 flex items-center justify-between shadow-md">
+      <div class="flex items-center gap-3">
+        <button onclick="closeStandaloneOrders()" class="w-9 h-9 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center justify-center transition text-sm">
+          <i class="fas fa-arrow-right"></i>
+        </button>
+        <div>
+          <h2 class="text-sm md:text-base font-black text-white flex items-center gap-2">
+            <i class="fas fa-box-open text-amber-400"></i>
+            <span>إدارة وتتبع الطلبات</span>
+          </h2>
+          <span class="text-[10px] text-gray-400">مركز معالجة وتوصيل مشتريات الزبائن</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="cleanOldOrdersManual()" title="تنظيف الطلبات القديمة" class="px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-amber-400 border border-amber-500/30 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+          <i class="fas fa-clock-rotate-left"></i> <span class="hidden sm:inline">تنظيف 24 ساعة</span>
+        </button>
+        <button onclick="loadOrdersOnce()" title="تحديث" class="w-9 h-9 rounded-xl bg-gray-800 hover:bg-gray-700 text-yellow-400 border border-gray-700 flex items-center justify-center transition text-xs">
+          <i class="fas fa-rotate"></i>
+        </button>
+        <button onclick="closeStandaloneOrders()" class="w-9 h-9 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white flex items-center justify-center transition text-sm">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- شريط البحث والفلترة السريعة -->
+    <div class="bg-[#10141d] border-b border-gray-800/80 px-4 py-2.5 shrink-0 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2 flex-1 max-w-md">
+        <div class="relative w-full">
+          <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+          <input id="standaloneOrderSearch" oninput="filterStandaloneOrders()" type="text" placeholder="البحث برقم الهاتف أو اسم الزبون..."
+                 class="w-full pr-8 pl-3 py-1.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] text-gray-400 font-semibold">تصفية:</span>
+        <select id="adminOrderFilter" onchange="loadOrdersOnce()" class="bg-gray-900 border border-gray-800 text-gray-200 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-yellow-500">
+          <option value="all">كل الطلبات</option>
+          <option value="جديد">الطلبات الجديدة</option>
+          <option value="مكتمل">الطلبات المكتملة</option>
+        </select>
+        <span id="standaloneOrdersCountBadge" class="text-[11px] bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-xl font-bold font-mono">0 طلب</span>
+      </div>
+    </div>
+
+    <!-- منطقة عرض بطاقات الطلبات بنمط أمزون المنفرد -->
+    <div class="flex-1 overflow-y-auto p-4 md:p-6 no-scrollbar">
+      <div id="adminOrdersList" class="max-w-4xl mx-auto space-y-4">
+        <p class="text-xs text-gray-400 text-center py-10">جاري جلب الطلبات...</p>
       </div>
     </div>
   </div>
@@ -1047,6 +1081,7 @@
     let unsubscribeBroadcasts = null;
     let currentAdminActivePhone = null;
     let cachedAdminChats = [];
+    let cachedAdminOrders = [];
 
     /* متغيرات ومسجلات الصوت للفوكال */
     let custMediaRecorder = null;
@@ -1373,7 +1408,7 @@
       setTimeout(() => box.classList.add("hidden"), 300);
     }
 
-    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal", "supportChatModal", "standaloneChatModal"];
+    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal", "supportChatModal", "standaloneChatModal", "standaloneOrdersModal"];
 
     function openModal(id) {
       const el = document.getElementById(id);
@@ -2101,6 +2136,189 @@
           toast("فشل إرسال الفوكال.", "error");
         }
       };
+    }
+
+    /* -------------------------------------------------------------
+       الواجهة المنفردة المخصصة للطلبات
+    ------------------------------------------------------------- */
+    function openStandaloneOrders() {
+      closeModal("adminModal");
+      openModal("standaloneOrdersModal");
+      loadOrdersOnce();
+    }
+
+    function closeStandaloneOrders() {
+      closeModal("standaloneOrdersModal");
+      openModal("adminModal");
+    }
+
+    function filterStandaloneOrders() {
+      const q = (document.getElementById("standaloneOrderSearch")?.value || "").toLowerCase().trim();
+      if (!q) {
+        renderOrdersList(cachedAdminOrders);
+        return;
+      }
+      const filtered = cachedAdminOrders.filter(o => 
+        (o.customerName || "").toLowerCase().includes(q) ||
+        (o.customerPhone || "").includes(q) ||
+        (o.address || "").toLowerCase().includes(q)
+      );
+      renderOrdersList(filtered);
+    }
+
+    async function loadOrdersOnce() {
+      if (!firebaseReady) return;
+      const list = document.getElementById("adminOrdersList");
+      const filter = document.getElementById("adminOrderFilter")?.value || "all";
+      
+      await cleanupOldOrders();
+
+      try {
+        let ref = db.collection("orders");
+        if (filter !== "all") ref = ref.where("status", "==", filter);
+        const snap = await ref.get();
+
+        cachedAdminOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+        const pendingCount = cachedAdminOrders.filter(o => o.status === "جديد").length;
+        const statPending = document.getElementById("statPendingOrders");
+        if (statPending) statPending.textContent = pendingCount;
+
+        const badge = document.getElementById("standaloneOrdersCountBadge");
+        if (badge) badge.textContent = `${cachedAdminOrders.length} طلب`;
+
+        renderOrdersList(cachedAdminOrders);
+      } catch (e) {
+        if (list) list.innerHTML = `<p class="text-xs text-red-400 text-center py-8">فشل تحميل الطلبات.</p>`;
+      }
+    }
+
+    function renderOrdersList(orders) {
+      const list = document.getElementById("adminOrdersList");
+      if (!list) return;
+
+      if (!orders.length) {
+        list.innerHTML = `
+          <div class="bg-[#121824] border border-gray-800 rounded-2xl p-12 text-center text-gray-400 text-xs">
+            <i class="fas fa-box-open text-3xl text-gray-600 mb-3 block"></i>
+            <span>لا توجد طلبات واردة حالياً.</span>
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = orders.map(o => {
+        const formattedDate = o.createdAt ? formatOrderDateTime(o.createdAt) : "غير محدد";
+        const isCompleted = o.status === "مكتمل";
+        const avatarImg = o.customerImage ? esc(o.customerImage) : FALLBACK_AVATAR;
+
+        return `
+          <article class="bg-[#111723] border border-gray-800 rounded-2xl overflow-hidden shadow-lg hover:border-yellow-500/30 transition duration-200">
+            <!-- ترويسة الطلب بنمط إدارة الطلبات -->
+            <div class="bg-[#161f2e] px-4 py-3 border-b border-gray-800/90 flex flex-wrap items-center justify-between gap-3 text-[11px] text-gray-300">
+              <div class="flex items-center gap-4 flex-wrap">
+                <div>
+                  <span class="block text-[10px] text-gray-400 font-semibold">تاريخ الطلب</span>
+                  <span class="font-bold text-white font-mono">${formattedDate}</span>
+                </div>
+                <div>
+                  <span class="block text-[10px] text-gray-400 font-semibold">المجموع الكلي</span>
+                  <span class="font-extrabold text-amber-400 font-mono">${money(o.total)}</span>
+                </div>
+                <div>
+                  <span class="block text-[10px] text-gray-400 font-semibold">الشحن والتوصيل</span>
+                  <span class="font-bold text-gray-200">${o.shippingFee === 0 ? '<span class="text-emerald-400 font-black">مجاني 🎉</span>' : money(o.shippingFee)}</span>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] text-gray-500 font-mono">رقم الطلب: #${o.id.slice(0, 8)}</span>
+                <button onclick="deleteSingleOrder('${o.id}')" title="حذف الطلب" class="w-8 h-8 rounded-lg bg-red-950/60 hover:bg-red-900 border border-red-800 text-red-300 flex items-center justify-center transition active:scale-95">
+                  <i class="fas fa-trash-can text-xs"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- جسم الطلب: بيانات التوصيل وحالة المعالجة -->
+            <div class="p-4 space-y-4">
+              <!-- شريط الحالة والعميل -->
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-gray-800/80">
+                <div class="flex items-center gap-3">
+                  <div class="relative w-12 h-12 rounded-full overflow-hidden border border-yellow-500/40 shrink-0 bg-gray-950 shadow">
+                    <img src="${avatarImg}" onerror="this.src=FALLBACK_AVATAR" class="w-full h-full object-cover">
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-black text-white flex items-center gap-2">
+                      <span>${esc(o.customerName)}</span>
+                      <a href="tel:${esc(o.customerPhone)}" class="text-amber-400 hover:text-amber-300 text-xs font-mono font-bold">
+                        <i class="fas fa-phone-alt text-[10px] ml-1"></i>${esc(o.customerPhone)}
+                      </a>
+                    </h3>
+                    <p class="text-xs text-gray-300 mt-0.5 flex items-center gap-1.5">
+                      <i class="fas fa-location-dot text-amber-400 text-[11px]"></i>
+                      <span>${esc(o.address)}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- التحكم بحالة الطلب -->
+                <div class="flex items-center gap-2 shrink-0">
+                  <span class="text-xs font-semibold ${isCompleted ? 'text-emerald-400' : 'text-amber-400'} flex items-center gap-1">
+                    <i class="fas ${isCompleted ? 'fa-circle-check' : 'fa-clock'} text-xs"></i>
+                    <span>${isCompleted ? 'مكتمل' : 'قيد المعالجة'}</span>
+                  </span>
+
+                  <select onchange="updateOrderStatus('${o.id}', this.value)" 
+                          class="bg-gray-950 border border-gray-700 text-xs px-3 py-1.5 rounded-xl text-white font-bold focus:outline-none focus:border-yellow-500 transition cursor-pointer">
+                    <option value="جديد" ${!isCompleted ? "selected" : ""}>جديد (قيد المعالجة)</option>
+                    <option value="مكتمل" ${isCompleted ? "selected" : ""}>مكتمل (تم التسليم)</option>
+                  </select>
+
+                  <button onclick="openAdminChatRoom('${esc(o.customerPhone)}', '${esc(o.customerName)}', '${avatarImg}'); closeModal('standaloneOrdersModal'); openStandaloneChat();" 
+                          title="مراسلة الزبون" 
+                          class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow">
+                    <i class="fas fa-comment-dots"></i> <span>محادثة</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- قائمة المنتجات المشتراة داخل الطلب -->
+              <div class="space-y-2">
+                <span class="text-[11px] text-gray-400 font-bold block mb-1">المنتجات المطلوبة:</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  ${(o.items || []).map(i => {
+                    const matchedProd = state.products.find(p => p.id === i.id);
+                    const prodImage = matchedProd && matchedProd.image ? imgSrc(matchedProd.image) : FALLBACK_IMG;
+
+                    return `
+                      <div class="bg-gray-950/80 border border-gray-800/80 rounded-xl p-2.5 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5 overflow-hidden">
+                          <img src="${prodImage}" onerror="imgFallback(this)" class="w-12 h-12 rounded-lg object-cover bg-gray-900 border border-gray-800 shrink-0">
+                          <div class="truncate">
+                            <h4 class="font-bold text-xs text-gray-200 truncate">${esc(i.name)}</h4>
+                            <span class="text-[11px] text-gray-400 block font-mono">الكمية: <strong class="text-white">${i.qty}</strong></span>
+                          </div>
+                        </div>
+                        <div class="text-right shrink-0">
+                          <span class="text-xs font-extrabold text-amber-400 font-mono block">${money(i.price * i.qty)}</span>
+                          <span class="text-[10px] text-gray-500 font-mono">${money(i.price)} للقطعة</span>
+                        </div>
+                      </div>
+                    `;
+                  }).join("")}
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function updateOrderStatus(id, status) {
+      db.collection("orders").doc(id).update({ status }).then(() => {
+        toast("تم تحديث حالة الطلب.", "success");
+        loadOrdersOnce();
+      });
     }
 
     /* -------------------------------------------------------------
@@ -3464,7 +3682,7 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
       document.querySelectorAll(".admin-tab").forEach(b => {
         b.className = "admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap";
       });
-      ["storeSettings", "orders", "customers", "manage", "add"].forEach(t => {
+      ["storeSettings", "customers", "manage", "add"].forEach(t => {
         const el = document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
         if (el) el.classList.add("hidden");
       });
@@ -3476,76 +3694,7 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
       if (target) target.classList.remove("hidden");
 
       if (tab === "customers") loadAdminCustomers();
-      if (tab === "orders") loadOrdersOnce();
       if (tab === "storeSettings") populateAdminSettingsInputs();
-    }
-
-    async function loadOrdersOnce() {
-      if (!firebaseReady) return;
-      const list = document.getElementById("adminOrdersList");
-      const filter = document.getElementById("adminOrderFilter").value;
-      
-      await cleanupOldOrders();
-
-      try {
-        let ref = db.collection("orders");
-        if (filter !== "all") ref = ref.where("status", "==", filter);
-        const snap = await ref.get();
-
-        const orders = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-          .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-
-        document.getElementById("statPendingOrders").textContent = orders.filter(o => o.status === "جديد").length;
-
-        if (!orders.length) {
-          list.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">لا توجد طلبات حالياً.</p>`;
-          return;
-        }
-
-        list.innerHTML = orders.map(o => {
-          const formattedDate = o.createdAt ? formatOrderDateTime(o.createdAt) : "غير محدد";
-
-          return `
-          <div class="bg-gray-950 p-3.5 rounded-2xl border border-gray-800 text-xs space-y-2.5 shadow-sm">
-            <div class="flex justify-between items-start border-b border-gray-800 pb-2">
-              <div>
-                <span class="font-extrabold text-yellow-400 text-sm">${esc(o.customerName)}</span>
-                <span class="text-gray-400 font-mono text-[11px] block mt-0.5">(${esc(o.customerPhone)})</span>
-                <div class="text-[10px] text-emerald-400 font-semibold flex items-center gap-1.5 mt-1 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded-md w-max">
-                  <i class="fas fa-clock text-[9px]"></i>
-                  <span>أُرسلت: ${formattedDate}</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-1.5">
-                <select onchange="updateOrderStatus('${o.id}', this.value)" class="bg-gray-900 border border-gray-700 text-[10px] p-1.5 rounded-lg text-white font-bold">
-                  <option value="جديد" ${o.status === "جديد" ? "selected" : ""}>جديد</option>
-                  <option value="مكتمل" ${o.status === "مكتمل" ? "selected" : ""}>مكتمل</option>
-                </select>
-                <button onclick="deleteSingleOrder('${o.id}')" title="حذف الطلب" class="p-1.5 text-red-400 hover:text-red-300 bg-red-950/40 rounded-lg border border-red-900/50">
-                  <i class="fas fa-trash-can text-xs"></i>
-                </button>
-              </div>
-            </div>
-            <div class="text-[11px] text-gray-300 bg-gray-900/60 p-2 rounded-xl border border-gray-900">
-              <i class="fas fa-location-dot text-amber-400 ml-1"></i> العنوان: ${esc(o.address)}
-            </div>
-            <div class="space-y-1">${(o.items || []).map(i => `<div class="flex justify-between text-gray-300 text-[11px]"><span>${esc(i.name)} ×${i.qty}</span><span class="font-mono">${money(i.price * i.qty)}</span></div>`).join("")}</div>
-            <div class="flex justify-between pt-2 border-t border-gray-800 font-bold">
-              <span>الإجمالي:</span>
-              <span class="text-amber-400 font-black text-sm">${money(o.total)}</span>
-            </div>
-          </div>`;
-        }).join("");
-      } catch (e) {
-        list.innerHTML = `<p class="text-xs text-red-400 text-center py-4">فشل تحميل الطلبات.</p>`;
-      }
-    }
-
-    function updateOrderStatus(id, status) {
-      db.collection("orders").doc(id).update({ status }).then(() => {
-        toast("تم تحديث حالة الطلب.", "success");
-        loadOrdersOnce();
-      });
     }
 
     function formatLastSeen(ts) {
