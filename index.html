@@ -183,7 +183,7 @@
       </button>
     </div>
 
-    <!-- Store Phones Bar (أرقام الاتصال المفصولة والمباشرة) -->
+    <!-- Store Phones Bar -->
     <div id="storePhonesMobileBar" class="mb-5 bg-gray-900/95 border border-yellow-500/30 rounded-2xl p-3 flex flex-col items-center justify-between gap-3 shadow-lg">
       <div class="flex items-center gap-2 text-yellow-400 font-bold text-xs">
         <div class="w-7 h-7 rounded-lg bg-yellow-500/10 flex items-center justify-center">
@@ -314,7 +314,7 @@
     </div>
   </div>
 
-  <!-- Live Customer Support Chat Modal (Customer Side) -->
+  <!-- Live Customer Support Chat Modal -->
   <div id="supportChatModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 md:p-4">
     <div class="bg-gray-950 border border-yellow-500/40 rounded-3xl w-full max-w-md h-[550px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative">
       <div class="bg-gray-900 p-3.5 border-b border-gray-800 flex items-center justify-between">
@@ -351,14 +351,17 @@
     </div>
   </div>
 
-  <!-- Authentication / Profile Modal -->
+  <!-- Authentication / Profile Modal (مُحدث بالكامل بتصميم بروفايل إنستغرام) -->
   <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-sm modal-scroll relative">
-      <div class="flex justify-between items-center mb-5">
-        <h3 id="authTitle" class="text-base font-extrabold text-yellow-400">تسجيل الدخول برقم الهاتف</h3>
-        <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
+    <div class="bg-gray-900 border border-yellow-500/30 p-5 md:p-6 rounded-3xl w-full max-w-sm modal-scroll relative shadow-2xl">
+      <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
+        <h3 id="authTitle" class="text-sm font-extrabold text-yellow-400 flex items-center gap-1.5">
+          <i class="fas fa-user-circle"></i> <span>تسجيل الدخول برقم الهاتف</span>
+        </h3>
+        <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-white p-1"><i class="fas fa-xmark text-lg"></i></button>
       </div>
 
+      <!-- نموذج تسجيل الدخول -->
       <div id="authFormContainer" class="space-y-4">
         <div>
           <label class="text-[11px] text-gray-400 font-semibold block mb-1">رقم الهاتف</label>
@@ -382,45 +385,95 @@
         </button>
       </div>
 
+      <!-- واجهة بروفايل إنستغرام الأنيقة للمستخدم -->
       <div id="customerProfileContainer" class="hidden space-y-4">
-        <div class="flex flex-col items-center text-center pb-3 border-b border-gray-800">
-          <div class="relative w-20 h-20 rounded-full overflow-hidden border-2 border-yellow-500 bg-gray-950 mb-2">
-            <img id="profileImgPreview" onerror="imgFallback(this)" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover">
+        <!-- Instagram Header (Avatar + Stats) -->
+        <div class="flex items-center justify-between gap-4 pb-3 border-b border-gray-800">
+          <!-- Story Avatar -->
+          <div class="relative shrink-0 cursor-pointer" onclick="document.getElementById('instaImgUpload').click()" title="اضغط لتغيير الصورة الشخصية">
+            <div class="w-20 h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-lg">
+              <div class="w-full h-full rounded-full bg-black p-[2px] overflow-hidden">
+                <img id="profileImgPreview" onerror="imgFallback(this)" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover rounded-full">
+              </div>
+            </div>
+            <div class="absolute bottom-0 left-0 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center border-2 border-gray-900 text-[10px] shadow">
+              <i class="fas fa-camera"></i>
+            </div>
+            <input type="file" id="instaImgUpload" accept="image/*" onchange="handleProfileImgUpload(event)" class="hidden">
+            <input type="hidden" id="profileImgBase64">
           </div>
-          <span id="profilePhoneDisplay" class="text-yellow-400 font-bold text-xs"></span>
+
+          <!-- Stats Counters -->
+          <div class="flex-1 flex justify-around items-center text-center">
+            <div class="cursor-pointer" onclick="toggleMyOrders(); closeModal('authModal');">
+              <span id="instaOrdersCount" class="block font-black text-sm text-white">0</span>
+              <span class="text-[10px] text-gray-400">طلباتي</span>
+            </div>
+            <div class="cursor-pointer" onclick="toggleWishlistModal(); closeModal('authModal');">
+              <span id="instaWishlistCount" class="block font-black text-sm text-white">0</span>
+              <span class="text-[10px] text-gray-400">المفضلة</span>
+            </div>
+            <div class="cursor-pointer" onclick="toggleCart(); closeModal('authModal');">
+              <span id="instaCartCount" class="block font-black text-sm text-white">0</span>
+              <span class="text-[10px] text-gray-400">السلة</span>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label class="text-[11px] text-gray-400 block mb-1">الاسم الكامل</label>
-          <input type="text" id="profileName" placeholder="أدخل اسمك الكريم" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+        <!-- Bio & User Info -->
+        <div class="space-y-1 text-xs">
+          <div class="flex items-center gap-1.5 font-black text-white text-sm">
+            <span id="instaDisplayName">المستخدم</span>
+            <i class="fas fa-circle-check text-blue-500 text-xs" title="حساب VIP موثق"></i>
+          </div>
+          <div class="text-[11px] text-yellow-400 font-mono font-bold" id="profilePhoneDisplay"></div>
+          <div class="text-[11px] text-gray-300 flex items-center gap-1.5 pt-0.5">
+            <i class="fas fa-location-dot text-amber-400 text-[10px]"></i>
+            <span id="instaBioAddress">لم يحدد العنوان بعد</span>
+          </div>
+          <p class="text-[10px] text-gray-500 leading-tight">عضو زبون VIP رسمي في متجر VIP SMOOK • التسوق السريع والدفع عند الاستلام</p>
         </div>
 
-        <div>
-          <label class="text-[11px] text-gray-400 block mb-1">منطقة التوصيل القريبة</label>
-          <select id="profileArea" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-            <option value="وسط المدينة (Centre-ville)">وسط المدينة (Centre-ville)</option>
-            <option value="البلديات والأحياء المجاورة القريبة">البلديات والأحياء المجاورة القريبة</option>
-            <option value="استلام مباشر من المحل">استلام مباشر من المحل</option>
-          </select>
+        <!-- Instagram Action Buttons -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button type="button" onclick="toggleInstaEditForm()" class="py-2 px-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl text-xs transition border border-gray-700 flex items-center justify-center gap-1.5 active:scale-95">
+            <i class="fas fa-user-pen text-[11px] text-yellow-400"></i> تعديل الملف
+          </button>
+          <button type="button" onclick="toggleMyOrders(); closeModal('authModal');" class="py-2 px-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl text-xs transition border border-gray-700 flex items-center justify-center gap-1.5 active:scale-95">
+            <i class="fas fa-box-archive text-[11px] text-amber-400"></i> سجل الطلبات
+          </button>
         </div>
 
-        <div>
-          <label class="text-[11px] text-gray-400 block mb-1">العنوان بالتفصيل</label>
-          <input type="text" id="profileAddress" placeholder="مثال: حي النصر، قرب المسجد" class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-        </div>
+        <!-- Collapsible Edit Details Drawer -->
+        <div id="instaEditFields" class="hidden space-y-3 pt-3 border-t border-gray-800 bg-gray-950/70 p-3 rounded-2xl border border-gray-800/80">
+          <div>
+            <label class="text-[10px] text-gray-400 block mb-1 font-semibold">الاسم الكامل</label>
+            <input type="text" id="profileName" placeholder="أدخل اسمك الكريم" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
+          </div>
 
-        <div>
-          <label class="text-[11px] text-gray-400 block mb-1">صورة الحساب</label>
-          <input type="file" accept="image/*" onchange="handleProfileImgUpload(event)" class="w-full text-[10px] text-gray-400 bg-gray-950 p-2 rounded-xl border border-gray-800">
-          <input type="hidden" id="profileImgBase64">
-        </div>
+          <div>
+            <label class="text-[10px] text-gray-400 block mb-1 font-semibold">منطقة التوصيل القريبة</label>
+            <select id="profileArea" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
+              <option value="وسط المدينة (Centre-ville)">وسط المدينة (Centre-ville)</option>
+              <option value="البلديات والأحياء المجاورة القريبة">البلديات والأحياء المجاورة القريبة</option>
+              <option value="استلام مباشر من المحل">استلام مباشر من المحل</option>
+            </select>
+          </div>
 
-        <div class="space-y-2 pt-2">
-          <button onclick="saveCustomerProfile()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition">
+          <div>
+            <label class="text-[10px] text-gray-400 block mb-1 font-semibold">العنوان بالتفصيل</label>
+            <input type="text" id="profileAddress" placeholder="مثال: حي النصر، قرب المسجد" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
+          </div>
+
+          <button onclick="saveCustomerProfile()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs transition shadow-md shadow-amber-500/20 active:scale-95">
             حفظ التعديلات
           </button>
-          <button onclick="logoutCustomer()" class="w-full py-2.5 bg-red-950/60 hover:bg-red-900 border border-red-800 text-red-300 font-bold rounded-xl text-xs transition">
-            تسجيل الخروج
+        </div>
+
+        <!-- Logout Button -->
+        <div class="pt-1">
+          <button onclick="logoutCustomer()" class="w-full py-2 bg-red-950/40 hover:bg-red-900/60 border border-red-900/60 text-red-400 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 active:scale-95">
+            <i class="fas fa-arrow-right-from-bracket text-[11px]"></i> تسجيل الخروج
           </button>
         </div>
       </div>
@@ -694,7 +747,7 @@
           </button>
         </div>
 
-        <!-- 2. Admin Live Support Chats Tab (Messenger UI) -->
+        <!-- 2. Admin Live Support Chats Tab -->
         <div id="adminTabChats" class="space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 h-[480px]">
             <div class="bg-gray-950 p-2.5 rounded-2xl border border-gray-800 flex flex-col h-full overflow-hidden">
@@ -816,7 +869,7 @@
     </div>
   </div>
 
-  <!-- Gemini AI Chat Widget (نسخة فائقة الذكاء ومطورة) -->
+  <!-- Gemini AI Chat Widget -->
   <div id="geminiChatWidget" class="fixed bottom-24 md:bottom-8 left-4 z-40">
     <button onclick="toggleGeminiChat()" id="geminiToggleBtn" 
             class="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-tr from-amber-600 via-yellow-500 to-amber-400 text-black rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition duration-300 relative border-2 border-black/50">
@@ -2150,6 +2203,8 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
       const count = state.wishlist.length;
       document.getElementById("wishlistCount").textContent = count;
       document.getElementById("mobileWishlistBadge").textContent = count;
+      const instaWish = document.getElementById("instaWishlistCount");
+      if (instaWish) instaWish.textContent = count;
     }
 
     function renderWishlistModal() {
@@ -2441,6 +2496,8 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
       const count = state.cart.reduce((a, x) => a + Number(x.qty || 0), 0);
       document.getElementById("cartCount").textContent = count;
       document.getElementById("mobileCartBadge").textContent = count;
+      const instaCart = document.getElementById("instaCartCount");
+      if (instaCart) instaCart.textContent = count;
 
       const box = document.getElementById("cartItems");
       if (!state.cart.length) {
@@ -2538,11 +2595,41 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
       updateCartUI();
     }
 
+    /* دوال بروفايل إنستغرام التفاعلية */
+    function toggleInstaEditForm() {
+      const box = document.getElementById("instaEditFields");
+      if (box) box.classList.toggle("hidden");
+    }
+
+    function refreshInstaProfileData() {
+      if (!state.customer) return;
+      const name = state.customer.name || "زبون VIP";
+      const area = state.customer.area || "";
+      const addr = state.customer.address || "";
+
+      const nameEl = document.getElementById("instaDisplayName");
+      const bioEl = document.getElementById("instaBioAddress");
+      const wishEl = document.getElementById("instaWishlistCount");
+      const cartEl = document.getElementById("instaCartCount");
+      const ordEl = document.getElementById("instaOrdersCount");
+
+      if (nameEl) nameEl.textContent = name;
+      if (bioEl) bioEl.textContent = (area || addr) ? `${area} - ${addr}` : "لم يتم تحديد العنوان بعد";
+      if (wishEl) wishEl.textContent = state.wishlist.length || 0;
+      if (cartEl) cartEl.textContent = state.cart.reduce((a, x) => a + Number(x.qty || 0), 0);
+
+      if (firebaseReady && db && state.customer.phone && ordEl) {
+        db.collection("orders").where("customerPhone", "==", state.customer.phone).get()
+          .then(snap => { ordEl.textContent = snap.size; })
+          .catch(() => {});
+      }
+    }
+
     function toggleAuthModal() {
       const el = document.getElementById("authModal");
       if (el.classList.contains("hidden")) {
         if (state.customer) {
-          document.getElementById("authTitle").textContent = "الملف الشخصي";
+          document.getElementById("authTitle").innerHTML = '<i class="fab fa-instagram text-pink-500"></i> الملف الشخصي';
           document.getElementById("authFormContainer").classList.add("hidden");
           document.getElementById("customerProfileContainer").classList.remove("hidden");
           document.getElementById("profilePhoneDisplay").textContent = state.customer.phone || "";
@@ -2551,8 +2638,9 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
           document.getElementById("profileAddress").value = state.customer.address || "";
           document.getElementById("profileImgBase64").value = state.customer.image || "";
           document.getElementById("profileImgPreview").src = state.customer.image || FALLBACK_AVATAR;
+          refreshInstaProfileData();
         } else {
-          document.getElementById("authTitle").textContent = "تسجيل الدخول";
+          document.getElementById("authTitle").innerHTML = '<i class="fas fa-user-circle"></i> تسجيل الدخول';
           document.getElementById("authFormContainer").classList.remove("hidden");
           document.getElementById("customerProfileContainer").classList.add("hidden");
         }
@@ -2612,7 +2700,12 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
         const b64 = await compressAndConvertImage(f, 200, 0.5);
         document.getElementById("profileImgBase64").value = b64;
         document.getElementById("profileImgPreview").src = b64;
-        toast("تمت جاهزية صورة الملف!", "success");
+        toast("تم تغيير صورة البروفايل بنجاح!", "success");
+        if (state.customer && firebaseReady && db) {
+          db.collection("store_users").doc(state.customer.phone).set({ image: b64 }, { merge: true });
+          state.customer.image = b64;
+          persistCustomer();
+        }
       } catch (err) {
         toast("فشل معالجة الصورة.", "error");
       }
@@ -2633,9 +2726,10 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
       }, { merge: true }).then(() => {
         state.customer = { ...state.customer, name, area, address, image };
         persistCustomer();
+        refreshInstaProfileData();
         toast("تم حفظ الملف الشخصي بنجاح.", "success");
         updateUserUI();
-        closeModal("authModal");
+        document.getElementById("instaEditFields")?.classList.add("hidden");
       }).catch(() => toast("تعذر حفظ التعديلات.", "error"));
     }
 
