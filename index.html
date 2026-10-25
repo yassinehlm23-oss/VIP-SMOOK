@@ -314,7 +314,7 @@
     </div>
   </div>
 
-  <!-- Live Customer Support Chat Modal -->
+  <!-- Live Customer Support Chat Modal (Customer Side) -->
   <div id="supportChatModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 md:p-4">
     <div class="bg-gray-950 border border-yellow-500/40 rounded-3xl w-full max-w-md h-[550px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative">
       <div class="bg-gray-900 p-3.5 border-b border-gray-800 flex items-center justify-between">
@@ -351,7 +351,7 @@
     </div>
   </div>
 
-  <!-- Authentication / Profile Modal (مُحدث بالكامل بتصميم بروفايل إنستغرام) -->
+  <!-- Authentication / Profile Modal (بدون شعار إنستغرام) -->
   <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-gray-900 border border-yellow-500/30 p-5 md:p-6 rounded-3xl w-full max-w-sm modal-scroll relative shadow-2xl">
       <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
@@ -361,7 +361,7 @@
         <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-white p-1"><i class="fas fa-xmark text-lg"></i></button>
       </div>
 
-      <!-- نموذج تسجيل الدخول -->
+      <!-- Auth Form Container -->
       <div id="authFormContainer" class="space-y-4">
         <div>
           <label class="text-[11px] text-gray-400 font-semibold block mb-1">رقم الهاتف</label>
@@ -385,11 +385,9 @@
         </button>
       </div>
 
-      <!-- واجهة بروفايل إنستغرام الأنيقة للمستخدم -->
+      <!-- Customer Profile Container -->
       <div id="customerProfileContainer" class="hidden space-y-4">
-        <!-- Instagram Header (Avatar + Stats) -->
         <div class="flex items-center justify-between gap-4 pb-3 border-b border-gray-800">
-          <!-- Story Avatar -->
           <div class="relative shrink-0 cursor-pointer" onclick="document.getElementById('instaImgUpload').click()" title="اضغط لتغيير الصورة الشخصية">
             <div class="w-20 h-20 rounded-full p-[2.5px] bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shadow-lg">
               <div class="w-full h-full rounded-full bg-black p-[2px] overflow-hidden">
@@ -403,7 +401,6 @@
             <input type="hidden" id="profileImgBase64">
           </div>
 
-          <!-- Stats Counters -->
           <div class="flex-1 flex justify-around items-center text-center">
             <div class="cursor-pointer" onclick="toggleMyOrders(); closeModal('authModal');">
               <span id="instaOrdersCount" class="block font-black text-sm text-white">0</span>
@@ -420,7 +417,6 @@
           </div>
         </div>
 
-        <!-- Bio & User Info -->
         <div class="space-y-1 text-xs">
           <div class="flex items-center gap-1.5 font-black text-white text-sm">
             <span id="instaDisplayName">المستخدم</span>
@@ -434,7 +430,6 @@
           <p class="text-[10px] text-gray-500 leading-tight">عضو زبون VIP رسمي في متجر VIP SMOOK • التسوق السريع والدفع عند الاستلام</p>
         </div>
 
-        <!-- Instagram Action Buttons -->
         <div class="grid grid-cols-2 gap-2 pt-1">
           <button type="button" onclick="toggleInstaEditForm()" class="py-2 px-3 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-xl text-xs transition border border-gray-700 flex items-center justify-center gap-1.5 active:scale-95">
             <i class="fas fa-user-pen text-[11px] text-yellow-400"></i> تعديل الملف
@@ -444,7 +439,6 @@
           </button>
         </div>
 
-        <!-- Collapsible Edit Details Drawer -->
         <div id="instaEditFields" class="hidden space-y-3 pt-3 border-t border-gray-800 bg-gray-950/70 p-3 rounded-2xl border border-gray-800/80">
           <div>
             <label class="text-[10px] text-gray-400 block mb-1 font-semibold">الاسم الكامل</label>
@@ -470,7 +464,6 @@
           </button>
         </div>
 
-        <!-- Logout Button -->
         <div class="pt-1">
           <button onclick="logoutCustomer()" class="w-full py-2 bg-red-950/40 hover:bg-red-900/60 border border-red-900/60 text-red-400 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 active:scale-95">
             <i class="fas fa-arrow-right-from-bracket text-[11px]"></i> تسجيل الخروج
@@ -666,10 +659,10 @@
           </div>
         </div>
 
-        <!-- Action Control Buttons Row -->
+        <!-- Action Control Buttons Row (زر فتح واجهة المحادثات المنفردة بدون أيقونة ماسنجر) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-          <button onclick="switchAdminTab('chats')" id="tabChatsBtn" class="admin-tab py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition active:scale-95">
-            <i class="fab fa-facebook-messenger text-base"></i> محادثات الزبائن <span id="adminUnreadChatBadge" class="hidden w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
+          <button onclick="openStandaloneChat()" id="tabChatsBtn" class="py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition active:scale-95">
+            <i class="fas fa-comments text-base"></i> محادثات الزبائن <span id="adminUnreadChatBadge" class="hidden w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
           </button>
           <button onclick="switchAdminTab('orders')" id="tabOrdersBtn" class="admin-tab py-3 px-4 bg-gray-950 hover:bg-gray-900 border border-gray-800 text-gray-200 font-bold rounded-2xl text-xs flex items-center justify-center gap-2 transition active:scale-95">
             <i class="fas fa-boxes-stacked text-yellow-400 text-sm"></i> الطلبات الواردة
@@ -747,59 +740,7 @@
           </button>
         </div>
 
-        <!-- 2. Admin Live Support Chats Tab -->
-        <div id="adminTabChats" class="space-y-3">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 h-[480px]">
-            <div class="bg-gray-950 p-2.5 rounded-2xl border border-gray-800 flex flex-col h-full overflow-hidden">
-              <div class="flex justify-between items-center pb-2.5 border-b border-gray-800/80 mb-2 px-1">
-                <span class="text-xs font-black text-yellow-400 flex items-center gap-1.5">
-                  <i class="fab fa-facebook-messenger text-blue-500"></i> محادثات الزبائن
-                </span>
-                <button onclick="loadAdminChatList()" class="text-[11px] text-gray-400 hover:text-white p-1 rounded-lg hover:bg-gray-900 transition">
-                  <i class="fas fa-rotate"></i>
-                </button>
-              </div>
-              <div id="adminChatRoomsList" class="flex-1 overflow-y-auto space-y-2 no-scrollbar pr-0.5">
-                <p class="text-gray-500 text-center py-8 text-[11px]">لا توجد محادثات نشطة حالياً.</p>
-              </div>
-            </div>
-
-            <div class="md:col-span-2 bg-[#0b101b] rounded-2xl border border-gray-800 flex flex-col overflow-hidden h-full shadow-inner relative">
-              <div id="adminActiveChatHeader" class="bg-gray-900/90 backdrop-blur-md p-3 border-b border-gray-800 text-xs flex justify-between items-center shadow-sm">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white text-xs shadow">
-                    <i class="fas fa-user"></i>
-                  </div>
-                  <div>
-                    <span class="text-white font-bold block">محادثة الزبون</span>
-                    <span class="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
-                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> متصل في الدردشة
-                    </span>
-                  </div>
-                </div>
-                <span id="adminActiveChatPhone" class="text-gray-400 font-mono text-[11px] bg-gray-950 px-2 py-1 rounded-lg border border-gray-800"></span>
-              </div>
-
-              <div id="adminChatMessagesBox" class="flex-1 p-3.5 overflow-y-auto space-y-3 text-xs no-scrollbar bg-gradient-to-b from-gray-950 to-[#070b14]">
-                <div class="text-gray-500 text-center py-20 text-xs flex flex-col items-center justify-center gap-2">
-                  <i class="fab fa-facebook-messenger text-3xl text-gray-700"></i>
-                  <span>اختر زبوناً من القائمة على اليمين لبدء المحادثة</span>
-                </div>
-              </div>
-
-              <div class="p-2.5 bg-gray-900/95 border-t border-gray-800 flex items-center gap-2">
-                <input id="adminReplyInput" type="text" placeholder="اكتب ردك للزبون هنا..." onkeydown="if(event.key==='Enter') sendAdminReply()" disabled
-                       class="flex-1 bg-gray-950 border border-gray-800 focus:border-blue-500 rounded-full px-4 py-2.5 text-xs text-white focus:outline-none transition disabled:opacity-40">
-                <button onclick="sendAdminReply()" id="adminReplySendBtn" disabled
-                        class="w-9 h-9 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 disabled:opacity-40 text-white font-bold rounded-full flex items-center justify-center transition shadow-md active:scale-95 shrink-0">
-                  <i class="fas fa-paper-plane text-xs"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. Orders Tab -->
+        <!-- 2. Orders Tab -->
         <div id="adminTabOrders" class="hidden space-y-3">
           <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-xl p-2.5 text-[11px] flex items-center justify-between">
             <span class="flex items-center gap-1.5"><i class="fas fa-clock-rotate-left"></i> يتم مسح وحذف الطلبات تلقائياً بعد مرور 24 ساعة.</span>
@@ -824,7 +765,7 @@
           </div>
         </div>
 
-        <!-- 4. Customers Tab -->
+        <!-- 3. Customers Tab -->
         <div id="adminTabCustomers" class="hidden space-y-3">
           <div class="flex justify-between items-center">
             <h4 class="text-xs font-bold text-gray-300">قائمة الزبائن المسجلين:</h4>
@@ -833,14 +774,14 @@
           <div id="adminCustomersList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- 5. Manage Stock Tab -->
+        <!-- 4. Manage Stock Tab -->
         <div id="adminTabManage" class="hidden space-y-3">
           <input id="adminStockSearch" oninput="filterAdminProductsList()" type="search" placeholder="ابحث عن منتج لتعديله..."
             class="w-full p-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
           <div id="adminProductsList" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- 6. Add Product Tab -->
+        <!-- 5. Add Product Tab -->
         <div id="adminTabAdd" class="hidden space-y-3 bg-gray-950/80 p-4 rounded-2xl border border-gray-800">
           <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-2.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-white">
           <div class="grid grid-cols-2 gap-2">
@@ -866,6 +807,94 @@
           </button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       واجهة التحدث مع الزبائن المنفردة والمستقلة بالكامل (Messenger Style)
+       ======================================================== -->
+  <div id="standaloneChatModal" class="fixed inset-0 z-[95] bg-black/90 backdrop-blur-md hidden items-center justify-center p-0 md:p-4">
+    <div class="w-full h-full md:max-w-4xl md:h-[90vh] bg-[#0c121e] border-0 md:border border-gray-800 md:rounded-3xl flex overflow-hidden shadow-2xl relative">
+      
+      <!-- العمود الأول: قائمة محادثات الزبائن -->
+      <div id="chatSidebar" class="w-full md:w-80 bg-gray-950 border-l border-gray-800/80 flex flex-col h-full shrink-0">
+        <!-- ترويسة القائمة -->
+        <div class="p-3.5 border-b border-gray-800/80 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <button onclick="closeStandaloneChat()" class="text-gray-400 hover:text-white p-1 text-base rounded-lg hover:bg-gray-900 transition">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+            <h3 class="text-sm font-black text-white flex items-center gap-2">
+              <i class="fas fa-comments text-yellow-400 text-sm"></i> محادثات الزبائن
+            </h3>
+          </div>
+          <button onclick="loadAdminChatList()" title="تحديث المحادثات" class="text-gray-400 hover:text-yellow-400 p-1.5 rounded-lg hover:bg-gray-900 transition text-xs">
+            <i class="fas fa-rotate"></i>
+          </button>
+        </div>
+
+        <!-- شريط البحث السريع في المحادثات -->
+        <div class="p-2.5 border-b border-gray-900 bg-gray-950/90">
+          <div class="relative">
+            <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-[11px]"></i>
+            <input id="chatSearchInput" oninput="filterChatList()" type="text" placeholder="بحث في المحادثات..."
+              class="w-full pr-8 pl-3 py-1.5 bg-gray-900 border border-gray-800 rounded-xl text-xs text-gray-200 focus:outline-none focus:border-yellow-500">
+          </div>
+        </div>
+
+        <!-- قائمة المحادثات -->
+        <div id="adminChatRoomsList" class="flex-1 overflow-y-auto space-y-1.5 p-2 no-scrollbar">
+          <p class="text-gray-500 text-center py-10 text-xs">لا توجد محادثات نشطة حالياً.</p>
+        </div>
+      </div>
+
+      <!-- العمود الثاني: صندوق الرسائل المنفرد للزبون المختار -->
+      <div id="chatMainArea" class="hidden md:flex flex-1 flex-col h-full bg-[#070b14] relative">
+        <!-- ترويسة المحادثة النشطة -->
+        <div id="adminActiveChatHeader" class="bg-gray-900/95 backdrop-blur-md px-4 py-3 border-b border-gray-800 flex items-center justify-between shadow-sm z-10">
+          <div class="flex items-center gap-3">
+            <button onclick="backToChatSidebarMobile()" class="md:hidden text-gray-400 hover:text-white p-1.5 text-base">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+            <div id="adminActiveAvatar" class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-500 flex items-center justify-center font-bold text-black text-xs shadow">
+              <i class="fas fa-user"></i>
+            </div>
+            <div>
+              <span id="adminActiveCustomerName" class="text-white font-extrabold text-xs block">اختر زبوناً للبدء</span>
+              <span class="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> متصل في الدردشة
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="adminActiveChatPhone" class="text-yellow-400 font-mono text-[11px] bg-gray-950 px-2.5 py-1 rounded-xl border border-gray-800"></span>
+            <button onclick="closeStandaloneChat()" class="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-gray-800 transition">
+              <i class="fas fa-xmark text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- مساحة عرض الرسائل بتصميم فقاعات ماسنجر -->
+        <div id="adminChatMessagesBox" class="flex-1 p-4 overflow-y-auto space-y-2.5 text-xs no-scrollbar bg-gradient-to-b from-gray-950/60 to-[#070b14]">
+          <div class="text-gray-500 text-center py-28 text-xs flex flex-col items-center justify-center gap-3">
+            <div class="w-16 h-16 rounded-full bg-gray-900 flex items-center justify-center text-gray-700 text-2xl">
+              <i class="fas fa-comments"></i>
+            </div>
+            <span>اختر زبوناً من القائمة لبدء المحادثة المباشرة</span>
+          </div>
+        </div>
+
+        <!-- شريط كتابة الرسالة والإرسال -->
+        <div class="p-3 bg-gray-950 border-t border-gray-800/90 flex items-center gap-2">
+          <input id="adminReplyInput" type="text" placeholder="اكتب ردك للزبون هنا..." onkeydown="if(event.key==='Enter') sendAdminReply()" disabled
+                 class="flex-1 bg-gray-900 border border-gray-800 focus:border-yellow-500 rounded-full px-4 py-2.5 text-xs text-white focus:outline-none transition disabled:opacity-40">
+          <button onclick="sendAdminReply()" id="adminReplySendBtn" disabled
+                  class="w-10 h-10 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-black font-bold rounded-full flex items-center justify-center transition shadow-md active:scale-95 shrink-0">
+            <i class="fas fa-paper-plane text-xs"></i>
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -951,6 +980,7 @@
     let unsubscribeAdminActiveChat = null;
     let unsubscribeBroadcasts = null;
     let currentAdminActivePhone = null;
+    let cachedAdminChats = [];
 
     const firebaseConfig = {
       apiKey: "AIzaSyC8Sh1-ufVJ_voLCcu3_W89011oQYEGn60",
@@ -1268,7 +1298,7 @@
       setTimeout(() => box.classList.add("hidden"), 300);
     }
 
-    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal", "supportChatModal"];
+    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal", "supportChatModal", "standaloneChatModal"];
 
     function openModal(id) {
       const el = document.getElementById(id);
@@ -1586,9 +1616,32 @@
       }
     }
 
+    /* -------------------------------------------------------------
+       نظام واجهة محادثات الزبائن المنفردة للمدير (Messenger Style)
+    ------------------------------------------------------------- */
+    function openStandaloneChat() {
+      closeModal("adminModal");
+      openModal("standaloneChatModal");
+      loadAdminChatList();
+      if (window.innerWidth < 768) {
+        backToChatSidebarMobile();
+      }
+    }
+
+    function closeStandaloneChat() {
+      closeModal("standaloneChatModal");
+      openModal("adminModal");
+      if (unsubscribeAdminActiveChat) unsubscribeAdminActiveChat();
+    }
+
+    function backToChatSidebarMobile() {
+      document.getElementById("chatSidebar")?.classList.remove("hidden");
+      document.getElementById("chatMainArea")?.classList.add("hidden");
+      document.getElementById("chatMainArea")?.classList.remove("flex");
+    }
+
     function loadAdminChatList() {
       if (!firebaseReady || !db || !state.isAdminLoggedIn) return;
-      const listContainer = document.getElementById("adminChatRoomsList");
 
       if (unsubscribeAdminChatList) unsubscribeAdminChatList();
 
@@ -1596,37 +1649,28 @@
         .orderBy("updatedAt", "desc")
         .onSnapshot(snap => {
           if (snap.empty) {
-            listContainer.innerHTML = `<p class="text-gray-500 text-center py-8 text-[11px]">لا توجد محادثات نشطة حالياً.</p>`;
+            cachedAdminChats = [];
+            renderAdminChatRooms([]);
             return;
           }
 
           let hasUnread = false;
-          listContainer.innerHTML = snap.docs.map(doc => {
+          cachedAdminChats = snap.docs.map(doc => {
             const data = doc.data();
             const phone = doc.id;
             const name = data.customerName || phone;
             const isUnread = data.unreadByAdmin === true;
             if (isUnread) hasUnread = true;
-            const isSelected = currentAdminActivePhone === phone;
-            const timeAgo = data.updatedAt ? formatOrderDateTime(data.updatedAt) : "";
+            return {
+              phone,
+              name,
+              lastMessage: data.lastMessage || "بدء المحادثة",
+              isUnread,
+              updatedAt: data.updatedAt
+            };
+          });
 
-            return `
-              <div onclick="openAdminChatRoom('${phone}', '${esc(name)}')" 
-                   class="p-2.5 rounded-2xl cursor-pointer border transition flex items-center gap-2.5 ${isSelected ? 'bg-gradient-to-r from-blue-900/40 to-gray-900 border-blue-500/60 shadow-md' : 'bg-gray-900/90 border-gray-800/90 hover:border-gray-700'}">
-                <div class="relative w-10 h-10 rounded-full bg-gradient-to-tr from-amber-600 to-yellow-400 flex items-center justify-center font-bold text-black text-xs shrink-0 shadow">
-                  ${esc(name.substring(0, 1)).toUpperCase() || '<i class="fas fa-user"></i>'}
-                  ${isUnread ? '<span class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-600 border-2 border-gray-900 rounded-full"></span>' : ''}
-                </div>
-                <div class="flex-1 truncate">
-                  <div class="flex justify-between items-center mb-0.5">
-                    <span class="font-bold text-gray-100 text-xs truncate ${isUnread ? 'text-white font-black' : ''}">${esc(name)}</span>
-                    <span class="text-[9px] text-gray-500 font-mono">${timeAgo}</span>
-                  </div>
-                  <p class="text-[11px] truncate ${isUnread ? 'text-blue-400 font-bold' : 'text-gray-400'}">${esc(data.lastMessage || "بدء المحادثة")}</p>
-                </div>
-              </div>
-            `;
-          }).join("");
+          renderAdminChatRooms(cachedAdminChats);
 
           const badge = document.getElementById("adminUnreadChatBadge");
           if (badge) {
@@ -1636,19 +1680,61 @@
         });
     }
 
+    function renderAdminChatRooms(chats) {
+      const listContainer = document.getElementById("adminChatRoomsList");
+      if (!listContainer) return;
+
+      if (!chats.length) {
+        listContainer.innerHTML = `<p class="text-gray-500 text-center py-10 text-xs">لا توجد محادثات نشطة حالياً.</p>`;
+        return;
+      }
+
+      listContainer.innerHTML = chats.map(chat => {
+        const isSelected = currentAdminActivePhone === chat.phone;
+        const timeAgo = chat.updatedAt ? formatOrderDateTime(chat.updatedAt) : "";
+
+        return `
+          <div onclick="openAdminChatRoom('${chat.phone}', '${esc(chat.name)}')" 
+               class="p-2.5 rounded-2xl cursor-pointer border transition flex items-center gap-3 ${isSelected ? 'bg-gradient-to-r from-blue-900/40 to-gray-900 border-blue-500/50 shadow-md' : 'bg-gray-900/80 border-gray-800/80 hover:bg-gray-800/60'}">
+            <div class="relative w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-400 flex items-center justify-center font-black text-black text-xs shrink-0 shadow">
+              ${esc(chat.name.substring(0, 1)).toUpperCase() || '<i class="fas fa-user"></i>'}
+              ${chat.isUnread ? '<span class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-600 border-2 border-gray-900 rounded-full"></span>' : ''}
+            </div>
+            <div class="flex-1 truncate">
+              <div class="flex justify-between items-center mb-0.5">
+                <span class="font-bold text-gray-100 text-xs truncate ${chat.isUnread ? 'text-white font-black' : ''}">${esc(chat.name)}</span>
+                <span class="text-[9px] text-gray-500 font-mono">${timeAgo}</span>
+              </div>
+              <p class="text-[11px] truncate ${chat.isUnread ? 'text-blue-400 font-bold' : 'text-gray-400'}">${esc(chat.lastMessage)}</p>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function filterChatList() {
+      const q = (document.getElementById("chatSearchInput")?.value || "").toLowerCase().trim();
+      if (!q) {
+        renderAdminChatRooms(cachedAdminChats);
+        return;
+      }
+      const filtered = cachedAdminChats.filter(c => c.name.toLowerCase().includes(q) || c.phone.includes(q) || c.lastMessage.toLowerCase().includes(q));
+      renderAdminChatRooms(filtered);
+    }
+
     function openAdminChatRoom(phone, name) {
       currentAdminActivePhone = phone;
-      document.getElementById("adminActiveChatHeader").innerHTML = `
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white text-xs shadow">
-            ${esc(name.substring(0,1)).toUpperCase() || '<i class="fas fa-user"></i>'}
-          </div>
-          <div>
-            <span class="text-white font-extrabold text-xs block">${esc(name)}</span>
-            <span class="text-gray-400 font-mono text-[10px]">${esc(phone)}</span>
-          </div>
-        </div>
-      `;
+
+      if (window.innerWidth < 768) {
+        document.getElementById("chatSidebar")?.classList.add("hidden");
+        const main = document.getElementById("chatMainArea");
+        main?.classList.remove("hidden");
+        main?.classList.add("flex");
+      }
+
+      document.getElementById("adminActiveCustomerName").textContent = name;
+      document.getElementById("adminActiveChatPhone").textContent = phone;
+      document.getElementById("adminActiveAvatar").innerHTML = esc(name.substring(0, 1)).toUpperCase() || '<i class="fas fa-user"></i>';
 
       const input = document.getElementById("adminReplyInput");
       const btn = document.getElementById("adminReplySendBtn");
@@ -1668,7 +1754,7 @@
         .orderBy("createdAt", "asc")
         .onSnapshot(snap => {
           if (snap.empty) {
-            messagesBox.innerHTML = `<p class="text-gray-500 text-center py-10 text-xs">لا توجد رسائل سابقة في هذه المحادثة.</p>`;
+            messagesBox.innerHTML = `<p class="text-gray-500 text-center py-16 text-xs">لا توجد رسائل سابقة في هذه المحادثة.</p>`;
             return;
           }
 
@@ -1678,7 +1764,7 @@
             const timeStr = m.createdAt ? formatOrderDateTime(m.createdAt) : "";
 
             return `
-              <div class="flex ${isAdmin ? 'justify-start' : 'justify-end'} items-end gap-1.5 my-1">
+              <div class="flex ${isAdmin ? 'justify-start' : 'justify-end'} items-end gap-1.5 my-1.5">
                 ${isAdmin ? '<div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0 mb-1"><i class="fas fa-shield-halved"></i></div>' : ''}
                 <div class="${isAdmin ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl rounded-bl-sm font-medium' : 'bg-gray-800 text-gray-200 rounded-2xl rounded-br-sm'} px-3.5 py-2 max-w-[80%] leading-relaxed text-xs shadow-sm">
                   ${!isAdmin ? `<span class="text-[9px] text-yellow-400 block font-bold mb-0.5">${esc(m.senderName || "الزبون")}</span>` : ''}
@@ -1691,7 +1777,7 @@
           messagesBox.scrollTop = messagesBox.scrollHeight;
         });
 
-      loadAdminChatList();
+      renderAdminChatRooms(cachedAdminChats);
     }
 
     async function sendAdminReply() {
@@ -1996,7 +2082,7 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
         actionsHTML += `
           <div class="mt-2.5 pt-2">
             <button onclick="toggleSupportChat()" class="w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5">
-              <i class="fab fa-facebook-messenger"></i> فتح محادثة المدير المباشرة
+              <i class="fas fa-comments"></i> فتح محادثة المدير المباشرة
             </button>
           </div>
         `;
@@ -2595,7 +2681,6 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
       updateCartUI();
     }
 
-    /* دوال بروفايل إنستغرام التفاعلية */
     function toggleInstaEditForm() {
       const box = document.getElementById("instaEditFields");
       if (box) box.classList.toggle("hidden");
@@ -2629,7 +2714,7 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
       const el = document.getElementById("authModal");
       if (el.classList.contains("hidden")) {
         if (state.customer) {
-          document.getElementById("authTitle").innerHTML = '<i class="fab fa-instagram text-pink-500"></i> الملف الشخصي';
+          document.getElementById("authTitle").innerHTML = '<i class="fas fa-user-circle"></i> الملف الشخصي';
           document.getElementById("authFormContainer").classList.add("hidden");
           document.getElementById("customerProfileContainer").classList.remove("hidden");
           document.getElementById("profilePhoneDisplay").textContent = state.customer.phone || "";
@@ -3042,7 +3127,7 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
       document.querySelectorAll(".admin-tab").forEach(b => {
         b.className = "admin-tab px-3.5 py-2 bg-gray-800 text-gray-300 font-semibold rounded-xl text-xs whitespace-nowrap";
       });
-      ["storeSettings", "chats", "orders", "customers", "manage", "add"].forEach(t => {
+      ["storeSettings", "orders", "customers", "manage", "add"].forEach(t => {
         const el = document.getElementById(`adminTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
         if (el) el.classList.add("hidden");
       });
@@ -3055,7 +3140,6 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
 
       if (tab === "customers") loadAdminCustomers();
       if (tab === "orders") loadOrdersOnce();
-      if (tab === "chats") loadAdminChatList();
       if (tab === "storeSettings") populateAdminSettingsInputs();
     }
 
@@ -3174,8 +3258,8 @@ ${availableProductsSummary || "جاري جلب المنتجات."}
               </div>
             </div>
             <div class="shrink-0 flex items-center gap-1.5">
-              <button onclick="openAdminChatRoom('${esc(c.phone || c.id)}', '${esc(c.name || c.phone || c.id)}'); switchAdminTab('chats');" class="px-2.5 py-1.5 bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 rounded-lg text-[10px] font-bold flex items-center gap-1 transition">
-                <i class="fab fa-facebook-messenger"></i> مراسلة
+              <button onclick="openAdminChatRoom('${esc(c.phone || c.id)}', '${esc(c.name || c.phone || c.id)}'); openStandaloneChat();" class="px-2.5 py-1.5 bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 rounded-lg text-[10px] font-bold flex items-center gap-1 transition">
+                <i class="fas fa-comments"></i> مراسلة
               </button>
               <button onclick="deleteCustomerAccount('${esc(c.id)}')" class="px-2.5 py-1.5 bg-red-950/80 hover:bg-red-900 border border-red-800 text-red-300 rounded-lg text-[10px] font-bold flex items-center gap-1 transition">
                 <i class="fas fa-trash-can"></i> حذف
