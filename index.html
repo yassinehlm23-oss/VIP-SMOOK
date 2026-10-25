@@ -85,6 +85,22 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
     }
+
+    /* أنماط تسجيل الفوكال */
+    .recording-pulse {
+      animation: micPulse 1s infinite alternate;
+      background-color: #ef4444 !important;
+      color: white !important;
+    }
+    @keyframes micPulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      100% { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    }
+    audio {
+      height: 34px;
+      max-width: 210px;
+      border-radius: 20px;
+    }
   </style>
 </head>
 <body class="bg-[#070a12] text-gray-100 min-h-screen pb-20 md:pb-0">
@@ -341,7 +357,7 @@
     </div>
   </div>
 
-  <!-- Live Customer Support Chat Modal (Customer Side) -->
+  <!-- Live Customer Support Chat Modal (Customer Side) مع ميزة الفوكال -->
   <div id="supportChatModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 md:p-4">
     <div class="bg-gray-950 border border-yellow-500/40 rounded-3xl w-full max-w-md h-[550px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative">
       <div class="bg-gray-900 p-3.5 border-b border-gray-800 flex items-center justify-between">
@@ -363,13 +379,22 @@
 
       <div id="supportMessages" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs no-scrollbar">
         <div class="bg-gray-900 border border-gray-800 text-gray-300 p-3 rounded-2xl rounded-tr-none leading-relaxed">
-          أهلاً بك! 👋 يمكنك هنا كتابة استفسارك، وسيرد عليك مدير المتجر مباشرة ويصلك إشعار بالرد.
+          أهلاً بك! 👋 يمكنك هنا كتابة استفسارك أو إرسال تسجيل صوتي، وسيرد عليك مدير المتجر مباشرة.
         </div>
       </div>
 
+      <!-- إدخال النص + الفوكال + الإرسال -->
       <div class="p-2.5 bg-gray-900 border-t border-gray-800 flex items-center gap-2">
         <input id="supportMsgInput" type="text" placeholder="اكتب رسالتك للمدير هنا..." onkeydown="if(event.key==='Enter') sendSupportMessage()"
                class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-500">
+        
+        <!-- زر الفوكال للزبون -->
+        <button id="custVoiceBtn" onclick="toggleCustomerVoiceRecord()" title="تسجيل صوتي (فوكال)"
+                class="w-9 h-9 bg-gray-800 hover:bg-gray-700 text-yellow-400 rounded-xl flex items-center justify-center font-bold transition shrink-0 border border-yellow-500/30 active:scale-95">
+          <i class="fas fa-microphone text-xs"></i>
+        </button>
+
+        <!-- زر الإرسال -->
         <button onclick="sendSupportMessage()" id="supportSendBtn" 
                 class="w-9 h-9 bg-amber-500 hover:bg-amber-400 text-black rounded-xl flex items-center justify-center font-bold transition shrink-0">
           <i class="fas fa-paper-plane text-xs"></i>
@@ -837,7 +862,7 @@
     </div>
   </div>
 
-  <!-- واجهة التحدث مع الزبائن المنفردة للمدير -->
+  <!-- واجهة التحدث مع الزبائن المنفردة للمدير مع الفوكال -->
   <div id="standaloneChatModal" class="fixed inset-0 z-[95] bg-black/90 backdrop-blur-md hidden items-center justify-center p-0 md:p-4">
     <div class="w-full h-full md:max-w-4xl md:h-[90vh] bg-[#0c121e] border-0 md:border border-gray-800 md:rounded-3xl flex overflow-hidden shadow-2xl relative">
       <div id="chatSidebar" class="w-full md:w-80 bg-gray-950 border-l border-gray-800/80 flex flex-col h-full shrink-0">
@@ -901,9 +926,16 @@
           </div>
         </div>
 
+        <!-- إدخال المدير مع زر الفوكال -->
         <div class="p-3 bg-gray-950 border-t border-gray-800/90 flex items-center gap-2">
           <input id="adminReplyInput" type="text" placeholder="اكتب ردك للزبون هنا..." onkeydown="if(event.key==='Enter') sendAdminReply()" disabled
                  class="flex-1 bg-gray-900 border border-gray-800 focus:border-yellow-500 rounded-full px-4 py-2.5 text-xs text-white focus:outline-none transition disabled:opacity-40">
+          
+          <button id="adminVoiceBtn" onclick="toggleAdminVoiceRecord()" title="تسجيل صوتي (فوكال)" disabled
+                  class="w-10 h-10 bg-gray-800 hover:bg-gray-700 disabled:opacity-40 text-yellow-400 border border-yellow-500/30 rounded-full flex items-center justify-center transition shadow-md active:scale-95 shrink-0">
+            <i class="fas fa-microphone text-xs"></i>
+          </button>
+
           <button onclick="sendAdminReply()" id="adminReplySendBtn" disabled
                   class="w-10 h-10 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-black font-bold rounded-full flex items-center justify-center transition shadow-md active:scale-95 shrink-0">
             <i class="fas fa-paper-plane text-xs"></i>
@@ -913,11 +945,8 @@
     </div>
   </div>
 
-  <!-- ========================================================
-       Gemini AI Chat Widget (نسخة فائقة التطور بتصميم وتجربة Google Gemini)
-       ======================================================== -->
+  <!-- Gemini AI Chat Widget -->
   <div id="geminiChatWidget" class="fixed bottom-24 md:bottom-8 left-4 z-40">
-    <!-- Gemini Floating Trigger Button -->
     <button onclick="toggleGeminiChat()" id="geminiToggleBtn" 
             class="w-13 h-13 md:w-14 md:h-14 p-0.5 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-rose-400 shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 relative border border-white/20">
       <div class="w-full h-full bg-[#0a0f1d] rounded-full flex items-center justify-center">
@@ -927,13 +956,9 @@
       <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-gradient-to-r from-blue-500 to-purple-500 border-2 border-black rounded-full"></span>
     </button>
 
-    <!-- Gemini Dedicated Modal / Window -->
     <div id="geminiChatBox" class="hidden fixed md:absolute bottom-20 md:bottom-16 left-3 right-3 md:left-0 md:right-auto md:w-[420px] h-[580px] max-h-[82vh] bg-[#0c101d]/95 border border-purple-500/30 rounded-3xl shadow-2xl flex-col overflow-hidden backdrop-blur-2xl">
-      
-      <!-- Top Glowing Border Line -->
       <div class="h-1 w-full bg-gradient-to-r from-blue-500 via-purple-500 to-rose-400"></div>
 
-      <!-- Gemini Header -->
       <div class="bg-[#11162a]/90 px-4 py-3 border-b border-gray-800/80 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600/30 via-purple-600/30 to-rose-600/30 border border-purple-500/40 flex items-center justify-center shadow-inner">
@@ -960,9 +985,7 @@
         </div>
       </div>
 
-      <!-- Messages Area -->
       <div id="geminiMessages" class="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs no-scrollbar bg-gradient-to-b from-[#0c101d] to-[#070913]">
-        <!-- Welcome Gemini Bubble -->
         <div class="flex items-start gap-2.5">
           <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shrink-0 mt-0.5 shadow">
             <i class="fas fa-sparkles text-white text-[11px]"></i>
@@ -976,7 +999,6 @@
         </div>
       </div>
 
-      <!-- Quick Suggested Chips -->
       <div class="px-3 py-1.5 bg-[#0e1322] border-t border-gray-800/80 flex gap-1.5 overflow-x-auto no-scrollbar text-[10px]">
         <button onclick="quickSendAI('واش هي السلع الأكثر طلباً اليوم؟')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">✨ الأكثر طلباً</button>
         <button onclick="quickSendAI('شحال التوصيل ووقتاش يوصلني؟')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">🚚 التوصيل السريع</button>
@@ -984,7 +1006,6 @@
         <button onclick="toggleSupportChat()" class="px-3 py-1 bg-amber-500/15 text-amber-300 rounded-full border border-amber-500/30 whitespace-nowrap font-bold hover:bg-amber-500/25 transition">💬 محادثة المدير</button>
       </div>
 
-      <!-- Gemini Pill Input Bar -->
       <div class="p-3 bg-[#0d1222] border-t border-gray-800/80">
         <div class="flex items-center gap-2 bg-[#14192b] border border-gray-800 rounded-2xl px-3 py-1.5 focus-within:border-purple-500/70 transition shadow-inner">
           <input id="geminiInput" type="text" placeholder="اسأل Gemini عن أي شيء أو سلعة..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
@@ -995,7 +1016,6 @@
           </button>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -1027,6 +1047,15 @@
     let unsubscribeBroadcasts = null;
     let currentAdminActivePhone = null;
     let cachedAdminChats = [];
+
+    /* متغيرات ومسجلات الصوت للفوكال */
+    let custMediaRecorder = null;
+    let custAudioChunks = [];
+    let isCustRecording = false;
+
+    let adminMediaRecorder = null;
+    let adminAudioChunks = [];
+    let isAdminRecording = false;
 
     const firebaseConfig = {
       apiKey: "AIzaSyC8Sh1-ufVJ_voLCcu3_W89011oQYEGn60",
@@ -1583,7 +1612,7 @@
             container.innerHTML = `
               <div class="bg-gray-900 border border-gray-800 text-gray-300 p-3 rounded-2xl rounded-tr-none leading-relaxed">
                 أهلاً بك في خدمة زبائن <strong class="text-yellow-400">VIP SMOOK</strong>! 👋<br>
-                اكتب أي استفسار أو طلب خاص هنا، وسيقوم مدير المتجر بالرد عليك مباشرة.
+                اكتب أي استفسار أو أرسل رسالة صوتية (فوكال)، وسيرد عليك مدير المتجر مباشرة.
               </div>
             `;
             return;
@@ -1593,12 +1622,26 @@
             const m = doc.data();
             const isAdmin = m.sender === "admin";
             const timeStr = m.createdAt ? formatOrderDateTime(m.createdAt) : "";
+            
+            // التحقق إن كانت الرسالة صوتية أو نصية
+            let contentHtml = "";
+            if (m.type === "audio" && m.audioData) {
+              contentHtml = `
+                <div class="flex items-center gap-2 py-1">
+                  <i class="fas fa-microphone ${isAdmin ? 'text-blue-400' : 'text-yellow-300'} text-xs"></i>
+                  <audio controls src="${m.audioData}" preload="metadata"></audio>
+                </div>
+              `;
+            } else {
+              contentHtml = `<div>${esc(m.text)}</div>`;
+            }
+
             return `
               <div class="flex ${isAdmin ? 'justify-start' : 'justify-end'} items-end gap-1.5 my-1">
                 ${isAdmin ? '<div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0 mb-1"><i class="fas fa-headset"></i></div>' : ''}
-                <div class="${isAdmin ? 'bg-gray-800 text-gray-100 rounded-2xl rounded-bl-sm' : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl rounded-br-sm font-medium'} px-3.5 py-2 max-w-[80%] leading-relaxed text-xs shadow-sm">
+                <div class="${isAdmin ? 'bg-gray-800 text-gray-100 rounded-2xl rounded-bl-sm' : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl rounded-br-sm font-medium'} px-3.5 py-2 max-w-[85%] leading-relaxed text-xs shadow-sm">
                   ${isAdmin ? '<span class="text-[9px] text-blue-400 font-black block mb-0.5">مدير المتجر</span>' : ''}
-                  <div>${esc(m.text)}</div>
+                  ${contentHtml}
                   <span class="text-[8px] opacity-60 block text-left mt-0.5">${timeStr}</span>
                 </div>
               </div>
@@ -1623,6 +1666,7 @@
 
       try {
         const msgData = {
+          type: "text",
           text,
           sender: "customer",
           senderName,
@@ -1663,7 +1707,100 @@
     }
 
     /* -------------------------------------------------------------
-       نظام واجهة محادثات الزبائن المنفردة للمدير
+       دوال تسجيل وإرسال الفوكال (الزبون)
+    ------------------------------------------------------------- */
+    async function toggleCustomerVoiceRecord() {
+      const btn = document.getElementById("custVoiceBtn");
+      if (!isCustRecording) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          custMediaRecorder = new MediaRecorder(stream);
+          custAudioChunks = [];
+
+          custMediaRecorder.ondataavailable = e => {
+            if (e.data && e.data.size > 0) custAudioChunks.push(e.data);
+          };
+
+          custMediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(custAudioChunks, { type: "audio/webm" });
+            stream.getTracks().forEach(t => t.stop());
+            await sendCustomerVoice(audioBlob);
+          };
+
+          custMediaRecorder.start();
+          isCustRecording = true;
+          btn.classList.add("recording-pulse");
+          btn.innerHTML = `<i class="fas fa-stop text-xs"></i>`;
+          toast("جاري التسجيل الصوتي... اضغط على المربع الأحمر للإرسال", "normal");
+        } catch (err) {
+          toast("يرجى إعطاء الإذن لتسجيل الصوت.", "error");
+        }
+      } else {
+        custMediaRecorder.stop();
+        isCustRecording = false;
+        btn.classList.remove("recording-pulse");
+        btn.innerHTML = `<i class="fas fa-microphone text-xs"></i>`;
+      }
+    }
+
+    async function sendCustomerVoice(blob) {
+      if (!firebaseReady || !db) return toast("الخدمة غير متصلة.", "error");
+      toast("جاري إرسال الفوكال...", "normal");
+
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = async () => {
+        const base64Audio = reader.result;
+        const chatId = getCustomerChatId();
+        const senderName = state.customer?.name || (state.customer?.phone ? `زبون: ${state.customer.phone}` : "زائر المتجر");
+        const senderPhone = state.customer?.phone || chatId;
+
+        try {
+          const batch = db.batch();
+          const chatDocRef = db.collection("support_chats").doc(chatId);
+          const msgDocRef = chatDocRef.collection("messages").doc();
+
+          batch.set(msgDocRef, {
+            type: "audio",
+            audioData: base64Audio,
+            text: "🎙️ رسالة صوتية (فوكال)",
+            sender: "customer",
+            senderName,
+            senderPhone,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          batch.set(chatDocRef, {
+            lastMessage: "🎙️ تسجيل صوتي (فوكال)",
+            lastSender: "customer",
+            customerPhone: senderPhone,
+            customerName: senderName,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            unreadByAdmin: true
+          }, { merge: true });
+
+          await batch.commit();
+          toast("تم إرسال التسجيل الصوتي بنجاح!", "success");
+
+          fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: TELEGRAM_CHAT_ID,
+              text: `🎙️ *تسجيل صوتي (فوكال) جديد في المتجر!*\n\n👤 *المرسل:* ${senderName}\n📞 *الهاتف:* \`${senderPhone}\`\n\n👉 *افتح لوحة التحكم للاستماع والرد.*`,
+              parse_mode: "Markdown"
+            })
+          }).catch(() => {});
+
+        } catch (e) {
+          console.error(e);
+          toast("فشل إرسال الفوكال.", "error");
+        }
+      };
+    }
+
+    /* -------------------------------------------------------------
+       نظام واجهة محادثات الزبائن للمدير مع الفوكال
     ------------------------------------------------------------- */
     function openStandaloneChat() {
       closeModal("adminModal");
@@ -1784,8 +1921,11 @@
 
       const input = document.getElementById("adminReplyInput");
       const btn = document.getElementById("adminReplySendBtn");
+      const voiceBtn = document.getElementById("adminVoiceBtn");
+
       input.disabled = false;
       btn.disabled = false;
+      voiceBtn.disabled = false;
       input.focus();
 
       db.collection("support_chats").doc(phone).set({ unreadByAdmin: false }, { merge: true }).catch(() => {});
@@ -1809,12 +1949,24 @@
             const isAdmin = m.sender === "admin";
             const timeStr = m.createdAt ? formatOrderDateTime(m.createdAt) : "";
 
+            let contentHtml = "";
+            if (m.type === "audio" && m.audioData) {
+              contentHtml = `
+                <div class="flex items-center gap-2 py-1">
+                  <i class="fas fa-microphone ${isAdmin ? 'text-yellow-300' : 'text-blue-400'} text-xs"></i>
+                  <audio controls src="${m.audioData}" preload="metadata"></audio>
+                </div>
+              `;
+            } else {
+              contentHtml = `<div>${esc(m.text)}</div>`;
+            }
+
             return `
               <div class="flex ${isAdmin ? 'justify-start' : 'justify-end'} items-end gap-1.5 my-1.5">
                 ${isAdmin ? '<div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] text-white shrink-0 mb-1"><i class="fas fa-shield-halved"></i></div>' : ''}
-                <div class="${isAdmin ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl rounded-bl-sm font-medium' : 'bg-gray-800 text-gray-200 rounded-2xl rounded-br-sm'} px-3.5 py-2 max-w-[80%] leading-relaxed text-xs shadow-sm">
+                <div class="${isAdmin ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl rounded-bl-sm font-medium' : 'bg-gray-800 text-gray-200 rounded-2xl rounded-br-sm'} px-3.5 py-2 max-w-[85%] leading-relaxed text-xs shadow-sm">
                   ${!isAdmin ? `<span class="text-[9px] text-yellow-400 block font-bold mb-0.5">${esc(m.senderName || "الزبون")}</span>` : ''}
-                  <div>${esc(m.text)}</div>
+                  ${contentHtml}
                   <span class="text-[8px] opacity-60 block text-left mt-0.5">${timeStr}</span>
                 </div>
               </div>
@@ -1840,6 +1992,7 @@
         const msgRef = chatRef.collection("messages").doc();
 
         batch.set(msgRef, {
+          type: "text",
           text,
           sender: "admin",
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1856,6 +2009,78 @@
       } catch (err) {
         toast("فشل إرسال الرد.", "error");
       }
+    }
+
+    /* فوكال المدير */
+    async function toggleAdminVoiceRecord() {
+      if (!currentAdminActivePhone) return;
+      const btn = document.getElementById("adminVoiceBtn");
+
+      if (!isAdminRecording) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          adminMediaRecorder = new MediaRecorder(stream);
+          adminAudioChunks = [];
+
+          adminMediaRecorder.ondataavailable = e => {
+            if (e.data && e.data.size > 0) adminAudioChunks.push(e.data);
+          };
+
+          adminMediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(adminAudioChunks, { type: "audio/webm" });
+            stream.getTracks().forEach(t => t.stop());
+            await sendAdminVoice(audioBlob);
+          };
+
+          adminMediaRecorder.start();
+          isAdminRecording = true;
+          btn.classList.add("recording-pulse");
+          btn.innerHTML = `<i class="fas fa-stop text-xs"></i>`;
+          toast("جاري تسجيل الفوكال للمدير... اضغط على المربع للإرسال", "normal");
+        } catch (err) {
+          toast("يرجى إعطاء الإذن لتسجيل الصوت.", "error");
+        }
+      } else {
+        adminMediaRecorder.stop();
+        isAdminRecording = false;
+        btn.classList.remove("recording-pulse");
+        btn.innerHTML = `<i class="fas fa-microphone text-xs"></i>`;
+      }
+    }
+
+    async function sendAdminVoice(blob) {
+      if (!currentAdminActivePhone) return;
+      toast("جاري إرسال الفوكال للزبون...", "normal");
+
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = async () => {
+        const base64Audio = reader.result;
+        try {
+          const batch = db.batch();
+          const chatRef = db.collection("support_chats").doc(currentAdminActivePhone);
+          const msgRef = chatRef.collection("messages").doc();
+
+          batch.set(msgRef, {
+            type: "audio",
+            audioData: base64Audio,
+            text: "🎙️ تسجيل صوتي من المدير",
+            sender: "admin",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          batch.set(chatRef, {
+            lastMessage: "🎙️ تسجيل صوتي من المدير",
+            lastSender: "admin",
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+
+          await batch.commit();
+          toast("تم إرسال الفوكال بنجاح!", "success");
+        } catch (e) {
+          toast("فشل إرسال الفوكال.", "error");
+        }
+      };
     }
 
     /* -------------------------------------------------------------
@@ -1941,7 +2166,6 @@
       const norm = normalizeSearchText(raw);
       const cfg = state.storeSettings;
 
-      // الإجابة الذكية على الوقت والتاريخ مباشرة
       if (norm.includes("ساعة") || norm.includes("وقت") || norm.includes("تاريخ") || norm.includes("اليوم")) {
         const now = new Date();
         const timeStr = now.toLocaleTimeString("ar-DZ", { hour: '2-digit', minute: '2-digit' });
@@ -1952,7 +2176,6 @@
         };
       }
 
-      // التحية
       if (/^(hi|hello|مرحبا|سلام|السلام|أهلا|اهلا|الو|صباح|مساء|صحا|سلام عليكم|صباح الخير|سلام خويا|مساء الخير)/i.test(norm) && norm.length <= 30) {
         return {
           text: `أهلاً وسهلاً بك! 👋 أنا مساعدك الذكي Gemini. يمكنك سؤالي عن أي شيء يدور ببالك، أو الاستفسار عن أسعار السلع، التوصيل السريع والدفع كاش عند الاستلام!`,
@@ -1960,7 +2183,6 @@
         };
       }
 
-      // أسئلة الخصم والعروض
       if (norm.includes("خصم") || norm.includes("كود") || norm.includes("تخفيض") || norm.includes("برومو") || norm.includes("promo")) {
         if (cfg.couponCode && Number(cfg.couponPercent) > 0) {
           return {
@@ -1975,7 +2197,6 @@
         }
       }
 
-      // أسئلة التوصيل
       if (norm.includes("توصيل") || norm.includes("livraison") || norm.includes("وين توصل") || norm.includes("توصلو")) {
         return {
           text: `🚚 **خيارات التوصيل:**\n• وسط المدينة: **${money(cfg.shippingFeeCentre)}**\n• المناطق المجاورة: **${money(cfg.shippingFeeNearby)}**\n• استلام من المحل: **مجاناً**\n\n🎉 مجاني بالكامل للطلبات التي تفوق ${money(cfg.freeShippingTarget)}!`,
@@ -1983,7 +2204,6 @@
         };
       }
 
-      // أسئلة الدفع
       if (norm.includes("دفع") || norm.includes("كاش") || norm.includes("خلص")) {
         return {
           text: `💵 **طريقة الدفع:** الدفع **نقداً كاش عند الاستلام يداً بيد** بعد معاينة طلبك والتأكد منه.`,
@@ -1991,7 +2211,6 @@
         };
       }
 
-      // التواصل مع المدير
       if (norm.includes("مدير") || norm.includes("نهدر مع") || norm.includes("صاحب المحل")) {
         return {
           text: `تفضل بالتواصل المباشر مع مدير المتجر الآن:`,
@@ -2000,7 +2219,6 @@
         };
       }
 
-      // البحث عن السلع المتوفرة إذا كان السؤال عن سلعة
       const matched = findRelevantProducts(q, 3);
       if (matched.length > 0) {
         return {
@@ -2009,14 +2227,12 @@
         };
       }
 
-      // الرد الذكي الشامل لأي سؤال عام
       return {
         text: `أنا هنا لمساعدتك والإجابة عن كل استفساراتك بكل سرور! بخصوص سؤالك:\n"${raw}"\nيمكنك سؤالي عن أي معلومة عامة أو استكشاف منتجات المتجر وأسعارها بالدينار الجزائري 🛍️`,
         actions: []
       };
     }
 
-    // دالة محاكاة الكتابة الحية الحرفية
     function streamGeminiText(elementId, fullText, speed = 10) {
       return new Promise((resolve) => {
         const el = document.getElementById(elementId);
@@ -3088,7 +3304,7 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
             <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 text-xs space-y-2">
               <div class="flex justify-between items-center text-gray-400 border-b border-gray-800 pb-2">
                 <div>
-                  <span class="font-bold text-gray-200">طلب #${d.id.slice(0, 6)}</span>
+                  <span class="font-bold text-gray-200 طلب #${d.id.slice(0, 6)}</span>
                   <span class="block text-[10px] text-gray-500 mt-0.5"><i class="fas fa-clock ml-1"></i> ${orderDate}</span>
                 </div>
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold ${o.status === 'مكتمل' ? 'bg-emerald-950 text-emerald-300' : 'bg-amber-950 text-amber-300'}">${o.status}</span>
