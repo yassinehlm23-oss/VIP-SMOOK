@@ -1108,8 +1108,8 @@
     const TELEGRAM_CHAT_ID = "6481958888";
     const VAPID_KEY = "BDfCKYaSN4yogxqHgf5Ab4qP5CHqQRNF-bYxMKQlx1Qi3n8MSZhCVtlS_z4-PQYEmUlPjCYQYXeonSdXRWFrpJg";
 
-    // مفتاح Google AI Studio الخاص بك
-    const GEMINI_API_KEY = "AQ.Ab8RN6JOAn2hykbRd4QV8FVXOR4OlvALnqfMWqhYXTAxSRBV0g";
+    // مفتاح Google Gemini API الجديد المحدّث
+    const GEMINI_API_KEY = "AQ.Ab8RN6IyY6UC6HyiuIBYTbeCm7LbGqEiqeacbCpe5u6j6CLzNQ";
 
     let geminiChatHistory = [];
     let isGeminiResponding = false;
@@ -2364,7 +2364,7 @@
     }
 
     /* -------------------------------------------------------------
-       تطوير وتحديث الذكاء الاصطناعي بنظام Google Gemini فائق الذكاء والعام
+       الذكاء الاصطناعي بنظام Google Gemini فائق الذكاء والعام
     ------------------------------------------------------------- */
     function toggleGeminiChat() {
       const box = document.getElementById("geminiChatBox");
@@ -2561,6 +2561,7 @@
 
       isGeminiResponding = true;
       sendBtn.disabled = true;
+
       const loadingId = "gemini_loading_" + Date.now();
       msgContainer.innerHTML += `
         <div id="${loadingId}" class="flex items-start gap-2.5">
@@ -2582,69 +2583,37 @@
       let matchedProductsForAction = hasShoppingIntent(msgText) ? findRelevantProducts(msgText, 3) : [];
       let showManagerBtn = false;
 
+      const cfg = state.storeSettings;
       const currentTimeStr = new Date().toLocaleTimeString("ar-DZ", { hour: '2-digit', minute: '2-digit' });
-      const currentDateStr = new Date().toLocaleDateString("ar-DZ", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      const availableProductsSummary = state.products.map(p => 
+        `• ${p.name} | السعر: ${p.price} د.ج | المخزون: ${p.stock > 0 ? p.stock : 'نفد'}`
+      ).join("\n");
 
-      try {
-        const availableProductsSummary = state.products.map(p => 
-          `• ${p.name} | السعر: ${p.price} د.ج | المخزون: ${p.stock > 0 ? p.stock : 'نفد'}`
-        ).join("\n");
+      const systemPrompt = `أنت Gemini، مساعد ذكي عام وشامل ومتطور. أجب بدقة وحرية واحترافية عن أي سؤال يطرحه المستخدم (تاريخ، علوم، ثقافة، معلومات عامة، برمجة وغيرها). إذا كان سؤاله عن متجر VIP SMOOK فالمعلومات هي: الوقت الحالي (${currentTimeStr})، التوصيل بـ ${cfg.shippingFeeCentre} د.ج لوسط المدينة و ${cfg.shippingFeeNearby} د.ج للمناطق المجاورة والدفع نقداً عند الاستلام. المنتجات: ${availableProductsSummary || "لا توجد"}. إذا كان السؤال عاماً لا تذكر المتجر وأجب عن السؤال مباشرة.`;
 
-        const cfg = state.storeSettings;
-        
-        // برومبت الذكاء الاصطناعي الشامل والعام
-        const systemPrompt = `
-أنت Gemini، نموذج ذكاء اصطناعي متطور، فائق الذكاء، عام وشامل طُوّرت بواسطة Google.
-أنت لست مقتصراً على متجر فقط، بل مهمتك هي الإجابة بحرية واحترافية وبدقة متناهية على أي سؤال أو طلب يطرحه المستخدم مهما كان مجاله:
-- ثقافة عامة، علوم، فيزياء، تاريخ، أدب، وجغرافيا.
-- حل مسائل الرياضيات والبرمجة وكتابة وتصحيح الأكواد.
-- كتابة الرسائل، المقالات، الترجمة بين اللغات، وتلخيص النصوص.
-- نصائح، نقاشات يومية، ودردشة عفوية وممتعة.
+      const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash"];
+      for (const model of modelsToTry) {
+        try {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
+          const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              systemInstruction: {
+                parts: [{ text: systemPrompt }]
+              },
+              contents: geminiChatHistory
+            })
+          });
 
-معلومات إضافية عن المتجر الذي تتواجد فيه (VIP SMOOK) لتجيب الزبائن إذا استفسروا عنه:
-- التوقيت الحالي: ${currentTimeStr} | التاريخ: ${currentDateStr}
-- المنتجات المتوفرة وأسعارها:
-${availableProductsSummary || "لا توجد سلع مضافة حالياً."}
-- التوصيل: وسط المدينة (${cfg.shippingFeeCentre} د.ج)، المناطق القريبة (${cfg.shippingFeeNearby} د.ج)، ومجاني للطلبات فوق ${cfg.freeShippingTarget} د.ج.
-- طريقة الدفع: نقداً كاش عند الاستلام.
-
-طريقة الرد:
-- إذا كان السؤال عاماً أو علمياً: أجب فوراً بدقة وبشكل طبيعي وكامل ومفصل دون إقحام المتجر أو السلع فيه.
-- إذا كان السؤال متعلقاً بمنتج أو شراء: قدّم معلومات المتجر والأسعار بالدينار الجزائري بلطف وترحيب.
-- تحدّث بطلاقة باللغة العربية أو الدارجة الجزائرية بحسب لغة الزبون.
-`;
-
-        const activeModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
-        for (const model of activeModels) {
-          try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
-            const response = await fetch(url, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                contents: [
-                  { role: "user", parts: [{ text: systemPrompt }] },
-                  { role: "model", parts: [{ text: "مفهوم، أنا مساعد Gemini الشامل والعام، جاهز للإجابة على جميع الأسئلة والمواضيع بحرية وذكاء." }] },
-                  ...geminiChatHistory
-                ],
-                generationConfig: { 
-                  temperature: 0.8, 
-                  maxOutputTokens: 1200 
-                }
-              })
-            });
-
-            if (response.ok) {
-              const data = await response.json();
-              if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-                replyText = data.candidates[0].content.parts[0].text;
-                break;
-              }
+          if (response.ok) {
+            const data = await response.json();
+            if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+              replyText = data.candidates[0].content.parts[0].text;
+              break;
             }
-          } catch (_) {}
-        }
-      } catch (err) {
-        console.warn("AI online error:", err);
+          }
+        } catch (err) {}
       }
 
       if (!replyText) {
