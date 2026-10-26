@@ -1879,9 +1879,6 @@
       };
     }
 
-    /* -------------------------------------------------------------
-       الواجهات المنفردة للمدير
-    ------------------------------------------------------------- */
     function openStandaloneChat() {
       closeModal("adminModal");
       openModal("standaloneChatModal");
@@ -2365,9 +2362,6 @@
       });
     }
 
-    /* -------------------------------------------------------------
-       تطوير وتحديث الذكاء الاصطناعي بنظام Google Gemini Pro المتطور
-    ------------------------------------------------------------- */
     function toggleGeminiChat() {
       const box = document.getElementById("geminiChatBox");
       const isHidden = box.classList.contains("hidden");
@@ -2700,8 +2694,6 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
       msgContainer.scrollTop = msgContainer.scrollHeight;
     }
 
-    initApp();
-
     async function initApp() {
       updateUserUI();
       updateCartUI();
@@ -2733,7 +2725,6 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
       if ('serviceWorker' in navigator) {
         try {
           swRegistration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
-          console.log('Firebase Service Worker مسجل بنجاح:', swRegistration.scope);
           if (messaging && messaging.useServiceWorker) {
             messaging.useServiceWorker(swRegistration);
           }
@@ -3598,7 +3589,7 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
             <div class="bg-gray-950 p-3 rounded-2xl border border-gray-800 text-xs space-y-2">
               <div class="flex justify-between items-center text-gray-400 border-b border-gray-800 pb-2">
                 <div>
-                  <span class="font-bold text-gray-200 طلب #${d.id.slice(0, 6)}</span>
+                  <span class="font-bold text-gray-200">طلب #${d.id.slice(0, 6)}</span>
                   <span class="block text-[10px] text-gray-500 mt-0.5"><i class="fas fa-clock ml-1"></i> ${orderDate}</span>
                 </div>
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold ${o.status === 'مكتمل' ? 'bg-emerald-950 text-emerald-300' : 'bg-amber-950 text-amber-300'}">${o.status}</span>
@@ -3616,7 +3607,7 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload event => {
+        reader.onload = event => {
           const img = new Image();
           img.src = event.target.result;
           img.onload = () => {
@@ -3926,6 +3917,11 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
       if (!confirm("هل أنت متأكد من حذف هذا المنتج نهائياً؟")) return;
       db.collection("products").doc(id).delete().then(() => toast("تم حذف المنتج.", "success")).catch(() => toast("فشل الحذف.", "error"));
     }
+
+    // بدء تشغيل التطبيق فور تحميل الصفحة
+    window.addEventListener("DOMContentLoaded", () => {
+      initApp();
+    });
   </script>
 </body>
 </html>
