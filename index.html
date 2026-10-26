@@ -357,7 +357,7 @@
     </div>
   </div>
 
-  <!-- Live Customer Support Chat Modal (Customer Side) مع ميزة الفوكال -->
+  <!-- Live Customer Support Chat Modal (Customer Side) -->
   <div id="supportChatModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 md:p-4">
     <div class="bg-gray-950 border border-yellow-500/40 rounded-3xl w-full max-w-md h-[550px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative">
       <div class="bg-gray-900 p-3.5 border-b border-gray-800 flex items-center justify-between">
@@ -383,18 +383,15 @@
         </div>
       </div>
 
-      <!-- إدخال النص + الفوكال + الإرسال -->
       <div class="p-2.5 bg-gray-900 border-t border-gray-800 flex items-center gap-2">
         <input id="supportMsgInput" type="text" placeholder="اكتب رسالتك للمدير هنا..." onkeydown="if(event.key==='Enter') sendSupportMessage()"
                class="flex-1 bg-gray-950 border border-gray-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-yellow-500">
         
-        <!-- زر الفوكال للزبون -->
         <button id="custVoiceBtn" onclick="toggleCustomerVoiceRecord()" title="تسجيل صوتي (فوكال)"
                 class="w-9 h-9 bg-gray-800 hover:bg-gray-700 text-yellow-400 rounded-xl flex items-center justify-center font-bold transition shrink-0 border border-yellow-500/30 active:scale-95">
           <i class="fas fa-microphone text-xs"></i>
         </button>
 
-        <!-- زر الإرسال -->
         <button onclick="sendSupportMessage()" id="supportSendBtn" 
                 class="w-9 h-9 bg-amber-500 hover:bg-amber-400 text-black rounded-xl flex items-center justify-center font-bold transition shrink-0">
           <i class="fas fa-paper-plane text-xs"></i>
@@ -413,7 +410,6 @@
         <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-white p-1"><i class="fas fa-xmark text-lg"></i></button>
       </div>
 
-      <!-- Auth Form Container -->
       <div id="authFormContainer" class="space-y-4">
         <div>
           <label class="text-[11px] text-gray-400 font-semibold block mb-1">رقم الهاتف</label>
@@ -437,7 +433,6 @@
         </button>
       </div>
 
-      <!-- Customer Profile Container -->
       <div id="customerProfileContainer" class="hidden space-y-4">
         <div class="flex items-center justify-between gap-4 pb-3 border-b border-gray-800">
           <div class="relative shrink-0 cursor-pointer" onclick="document.getElementById('instaImgUpload').click()" title="اضغط لتغيير الصورة الشخصية">
@@ -711,7 +706,7 @@
           </div>
         </div>
 
-        <!-- Action Control Buttons Row: أزرار الواجهات المنفردة للمدير -->
+        <!-- Action Control Buttons Row -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
           <button onclick="openStandaloneChat()" id="tabChatsBtn" class="py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 text-black font-extrabold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition active:scale-95">
             <i class="fas fa-comments text-base"></i> محادثات الزبائن <span id="adminUnreadChatBadge" class="hidden w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
@@ -777,7 +772,6 @@
 
   <!-- الواجهة المنفردة المخصصة للإعدادات والإشعارات للمدير -->
   <div id="standaloneSettingsModal" class="fixed inset-0 z-[95] bg-[#090d16] hidden flex-col overflow-hidden">
-    <!-- شريط علوي -->
     <header class="bg-[#101726] border-b border-gray-800 px-4 py-3 shrink-0 flex items-center justify-between shadow-md">
       <div class="flex items-center gap-3">
         <button onclick="closeStandaloneSettings()" class="w-9 h-9 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center justify-center transition text-sm">
@@ -802,11 +796,8 @@
       </div>
     </header>
 
-    <!-- محتوى الإعدادات مقسم في بطاقات أنيقة -->
     <div class="flex-1 overflow-y-auto p-4 md:p-6 no-scrollbar">
       <div class="max-w-4xl mx-auto space-y-5">
-
-        <!-- بطاقة 1: مركز إرسال الإشعار الفوري لجميع الزبائن -->
         <div class="bg-gradient-to-r from-amber-950/40 via-gray-900 to-[#101726] border border-yellow-500/40 rounded-2xl p-4 md:p-5 shadow-xl space-y-3">
           <div class="flex items-center justify-between">
             <h3 class="font-black text-yellow-400 text-xs md:text-sm flex items-center gap-2">
@@ -825,7 +816,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- بطاقة 2: إعدادات كود الخصم -->
           <div class="bg-[#121927] border border-gray-800 rounded-2xl p-4 shadow-md space-y-3">
             <div class="flex items-center gap-2 text-white font-bold text-xs border-b border-gray-800/80 pb-2">
               <i class="fas fa-tags text-yellow-400 text-sm"></i>
@@ -841,7 +831,6 @@
             </div>
           </div>
 
-          <!-- بطاقة 3: إعدادات أسعار التوصيل والتوصيل المجاني -->
           <div class="bg-[#121927] border border-gray-800 rounded-2xl p-4 shadow-md space-y-3">
             <div class="flex items-center gap-2 text-white font-bold text-xs border-b border-gray-800/80 pb-2">
               <i class="fas fa-truck-fast text-yellow-400 text-sm"></i>
@@ -864,7 +853,6 @@
           </div>
         </div>
 
-        <!-- بطاقة 4: الشريط الإعلاني المتحرك -->
         <div class="bg-[#121927] border border-gray-800 rounded-2xl p-4 shadow-md space-y-2.5">
           <div class="flex items-center gap-2 text-white font-bold text-xs border-b border-gray-800/80 pb-2">
             <i class="fas fa-scroll text-yellow-400 text-sm"></i>
@@ -873,7 +861,6 @@
           <input type="text" id="adminTickerText" placeholder="اكتب النص الإعلاني الترحيبي هنا..." class="w-full p-3 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-yellow-500">
         </div>
 
-        <!-- بطاقة 5: أرقام هاتف المتجر للاتصال والطلب السريع -->
         <div class="bg-[#121927] border border-gray-800 rounded-2xl p-4 shadow-md space-y-2.5">
           <div class="flex items-center gap-2 text-white font-bold text-xs border-b border-gray-800/80 pb-2">
             <i class="fas fa-phone-volume text-yellow-400 text-sm"></i>
@@ -888,14 +875,12 @@
             <i class="fas fa-check-circle text-sm"></i> <span>حفظ وتطبيق جميع الإعدادات فوراً في المتجر</span>
           </button>
         </div>
-
       </div>
     </div>
   </div>
 
-  <!-- الواجهة المنفردة المخصصة للطلبات بنمط إدارة الطلبات المتقدم -->
+  <!-- الواجهة المنفردة المخصصة للطلبات -->
   <div id="standaloneOrdersModal" class="fixed inset-0 z-[95] bg-[#0b0e14] hidden flex-col overflow-hidden">
-    <!-- شريط علوي للواجهة المنفردة -->
     <header class="bg-[#131923] border-b border-gray-800 px-4 py-3 shrink-0 flex items-center justify-between shadow-md">
       <div class="flex items-center gap-3">
         <button onclick="closeStandaloneOrders()" class="w-9 h-9 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center justify-center transition text-sm">
@@ -923,7 +908,6 @@
       </div>
     </header>
 
-    <!-- شريط البحث والفلترة السريعة -->
     <div class="bg-[#10141d] border-b border-gray-800/80 px-4 py-2.5 shrink-0 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-2 flex-1 max-w-md">
         <div class="relative w-full">
@@ -944,7 +928,6 @@
       </div>
     </div>
 
-    <!-- منطقة عرض بطاقات الطلبات بنمط أمزون المنفرد -->
     <div class="flex-1 overflow-y-auto p-4 md:p-6 no-scrollbar">
       <div id="adminOrdersList" class="max-w-4xl mx-auto space-y-4">
         <p class="text-xs text-gray-400 text-center py-10">جاري جلب الطلبات...</p>
@@ -952,7 +935,7 @@
     </div>
   </div>
 
-  <!-- واجهة التحدث مع الزبائن المنفردة للمدير مع الفوكال وإظهار صور الزبائن -->
+  <!-- واجهة التحدث مع الزبائن للمدير -->
   <div id="standaloneChatModal" class="fixed inset-0 z-[95] bg-black/90 backdrop-blur-md hidden items-center justify-center p-0 md:p-4">
     <div class="w-full h-full md:max-w-4xl md:h-[90vh] bg-[#0c121e] border-0 md:border border-gray-800 md:rounded-3xl flex overflow-hidden shadow-2xl relative">
       <div id="chatSidebar" class="w-full md:w-80 bg-gray-950 border-l border-gray-800/80 flex flex-col h-full shrink-0">
@@ -1016,7 +999,6 @@
           </div>
         </div>
 
-        <!-- إدخال المدير مع زر الفوكال -->
         <div class="p-3 bg-gray-950 border-t border-gray-800/90 flex items-center gap-2">
           <input id="adminReplyInput" type="text" placeholder="اكتب ردك للزبون هنا..." onkeydown="if(event.key==='Enter') sendAdminReply()" disabled
                  class="flex-1 bg-gray-900 border border-gray-800 focus:border-yellow-500 rounded-full px-4 py-2.5 text-xs text-white focus:outline-none transition disabled:opacity-40">
@@ -1027,7 +1009,7 @@
           </button>
 
           <button onclick="sendAdminReply()" id="adminReplySendBtn" disabled
-                  class="w-10 h-10 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-full flex items-center justify-center transition shadow-md active:scale-95 shrink-0">
+                  class="w-10 h-10 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-black font-bold rounded-full flex items-center justify-center transition shadow-md active:scale-95 shrink-0">
             <i class="fas fa-paper-plane text-xs"></i>
           </button>
         </div>
@@ -1139,7 +1121,6 @@
     let cachedAdminChats = [];
     let cachedAdminOrders = [];
 
-    /* متغيرات ومسجلات الصوت للفوكال */
     let custMediaRecorder = null;
     let custAudioChunks = [];
     let isCustRecording = false;
@@ -1162,6 +1143,7 @@
     let db = null;
     let auth = null;
     let messaging = null;
+    let swRegistration = null;
     let unsubscribeProducts = null;
 
     try {
@@ -1242,7 +1224,14 @@
     async function syncFcmToken() {
       if (!messaging || !("Notification" in window) || Notification.permission !== "granted") return;
       try {
-        const reg = await navigator.serviceWorker.ready;
+        let reg = swRegistration;
+        if (!reg && navigator.serviceWorker) {
+          reg = await navigator.serviceWorker.ready;
+        }
+        if (reg && messaging.useServiceWorker) {
+          messaging.useServiceWorker(reg);
+        }
+
         const token = await messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
         if (token) {
           localStorage.setItem("vip_fcm_token", token);
@@ -1267,7 +1256,7 @@
 
     async function requestNotificationPermission() {
       if (!("Notification" in window)) {
-        toast("لتفعيل الإشعارات على الآيفون: افتح التطبيق من الشاشة الرئيسية أولاً.", "normal");
+        toast("لتفعيل الإشعارات على الآيفون: اضغط زر المشاركة ثم إضافة للشاشة الرئيسية أولاً.", "normal");
         return;
       }
 
@@ -1277,7 +1266,7 @@
         if (perm === "granted") {
           playNotificationSound();
           await syncFcmToken();
-          showSystemNotification("VIP SMOOK 🔔", "تم تفعيل الإشعارات بنجاح! ستصلك تنبيهات المنتجات الجديدة والرسائل فوراً.");
+          showSystemNotification("VIP SMOOK 🔔", "تم تفعيل الإشعارات بنجاح! ستصلك تنبيهات العروض والرسائل حتى لو كان التطبيق مغلقاً.");
           toast("تم تفعيل إشعارات المتجر بنجاح! 🔔", "success");
         } else {
           toast("يرجى السماح بالإشعارات من إعدادات المتصفح لتصلك التنبيهات.", "error");
@@ -1341,8 +1330,8 @@
 
       if (messaging) {
         messaging.onMessage(payload => {
-          const title = payload.notification?.title || "VIP SMOOK 🔔";
-          const body = payload.notification?.body || "لديك تحديث جديد في المتجر!";
+          const title = payload.notification?.title || payload.data?.title || "VIP SMOOK 🔔";
+          const body = payload.notification?.body || payload.data?.body || "لديك تحديث جديد في المتجر!";
           showSystemNotification(title, body);
         });
       }
@@ -1798,9 +1787,6 @@
       }
     }
 
-    /* -------------------------------------------------------------
-       دوال تسجيل وإرسال الفوكال (الزبون)
-    ------------------------------------------------------------- */
     async function toggleCustomerVoiceRecord() {
       const btn = document.getElementById("custVoiceBtn");
       if (!isCustRecording) {
@@ -1894,7 +1880,7 @@
     }
 
     /* -------------------------------------------------------------
-       نظام واجهة محادثات الزبائن للمدير مع الفوكال وإظهار الصور
+       الواجهات المنفردة للمدير
     ------------------------------------------------------------- */
     function openStandaloneChat() {
       closeModal("adminModal");
@@ -1915,6 +1901,28 @@
       document.getElementById("chatSidebar")?.classList.remove("hidden");
       document.getElementById("chatMainArea")?.classList.add("hidden");
       document.getElementById("chatMainArea")?.classList.remove("flex");
+    }
+
+    function openStandaloneSettings() {
+      closeModal("adminModal");
+      populateAdminSettingsInputs();
+      openModal("standaloneSettingsModal");
+    }
+
+    function closeStandaloneSettings() {
+      closeModal("standaloneSettingsModal");
+      openModal("adminModal");
+    }
+
+    function openStandaloneOrders() {
+      closeModal("adminModal");
+      openModal("standaloneOrdersModal");
+      loadOrdersOnce();
+    }
+
+    function closeStandaloneOrders() {
+      closeModal("standaloneOrdersModal");
+      openModal("adminModal");
     }
 
     async function loadAdminChatList() {
@@ -2122,7 +2130,6 @@
       }
     }
 
-    /* فوكال المدير */
     async function toggleAdminVoiceRecord() {
       if (!currentAdminActivePhone) return;
       const btn = document.getElementById("adminVoiceBtn");
@@ -2194,34 +2201,6 @@
       };
     }
 
-    /* -------------------------------------------------------------
-       الواجهة المنفردة المخصصة للإعدادات والإشعارات
-    ------------------------------------------------------------- */
-    function openStandaloneSettings() {
-      closeModal("adminModal");
-      populateAdminSettingsInputs();
-      openModal("standaloneSettingsModal");
-    }
-
-    function closeStandaloneSettings() {
-      closeModal("standaloneSettingsModal");
-      openModal("adminModal");
-    }
-
-    /* -------------------------------------------------------------
-       الواجهة المنفردة المخصصة للطلبات
-    ------------------------------------------------------------- */
-    function openStandaloneOrders() {
-      closeModal("adminModal");
-      openModal("standaloneOrdersModal");
-      loadOrdersOnce();
-    }
-
-    function closeStandaloneOrders() {
-      closeModal("standaloneOrdersModal");
-      openModal("adminModal");
-    }
-
     function filterStandaloneOrders() {
       const q = (document.getElementById("standaloneOrderSearch")?.value || "").toLowerCase().trim();
       if (!q) {
@@ -2284,7 +2263,6 @@
 
         return `
           <article class="bg-[#111723] border border-gray-800 rounded-2xl overflow-hidden shadow-lg hover:border-yellow-500/30 transition duration-200">
-            <!-- ترويسة الطلب بنمط إدارة الطلبات -->
             <div class="bg-[#161f2e] px-4 py-3 border-b border-gray-800/90 flex flex-wrap items-center justify-between gap-3 text-[11px] text-gray-300">
               <div class="flex items-center gap-4 flex-wrap">
                 <div>
@@ -2309,9 +2287,7 @@
               </div>
             </div>
 
-            <!-- جسم الطلب: بيانات التوصيل وحالة المعالجة -->
             <div class="p-4 space-y-4">
-              <!-- شريط الحالة والعميل -->
               <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-gray-800/80">
                 <div class="flex items-center gap-3">
                   <div class="relative w-12 h-12 rounded-full overflow-hidden border border-yellow-500/40 shrink-0 bg-gray-950 shadow">
@@ -2331,7 +2307,6 @@
                   </div>
                 </div>
 
-                <!-- التحكم بحالة الطلب -->
                 <div class="flex items-center gap-2 shrink-0">
                   <span class="text-xs font-semibold ${isCompleted ? 'text-emerald-400' : 'text-amber-400'} flex items-center gap-1">
                     <i class="fas ${isCompleted ? 'fa-circle-check' : 'fa-clock'} text-xs"></i>
@@ -2352,7 +2327,6 @@
                 </div>
               </div>
 
-              <!-- قائمة المنتجات المشتراة داخل الطلب -->
               <div class="space-y-2">
                 <span class="text-[11px] text-gray-400 font-bold block mb-1">المنتجات المطلوبة:</span>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -2755,7 +2729,19 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
 
       await syncStoreSettings();
       startRealtimeNotificationsListener();
-      syncFcmToken();
+
+      if ('serviceWorker' in navigator) {
+        try {
+          swRegistration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+          console.log('Firebase Service Worker مسجل بنجاح:', swRegistration.scope);
+          if (messaging && messaging.useServiceWorker) {
+            messaging.useServiceWorker(swRegistration);
+          }
+          await syncFcmToken();
+        } catch (err) {
+          console.warn('Service Worker registration error:', err);
+        }
+      }
 
       if (state.customer && state.customer.phone) {
         db.collection("store_users").doc(state.customer.phone).set({
@@ -3630,7 +3616,7 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = event => {
+        reader.onload event => {
           const img = new Image();
           img.src = event.target.result;
           img.onload = () => {
@@ -3939,14 +3925,6 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
     function deleteProduct(id) {
       if (!confirm("هل أنت متأكد من حذف هذا المنتج نهائياً؟")) return;
       db.collection("products").doc(id).delete().then(() => toast("تم حذف المنتج.", "success")).catch(() => toast("فشل الحذف.", "error"));
-    }
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(() => console.log('تطبيق VIP SMOOK جاهز للعمل كتطبيق مستقل!'))
-          .catch(err => console.warn('PWA registration error:', err));
-      });
     }
   </script>
 </body>
