@@ -1038,11 +1038,11 @@
           </div>
           <div>
             <div class="flex items-center gap-1.5">
-              <h4 class="text-xs font-black text-white tracking-wide">VIP SMOOK <span class="gemini-gradient-text font-black">Gemini</span></h4>
-              <span class="text-[9px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold">Pro 2.5</span>
+              <h4 class="text-xs font-black text-white tracking-wide">VIP SMOOK <span class="gemini-gradient-text font-black">Gemini AI</span></h4>
+              <span class="text-[9px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold">Pro</span>
             </div>
             <span class="text-[10px] text-gray-400 flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ذكاء متصل لحظياً ببيانات المتجر
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> مساعد ذكي عام ومباشر
             </span>
           </div>
         </div>
@@ -1063,24 +1063,24 @@
             <i class="fas fa-sparkles text-white text-[11px]"></i>
           </div>
           <div class="bg-[#151b2e] border border-gray-800 text-gray-200 p-3.5 rounded-2xl rounded-tr-none leading-relaxed shadow-lg max-w-[90%]">
-            <p class="font-extrabold text-white text-xs mb-1">أهلاً بك! 👋 أنا مساعدك الذكي المطور بنظام Gemini.</p>
+            <p class="font-extrabold text-white text-xs mb-1">مرحباً بك! 👋 أنا مساعدك الذكي Gemini.</p>
             <p class="text-gray-300 text-[11px] leading-relaxed">
-              يمكنك سؤالي عن أي شيء يدور ببالك، أو الاستفسار عن الأسعار الحالية، توفر السلع في المخزون، وتفاصيل التوصيل السريع لوسط المدينة!
+              أنا هنا للإجابة عن أي سؤال في مختلف العلوم والمواضيع العامة، بالإضافة إلى مساعدتك في استكشاف منتجات المتجر وأسعارها وتفاصيل التوصيل!
             </p>
           </div>
         </div>
       </div>
 
       <div class="px-3 py-1.5 bg-[#0e1322] border-t border-gray-800/80 flex gap-1.5 overflow-x-auto no-scrollbar text-[10px]">
+        <button onclick="quickSendAI('حدثني عن فائدة القراءة')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">💡 سؤال عام</button>
         <button onclick="quickSendAI('واش هي السلع الأكثر طلباً اليوم؟')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">✨ الأكثر طلباً</button>
         <button onclick="quickSendAI('شحال التوصيل ووقتاش يوصلني؟')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">🚚 التوصيل السريع</button>
-        <button onclick="quickSendAI('كاين كود برومو ديرلي تخفيض؟')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">🎁 كود الخصم</button>
         <button onclick="toggleSupportChat()" class="px-3 py-1 bg-amber-500/15 text-amber-300 rounded-full border border-amber-500/30 whitespace-nowrap font-bold hover:bg-amber-500/25 transition">💬 محادثة المدير</button>
       </div>
 
       <div class="p-3 bg-[#0d1222] border-t border-gray-800/80">
         <div class="flex items-center gap-2 bg-[#14192b] border border-gray-800 rounded-2xl px-3 py-1.5 focus-within:border-purple-500/70 transition shadow-inner">
-          <input id="geminiInput" type="text" placeholder="اسأل Gemini عن أي شيء أو سلعة..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
+          <input id="geminiInput" type="text" placeholder="اسأل Gemini عن أي شيء في العالم أو عن السلع..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
                  class="flex-1 bg-transparent py-1.5 text-xs text-white focus:outline-none placeholder-gray-500">
           <button onclick="sendGeminiMessage()" id="geminiSendBtn" title="إرسال"
                   class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-purple-600 to-rose-500 hover:opacity-90 text-white flex items-center justify-center transition shadow active:scale-95 shrink-0">
@@ -1108,7 +1108,8 @@
     const TELEGRAM_CHAT_ID = "6481958888";
     const VAPID_KEY = "BDfCKYaSN4yogxqHgf5Ab4qP5CHqQRNF-bYxMKQlx1Qi3n8MSZhCVtlS_z4-PQYEmUlPjCYQYXeonSdXRWFrpJg";
 
-    const GEMINI_API_KEY = atob("QVEuQWI4Uk42SVExX280VDhwVHFZb2ctYXJtVUR5UUhOSGdtVFVMU2ljQ2tqbE9lSkJnU1E=");
+    // مفتاح Google AI Studio الخاص بك
+    const GEMINI_API_KEY = "AQ.Ab8RN6JOAn2hykbRd4QV8FVXOR4OlvALnqfMWqhYXTAxSRBV0g";
 
     let geminiChatHistory = [];
     let isGeminiResponding = false;
@@ -2362,6 +2363,9 @@
       });
     }
 
+    /* -------------------------------------------------------------
+       تطوير وتحديث الذكاء الاصطناعي بنظام Google Gemini فائق الذكاء والعام
+    ------------------------------------------------------------- */
     function toggleGeminiChat() {
       const box = document.getElementById("geminiChatBox");
       const isHidden = box.classList.contains("hidden");
@@ -2385,7 +2389,7 @@
           </div>
           <div class="bg-[#151b2e] border border-gray-800 text-gray-200 p-3.5 rounded-2xl rounded-tr-none leading-relaxed shadow-lg max-w-[90%]">
             <p class="font-extrabold text-white text-xs mb-1">مرحباً بك مجدداً في Gemini! ✨</p>
-            <p class="text-gray-300 text-[11px]">تم بدء محادثة جديدة. يمكنك سؤالي عن أي شيء يدور في ذهنك أو عن منتجات المتجر!</p>
+            <p class="text-gray-300 text-[11px]">تم بدء محادثة جديدة. يمكنك سؤالي عن أي شيء يدور في ذهنك بحرية تامة!</p>
           </div>
         </div>
       `;
@@ -2405,6 +2409,12 @@
         toast("تم نسخ الرد بنجاح!", "success");
         setTimeout(() => { if (icon) icon.className = "fas fa-copy"; }, 2000);
       }).catch(() => toast("تعذر النسخ.", "error"));
+    }
+
+    function hasShoppingIntent(text) {
+      const norm = normalizeSearchText(text);
+      const keywords = ["سعر", "سومة", "شراء", "اشتري", "سلعة", "سلع", "منتج", "منتجات", "شحال", "بكم", "توصيل", "كود", "خصم", "برومو", "عندكم", "كاين", "مارلبورو", "دخان", "سجائر", "مشروب", "شيبس", "حلوى", "تبغ"];
+      return keywords.some(k => norm.includes(k));
     }
 
     function findRelevantProducts(q, limit = 3) {
@@ -2447,14 +2457,14 @@
         const timeStr = now.toLocaleTimeString("ar-DZ", { hour: '2-digit', minute: '2-digit' });
         const dateStr = now.toLocaleDateString("ar-DZ", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         return {
-          text: `⏰ الساعة الآن تشير إلى **${timeStr}**.\n📅 واليوم هو: **${dateStr}**.\n\nتفضل، هل لديك أي استفسار آخر أو تود معرفة عروض المتجر؟`,
+          text: `⏰ الساعة الآن تشير إلى **${timeStr}**.\n📅 واليوم هو: **${dateStr}**.\n\nتفضل، هل لديك أي استفسار آخر ترغب في معرفته؟`,
           actions: []
         };
       }
 
       if (/^(hi|hello|مرحبا|سلام|السلام|أهلا|اهلا|الو|صباح|مساء|صحا|سلام عليكم|صباح الخير|سلام خويا|مساء الخير)/i.test(norm) && norm.length <= 30) {
         return {
-          text: `أهلاً وسهلاً بك! 👋 أنا مساعدك الذكي Gemini. يمكنك سؤالي عن أي شيء يدور ببالك، أو الاستفسار عن أسعار السلع، التوصيل السريع والدفع كاش عند الاستلام!`,
+          text: `أهلاً وسهلاً بك! 👋 أنا مساعدك الذكي Gemini. يمكنك سؤالي عن أي موضوع علمي أو عام أو استفسار شخصي، أو الاستفسار عن أسعار السلع والتوصيل في متجر VIP SMOOK!`,
           actions: []
         };
       }
@@ -2462,7 +2472,7 @@
       if (norm.includes("خصم") || norm.includes("كود") || norm.includes("تخفيض") || norm.includes("برومو") || norm.includes("promo")) {
         if (cfg.couponCode && Number(cfg.couponPercent) > 0) {
           return {
-            text: `🎉 **كود خصم حصري فعال الآن!**\nاستخدم الكود: **${cfg.couponCode}** للحصول على تخفيض فوري بنسبة **${cfg.couponPercent}%** في السلة.`,
+            text: `🎉 **كود خصم حصري فعال الآن في المتجر!**\nاستخدم الكود: **${cfg.couponCode}** للحصول على تخفيض فوري بنسبة **${cfg.couponPercent}%** في السلة.`,
             actions: []
           };
         } else {
@@ -2496,7 +2506,7 @@
       }
 
       const matched = findRelevantProducts(q, 3);
-      if (matched.length > 0) {
+      if (hasShoppingIntent(q) && matched.length > 0) {
         return {
           text: `إليك ما وجدته بخصوص طلبك في المخزون:`,
           actions: matched
@@ -2504,7 +2514,7 @@
       }
 
       return {
-        text: `أنا هنا لمساعدتك والإجابة عن كل استفساراتك بكل سرور! بخصوص سؤالك:\n"${raw}"\nيمكنك سؤالي عن أي معلومة عامة أو استكشاف منتجات المتجر وأسعارها بالدينار الجزائري 🛍️`,
+        text: `أنا هنا لمساعدتك والإجابة عن كل استفساراتك بكل سرور! بخصوص سؤالك:\n"${raw}"\nيمكنك سؤالي عن أي معلومة عامة، ثقافة، نصائح، أو طلب استكشاف منتجات المتجر وأسعارها بالدينار الجزائري 🛍️`,
         actions: []
       };
     }
@@ -2569,7 +2579,7 @@
       if (geminiChatHistory.length > 8) geminiChatHistory = geminiChatHistory.slice(-8);
 
       let replyText = null;
-      let matchedProductsForAction = findRelevantProducts(msgText, 3);
+      let matchedProductsForAction = hasShoppingIntent(msgText) ? findRelevantProducts(msgText, 3) : [];
       let showManagerBtn = false;
 
       const currentTimeStr = new Date().toLocaleTimeString("ar-DZ", { hour: '2-digit', minute: '2-digit' });
@@ -2581,20 +2591,30 @@
         ).join("\n");
 
         const cfg = state.storeSettings;
+        
+        // برومبت الذكاء الاصطناعي الشامل والعام
         const systemPrompt = `
-أنت المساعد الذكي Google Gemini لمتجر VIP SMOOK.
-أنت ذكاء اصطناعي شامل وعام: أجب عن أي سؤال يطرحه المستخدم بذكاء وطلاقة وثقافة عالية سواء كان سؤالاً عاماً (الوقت، التاريخ، معلومات عامة، ثقافة، نصائح، ترحيب) أو سؤالاً خاصاً بالمتجر ومنتجاته وأسعاره.
+أنت Gemini، نموذج ذكاء اصطناعي متطور، فائق الذكاء، عام وشامل طُوّرت بواسطة Google.
+أنت لست مقتصراً على متجر فقط، بل مهمتك هي الإجابة بحرية واحترافية وبدقة متناهية على أي سؤال أو طلب يطرحه المستخدم مهما كان مجاله:
+- ثقافة عامة، علوم، فيزياء، تاريخ، أدب، وجغرافيا.
+- حل مسائل الرياضيات والبرمجة وكتابة وتصحيح الأكواد.
+- كتابة الرسائل، المقالات، الترجمة بين اللغات، وتلخيص النصوص.
+- نصائح، نقاشات يومية، ودردشة عفوية وممتعة.
 
-بيانات مهمة:
-- الوقت الحالي الآن عند المستخدم: ${currentTimeStr}
-- التاريخ الحالي: ${currentDateStr}
-- سلع المتجر الحالية:
-${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
-- التوصيل: وسط المدينة (${cfg.shippingFeeCentre} د.ج)، البلديات المجاورة (${cfg.shippingFeeNearby} د.ج)، مجاني فوق ${cfg.freeShippingTarget} د.ج.
-- أسلوبك: ودود، سريع، متقن للعربية واللهجة الجزائرية بذكاء دون حشو.
+معلومات إضافية عن المتجر الذي تتواجد فيه (VIP SMOOK) لتجيب الزبائن إذا استفسروا عنه:
+- التوقيت الحالي: ${currentTimeStr} | التاريخ: ${currentDateStr}
+- المنتجات المتوفرة وأسعارها:
+${availableProductsSummary || "لا توجد سلع مضافة حالياً."}
+- التوصيل: وسط المدينة (${cfg.shippingFeeCentre} د.ج)، المناطق القريبة (${cfg.shippingFeeNearby} د.ج)، ومجاني للطلبات فوق ${cfg.freeShippingTarget} د.ج.
+- طريقة الدفع: نقداً كاش عند الاستلام.
+
+طريقة الرد:
+- إذا كان السؤال عاماً أو علمياً: أجب فوراً بدقة وبشكل طبيعي وكامل ومفصل دون إقحام المتجر أو السلع فيه.
+- إذا كان السؤال متعلقاً بمنتج أو شراء: قدّم معلومات المتجر والأسعار بالدينار الجزائري بلطف وترحيب.
+- تحدّث بطلاقة باللغة العربية أو الدارجة الجزائرية بحسب لغة الزبون.
 `;
 
-        const activeModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash-latest"];
+        const activeModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"];
         for (const model of activeModels) {
           try {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
@@ -2604,10 +2624,13 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
               body: JSON.stringify({
                 contents: [
                   { role: "user", parts: [{ text: systemPrompt }] },
-                  { role: "model", parts: [{ text: "مفهوم، أنا مساعد Gemini الشامل والذكي وجاهز للإجابة عن كل الأسئلة." }] },
+                  { role: "model", parts: [{ text: "مفهوم، أنا مساعد Gemini الشامل والعام، جاهز للإجابة على جميع الأسئلة والمواضيع بحرية وذكاء." }] },
                   ...geminiChatHistory
                 ],
-                generationConfig: { temperature: 0.7, maxOutputTokens: 600 }
+                generationConfig: { 
+                  temperature: 0.8, 
+                  maxOutputTokens: 1200 
+                }
               })
             });
 
@@ -3607,7 +3630,7 @@ ${availableProductsSummary || "لا توجد سلع مسجلة حالياً."}
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = event => {
+        reader.onload = (event) => {
           const img = new Image();
           img.src = event.target.result;
           img.onload = () => {
