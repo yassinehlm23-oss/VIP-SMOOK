@@ -1172,6 +1172,9 @@
     const VAPID_KEY = "BDfCKYaSN4yogxqHgf5Ab4qP5CHqQRNF-bYxMKQlx1Qi3n8MSZhCVtlS_z4-PQYEmUlPjCYQYXeonSdXRWFrpJg";
     const GEMINI_API_KEY = "AQ.Ab8RN6IyY6UC6HyiuIBYTbeCm7LbGqEiqeacbCpe5u6j6CLzNQ";
 
+    // رابط خوادم TURN الخاصة بحسابك في Metered لتخطي حظر شبكات الـ 4G
+    const METERED_TURN_URL = "https://vip-smook.metered.live/api/v1/turn/credentials?apiKey=G1SWbxcGINYPzJpWDJ9q3azVBTav4moPKtt7t4z8l0h__Q5H";
+
     let geminiChatHistory = [];
     let isGeminiResponding = false;
     let unsubscribeSupportChat = null;
@@ -1191,12 +1194,21 @@
     let adminAudioChunks = [];
     let isAdminRecording = false;
 
-    /* إعدادات محرك WebRTC مع خوادم Google STUN العالمية */
-    const rtcConfig = {
+    /* إعدادات محرك WebRTC الافتراضية مع STUN و TURN الاحتياطي */
+    let rtcConfig = {
       iceServers: [
         { urls: "stun:stun.l.google.com:19302" },
         { urls: "stun:stun1.l.google.com:19302" },
-        { urls: "stun:stun2.l.google.com:19302" }
+        { urls: "stun:stun2.l.google.com:19302" },
+        {
+          urls: [
+            "turn:openrelay.metered.ca:80",
+            "turn:openrelay.metered.ca:443",
+            "turns:openrelay.metered.ca:443?transport=tcp"
+          ],
+          username: "openrelayproject",
+          credential: "openrelayproject"
+        }
       ]
     };
 
@@ -1212,6 +1224,23 @@
     let incomingCallData = null;
     let isCallMuted = false;
     let isSpeakerOn = true;
+
+    /* جلب خوادم TURN الخاصة بتطبيقك vip-smook فور فتح المتجر */
+    async function fetchCustomTurnServers() {
+      try {
+        const response = await fetch(METERED_TURN_URL);
+        const servers = await response.json();
+        if (servers && servers.length) {
+          rtcConfig.iceServers = [
+            { urls: "stun:stun.l.google.com:19302" },
+            ...servers
+          ];
+        }
+      } catch (err) {
+        console.warn("Using fallback TURN servers:", err);
+      }
+    }
+    fetchCustomTurnServers();
 
     const firebaseConfig = {
       apiKey: "AIzaSyC8Sh1-ufVJ_voLCcu3_W89011oQYEGn60",
@@ -1308,7 +1337,6 @@
         toast("تم خفض الصوت لسماعة الأذن", "normal");
       }
 
-      // دعم setSinkId للأجهزة الداعمة لتحويل مخرج الصوت فعلياً
       if (typeof audioEl.setSinkId === 'function') {
         try {
           const devices = await navigator.mediaDevices.enumerateDevices();
@@ -1406,7 +1434,6 @@
       }
 
       const chatId = getCustomerChatId();
-      // معرّف فريد لكل مكالمة لتجنب تداخل بيانات الجلسات السابقة
       currentCallId = "call_" + Date.now() + "_" + Math.random().toString(36).substring(2, 6);
       const callerName = state.customer?.name || (state.customer?.phone ? `زبون: ${state.customer.phone}` : "زائر المتجر");
       const callerPhone = state.customer?.phone || chatId;
@@ -1500,7 +1527,6 @@
           await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
           isRemoteReady = true;
 
-          // تطبيق المرشحات المؤجلة بعد تهيئة الوصف
           for (const cand of calleeQueue) {
             try {
               await peerConnection.addIceCandidate(new RTCIceCandidate(cand));
