@@ -7,7 +7,7 @@
   <meta name="description" content="VIP SMOOK - المتجر الفاخر للتسوق والتوصيل السريع لوسط المدينة والمناطق القريبة. عروض حصرية ودفع عند الاستلام.">
   <title>VIP SMOOK | المتجر الرسمي الفاخر</title>
 
-  <!-- إعدادات تطبيق الويب التقدمي المتكامل (PWA) -->
+  <!-- إعدادات تطبيق الويب التقدمي (PWA) -->
   <link rel="manifest" href="manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -155,11 +155,6 @@
             <span id="desktopChatBadge" class="hidden w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
           </button>
 
-          <button onclick="toggleWishlistModal()" class="flex px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition relative">
-            <i class="fas fa-heart text-red-500 ml-1"></i> المفضلة
-            <span id="wishlistCount" class="bg-red-500/20 text-red-400 text-[10px] px-1.5 py-0.2 rounded-full font-bold mr-1">0</span>
-          </button>
-
           <button id="myOrdersBtn" onclick="toggleMyOrders()" class="flex px-3 py-2 bg-gray-900 hover:bg-gray-800 text-xs border border-gray-800 rounded-xl text-gray-300 transition">
             <i class="fas fa-box-archive text-yellow-500 ml-1"></i> طلباتي
           </button>
@@ -243,7 +238,6 @@
             <option value="default">الترتيب الافتراضي</option>
             <option value="price_low">السعر: من الأقل للأعلى</option>
             <option value="price_high">السعر: من الأعلى للأقل</option>
-            <option value="popular">الأكثر إعجاباً</option>
           </select>
 
           <span id="productCount" class="text-[11px] text-gray-400 font-medium bg-gray-900 px-2 py-1.5 rounded-xl border border-gray-800 whitespace-nowrap"></span>
@@ -283,11 +277,6 @@
       <span>المدير</span>
       <span id="mobileChatBadge" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center animate-bounce">!</span>
     </button>
-    <button onclick="toggleWishlistModal()" class="flex flex-col items-center gap-1 relative">
-      <i class="fas fa-heart text-base text-red-400"></i>
-      <span>المفضلة</span>
-      <span id="mobileWishlistBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span>
-    </button>
     <button onclick="toggleCart()" class="flex flex-col items-center gap-1 relative">
       <i class="fas fa-shopping-bag text-base"></i>
       <span>السلة</span>
@@ -314,22 +303,7 @@
     </div>
   </div>
 
-  <!-- Wishlist Modal -->
-  <div id="wishlistModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-gray-900 border border-yellow-500/30 p-6 rounded-3xl w-full max-w-md modal-scroll relative">
-      <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
-        <h3 class="text-base font-extrabold text-yellow-400 flex items-center gap-2">
-          <i class="fas fa-heart text-red-500"></i> قائمة المفضلة
-        </h3>
-        <button onclick="toggleWishlistModal()" class="text-gray-400 hover:text-white"><i class="fas fa-xmark text-lg"></i></button>
-      </div>
-      <div id="wishlistItems" class="space-y-3">
-        <p class="text-gray-400 text-center py-8 text-xs">قائمة المفضلة فارغة حالياً.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Support Chat Modal (محادثة المدير بدون زر المكالمة) -->
+  <!-- Support Chat Modal -->
   <div id="supportChatModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 md:p-4">
     <div class="bg-gray-950 border border-yellow-500/40 rounded-3xl w-full max-w-md h-[550px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative">
       <div class="bg-gray-900 p-3.5 border-b border-gray-800 flex items-center justify-between">
@@ -424,10 +398,6 @@
             <div class="cursor-pointer" onclick="toggleMyOrders(); closeModal('authModal');">
               <span id="instaOrdersCount" class="block font-black text-sm text-white">0</span>
               <span class="text-[10px] text-gray-400">طلباتي</span>
-            </div>
-            <div class="cursor-pointer" onclick="toggleWishlistModal(); closeModal('authModal');">
-              <span id="instaWishlistCount" class="block font-black text-sm text-white">0</span>
-              <span class="text-[10px] text-gray-400">المفضلة</span>
             </div>
             <div class="cursor-pointer" onclick="toggleCart(); closeModal('authModal');">
               <span id="instaCartCount" class="block font-black text-sm text-white">0</span>
@@ -1043,7 +1013,6 @@
       if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
       db = firebase.firestore();
       
-      // تشغيل Firestore لدعم شبكات الهاتف المحمول 4G والواي فاي
       db.settings({
         experimentalForceLongPolling: true,
         useFetchStreams: false
@@ -1063,7 +1032,6 @@
       orders: [],
       customers: [],
       cart: JSON.parse(localStorage.getItem("vip_cart") || "[]"),
-      wishlist: JSON.parse(localStorage.getItem("vip_wishlist") || "[]"),
       currentCategory: "all",
       searchQuery: "",
       customer: JSON.parse(localStorage.getItem("vip_user") || "null"),
@@ -1345,7 +1313,7 @@
       setTimeout(() => box.classList.add("hidden"), 300);
     }
 
-    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal", "supportChatModal", "standaloneChatModal", "standaloneOrdersModal", "standaloneSettingsModal"];
+    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "supportChatModal", "standaloneChatModal", "standaloneOrdersModal", "standaloneSettingsModal"];
 
     function openModal(id) {
       const el = document.getElementById(id);
@@ -1393,7 +1361,6 @@
     }
 
     function persistCart() { localStorage.setItem("vip_cart", JSON.stringify(state.cart)); }
-    function persistWishlist() { localStorage.setItem("vip_wishlist", JSON.stringify(state.wishlist)); updateWishlistUI(); }
     function persistCustomer() {
       if (!state.customer) { localStorage.removeItem("vip_user"); return; }
       const { pass, createdAt, lastSeen, ...safe } = state.customer;
@@ -2222,7 +2189,6 @@
     async function initApp() {
       updateUserUI();
       updateCartUI();
-      updateWishlistUI();
       updateNotifUI();
 
       if (!firebaseReady || !db) return;
@@ -2378,81 +2344,16 @@
       }
     }
 
-    function toggleWishlist(id) {
-      const idx = state.wishlist.indexOf(id);
-      if (idx > -1) {
-        state.wishlist.splice(idx, 1);
-        toast("تمت إزالة المنتج من المفضلة.", "normal");
-      } else {
-        state.wishlist.push(id);
-        toast("تمت إضافة المنتج إلى المفضلة!", "success");
-      }
-      persistWishlist();
-      renderProducts();
-    }
-
-    function toggleWishlistModal() {
-      const el = document.getElementById("wishlistModal");
-      if (el.classList.contains("hidden")) {
-        renderWishlistModal();
-        openModal("wishlistModal");
-      } else {
-        closeModal("wishlistModal");
-      }
-    }
-
-    function updateWishlistUI() {
-      const count = state.wishlist.length;
-      document.getElementById("wishlistCount").textContent = count;
-      document.getElementById("mobileWishlistBadge").textContent = count;
-      const instaWish = document.getElementById("instaWishlistCount");
-      if (instaWish) instaWish.textContent = count;
-    }
-
-    function renderWishlistModal() {
-      const container = document.getElementById("wishlistItems");
-      const wishProducts = state.products.filter(p => state.wishlist.includes(p.id));
-
-      if (!wishProducts.length) {
-        container.innerHTML = `<p class="text-gray-400 text-center py-8 text-xs">قائمة المفضلة فارغة حالياً.</p>`;
-        return;
-      }
-
-      container.innerHTML = wishProducts.map(p => `
-        <div class="flex items-center justify-between bg-gray-950 p-2.5 rounded-xl border border-gray-800 text-xs gap-2">
-          <div class="flex items-center gap-2 overflow-hidden">
-            <img src="${esc(imgSrc(p.image))}" onerror="imgFallback(this)" class="w-12 h-12 rounded-lg object-cover bg-gray-900 border border-gray-800 shrink-0">
-            <div class="truncate">
-              <h5 class="font-bold text-gray-200 truncate">${esc(p.name)}</h5>
-              <p class="text-amber-400 font-bold text-[11px]">${money(p.price)}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            <button onclick="addToCart('${esc(p.id)}')" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-lg text-[10px]">
-              + للسلة
-            </button>
-            <button onclick="toggleWishlist('${esc(p.id)}'); renderWishlistModal();" class="text-red-400 hover:text-red-300 p-1">
-              <i class="fas fa-trash text-xs"></i>
-            </button>
-          </div>
-        </div>
-      `).join("");
-    }
-
     function openQuickView(id) {
       const p = state.products.find(x => x.id === id);
       if (!p) return;
 
       const stock = Math.max(0, Number(p.stock || 0));
-      const isFav = state.wishlist.includes(p.id);
 
       document.getElementById("quickViewContent").innerHTML = `
         <div class="flex flex-col md:flex-row gap-4 items-center">
           <div class="w-full md:w-1/2 aspect-square rounded-2xl overflow-hidden bg-gray-950 border border-gray-800 relative">
             <img src="${esc(imgSrc(p.image))}" onerror="imgFallback(this)" class="w-full h-full object-cover">
-            <button onclick="toggleWishlist('${esc(p.id)}'); openQuickView('${esc(p.id)}');" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center">
-              <i class="fas fa-heart ${isFav ? 'text-red-500' : 'text-gray-300'}"></i>
-            </button>
           </div>
           <div class="w-full md:w-1/2 space-y-3">
             <span class="text-[10px] bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 px-2 py-0.5 rounded-full font-bold">منتج أصلي معتمد</span>
@@ -2489,8 +2390,6 @@
         filtered.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
       } else if (sortVal === "price_high") {
         filtered.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
-      } else if (sortVal === "popular") {
-        filtered.sort((a, b) => Number(b.likesCount || 0) - Number(a.likesCount || 0));
       }
 
       document.getElementById("productCount").textContent = `${filtered.length} منتج`;
@@ -2506,10 +2405,6 @@
       grid.innerHTML = filtered.map(p => {
         const stock = Math.max(0, Number(p.stock || 0));
         const out = stock <= 0;
-        const isWish = state.wishlist.includes(p.id);
-        const likes = Number(p.likesCount || 0);
-        const userPhone = state.customer?.phone;
-        const userLiked = userPhone && Array.isArray(p.likedBy) && p.likedBy.includes(userPhone);
 
         return `
           <article class="card-hover bg-gray-900/90 border border-gray-800 rounded-2xl p-3 flex flex-col justify-between overflow-hidden relative group">
@@ -2523,22 +2418,12 @@
                   ${out ? `<span class="px-2 py-0.5 bg-red-950/90 border border-red-800 text-red-300 text-[9px] font-bold rounded-md">نفد المخزون</span>`
                         : `<span class="px-2 py-0.5 bg-emerald-950/90 border border-emerald-800 text-emerald-300 text-[9px] font-bold rounded-md">متوفر</span>`}
                 </div>
-
-                <button onclick="toggleWishlist('${esc(p.id)}')" title="إضافة للمفضلة"
-                  class="absolute top-2 left-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center transition hover:scale-110">
-                  <i class="fas fa-heart text-xs ${isWish ? 'text-red-500' : 'text-gray-300'}"></i>
-                </button>
               </div>
 
               <div>
                 <h3 onclick="openQuickView('${esc(p.id)}')" class="font-bold text-xs text-gray-100 line-clamp-1 cursor-pointer hover:text-yellow-400 transition">${esc(p.name)}</h3>
                 <div class="flex items-center justify-between mt-1">
                   <p class="text-amber-400 font-extrabold text-xs">${money(p.price)}</p>
-                  
-                  <button onclick="voteLikeProduct('${esc(p.id)}')" class="flex items-center gap-1 text-[11px] ${userLiked ? 'text-emerald-400 font-bold' : 'text-gray-400 hover:text-emerald-400'} transition">
-                    <i class="fas fa-thumbs-up"></i>
-                    <span>${likes}</span>
-                  </button>
                 </div>
               </div>
             </div>
@@ -2555,38 +2440,6 @@
             </div>
           </article>`;
       }).join("");
-    }
-
-    async function voteLikeProduct(id) {
-      if (!state.customer || !state.customer.phone) {
-        toast("يرجى تسجيل الدخول بحسابك أولاً لتتمكن من التفاعل!", "error");
-        toggleAuthModal();
-        return;
-      }
-      if (!firebaseReady) return toast("الخدمة غير متصلة.", "error");
-
-      const pRef = db.collection("products").doc(id);
-      try {
-        await db.runTransaction(async tx => {
-          const doc = await tx.get(pRef);
-          if (!doc.exists) return;
-          const data = doc.data();
-          const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
-          const userPhone = state.customer.phone;
-
-          if (likedBy.includes(userPhone)) {
-            tx.update(pRef, {
-              likesCount: firebase.firestore.FieldValue.increment(-1),
-              likedBy: firebase.firestore.FieldValue.arrayRemove(userPhone)
-            });
-          } else {
-            tx.update(pRef, {
-              likesCount: firebase.firestore.FieldValue.increment(1),
-              likedBy: firebase.firestore.FieldValue.arrayUnion(userPhone)
-            });
-          }
-        });
-      } catch (e) {}
     }
 
     function filterCategory(cat, btn) {
@@ -2808,13 +2661,11 @@
 
       const nameEl = document.getElementById("instaDisplayName");
       const bioEl = document.getElementById("instaBioAddress");
-      const wishEl = document.getElementById("instaWishlistCount");
       const cartEl = document.getElementById("instaCartCount");
       const ordEl = document.getElementById("instaOrdersCount");
 
       if (nameEl) nameEl.textContent = name;
       if (bioEl) bioEl.textContent = (area || addr) ? `${area} - ${addr}` : "لم يتم تحديد العنوان بعد";
-      if (wishEl) wishEl.textContent = state.wishlist.length || 0;
       if (cartEl) cartEl.textContent = state.cart.reduce((a, x) => a + Number(x.qty || 0), 0);
 
       if (firebaseReady && db && state.customer.phone && ordEl) {
@@ -3369,8 +3220,6 @@
         stock,
         category,
         image: image || FALLBACK_IMG,
-        likesCount: 0,
-        likedBy: [],
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
         triggerStoreBroadcast("✨ منتج جديد في VIP SMOOK!", `توفر الآن: ${name} بسعر ${money(price)}`);
