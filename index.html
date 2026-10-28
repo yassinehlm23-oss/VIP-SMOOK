@@ -325,7 +325,7 @@
 
       <div id="supportMessages" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs no-scrollbar">
         <div class="bg-gray-900 border border-gray-800 text-gray-300 p-3 rounded-2xl rounded-tr-none leading-relaxed">
-          أهلاً بك! 👋 يمكنك هنا كتابة استفسارك أو إرسال تسجيل صوتي (فوكال) للتواصل المباشر مع المدير.
+          أهلاً بك! 👋 يمكنك هنا كتابة استفسارك أو إرسال تسجيل صوتي (فوكال أقصاه 30 ثانية) للتواصل المباشر مع المدير.
         </div>
       </div>
 
@@ -988,10 +988,12 @@
     let custMediaRecorder = null;
     let custAudioChunks = [];
     let isCustRecording = false;
+    let custRecordTimer = null;
 
     let adminMediaRecorder = null;
     let adminAudioChunks = [];
     let isAdminRecording = false;
+    let adminRecordTimer = null;
 
     const firebaseConfig = {
       apiKey: "AIzaSyC8Sh1-ufVJ_voLCcu3_W89011oQYEGn60",
@@ -1525,7 +1527,7 @@
             container.innerHTML = `
               <div class="bg-gray-900 border border-gray-800 text-gray-300 p-3 rounded-2xl rounded-tr-none leading-relaxed">
                 أهلاً بك في خدمة زبائن <strong class="text-yellow-400">VIP SMOOK</strong>! 👋<br>
-                اكتب أي استفسار أو أرسل رسالة صوتية (فوكال) للتواصل المباشر مع المدير.
+                اكتب أي استفسار أو أرسل رسالة صوتية (فوكال أقصاه 30 ثانية) للتواصل المباشر مع المدير.
               </div>
             `;
             return;
@@ -1603,7 +1605,6 @@
 
         await batch.commit();
 
-        // إرسال الإشعار عبر Cloudflare Worker الآمن
         fetch(TELEGRAM_PROXY_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1616,12 +1617,13 @@
       }
     }
 
+    // تسجيل الفوكال بحد أقصى 30 ثانية للحفاظ على استقرار وسرعة المتجر
     async function toggleCustomerVoiceRecord() {
       const btn = document.getElementById("custVoiceBtn");
       if (!isCustRecording) {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          custMediaRecorder = new MediaRecorder(stream);
+          custMediaRecorder = new MediaRecorder(stream, { audioBitsPerSecond: 32000 });
           custAudioChunks = [];
 
           custMediaRecorder.ondataavailable = e => {
@@ -1629,6 +1631,7 @@
           };
 
           custMediaRecorder.onstop = async () => {
+            clearTimeout(custRecordTimer);
             const audioBlob = new Blob(custAudioChunks, { type: "audio/webm" });
             stream.getTracks().forEach(t => t.stop());
             await sendCustomerVoice(audioBlob);
@@ -1638,11 +1641,16 @@
           isCustRecording = true;
           btn.classList.add("recording-pulse");
           btn.innerHTML = `<i class="fas fa-stop text-xs"></i>`;
-          toast("جاري التسجيل الصوتي... اضغط على المربع للإرسال", "normal");
+          toast("جاري التسجيل الصوتي (حد أقصى 30 ثانية)...", "normal");
+
+          custRecordTimer = setTimeout(() => {
+            if (isCustRecording) toggleCustomerVoiceRecord();
+          }, 30000);
         } catch (err) {
           toast("يرجى إعطاء الإذن لتسجيل الصوت.", "error");
         }
       } else {
+        clearTimeout(custRecordTimer);
         custMediaRecorder.stop();
         isCustRecording = false;
         btn.classList.remove("recording-pulse");
@@ -1691,7 +1699,6 @@
           await batch.commit();
           toast("تم إرسال التسجيل الصوتي بنجاح!", "success");
 
-          // إرسال الإشعار عبر Cloudflare Worker الآمن
           fetch(TELEGRAM_PROXY_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -1957,7 +1964,7 @@
       if (!isAdminRecording) {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          adminMediaRecorder = new MediaRecorder(stream);
+          adminMediaRecorder = new MediaRecorder(stream, { audioBitsPerSecond: 32000 });
           adminAudioChunks = [];
 
           adminMediaRecorder.ondataavailable = e => {
@@ -1965,6 +1972,7 @@
           };
 
           adminMediaRecorder.onstop = async () => {
+            clearTimeout(adminRecordTimer);
             const audioBlob = new Blob(adminAudioChunks, { type: "audio/webm" });
             stream.getTracks().forEach(t => t.stop());
             await sendAdminVoice(audioBlob);
@@ -1974,11 +1982,16 @@
           isAdminRecording = true;
           btn.classList.add("recording-pulse");
           btn.innerHTML = `<i class="fas fa-stop text-xs"></i>`;
-          toast("جاري تسجيل الفوكال للمدير... اضغط على المربع للإرسال", "normal");
+          toast("جاري تسجيل الفوكال (حد أقصى 30 ثانية)...", "normal");
+
+          adminRecordTimer = setTimeout(() => {
+            if (isAdminRecording) toggleAdminVoiceRecord();
+          }, 30000);
         } catch (err) {
           toast("يرجى إعطاء الإذن لتسجيل الصوت.", "error");
         }
       } else {
+        clearTimeout(adminRecordTimer);
         adminMediaRecorder.stop();
         isAdminRecording = false;
         btn.classList.remove("recording-pulse");
@@ -2746,7 +2759,8 @@
       const f = e.target.files[0];
       if (!f) return;
       try {
-        const b64 = await compressAndConvertImage(f, 200, 0.5);
+        // ضغط خفيف جداً لصورة البروفايل (أقل من 20KB)
+        const b64 = await compressAndConvertImage(f, 150, 0.45);
         document.getElementById("profileImgBase64").value = b64;
         document.getElementById("profileImgPreview").src = b64;
         toast("تم تغيير صورة البروفايل بنجاح!", "success");
@@ -2807,7 +2821,7 @@
       }
     }
 
-    // إرسال تنبيه الطلب إلى تيليجرام عبر الرابط السحابي الوسيط
+    // إرسال تنبيه الطلب إلى تيليجرام عبر الوسيط السحابي الآمن
     async function sendTelegramNotification(orderData) {
       try {
         let itemsList = orderData.items.map(i => `• ${i.name} (×${i.qty}) - ${money(i.price * i.qty)}`).join("\n");
@@ -2961,7 +2975,8 @@
       }
     }
 
-    function compressAndConvertImage(file, maxWidth = 380, quality = 0.55) {
+    // خوارزمية ذكية لضغط الصور إلى حجم خفيف جداً (بين 25KB إلى 45KB فقط)
+    function compressAndConvertImage(file, maxWidth = 300, quality = 0.45) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -2992,7 +3007,7 @@
       const file = e.target.files[0];
       if (!file) return;
       try {
-        const b64 = await compressAndConvertImage(file, 380, 0.55);
+        const b64 = await compressAndConvertImage(file, 300, 0.45);
         document.getElementById("pImgBase64").value = b64;
         document.getElementById("imgPreview").src = b64;
         document.getElementById("imgPreviewContainer").classList.remove("hidden");
@@ -3005,7 +3020,7 @@
       const file = e.target.files[0];
       if (!file) return;
       try {
-        const b64 = await compressAndConvertImage(file, 380, 0.55);
+        const b64 = await compressAndConvertImage(file, 300, 0.45);
         document.getElementById("editPImgBase64").value = b64;
         document.getElementById("editImgPreview").src = b64;
       } catch (err) {
