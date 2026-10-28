@@ -1400,7 +1400,6 @@
         const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
         if (state.isAdminLoggedIn) {
-          // المدير يقوم بتنظيف شامل لكل المحادثات
           const chatsSnap = await db.collection("support_chats").get();
           for (const chatDoc of chatsSnap.docs) {
             const msgsSnap = await chatDoc.ref.collection("messages").get();
@@ -1421,7 +1420,6 @@
             if (hasDeletes) await batch.commit();
           }
         } else {
-          // الزبون ينظف محادثته الخاصة فقط للحفاظ على الخصوصية والسرعة
           const myChatId = getCustomerChatId();
           const msgsSnap = await db.collection("support_chats").doc(myChatId).collection("messages").get();
           if (!msgsSnap.empty) {
@@ -2242,7 +2240,6 @@
         }, { merge: true }).catch(() => {});
       }
 
-      // تنظيف تلقائي للطلبات والرسائل كل 10 دقائق
       cleanupOldOrders();
       setInterval(cleanupOldOrders, 10 * 60 * 1000);
 
@@ -2424,16 +2421,24 @@
         const out = stock <= 0;
 
         return `
-          <article class="card-hover bg-gray-900/90 border border-gray-800 rounded-2xl p-3 flex flex-col justify-between overflow-hidden relative group">
+          <article class="card-hover bg-gray-900/90 border border-gray-800 rounded-2xl p-3 flex flex-col justify-between overflow-hidden relative group ${out ? "opacity-75 grayscale-[25%]" : ""}">
             <div>
               <div class="relative overflow-hidden rounded-xl mb-2.5 bg-gray-950 aspect-square">
                 <img src="${esc(imgSrc(p.image))}" alt="${esc(p.name)}" loading="lazy" onerror="imgFallback(this)"
-                     class="w-full h-full object-cover group-hover:scale-105 transition duration-300 cursor-pointer"
+                     class="w-full h-full object-cover ${out ? "" : "group-hover:scale-105"} transition duration-300 cursor-pointer"
                      onclick="openQuickView('${esc(p.id)}')">
-                <div class="absolute top-2 right-2">
-                  ${out ? `<span class="px-2 py-0.5 bg-red-950/90 border border-red-800 text-red-300 text-[9px] font-bold rounded-md">نفد المخزون</span>`
-                        : `<span class="px-2 py-0.5 bg-emerald-950/90 border border-emerald-800 text-emerald-300 text-[9px] font-bold rounded-md">متوفر</span>`}
-                </div>
+                
+                ${out ? `
+                  <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center p-2">
+                    <span class="bg-zinc-800/90 text-gray-200 border border-zinc-600/60 font-black text-[11px] px-3 py-1 rounded-lg tracking-wider shadow-xl transform -rotate-6 select-none flex items-center gap-1.5">
+                      <i class="fas fa-ban text-red-400 text-[10px]"></i> نفد المخزون
+                    </span>
+                  </div>
+                ` : `
+                  <div class="absolute top-2 right-2">
+                    <span class="px-2 py-0.5 bg-emerald-950/90 border border-emerald-800 text-emerald-300 text-[9px] font-bold rounded-md">متوفر</span>
+                  </div>
+                `}
               </div>
               <div>
                 <h3 onclick="openQuickView('${esc(p.id)}')" class="font-bold text-xs text-gray-100 line-clamp-1 cursor-pointer hover:text-yellow-400 transition">${esc(p.name)}</h3>
@@ -2446,9 +2451,9 @@
             <div class="mt-3 pt-2 border-t border-gray-800/80">
               <div class="flex gap-1.5">
                 <input id="qty_${esc(p.id)}" type="number" min="1" max="${stock}" value="1" ${out ? "disabled" : ""}
-                  class="w-12 p-1.5 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white">
+                  class="w-12 p-1.5 bg-gray-950 border border-gray-800 rounded-lg text-center text-xs text-white ${out ? "opacity-40 cursor-not-allowed" : ""}">
                 <button onclick="addToCart('${esc(p.id)}')" ${out ? "disabled" : ""}
-                  class="flex-1 py-1.5 ${out ? "bg-gray-800 text-gray-400 cursor-not-allowed" : "bg-amber-500 hover:bg-amber-400 text-black"} text-[11px] font-bold rounded-lg transition">
+                  class="flex-1 py-1.5 ${out ? "bg-gray-800/80 text-gray-500 cursor-not-allowed border border-gray-800" : "bg-amber-500 hover:bg-amber-400 text-black shadow-md shadow-amber-500/10"} text-[11px] font-bold rounded-lg transition">
                   ${out ? "غير متوفر" : "إضافة +"}
                 </button>
               </div>
