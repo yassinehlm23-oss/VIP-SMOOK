@@ -20,9 +20,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- محرك الاتصال السحابي المشفر لتخطي حظر 4G/5G -->
-  <script src="https://meet.jit.si/external_api.js"></script>
-
   <!-- Firebase Compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -60,32 +57,6 @@
     }
     @media (prefers-reduced-motion: reduce) {
       .marquee-track { animation: none; }
-    }
-
-    .gemini-gradient-text {
-      background: linear-gradient(135deg, #4285f4 0%, #9b72cb 50%, #d96570 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .gemini-shimmer {
-      background: linear-gradient(90deg, rgba(66,133,244,0.15) 0%, rgba(155,114,203,0.3) 50%, rgba(217,101,112,0.15) 100%);
-      background-size: 200% 100%;
-      animation: geminiShimmer 2s infinite linear;
-    }
-    @keyframes geminiShimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-    .typing-cursor::after {
-      content: '▋';
-      display: inline-block;
-      color: #9b72cb;
-      animation: blink 0.8s infinite;
-      margin-right: 2px;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
     }
 
     .recording-pulse {
@@ -358,7 +329,7 @@
     </div>
   </div>
 
-  <!-- Support Chat Modal مع زر الاتصال الصوتي المباشر -->
+  <!-- Support Chat Modal (محادثة المدير بدون زر المكالمة) -->
   <div id="supportChatModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 md:p-4">
     <div class="bg-gray-950 border border-yellow-500/40 rounded-3xl w-full max-w-md h-[550px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative">
       <div class="bg-gray-900 p-3.5 border-b border-gray-800 flex items-center justify-between">
@@ -373,20 +344,14 @@
             </span>
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          <button id="custVoiceCallBtn" onclick="startCustomerVoiceCall()" title="اتصال صوتي مباشر مع المدير"
-                  class="w-8 h-8 rounded-full bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-black flex items-center justify-center transition border border-emerald-500/40 active:scale-95">
-            <i class="fas fa-phone text-xs"></i>
-          </button>
-          <button onclick="toggleSupportChat()" class="text-gray-400 hover:text-white p-1 text-base">
-            <i class="fas fa-xmark"></i>
-          </button>
-        </div>
+        <button onclick="toggleSupportChat()" class="text-gray-400 hover:text-white p-1 text-base">
+          <i class="fas fa-xmark"></i>
+        </button>
       </div>
 
       <div id="supportMessages" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs no-scrollbar">
         <div class="bg-gray-900 border border-gray-800 text-gray-300 p-3 rounded-2xl rounded-tr-none leading-relaxed">
-          أهلاً بك! 👋 يمكنك هنا كتابة استفسارك أو إرسال تسجيل صوتي، أو الضغط على زر الهاتف بالأعلى للاتصال مباشرة بالمدير.
+          أهلاً بك! 👋 يمكنك هنا كتابة استفسارك أو إرسال تسجيل صوتي (فوكال) للتواصل المباشر مع المدير.
         </div>
       </div>
 
@@ -1024,140 +989,6 @@
     </div>
   </div>
 
-  <!-- Gemini AI Chat Widget -->
-  <div id="geminiChatWidget" class="fixed bottom-24 md:bottom-8 left-4 z-40">
-    <button onclick="toggleGeminiChat()" id="geminiToggleBtn" 
-            class="w-13 h-13 md:w-14 md:h-14 p-0.5 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-rose-400 shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 relative border border-white/20">
-      <div class="w-full h-full bg-[#0a0f1d] rounded-full flex items-center justify-center">
-        <i class="fas fa-sparkles text-lg text-transparent bg-clip-text bg-gradient-to-tr from-blue-400 via-purple-300 to-rose-400"></i>
-      </div>
-      <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-blue-500 border-2 border-black rounded-full animate-ping"></span>
-      <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-gradient-to-r from-blue-500 to-purple-500 border-2 border-black rounded-full"></span>
-    </button>
-
-    <div id="geminiChatBox" class="hidden fixed md:absolute bottom-20 md:bottom-16 left-3 right-3 md:left-0 md:right-auto md:w-[420px] h-[580px] max-h-[82vh] bg-[#0c101d]/95 border border-purple-500/30 rounded-3xl shadow-2xl flex-col overflow-hidden backdrop-blur-2xl">
-      <div class="h-1 w-full bg-gradient-to-r from-blue-500 via-purple-500 to-rose-400"></div>
-
-      <div class="bg-[#11162a]/90 px-4 py-3 border-b border-gray-800/80 flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600/30 via-purple-600/30 to-rose-600/30 border border-purple-500/40 flex items-center justify-center shadow-inner">
-            <i class="fas fa-sparkles text-sm text-purple-300"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-1.5">
-              <h4 class="text-xs font-black text-white tracking-wide">VIP SMOOK <span class="gemini-gradient-text font-black">Gemini AI</span></h4>
-              <span class="text-[9px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold">Pro</span>
-            </div>
-            <span class="text-[10px] text-gray-400 flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> مساعد ذكي عام ومباشر
-            </span>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-1.5">
-          <button onclick="clearGeminiChatHistory()" title="بدء محادثة جديدة" class="w-7 h-7 rounded-lg bg-gray-900/80 hover:bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center text-xs transition border border-gray-800">
-            <i class="fas fa-rotate-right"></i>
-          </button>
-          <button onclick="toggleGeminiChat()" class="w-7 h-7 rounded-lg bg-gray-900/80 hover:bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center text-xs transition border border-gray-800">
-            <i class="fas fa-xmark"></i>
-          </button>
-        </div>
-      </div>
-
-      <div id="geminiMessages" class="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs no-scrollbar bg-gradient-to-b from-[#0c101d] to-[#070913]">
-        <div class="flex items-start gap-2.5">
-          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shrink-0 mt-0.5 shadow">
-            <i class="fas fa-sparkles text-white text-[11px]"></i>
-          </div>
-          <div class="bg-[#151b2e] border border-gray-800 text-gray-200 p-3.5 rounded-2xl rounded-tr-none leading-relaxed shadow-lg max-w-[90%]">
-            <p class="font-extrabold text-white text-xs mb-1">مرحباً بك! 👋 أنا مساعدك الذكي Gemini.</p>
-            <p class="text-gray-300 text-[11px] leading-relaxed">
-              أنا هنا للإجابة عن أي سؤال في مختلف العلوم والمواضيع العامة، بالإضافة إلى مساعدتك في استكشاف منتجات المتجر وأسعارها وتفاصيل التوصيل!
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="px-3 py-1.5 bg-[#0e1322] border-t border-gray-800/80 flex gap-1.5 overflow-x-auto no-scrollbar text-[10px]">
-        <button onclick="quickSendAI('حدثني عن فائدة القراءة')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">💡 سؤال عام</button>
-        <button onclick="quickSendAI('واش هي السلع الأكثر طلباً اليوم؟')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">✨ الأكثر طلباً</button>
-        <button onclick="quickSendAI('شحال التوصيل ووقتاش يوصلني؟')" class="px-3 py-1 bg-gray-900/90 hover:bg-gray-800 text-gray-300 hover:text-white rounded-full border border-gray-800 whitespace-nowrap transition">🚚 التوصيل السريع</button>
-        <button onclick="toggleSupportChat()" class="px-3 py-1 bg-amber-500/15 text-amber-300 rounded-full border border-amber-500/30 whitespace-nowrap font-bold hover:bg-amber-500/25 transition">💬 محادثة المدير</button>
-      </div>
-
-      <div class="p-3 bg-[#0d1222] border-t border-gray-800/80">
-        <div class="flex items-center gap-2 bg-[#14192b] border border-gray-800 rounded-2xl px-3 py-1.5 focus-within:border-purple-500/70 transition shadow-inner">
-          <input id="geminiInput" type="text" placeholder="اسأل Gemini عن أي شيء في العالم أو عن السلع..." onkeydown="if(event.key==='Enter') sendGeminiMessage()"
-                 class="flex-1 bg-transparent py-1.5 text-xs text-white focus:outline-none placeholder-gray-500">
-          <button onclick="sendGeminiMessage()" id="geminiSendBtn" title="إرسال"
-                  class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-purple-600 to-rose-500 hover:opacity-90 text-white flex items-center justify-center transition shadow active:scale-95 shrink-0">
-            <i class="fas fa-arrow-up text-xs"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- صوت المكالمة الواردة (Remote Audio) -->
-  <audio id="remoteAudio" autoplay playsinline></audio>
-
-  <!-- شاشة المكالمة الجارية مع زر مكبر الصوت وزر الكتم والإنهاء -->
-  <div id="voiceCallModal" class="fixed inset-0 z-[150] bg-black/95 backdrop-blur-xl hidden items-center justify-center p-4">
-    <div class="w-full max-w-xs bg-gray-900 border border-yellow-500/40 rounded-3xl p-6 text-center shadow-2xl flex flex-col items-center">
-      <div class="relative mb-4">
-        <div id="callPulseRing" class="w-24 h-24 rounded-full border-2 border-emerald-500 animate-ping absolute inset-0"></div>
-        <img id="callUserImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" 
-             class="w-24 h-24 rounded-full object-cover border-2 border-yellow-400 relative z-10 shadow-lg">
-      </div>
-      <h3 id="callUserName" class="text-white font-black text-sm mb-1">مدير المتجر</h3>
-      <p id="callStatusText" class="text-xs text-yellow-400 font-medium mb-3">جاري الاتصال...</p>
-      <div id="callTimer" class="hidden text-sm font-mono font-black text-emerald-400 bg-gray-950 px-3 py-1 rounded-full border border-gray-800 mb-6">00:00</div>
-      
-      <!-- أزرار التحكم بالمكالمة: مكبر الصوت، إنهاء المكالمة، كتم المايك -->
-      <div class="flex items-center justify-center gap-4 w-full">
-        <!-- زر كتم المايك -->
-        <button id="callMuteBtn" onclick="toggleMuteCall()" title="كتم الصوت"
-                class="w-12 h-12 rounded-full bg-gray-800 hover:bg-gray-700 text-white flex items-center justify-center transition border border-gray-700 active:scale-95 shadow">
-          <i id="callMuteIcon" class="fas fa-microphone text-sm"></i>
-        </button>
-
-        <!-- زر إنهاء المكالمة -->
-        <button onclick="hangupVoiceCall()" title="إنهاء المكالمة"
-                class="w-14 h-14 rounded-full bg-red-600 hover:bg-red-500 text-white flex items-center justify-center transition active:scale-95 shadow-lg shadow-red-600/40">
-          <i class="fas fa-phone-slash text-lg"></i>
-        </button>
-
-        <!-- زر مكبر الصوت (Speakerphone) -->
-        <button id="callSpeakerBtn" onclick="toggleSpeakerphone()" title="مكبر الصوت"
-                class="w-12 h-12 rounded-full bg-gray-800 hover:bg-gray-700 text-white flex items-center justify-center transition border border-gray-700 active:scale-95 shadow">
-          <i id="callSpeakerIcon" class="fas fa-volume-high text-sm text-yellow-400"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة المكالمة الواردة للمدير (Incoming Call Modal) -->
-  <div id="incomingCallModal" class="fixed inset-0 z-[160] bg-black/90 backdrop-blur-md hidden items-center justify-center p-4">
-    <div class="w-full max-w-xs bg-gray-950 border border-emerald-500/50 rounded-3xl p-6 text-center shadow-2xl flex flex-col items-center">
-      <div class="relative mb-4">
-        <div class="w-20 h-20 rounded-full border-2 border-emerald-400 animate-ping absolute inset-0"></div>
-        <img id="incomingCustomerImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" 
-             class="w-20 h-20 rounded-full object-cover border-2 border-emerald-400 relative z-10 shadow-lg">
-      </div>
-      <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-bold mb-2">مكالمة صوتية واردة 📞</span>
-      <h3 id="incomingCustomerName" class="text-white font-black text-sm mb-1">زبون المتجر</h3>
-      <p id="incomingCustomerPhone" class="text-xs text-gray-400 font-mono mb-6">0661234567</p>
-      <div class="flex items-center justify-center gap-6 w-full">
-        <button onclick="rejectIncomingCall()" class="w-14 h-14 rounded-full bg-red-600 hover:bg-red-500 text-white flex items-center justify-center transition active:scale-95 shadow-lg shadow-red-600/40">
-          <i class="fas fa-phone-slash text-base"></i>
-        </button>
-        <button onclick="acceptIncomingCall()" class="w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center transition active:scale-95 shadow-lg shadow-emerald-600/40 animate-bounce">
-          <i class="fas fa-phone text-base"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
   <footer class="border-t border-gray-900 bg-black/60 py-8 text-center text-xs text-gray-400">
     <div class="max-w-6xl mx-auto px-4 space-y-2">
       <p class="font-bold text-yellow-500/80">VIP SMOOK © <span id="year"></span></p>
@@ -1173,10 +1004,7 @@
     const TELEGRAM_BOT_TOKEN = "8306019686:AAEVN6Stiinu6cefq3OP_e9JwquGswckfVo";
     const TELEGRAM_CHAT_ID = "6481958888";
     const VAPID_KEY = "BDfCKYaSN4yogxqHgf5Ab4qP5CHqQRNF-bYxMKQlx1Qi3n8MSZhCVtlS_z4-PQYEmUlPjCYQYXeonSdXRWFrpJg";
-    const GEMINI_API_KEY = "AQ.Ab8RN6IyY6UC6HyiuIBYTbeCm7LbGqEiqeacbCpe5u6j6CLzNQ";
 
-    let geminiChatHistory = [];
-    let isGeminiResponding = false;
     let unsubscribeSupportChat = null;
     let unsubscribeBackgroundChat = null;
     let unsubscribeAdminChatList = null;
@@ -1193,28 +1021,6 @@
     let adminMediaRecorder = null;
     let adminAudioChunks = [];
     let isAdminRecording = false;
-
-    let jitsiApi = null;
-    let currentCallId = null;
-    let unsubscribeCallListener = null;
-    let unsubscribeIncomingCalls = null;
-    let ringtoneAudio = null;
-    let callTimerInterval = null;
-    let callSecondsCount = 0;
-    let incomingCallData = null;
-    let isCallMuted = false;
-    let isSpeakerOn = true;
-
-    function getOrCreateAudioContainer() {
-      let box = document.getElementById("jitsiAudioContainer");
-      if (!box) {
-        box = document.createElement("div");
-        box.id = "jitsiAudioContainer";
-        box.style.display = "none";
-        document.body.appendChild(box);
-      }
-      return box;
-    }
 
     const firebaseConfig = {
       apiKey: "AIzaSyC8Sh1-ufVJ_voLCcu3_W89011oQYEGn60",
@@ -1237,6 +1043,7 @@
       if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
       db = firebase.firestore();
       
+      // تشغيل Firestore لدعم شبكات الهاتف المحمول 4G والواي فاي
       db.settings({
         experimentalForceLongPolling: true,
         useFetchStreams: false
@@ -1291,266 +1098,6 @@
         osc.start();
         osc.stop(ctx.currentTime + 0.3);
       } catch (_) {}
-    }
-
-    function playRingtone() {
-      stopRingtone();
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let isBeep = false;
-        ringtoneAudio = setInterval(() => {
-          if (!audioCtx || audioCtx.state === 'closed') return;
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(isBeep ? 480 : 440, audioCtx.currentTime);
-          gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start();
-          osc.stop(audioCtx.currentTime + 0.4);
-          isBeep = !isBeep;
-        }, 1200);
-        ringtoneAudio.ctx = audioCtx;
-      } catch (e) {}
-    }
-
-    function stopRingtone() {
-      if (ringtoneAudio) {
-        clearInterval(ringtoneAudio);
-        if (ringtoneAudio.ctx) ringtoneAudio.ctx.close().catch(() => {});
-        ringtoneAudio = null;
-      }
-    }
-
-    function startCallTimer() {
-      callSecondsCount = 0;
-      const timerEl = document.getElementById("callTimer");
-      timerEl.classList.remove("hidden");
-      document.getElementById("callPulseRing")?.classList.add("hidden");
-      document.getElementById("callStatusText").textContent = "المكالمة متصلة - الصوت يعمل بوضوح";
-
-      clearInterval(callTimerInterval);
-      callTimerInterval = setInterval(() => {
-        callSecondsCount++;
-        const mins = String(Math.floor(callSecondsCount / 60)).padStart(2, "0");
-        const secs = String(callSecondsCount % 60).padStart(2, "0");
-        timerEl.textContent = `${mins}:${secs}`;
-      }, 1000);
-    }
-
-    function stopCallTimer() {
-      clearInterval(callTimerInterval);
-      callTimerInterval = null;
-      document.getElementById("callTimer")?.classList.add("hidden");
-    }
-
-    /* 1. مكالمة الزبون عبر المحرك السحابي */
-    async function startCustomerVoiceCall() {
-      if (!firebaseReady || !db) return toast("سيرفر المتجر غير متصل.", "error");
-
-      const chatId = getCustomerChatId();
-      const roomName = "VIP_SMOOK_CALL_" + chatId.replace(/[^a-zA-Z0-9]/g, "");
-      const callerName = state.customer?.name || (state.customer?.phone ? `زبون: ${state.customer.phone}` : "زائر المتجر");
-      const callerPhone = state.customer?.phone || chatId;
-
-      document.getElementById("callUserName").textContent = "مدير المتجر";
-      document.getElementById("callUserImg").src = APP_ICON;
-      document.getElementById("callStatusText").textContent = "جاري الاتصال بالمدير...";
-      document.getElementById("callPulseRing")?.classList.remove("hidden");
-      openModal("voiceCallModal");
-      playRingtone();
-
-      currentCallId = "call_" + chatId;
-      await db.collection("voice_calls").doc(currentCallId).set({
-        roomName: roomName,
-        callerName: callerName,
-        callerPhone: callerPhone,
-        callerImage: state.customer?.image || FALLBACK_AVATAR,
-        status: "calling",
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: TELEGRAM_CHAT_ID,
-          text: `📞 *مكالمة صوتية واردة الآن في المتجر!*\n\n👤 *الزبون:* ${callerName}\n📱 *الهاتف:* \`${callerPhone}\`\n\n👉 *افتح المتجر للرد مباشرة.*`,
-          parse_mode: "Markdown"
-        })
-      }).catch(() => {});
-
-      initJitsiAudioSession(roomName, callerName);
-
-      if (unsubscribeCallListener) unsubscribeCallListener();
-      unsubscribeCallListener = db.collection("voice_calls").doc(currentCallId).onSnapshot(doc => {
-        const d = doc.data();
-        if (!d) return;
-
-        if (d.status === "active") {
-          stopRingtone();
-          startCallTimer();
-        } else if (d.status === "rejected" || d.status === "ended") {
-          toast(d.status === "rejected" ? "تم رفض المكالمة." : "انتهت المكالمة.", "normal");
-          hangupVoiceCall(false);
-        }
-      });
-    }
-
-    /* 2. مستمع المكالمات الواردة للمدير */
-    function startAdminVoiceCallsListener() {
-      if (!firebaseReady || !db || !state.isAdminLoggedIn) return;
-      if (unsubscribeIncomingCalls) unsubscribeIncomingCalls();
-
-      unsubscribeIncomingCalls = db.collection("voice_calls")
-        .where("status", "==", "calling")
-        .onSnapshot(snap => {
-          if (snap.empty) {
-            closeModal("incomingCallModal");
-            stopRingtone();
-            return;
-          }
-
-          const doc = snap.docs[0];
-          incomingCallData = { id: doc.id, ...doc.data() };
-
-          document.getElementById("incomingCustomerName").textContent = incomingCallData.callerName || "زبون المتجر";
-          document.getElementById("incomingCustomerPhone").textContent = incomingCallData.callerPhone || "";
-          document.getElementById("incomingCustomerImg").src = incomingCallData.callerImage || FALLBACK_AVATAR;
-
-          openModal("incomingCallModal");
-          playRingtone();
-        });
-    }
-
-    /* 3. قبول مكالمة المدير عبر المحرك السحابي */
-    async function acceptIncomingCall() {
-      stopRingtone();
-      closeModal("incomingCallModal");
-
-      if (!incomingCallData) return;
-      currentCallId = incomingCallData.id;
-
-      document.getElementById("callUserName").textContent = incomingCallData.callerName || "الزبون";
-      document.getElementById("callUserImg").src = incomingCallData.callerImage || FALLBACK_AVATAR;
-      openModal("voiceCallModal");
-      startCallTimer();
-
-      await db.collection("voice_calls").doc(currentCallId).update({ status: "active" });
-
-      initJitsiAudioSession(incomingCallData.roomName, "مدير المتجر");
-
-      if (unsubscribeCallListener) unsubscribeCallListener();
-      unsubscribeCallListener = db.collection("voice_calls").doc(currentCallId).onSnapshot(doc => {
-        const d = doc.data();
-        if (d && d.status === "ended") {
-          toast("أنهى الزبون المكالمة.", "normal");
-          hangupVoiceCall(false);
-        }
-      });
-    }
-
-    /* 4. إعداد جلسة الصوت السحابية داخل المتجر */
-    function initJitsiAudioSession(roomName, displayName) {
-      if (jitsiApi) { jitsiApi.dispose(); jitsiApi = null; }
-
-      const container = getOrCreateAudioContainer();
-      container.innerHTML = "";
-
-      const options = {
-        roomName: roomName,
-        parentNode: container,
-        width: "100%",
-        height: "100%",
-        configOverwrite: {
-          startWithAudioMuted: false,
-          startWithVideoMuted: true,
-          disableAudioLevels: false,
-          enableNoisyMicDetection: false
-        },
-        interfaceConfigOverwrite: {
-          TOOLBAR_BUTTONS: [],
-          SHOW_JITSI_WATERMARK: false,
-          SHOW_WATERMARK_FOR_GUESTS: false
-        },
-        userInfo: {
-          displayName: displayName
-        }
-      };
-
-      try {
-        jitsiApi = new JitsiMeetExternalAPI("meet.jit.si", options);
-        jitsiApi.addEventListener("videoConferenceJoined", () => {
-          document.getElementById("callStatusText").textContent = "المكالمة متصلة - الصوت يعمل بوضوح";
-        });
-      } catch (err) {
-        console.error("Audio init error:", err);
-      }
-    }
-
-    async function rejectIncomingCall() {
-      stopRingtone();
-      closeModal("incomingCallModal");
-      if (incomingCallData && incomingCallData.id) {
-        await db.collection("voice_calls").doc(incomingCallData.id).update({ status: "rejected" }).catch(() => {});
-      }
-      incomingCallData = null;
-      currentCallId = null;
-    }
-
-    function toggleMuteCall() {
-      if (!jitsiApi) return;
-      isCallMuted = !isCallMuted;
-      jitsiApi.executeCommand("toggleAudio");
-
-      const icon = document.getElementById("callMuteIcon");
-      const btn = document.getElementById("callMuteBtn");
-      if (isCallMuted) {
-        icon.className = "fas fa-microphone-slash text-sm text-red-400";
-        btn.classList.add("bg-red-950", "border-red-600");
-        toast("تم كتم المايكروفون", "normal");
-      } else {
-        icon.className = "fas fa-microphone text-sm text-white";
-        btn.classList.remove("bg-red-950", "border-red-600");
-        toast("تم تشغيل المايكروفون", "normal");
-      }
-    }
-
-    function toggleSpeakerphone() {
-      toast("الصوت يعمل على مكبر الصوت بأعلى جودة", "normal");
-    }
-
-    async function hangupVoiceCall(notifyDb = true) {
-      stopRingtone();
-      stopCallTimer();
-
-      if (notifyDb && currentCallId && firebaseReady && db) {
-        db.collection("voice_calls").doc(currentCallId).update({ status: "ended" }).catch(() => {});
-      }
-
-      if (unsubscribeCallListener) {
-        unsubscribeCallListener();
-        unsubscribeCallListener = null;
-      }
-
-      if (jitsiApi) {
-        jitsiApi.dispose();
-        jitsiApi = null;
-      }
-
-      const container = document.getElementById("jitsiAudioContainer");
-      if (container) container.innerHTML = "";
-
-      currentCallId = null;
-      isCallMuted = false;
-      const muteIcon = document.getElementById("callMuteIcon");
-      if (muteIcon) muteIcon.className = "fas fa-microphone text-sm text-white";
-      document.getElementById("callMuteBtn")?.classList.remove("bg-red-950", "border-red-600");
-
-      closeModal("voiceCallModal");
-      closeModal("incomingCallModal");
     }
 
     function updateNotifUI() {
@@ -1798,7 +1345,7 @@
       setTimeout(() => box.classList.add("hidden"), 300);
     }
 
-    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal", "supportChatModal", "standaloneChatModal", "standaloneOrdersModal", "standaloneSettingsModal", "voiceCallModal", "incomingCallModal"];
+    const MODAL_IDS = ["legalGate", "authModal", "cartDrawer", "myOrdersModal", "editProductModal", "adminModal", "quickViewModal", "wishlistModal", "supportChatModal", "standaloneChatModal", "standaloneOrdersModal", "standaloneSettingsModal"];
 
     function openModal(id) {
       const el = document.getElementById(id);
@@ -2010,7 +1557,7 @@
             container.innerHTML = `
               <div class="bg-gray-900 border border-gray-800 text-gray-300 p-3 rounded-2xl rounded-tr-none leading-relaxed">
                 أهلاً بك في خدمة زبائن <strong class="text-yellow-400">VIP SMOOK</strong>! 👋<br>
-                اكتب أي استفسار أو أرسل فوكال أو اتصل بالمدير هاتفياً مباشرة.
+                اكتب أي استفسار أو أرسل رسالة صوتية (فوكال) للتواصل المباشر مع المدير.
               </div>
             `;
             return;
@@ -2124,7 +1671,7 @@
           isCustRecording = true;
           btn.classList.add("recording-pulse");
           btn.innerHTML = `<i class="fas fa-stop text-xs"></i>`;
-          toast("جاري التسجيل الصوتي... اضغط على المربع الأحمر للإرسال", "normal");
+          toast("جاري التسجيل الصوتي... اضغط على المربع للإرسال", "normal");
         } catch (err) {
           toast("يرجى إعطاء الإذن لتسجيل الصوت.", "error");
         }
@@ -2672,325 +2219,6 @@
       });
     }
 
-    /* الذكاء الاصطناعي بنظام Google Gemini */
-    function toggleGeminiChat() {
-      const box = document.getElementById("geminiChatBox");
-      const isHidden = box.classList.contains("hidden");
-      if (isHidden) {
-        box.classList.remove("hidden");
-        box.classList.add("flex");
-        document.getElementById("geminiInput")?.focus();
-      } else {
-        box.classList.add("hidden");
-        box.classList.remove("flex");
-      }
-    }
-
-    function clearGeminiChatHistory() {
-      geminiChatHistory = [];
-      const msgContainer = document.getElementById("geminiMessages");
-      msgContainer.innerHTML = `
-        <div class="flex items-start gap-2.5">
-          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shrink-0 mt-0.5 shadow">
-            <i class="fas fa-sparkles text-white text-[11px]"></i>
-          </div>
-          <div class="bg-[#151b2e] border border-gray-800 text-gray-200 p-3.5 rounded-2xl rounded-tr-none leading-relaxed shadow-lg max-w-[90%]">
-            <p class="font-extrabold text-white text-xs mb-1">مرحباً بك مجدداً في Gemini! ✨</p>
-            <p class="text-gray-300 text-[11px]">تم بدء محادثة جديدة. يمكنك سؤالي عن أي شيء يدور في ذهنك بحرية تامة!</p>
-          </div>
-        </div>
-      `;
-      toast("تم بدء محادثة جديدة مع Gemini بنجاح.", "normal");
-    }
-
-    function quickSendAI(text) {
-      const input = document.getElementById("geminiInput");
-      input.value = text;
-      sendGeminiMessage();
-    }
-
-    function copyToClipboard(text, btn) {
-      navigator.clipboard.writeText(text).then(() => {
-        const icon = btn.querySelector("i");
-        if (icon) icon.className = "fas fa-check text-emerald-400";
-        toast("تم نسخ الرد بنجاح!", "success");
-        setTimeout(() => { if (icon) icon.className = "fas fa-copy"; }, 2000);
-      }).catch(() => toast("تعذر النسخ.", "error"));
-    }
-
-    function hasShoppingIntent(text) {
-      const norm = normalizeSearchText(text);
-      const keywords = ["سعر", "سومة", "شراء", "اشتري", "سلعة", "سلع", "منتج", "منتجات", "شحال", "بكم", "توصيل", "كود", "خصم", "برومو", "عندكم", "كاين", "مارلبورو", "دخان", "سجائر", "مشروب", "شيبس", "حلوى", "تبغ"];
-      return keywords.some(k => norm.includes(k));
-    }
-
-    function findRelevantProducts(q, limit = 3) {
-      const norm = normalizeSearchText(q);
-      const stopWords = ["كم", "سعر", "سومة", "كاش", "ثمن", "عندكم", "كاين", "شحال", "اعطيني", "بكم", "اريد", "حاب", "شراء", "علبة", "باكية", "باكي", "قرعة", "واش", "فيه", "راه"];
-      const words = norm.split(/\s+/).filter(w => w.length > 1 && !stopWords.includes(w));
-
-      let scored = state.products.map(p => {
-        let score = 0;
-        const pNorm = normalizeSearchText(p.name);
-        const catNorm = normalizeSearchText(p.category);
-
-        if (pNorm === norm) score += 15;
-        if (pNorm.includes(norm) && norm.length > 2) score += 10;
-
-        words.forEach(w => {
-          if (pNorm.includes(w)) score += 4;
-          if (catNorm.includes(w)) score += 2;
-          for (const [k, v] of Object.entries(SEARCH_SYNONYMS)) {
-            if (k.includes(w) || w.includes(k)) {
-              if (pNorm.includes(v)) score += 4;
-            }
-          }
-        });
-
-        return { product: p, score };
-      }).filter(x => x.score > 0);
-
-      scored.sort((a, b) => b.score - a.score);
-      return scored.slice(0, limit).map(x => x.product);
-    }
-
-    function generateSmartStoreReply(q) {
-      const raw = q.trim();
-      const norm = normalizeSearchText(raw);
-      const cfg = state.storeSettings;
-
-      if (norm.includes("ساعة") || norm.includes("وقت") || norm.includes("تاريخ") || norm.includes("اليوم")) {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString("ar-DZ", { hour: '2-digit', minute: '2-digit' });
-        const dateStr = now.toLocaleDateString("ar-DZ", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        return {
-          text: `⏰ الساعة الآن تشير إلى **${timeStr}**.\n📅 واليوم هو: **${dateStr}**.\n\nتفضل، هل لديك أي استفسار آخر ترغب في معرفته؟`,
-          actions: []
-        };
-      }
-
-      if (/^(hi|hello|مرحبا|سلام|السلام|أهلا|اهلا|الو|صباح|مساء|صحا|سلام عليكم|صباح الخير|سلام خويا|مساء الخير)/i.test(norm) && norm.length <= 30) {
-        return {
-          text: `أهلاً وسهلاً بك! 👋 أنا مساعدك الذكي Gemini. يمكنك سؤالي عن أي موضوع علمي أو عام أو استفسار شخصي، أو الاستفسار عن أسعار السلع والتوصيل في متجر VIP SMOOK!`,
-          actions: []
-        };
-      }
-
-      if (norm.includes("خصم") || norm.includes("كود") || norm.includes("تخفيض") || norm.includes("برومو") || norm.includes("promo")) {
-        if (cfg.couponCode && Number(cfg.couponPercent) > 0) {
-          return {
-            text: `🎉 **كود خصم حصري فعال الآن في المتجر!**\nاستخدم الكود: **${cfg.couponCode}** للحصول على تخفيض فوري بنسبة **${cfg.couponPercent}%** في السلة.`,
-            actions: []
-          };
-        } else {
-          return {
-            text: `حالياً لا يوجد كود خصم، لكن التوصيل **مجاني بالكامل** عند وصول طلبك إلى ${money(cfg.freeShippingTarget)}! 🎁`,
-            actions: []
-          };
-        }
-      }
-
-      if (norm.includes("توصيل") || norm.includes("livraison") || norm.includes("وين توصل") || norm.includes("توصلو")) {
-        return {
-          text: `🚚 **خيارات التوصيل:**\n• وسط المدينة: **${money(cfg.shippingFeeCentre)}**\n• المناطق المجاورة: **${money(cfg.shippingFeeNearby)}**\n• استلام من المحل: **مجاناً**\n\n🎉 مجاني بالكامل للطلبات التي تفوق ${money(cfg.freeShippingTarget)}!`,
-          actions: []
-        };
-      }
-
-      if (norm.includes("دفع") || norm.includes("كاش") || norm.includes("خلص")) {
-        return {
-          text: `💵 **طريقة الدفع:** الدفع **نقداً كاش عند الاستلام يداً بيد** بعد معاينة طلبك والتأكد منه.`,
-          actions: []
-        };
-      }
-
-      if (norm.includes("مدير") || norm.includes("نهدر مع") || norm.includes("صاحب المحل")) {
-        return {
-          text: `تفضل بالتواصل المباشر مع مدير المتجر الآن:`,
-          actions: [],
-          openManagerChat: true
-        };
-      }
-
-      const matched = findRelevantProducts(q, 3);
-      if (hasShoppingIntent(q) && matched.length > 0) {
-        return {
-          text: `إليك ما وجدته بخصوص طلبك في المخزون:`,
-          actions: matched
-        };
-      }
-
-      return {
-        text: `أنا هنا لمساعدتك والإجابة عن كل استفساراتك بكل سرور! بخصوص سؤالك:\n"${raw}"\nيمكنك سؤالي عن أي معلومة عامة، ثقافة، نصائح، أو طلب استكشاف منتجات المتجر وأسعارها بالدينار الجزائري 🛍️`,
-        actions: []
-      };
-    }
-
-    function streamGeminiText(elementId, fullText, speed = 10) {
-      return new Promise((resolve) => {
-        const el = document.getElementById(elementId);
-        if (!el) return resolve();
-        el.classList.add("typing-cursor");
-        let i = 0;
-        const timer = setInterval(() => {
-          if (i < fullText.length) {
-            el.textContent += fullText.charAt(i);
-            i++;
-            const box = document.getElementById("geminiMessages");
-            if (box) box.scrollTop = box.scrollHeight;
-          } else {
-            clearInterval(timer);
-            el.classList.remove("typing-cursor");
-            resolve();
-          }
-        }, speed);
-      });
-    }
-
-    async function sendGeminiMessage() {
-      if (isGeminiResponding) return;
-      const input = document.getElementById("geminiInput");
-      const msgText = input.value.trim();
-      if (!msgText) return;
-
-      const msgContainer = document.getElementById("geminiMessages");
-      const sendBtn = document.getElementById("geminiSendBtn");
-
-      msgContainer.innerHTML += `
-        <div class="flex justify-start">
-          <div class="bg-[#1c2438] border border-gray-700/60 text-white font-medium p-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow text-xs">
-            ${esc(msgText)}
-          </div>
-        </div>
-      `;
-      input.value = "";
-      msgContainer.scrollTop = msgContainer.scrollHeight;
-
-      isGeminiResponding = true;
-      sendBtn.disabled = true;
-
-      const loadingId = "gemini_loading_" + Date.now();
-      msgContainer.innerHTML += `
-        <div id="${loadingId}" class="flex items-start gap-2.5">
-          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shrink-0 mt-0.5 shadow animate-pulse">
-            <i class="fas fa-sparkles text-white text-[11px]"></i>
-          </div>
-          <div class="gemini-shimmer border border-purple-500/30 text-purple-200 p-3 rounded-2xl rounded-tr-none text-xs flex items-center gap-2 shadow-lg">
-            <span class="w-2 h-2 rounded-full bg-purple-400 animate-ping"></span>
-            <span class="font-bold">جيميناي يكتب الرد...</span>
-          </div>
-        </div>
-      `;
-      msgContainer.scrollTop = msgContainer.scrollHeight;
-
-      geminiChatHistory.push({ role: "user", parts: [{ text: msgText }] });
-      if (geminiChatHistory.length > 8) geminiChatHistory = geminiChatHistory.slice(-8);
-
-      let replyText = null;
-      let matchedProductsForAction = hasShoppingIntent(msgText) ? findRelevantProducts(msgText, 3) : [];
-      let showManagerBtn = false;
-
-      const cfg = state.storeSettings;
-      const currentTimeStr = new Date().toLocaleTimeString("ar-DZ", { hour: '2-digit', minute: '2-digit' });
-      const availableProductsSummary = state.products.map(p => 
-        `• ${p.name} | السعر: ${p.price} د.ج | المخزون: ${p.stock > 0 ? p.stock : 'نفد'}`
-      ).join("\n");
-
-      const systemPrompt = `أنت Gemini، مساعد ذكي عام وشامل ومتطور. أجب بدقة وحرية واحترافية عن أي سؤال يطرحه المستخدم (تاريخ، علوم، ثقافة، معلومات عامة، برمجة وغيرها). إذا كان سؤاله عن متجر VIP SMOOK فالمعلومات هي: الوقت الحالي (${currentTimeStr})، التوصيل بـ ${cfg.shippingFeeCentre} د.ج لوسط المدينة و ${cfg.shippingFeeNearby} د.ج للمناطق المجاورة والدفع نقداً عند الاستلام. المنتجات: ${availableProductsSummary || "لا توجد"}. إذا كان السؤال عاماً لا تذكر المتجر وأجب عن السؤال مباشرة.`;
-
-      const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash"];
-      for (const model of modelsToTry) {
-        try {
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
-          const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              systemInstruction: { parts: [{ text: systemPrompt }] },
-              contents: geminiChatHistory
-            })
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-              replyText = data.candidates[0].content.parts[0].text;
-              break;
-            }
-          }
-        } catch (err) {}
-      }
-
-      if (!replyText) {
-        const local = generateSmartStoreReply(msgText);
-        replyText = local.text;
-        matchedProductsForAction = local.actions || [];
-        showManagerBtn = local.openManagerChat || false;
-      }
-
-      geminiChatHistory.push({ role: "model", parts: [{ text: replyText }] });
-      document.getElementById(loadingId)?.remove();
-
-      let actionsHTML = "";
-      if (matchedProductsForAction && matchedProductsForAction.length > 0) {
-        actionsHTML = `
-          <div class="mt-3 pt-2.5 border-t border-gray-800/80 space-y-2">
-            <span class="text-[10px] text-purple-300 font-bold block mb-1">⚡ سلع متوفرة في المتجر لطلبك:</span>
-            ${matchedProductsForAction.map(p => `
-              <div class="flex items-center justify-between bg-[#0b0f1a] p-2 rounded-xl border border-gray-800 text-[11px] gap-2 shadow">
-                <div class="truncate pl-1">
-                  <span class="font-bold text-gray-200 block truncate">${esc(p.name)}</span>
-                  <span class="text-amber-400 font-mono text-[10px] font-bold">${money(p.price)}</span>
-                </div>
-                <button onclick="addToCart('${esc(p.id)}')" class="shrink-0 px-3 py-1 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold rounded-lg text-[10px] transition shadow">
-                  + للسلة
-                </button>
-              </div>
-            `).join("")}
-          </div>
-        `;
-      }
-
-      if (showManagerBtn) {
-        actionsHTML += `
-          <div class="mt-2.5 pt-2">
-            <button onclick="toggleSupportChat()" class="w-full py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5">
-              <i class="fas fa-comments"></i> التحدث مع مدير المتجر مباشرة
-            </button>
-          </div>
-        `;
-      }
-
-      const replyBubbleId = "gemini_txt_" + Date.now();
-      const escapedCleanText = replyText.replace(/"/g, '&quot;');
-
-      msgContainer.innerHTML += `
-        <div class="flex items-start gap-2.5">
-          <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center shrink-0 mt-0.5 shadow">
-            <i class="fas fa-sparkles text-white text-[11px]"></i>
-          </div>
-          <div class="bg-[#13182a] border border-gray-800 text-gray-200 p-3.5 rounded-2xl rounded-tr-none max-w-[90%] leading-relaxed shadow-lg">
-            <div id="${replyBubbleId}" class="text-xs whitespace-pre-line leading-relaxed font-normal"></div>
-            ${actionsHTML}
-            <div class="flex items-center gap-3 pt-2 mt-2 border-t border-gray-800/60 text-[10px] text-gray-400">
-              <button onclick="copyToClipboard('${escapedCleanText}', this)" class="hover:text-white flex items-center gap-1 transition" title="نسخ الرد">
-                <i class="fas fa-copy"></i> <span>نسخ</span>
-              </button>
-              <button onclick="quickSendAI('${esc(msgText)}')" class="hover:text-white flex items-center gap-1 transition" title="إعادة التوليد">
-                <i class="fas fa-rotate"></i> <span>إعادة المحاولة</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      await streamGeminiText(replyBubbleId, replyText, 10);
-
-      isGeminiResponding = false;
-      sendBtn.disabled = false;
-      msgContainer.scrollTop = msgContainer.scrollHeight;
-    }
-
     async function initApp() {
       updateUserUI();
       updateCartUI();
@@ -3009,12 +2237,10 @@
           loadOrdersOnce();
           loadAdminChatList();
           updateAdminDashboardStats();
-          startAdminVoiceCallsListener();
         } else {
           state.isAdminLoggedIn = false;
           document.getElementById("adminLoginForm").classList.remove("hidden");
           document.getElementById("adminPanel").classList.add("hidden");
-          if (unsubscribeIncomingCalls) unsubscribeIncomingCalls();
         }
       });
 
