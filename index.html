@@ -1172,8 +1172,9 @@
     const VAPID_KEY = "BDfCKYaSN4yogxqHgf5Ab4qP5CHqQRNF-bYxMKQlx1Qi3n8MSZhCVtlS_z4-PQYEmUlPjCYQYXeonSdXRWFrpJg";
     const GEMINI_API_KEY = "AQ.Ab8RN6IyY6UC6HyiuIBYTbeCm7LbGqEiqeacbCpe5u6j6CLzNQ";
 
-    // رابط خوادم TURN الخاصة بحسابك في Metered لتخطي حظر شبكات الـ 4G
-    const METERED_TURN_URL = "https://vip-smook.metered.live/api/v1/turn/credentials?apiKey=G1SWbxcGINYPzJpWDJ9q3azVBTav4moPKtt7t4z8l0h__Q5H";
+    // مفاتيح ورابط Metered TURN الخاص بحسابك لتجاوز حظر الـ 4G
+    const METERED_APP_DOMAIN = "vip-smook.metered.live";
+    const METERED_API_KEY = "g1SWbxcGINYPzJpWDJ9q3azVBTav4moPKtt7t4z8l0h__Q5H";
 
     let geminiChatHistory = [];
     let isGeminiResponding = false;
@@ -1194,7 +1195,7 @@
     let adminAudioChunks = [];
     let isAdminRecording = false;
 
-    /* إعدادات محرك WebRTC الافتراضية مع STUN و TURN الاحتياطي */
+    /* إعدادات محرك WebRTC الافتراضية */
     let rtcConfig = {
       iceServers: [
         { urls: "stun:stun.l.google.com:19302" },
@@ -1225,22 +1226,30 @@
     let isCallMuted = false;
     let isSpeakerOn = true;
 
-    /* جلب خوادم TURN الخاصة بتطبيقك vip-smook فور فتح المتجر */
-    async function fetchCustomTurnServers() {
-      try {
-        const response = await fetch(METERED_TURN_URL);
-        const servers = await response.json();
-        if (servers && servers.length) {
-          rtcConfig.iceServers = [
-            { urls: "stun:stun.l.google.com:19302" },
-            ...servers
-          ];
-        }
-      } catch (err) {
-        console.warn("Using fallback TURN servers:", err);
+    /* دالة جلب خوادم TURN الخاصة بحسابك والتأكد من جاهزيتها قبل المكالمة */
+    async function ensureTurnServers() {
+      const keys = [
+        METERED_API_KEY,
+        "G1SWbxcGINYPzJpWDJ9q3azVBTav4moPKtt7t4z8l0h__Q5H"
+      ];
+
+      for (const k of keys) {
+        try {
+          const res = await fetch(`https://${METERED_APP_DOMAIN}/api/v1/turn/credentials?apiKey=${k}`);
+          if (res.ok) {
+            const servers = await res.json();
+            if (Array.isArray(servers) && servers.length) {
+              rtcConfig.iceServers = [
+                { urls: "stun:stun.l.google.com:19302" },
+                ...servers
+              ];
+              return;
+            }
+          }
+        } catch (_) {}
       }
     }
-    fetchCustomTurnServers();
+    ensureTurnServers();
 
     const firebaseConfig = {
       apiKey: "AIzaSyC8Sh1-ufVJ_voLCcu3_W89011oQYEGn60",
@@ -1424,6 +1433,8 @@
     async function startCustomerVoiceCall() {
       if (!firebaseReady || !db) return toast("سيرفر الاتصال غير جاهز.", "error");
 
+      await ensureTurnServers();
+
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ 
           audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, 
@@ -1575,6 +1586,8 @@
 
       if (!incomingCallData) return;
       currentCallId = incomingCallData.id;
+
+      await ensureTurnServers();
 
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ 
