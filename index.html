@@ -971,8 +971,9 @@
     const APP_ICON = "1792015651400.jpg";
 
     const ADMIN_UID = "Mb1v98Csl6bVd9fnzUSTdMTGaCT2";
-    const TELEGRAM_BOT_TOKEN = "8306019686:AAEVN6Stiinu6cefq3OP_e9JwquGswckfVo";
-    const TELEGRAM_CHAT_ID = "6481958888";
+    
+    // الرابط الوسيط المحمي (Cloudflare Worker)
+    const TELEGRAM_PROXY_URL = "https://vip-telegram-bot.yassinehlm23.workers.dev";
     const VAPID_KEY = "BDfCKYaSN4yogxqHgf5Ab4qP5CHqQRNF-bYxMKQlx1Qi3n8MSZhCVtlS_z4-PQYEmUlPjCYQYXeonSdXRWFrpJg";
 
     let unsubscribeSupportChat = null;
@@ -1602,13 +1603,12 @@
 
         await batch.commit();
 
-        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        // إرسال الإشعار عبر Cloudflare Worker الآمن
+        fetch(TELEGRAM_PROXY_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: `💬 *رسالة محادثة جديدة في المتجر!*\n\n👤 *المرسل:* ${senderName}\n📞 *الهاتف:* \`${senderPhone}\`\n\n✉️ *الرسالة:*\n${text}\n\n👉 *يمكنك الرد عليه مباشرة من لوحة التحكم.*`,
-            parse_mode: "Markdown"
+            text: `💬 *رسالة محادثة جديدة في المتجر!*\n\n👤 *المرسل:* ${senderName}\n📞 *الهاتف:* \`${senderPhone}\`\n\n✉️ *الرسالة:*\n${text}\n\n👉 *يمكنك الرد عليه مباشرة من لوحة التحكم.*`
           })
         }).catch(() => {});
       } catch (err) {
@@ -1691,13 +1691,12 @@
           await batch.commit();
           toast("تم إرسال التسجيل الصوتي بنجاح!", "success");
 
-          fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          // إرسال الإشعار عبر Cloudflare Worker الآمن
+          fetch(TELEGRAM_PROXY_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              chat_id: TELEGRAM_CHAT_ID,
-              text: `🎙️ *تسجيل صوتي (فوكال) جديد في المتجر!*\n\n👤 *المرسل:* ${senderName}\n📞 *الهاتف:* \`${senderPhone}\`\n\n👉 *افتح لوحة التحكم للاستماع والرد.*`,
-              parse_mode: "Markdown"
+              text: `🎙️ *تسجيل صوتي (فوكال) جديد في المتجر!*\n\n👤 *المرسل:* ${senderName}\n📞 *الهاتف:* \`${senderPhone}\`\n\n👉 *افتح لوحة التحكم للاستماع والرد.*`
             })
           }).catch(() => {});
         } catch (e) {
@@ -2808,6 +2807,7 @@
       }
     }
 
+    // إرسال تنبيه الطلب إلى تيليجرام عبر الرابط السحابي الوسيط
     async function sendTelegramNotification(orderData) {
       try {
         let itemsList = orderData.items.map(i => `• ${i.name} (×${i.qty}) - ${money(i.price * i.qty)}`).join("\n");
@@ -2819,12 +2819,14 @@
                    `🚚 *التوصيل:* ${orderData.shippingFee === 0 ? 'مجاني' : money(orderData.shippingFee)}\n` +
                    `💰 *المبلغ الإجمالي:* *${money(orderData.total)}*`;
 
-        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        await fetch(TELEGRAM_PROXY_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: "Markdown" })
+          body: JSON.stringify({ text })
         });
-      } catch (e) {}
+      } catch (e) {
+        console.warn("Telegram notification proxy error:", e);
+      }
     }
 
     async function submitOrderToAdmin() {
