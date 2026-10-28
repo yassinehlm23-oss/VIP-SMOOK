@@ -355,7 +355,7 @@
     </div>
   </div>
 
-  <!-- Live Customer Support Chat Modal (Customer Side) مع زر الاتصال الصوتي المباشر -->
+  <!-- Support Chat Modal مع زر الاتصال الصوتي المباشر -->
   <div id="supportChatModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 md:p-4">
     <div class="bg-gray-950 border border-yellow-500/40 rounded-3xl w-full max-w-md h-[550px] max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative">
       <div class="bg-gray-900 p-3.5 border-b border-gray-800 flex items-center justify-between">
@@ -1095,10 +1095,10 @@
     </div>
   </div>
 
-  <!-- صوت المكالمة الواردة (Remote Audio) -->
-  <audio id="remoteAudio" autoplay playsinline class="hidden"></audio>
+  <!-- صوت المكالمة الواردة (Remote Audio) مع autoplay و playsinline -->
+  <audio id="remoteAudio" autoplay playsinline></audio>
 
-  <!-- شاشة المكالمة الجارية (Active / Outgoing Call) للطرفين -->
+  <!-- شاشة المكالمة الجارية للطرفين -->
   <div id="voiceCallModal" class="fixed inset-0 z-[150] bg-black/95 backdrop-blur-xl hidden items-center justify-center p-4">
     <div class="w-full max-w-xs bg-gray-900 border border-yellow-500/40 rounded-3xl p-6 text-center shadow-2xl flex flex-col items-center">
       <div class="relative mb-4">
@@ -1191,7 +1191,6 @@
 
     let peerConnection = null;
     let localStream = null;
-    let remoteStream = null;
     let currentCallId = null;
     let unsubscribeCallListener = null;
     let unsubscribeCandidatesListener = null;
@@ -1256,7 +1255,29 @@
 
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    /* توليد أصوات الرنين والإشعارات دون ملفات خارجية */
+    /* تشغيل صوت المكالمة الواردة والتغلب على قيود متصفحات الهواتف */
+    function attachRemoteAudio(stream) {
+      const audioEl = document.getElementById("remoteAudio");
+      if (!audioEl) return;
+      audioEl.srcObject = stream;
+      audioEl.volume = 1.0;
+      audioEl.muted = false;
+      
+      const playPromise = audioEl.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          const forcePlay = () => {
+            audioEl.play().catch(() => {});
+            document.removeEventListener("touchstart", forcePlay);
+            document.removeEventListener("click", forcePlay);
+          };
+          document.addEventListener("touchstart", forcePlay, { once: true });
+          document.addEventListener("click", forcePlay, { once: true });
+        });
+      }
+    }
+
+    /* نغمات الرنين والإشعارات */
     function playNotificationSound() {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1327,12 +1348,15 @@
       document.getElementById("callTimer")?.classList.add("hidden");
     }
 
-    /* WebRTC Signaling: اتصال الزبون */
+    /* اتصال الزبون */
     async function startCustomerVoiceCall() {
       if (!firebaseReady || !db) return toast("سيرفر الاتصال غير جاهز.", "error");
 
       try {
-        localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        localStream = await navigator.mediaDevices.getUserMedia({ 
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, 
+          video: false 
+        });
       } catch (err) {
         return toast("يرجى إعطاء الإذن لاستخدام المايكروفون لبدء المكالمة.", "error");
       }
@@ -1351,13 +1375,18 @@
       playRingtone();
 
       peerConnection = new RTCPeerConnection(rtcConfig);
-      remoteStream = new MediaStream();
-      document.getElementById("remoteAudio").srcObject = remoteStream;
 
-      localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+      localStream.getTracks().forEach(track => {
+        peerConnection.addTrack(track, localStream);
+      });
 
       peerConnection.ontrack = event => {
-        event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track));
+        if (event.streams && event.streams[0]) {
+          attachRemoteAudio(event.streams[0]);
+        } else {
+          const inboundStream = new MediaStream([event.track]);
+          attachRemoteAudio(inboundStream);
+        }
       };
 
       const callDoc = db.collection("voice_calls").doc(currentCallId);
@@ -1368,7 +1397,10 @@
         if (event.candidate) callerCandidatesCollection.add(event.candidate.toJSON());
       };
 
-      const offerDescription = await peerConnection.createOffer();
+      const offerDescription = await peerConnection.createOffer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: false
+      });
       await peerConnection.setLocalDescription(offerDescription);
 
       await callDoc.set({
@@ -1390,14 +1422,14 @@
         })
       }).catch(() => {});
 
-      unsubscribeCallListener = callDoc.onSnapshot(snapshot => {
+      unsubscribeCallListener = callDoc.onSnapshot(async snapshot => {
         const data = snapshot.data();
         if (!data) return;
 
         if (!peerConnection.currentRemoteDescription && data.answer) {
           stopRingtone();
           startCallTimer();
-          peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
         }
 
         if (data.status === "rejected" || data.status === "ended") {
@@ -1407,15 +1439,17 @@
       });
 
       unsubscribeCandidatesListener = calleeCandidatesCollection.onSnapshot(snapshot => {
-        snapshot.docChanges().forEach(change => {
+        snapshot.docChanges().forEach(async change => {
           if (change.type === "added") {
-            peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())).catch(() => {});
+            try {
+              await peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data()));
+            } catch (_) {}
           }
         });
       });
     }
 
-    /* WebRTC Signaling: استقبال مكالمة المدير */
+    /* استقبال مكالمة المدير */
     function startAdminVoiceCallsListener() {
       if (!firebaseReady || !db || !state.isAdminLoggedIn) return;
       if (unsubscribeIncomingCalls) unsubscribeIncomingCalls();
@@ -1449,7 +1483,10 @@
       currentCallId = incomingCallData.id;
 
       try {
-        localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        localStream = await navigator.mediaDevices.getUserMedia({ 
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, 
+          video: false 
+        });
       } catch (err) {
         rejectIncomingCall();
         return toast("يرجى إعطاء إذن المايكروفون للرد.", "error");
@@ -1461,13 +1498,18 @@
       startCallTimer();
 
       peerConnection = new RTCPeerConnection(rtcConfig);
-      remoteStream = new MediaStream();
-      document.getElementById("remoteAudio").srcObject = remoteStream;
 
-      localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+      localStream.getTracks().forEach(track => {
+        peerConnection.addTrack(track, localStream);
+      });
 
       peerConnection.ontrack = event => {
-        event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track));
+        if (event.streams && event.streams[0]) {
+          attachRemoteAudio(event.streams[0]);
+        } else {
+          const inboundStream = new MediaStream([event.track]);
+          attachRemoteAudio(inboundStream);
+        }
       };
 
       const callDoc = db.collection("voice_calls").doc(currentCallId);
@@ -1482,7 +1524,10 @@
       if (!callData || !callData.offer) return hangupVoiceCall();
 
       await peerConnection.setRemoteDescription(new RTCSessionDescription(callData.offer));
-      const answerDescription = await peerConnection.createAnswer();
+      const answerDescription = await peerConnection.createAnswer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: false
+      });
       await peerConnection.setLocalDescription(answerDescription);
 
       await callDoc.update({
@@ -1491,9 +1536,11 @@
       });
 
       unsubscribeCandidatesListener = callerCandidatesCollection.onSnapshot(snapshot => {
-        snapshot.docChanges().forEach(change => {
+        snapshot.docChanges().forEach(async change => {
           if (change.type === "added") {
-            peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data())).catch(() => {});
+            try {
+              await peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data()));
+            } catch (_) {}
           }
         });
       });
@@ -1845,9 +1892,7 @@
       const show = input.type === "password";
       input.type = show ? "text" : "password";
       const icon = btn.querySelector("i");
-      if (icon) {
-        icon.className = `fas fa-eye${show ? "-slash" : ""} text-xs`;
-      }
+      if (icon) icon.className = `fas fa-eye${show ? "-slash" : ""} text-xs`;
     }
 
     async function hashPassword(str) {
@@ -2249,7 +2294,6 @@
 
     async function loadAdminChatList() {
       if (!firebaseReady || !db || !state.isAdminLoggedIn) return;
-
       if (unsubscribeAdminChatList) unsubscribeAdminChatList();
 
       unsubscribeAdminChatList = db.collection("support_chats")
@@ -3275,7 +3319,7 @@
 
       const sortVal = document.getElementById("sortSelect").value;
       if (sortVal === "price_low") {
-        filtered.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+        filtered.sort((a, b) => Number(a.price || 0) - Number(p.price || 0));
       } else if (sortVal === "price_high") {
         filtered.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
       } else if (sortVal === "popular") {
