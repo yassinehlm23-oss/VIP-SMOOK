@@ -287,10 +287,11 @@
     </button>
   </div>
 
-  <!-- Live News Modal -->
+  <!-- Live News Modal (With In-Site Article Reader) -->
   <div id="newsModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden items-center justify-center p-3 md:p-4">
-    <div class="bg-gray-950 border border-yellow-500/40 rounded-3xl w-full max-w-2xl h-[82vh] flex flex-col overflow-hidden shadow-2xl relative">
-      <div class="bg-gray-900 p-4 border-b border-gray-800 flex items-center justify-between">
+    <div class="bg-gray-950 border border-yellow-500/40 rounded-3xl w-full max-w-2xl h-[85vh] flex flex-col overflow-hidden shadow-2xl relative">
+      <!-- Modal Header -->
+      <div class="bg-gray-900 p-4 border-b border-gray-800 flex items-center justify-between shrink-0">
         <div class="flex items-center gap-2.5">
           <div class="w-9 h-9 rounded-xl bg-yellow-500/20 text-yellow-400 flex items-center justify-center border border-yellow-500/30 font-bold">
             <i class="fas fa-newspaper text-sm"></i>
@@ -305,18 +306,34 @@
         </button>
       </div>
 
-      <div class="bg-gray-900/60 px-4 py-2.5 border-b border-gray-800 flex gap-2 overflow-x-auto no-scrollbar">
-        <button onclick="fetchLiveNews('general', this)" data-i18n="newsCatGeneral" class="news-cat-btn px-3.5 py-1.5 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap transition">أخبار عامة</button>
-        <button onclick="fetchLiveNews('algeria', this)" data-i18n="newsCatAlgeria" class="news-cat-btn px-3.5 py-1.5 bg-gray-800 text-gray-300 hover:bg-gray-700 font-semibold rounded-xl text-xs whitespace-nowrap transition">أخبار الجزائر</button>
-        <button onclick="fetchLiveNews('sports', this)" data-i18n="newsCatSports" class="news-cat-btn px-3.5 py-1.5 bg-gray-800 text-gray-300 hover:bg-gray-700 font-semibold rounded-xl text-xs whitespace-nowrap transition">رياضة</button>
-        <button onclick="fetchLiveNews('tech', this)" data-i18n="newsCatTech" class="news-cat-btn px-3.5 py-1.5 bg-gray-800 text-gray-300 hover:bg-gray-700 font-semibold rounded-xl text-xs whitespace-nowrap transition">تكنولوجيا</button>
+      <!-- News List View -->
+      <div id="newsListView" class="flex-1 flex flex-col overflow-hidden">
+        <div class="bg-gray-900/60 px-4 py-2.5 border-b border-gray-800 flex gap-2 overflow-x-auto no-scrollbar shrink-0">
+          <button onclick="fetchLiveNews('general', this)" data-i18n="newsCatGeneral" class="news-cat-btn px-3.5 py-1.5 bg-yellow-500 text-black font-bold rounded-xl text-xs whitespace-nowrap transition">أخبار عامة</button>
+          <button onclick="fetchLiveNews('algeria', this)" data-i18n="newsCatAlgeria" class="news-cat-btn px-3.5 py-1.5 bg-gray-800 text-gray-300 hover:bg-gray-700 font-semibold rounded-xl text-xs whitespace-nowrap transition">أخبار الجزائر</button>
+          <button onclick="fetchLiveNews('sports', this)" data-i18n="newsCatSports" class="news-cat-btn px-3.5 py-1.5 bg-gray-800 text-gray-300 hover:bg-gray-700 font-semibold rounded-xl text-xs whitespace-nowrap transition">رياضة</button>
+          <button onclick="fetchLiveNews('tech', this)" data-i18n="newsCatTech" class="news-cat-btn px-3.5 py-1.5 bg-gray-800 text-gray-300 hover:bg-gray-700 font-semibold rounded-xl text-xs whitespace-nowrap transition">تكنولوجيا</button>
+        </div>
+
+        <div id="fullNewsContainer" class="flex-1 p-4 overflow-y-auto space-y-3 no-scrollbar">
+          <div class="text-center py-20 text-gray-400 text-xs">
+            <i class="fas fa-circle-notch fa-spin text-2xl text-yellow-500 mb-2 block"></i>
+            <span data-i18n="loadingNews">جاري تحميل الأخبار...</span>
+          </div>
+        </div>
       </div>
 
-      <div id="fullNewsContainer" class="flex-1 p-4 overflow-y-auto space-y-3 no-scrollbar">
-        <div class="text-center py-20 text-gray-400 text-xs">
-          <i class="fas fa-circle-notch fa-spin text-2xl text-yellow-500 mb-2 block"></i>
-          <span data-i18n="loadingNews">جاري تحميل الأخبار...</span>
+      <!-- In-Site Article Reader View -->
+      <div id="newsArticleView" class="hidden flex-1 flex-col overflow-hidden bg-[#080c16]">
+        <div class="bg-gray-900/80 px-4 py-2.5 border-b border-gray-800 flex items-center justify-between shrink-0">
+          <button onclick="backToNewsList()" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-yellow-400 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95">
+            <i class="fas fa-arrow-right text-[11px]"></i>
+            <span data-i18n="backToNews">عودة للأخبار</span>
+          </button>
+          <span id="articleSourceBadge" class="text-[11px] text-amber-400 font-bold truncate max-w-[180px]"></span>
         </div>
+
+        <div id="articleReaderBody" class="flex-1 p-4 md:p-6 overflow-y-auto space-y-4 no-scrollbar"></div>
       </div>
     </div>
   </div>
@@ -1010,6 +1027,7 @@
         newsCatSports: "رياضة",
         newsCatTech: "تكنولوجيا",
         readMore: "اقرأ التفاصيل",
+        backToNews: "عودة للأخبار",
         chatManager: "محادثة المدير",
         myOrders: "طلباتي",
         login: "دخول",
@@ -1103,6 +1121,7 @@
         newsCatSports: "Sports",
         newsCatTech: "Tech",
         readMore: "Lire la suite",
+        backToNews: "Retour aux actus",
         chatManager: "Chat Gérant",
         myOrders: "Mes commandes",
         login: "Connexion",
@@ -1196,6 +1215,7 @@
         newsCatSports: "Sports",
         newsCatTech: "Tech",
         readMore: "Read More",
+        backToNews: "Back to News",
         chatManager: "Manager Chat",
         myOrders: "My Orders",
         login: "Login",
@@ -3649,10 +3669,14 @@
     }
 
     // ================= Live News System =================
+    const NEWS_FALLBACK_IMG = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=600&q=80";
+    let currentNewsItems = [];
+    let currentNewsFeedTitle = "";
+
     const NEWS_FEEDS = {
       ar: {
         general: "https://www.aljazeera.net/aljazeerarss/a7c186be-1baa-4bd4-9d80-a84db769f779/73d0e1b4-532f-45ef-b135-bfdff8b8cab9",
-        algeria: "https://www.echoroukonline.com/feed",
+        algeria: "https://www.ennaharonline.com/feed/",
         sports: "https://www.aljazeera.net/aljazeerarss/be46a341-fe26-41f1-acab-b6ed9c198b19/e6aef64d-084c-42f0-8269-abe48e0cd154",
         tech: "https://aitnews.com/feed/"
       },
@@ -3670,17 +3694,94 @@
       }
     };
 
+    function extractNewsImage(item) {
+      if (item.thumbnail && item.thumbnail.startsWith("http")) return item.thumbnail;
+      if (item.enclosure && item.enclosure.link && item.enclosure.link.startsWith("http")) return item.enclosure.link;
+
+      const rawHtml = `${item.content || ""} ${item.description || ""}`;
+      const imgMatch = rawHtml.match(/<img[^>]+src=["']([^"']+)["']/i);
+      if (imgMatch && imgMatch[1] && imgMatch[1].startsWith("http")) {
+        return imgMatch[1];
+      }
+      return NEWS_FALLBACK_IMG;
+    }
+
+    function newsImgFallback(el) {
+      el.onerror = null;
+      el.src = NEWS_FALLBACK_IMG;
+    }
+
     function toggleNewsModal() {
       const modal = document.getElementById("newsModal");
       if (modal.classList.contains("hidden")) {
+        backToNewsList();
         openModal("newsModal");
-        fetchLiveNews("general");
+        if (!currentNewsItems.length) fetchLiveNews("general");
       } else {
         closeModal("newsModal");
       }
     }
 
+    function backToNewsList() {
+      document.getElementById("newsArticleView")?.classList.add("hidden");
+      document.getElementById("newsArticleView")?.classList.remove("flex");
+      document.getElementById("newsListView")?.classList.remove("hidden");
+    }
+
+    function openNewsArticle(index) {
+      const item = currentNewsItems[index];
+      if (!item) return;
+
+      const modal = document.getElementById("newsModal");
+      if (modal.classList.contains("hidden")) {
+        openModal("newsModal");
+      }
+
+      document.getElementById("newsListView").classList.add("hidden");
+      const articleView = document.getElementById("newsArticleView");
+      articleView.classList.remove("hidden");
+      articleView.classList.add("flex");
+
+      const thumb = extractNewsImage(item);
+      document.getElementById("articleSourceBadge").textContent = currentNewsFeedTitle || "VIP NEWS";
+
+      const rawContent = item.content || item.description || "";
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = rawContent;
+      tempDiv.querySelectorAll("script, style, iframe, img").forEach(el => el.remove());
+
+      const paragraphs = (tempDiv.innerText || tempDiv.textContent || "")
+        .split(/\n+/)
+        .map(p => p.trim())
+        .filter(p => p.length > 15);
+
+      const formattedBody = paragraphs.length
+        ? paragraphs.map(p => `<p class="text-xs md:text-sm text-gray-200 leading-7">${esc(p)}</p>`).join("")
+        : `<p class="text-xs md:text-sm text-gray-200 leading-7">${esc(rawContent.replace(/<[^>]*>?/gm, ""))}</p>`;
+
+      const pubDate = item.pubDate ? item.pubDate.slice(0, 16) : "";
+
+      document.getElementById("articleReaderBody").innerHTML = `
+        <div class="rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 aspect-video max-h-64 w-full shadow-lg">
+          <img src="${esc(thumb)}" onerror="newsImgFallback(this)" class="w-full h-full object-cover">
+        </div>
+        <div class="space-y-2 border-b border-gray-800 pb-3">
+          <div class="flex items-center justify-between text-[11px] text-gray-400 font-mono">
+            <span class="bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 px-2.5 py-0.5 rounded-full font-bold">${esc(currentNewsFeedTitle)}</span>
+            <span><i class="fas fa-clock mx-1"></i>${esc(pubDate)}</span>
+          </div>
+          <h2 class="text-base md:text-lg font-black text-white leading-snug">${esc(item.title)}</h2>
+        </div>
+        <div class="space-y-3 pb-6">
+          ${formattedBody}
+        </div>
+      `;
+      document.getElementById("articleReaderBody").scrollTop = 0;
+    }
+
     async function fetchLiveNews(category = "general", btnEl = null) {
+      backToNewsList();
+
       if (btnEl) {
         document.querySelectorAll(".news-cat-btn").forEach(b => {
           b.className = "news-cat-btn px-3.5 py-1.5 bg-gray-800 text-gray-300 hover:bg-gray-700 font-semibold rounded-xl text-xs whitespace-nowrap transition";
@@ -3707,47 +3808,48 @@
           throw new Error("No items");
         }
 
-        const items = data.items.slice(0, 12);
+        currentNewsItems = data.items.slice(0, 15);
+        currentNewsFeedTitle = data.feed?.title || "News";
 
         if (miniSlider && category === "general") {
-          miniSlider.innerHTML = items.slice(0, 6).map(item => {
-            const thumb = item.thumbnail || item.enclosure?.link || FALLBACK_IMG;
+          miniSlider.innerHTML = currentNewsItems.slice(0, 8).map((item, idx) => {
+            const thumb = extractNewsImage(item);
             return `
-              <a href="${esc(item.link)}" target="_blank" rel="noopener noreferrer"
-                 class="min-w-[230px] max-w-[230px] bg-gray-950 border border-gray-800 hover:border-yellow-500/40 rounded-xl p-2 flex items-center gap-2.5 transition shrink-0 group">
-                <img src="${esc(thumb)}" onerror="imgFallback(this)" class="w-12 h-12 rounded-lg object-cover shrink-0 bg-gray-900">
+              <div onclick="openNewsArticle(${idx})"
+                   class="cursor-pointer min-w-[240px] max-w-[240px] bg-gray-950 border border-gray-800 hover:border-yellow-500/40 rounded-xl p-2 flex items-center gap-2.5 transition shrink-0 group">
+                <img src="${esc(thumb)}" onerror="newsImgFallback(this)" class="w-12 h-12 rounded-lg object-cover shrink-0 bg-gray-900">
                 <div class="overflow-hidden">
                   <p class="text-[11px] font-bold text-gray-200 group-hover:text-yellow-400 line-clamp-2 leading-snug transition">${esc(item.title)}</p>
-                  <span class="text-[9px] text-gray-500 block mt-0.5 font-mono">${esc(data.feed?.title || "News")}</span>
+                  <span class="text-[9px] text-gray-500 block mt-0.5 font-mono">${esc(currentNewsFeedTitle)}</span>
                 </div>
-              </a>
+              </div>
             `;
           }).join("");
         }
 
         if (fullBox) {
-          fullBox.innerHTML = items.map(item => {
-            const thumb = item.thumbnail || item.enclosure?.link || FALLBACK_IMG;
-            const cleanDesc = (item.description || "").replace(/<[^>]*>?/gm, "").trim();
+          fullBox.innerHTML = currentNewsItems.map((item, idx) => {
+            const thumb = extractNewsImage(item);
+            const cleanDesc = (item.description || item.content || "").replace(/<[^>]*>?/gm, "").trim();
             const pubTime = item.pubDate ? item.pubDate.split(" ")[1]?.slice(0, 5) || "" : "";
 
             return `
-              <article class="bg-gray-900/90 border border-gray-800 hover:border-yellow-500/40 rounded-2xl p-3 flex gap-3 transition">
-                <img src="${esc(thumb)}" onerror="imgFallback(this)" class="w-20 h-20 md:w-24 md:h-24 rounded-xl object-cover shrink-0 bg-gray-950 border border-gray-800">
+              <article onclick="openNewsArticle(${idx})"
+                       class="cursor-pointer bg-gray-900/90 border border-gray-800 hover:border-yellow-500/40 rounded-2xl p-3 flex gap-3 transition group">
+                <img src="${esc(thumb)}" onerror="newsImgFallback(this)" class="w-20 h-20 md:w-24 md:h-24 rounded-xl object-cover shrink-0 bg-gray-950 border border-gray-800">
                 <div class="flex-1 flex flex-col justify-between overflow-hidden">
                   <div>
                     <div class="flex items-center justify-between gap-2 mb-1">
-                      <span class="text-[10px] text-yellow-400 font-bold truncate">${esc(data.feed?.title || "")}</span>
+                      <span class="text-[10px] text-yellow-400 font-bold truncate">${esc(currentNewsFeedTitle)}</span>
                       <span class="text-[10px] text-gray-500 font-mono shrink-0">${pubTime}</span>
                     </div>
-                    <h4 class="text-xs md:text-sm font-bold text-white line-clamp-2 leading-snug">${esc(item.title)}</h4>
+                    <h4 class="text-xs md:text-sm font-bold text-white group-hover:text-yellow-400 line-clamp-2 leading-snug transition">${esc(item.title)}</h4>
                     <p class="text-[11px] text-gray-400 line-clamp-2 mt-1">${esc(cleanDesc)}</p>
                   </div>
                   <div class="mt-2 flex justify-end">
-                    <a href="${esc(item.link)}" target="_blank" rel="noopener noreferrer"
-                       class="text-[11px] text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1">
-                      <span>${t("readMore")}</span> <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
-                    </a>
+                    <span class="text-[11px] text-amber-400 group-hover:text-amber-300 font-bold flex items-center gap-1">
+                      <span>${t("readMore")}</span> <i class="fas fa-book-open text-[10px]"></i>
+                    </span>
                   </div>
                 </div>
               </article>
