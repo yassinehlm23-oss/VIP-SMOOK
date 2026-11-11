@@ -211,7 +211,7 @@
       <div class="flex items-center justify-between gap-2 mb-2.5">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-          <h3 data-i18n="dailyNewsTitle" class="text-xs md:text-sm font-black text-yellow-400">ماذا حدث اليوم؟ (أخبار مباشرة)</h3>
+          <h3 data-i18n="dailyNewsTitle" class="text-xs md:text-sm font-black text-yellow-400">أخبار اليوم المباشرة</h3>
         </div>
         <button onclick="toggleNewsModal()" data-i18n="viewAllNews" class="text-[11px] bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 px-2.5 py-1 rounded-lg font-bold transition">
           عرض الكل
@@ -219,7 +219,7 @@
       </div>
       <div id="miniNewsSlider" class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
         <div class="text-xs text-gray-400 py-2 flex items-center gap-2">
-          <i class="fas fa-spinner fa-spin text-yellow-500"></i> <span data-i18n="loadingNews">جاري جلب آخر المستجدات...</span>
+          <i class="fas fa-spinner fa-spin text-yellow-500"></i> <span data-i18n="loadingNews">جاري تحميل المنشورات...</span>
         </div>
       </div>
     </section>
@@ -287,7 +287,7 @@
     </button>
   </div>
 
-  <!-- Live News Modal (Facebook Feed Style) -->
+  <!-- Live News Modal (Facebook Feed Style - Updates every 1 minute & on Refresh) -->
   <div id="newsModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-0 md:p-4">
     <div class="bg-[#0b0f19] border-0 md:border border-yellow-500/30 md:rounded-3xl w-full max-w-xl h-full md:h-[88vh] flex flex-col overflow-hidden shadow-2xl relative">
       
@@ -299,18 +299,25 @@
           </div>
           <div>
             <h3 data-i18n="dailyNewsTitle" class="text-sm font-black text-white">أخبار اليوم المباشرة</h3>
-            <span class="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> بث مباشر لحظة بلحظة
+            <span id="newsLastUpdateText" class="text-[10px] text-emerald-400 flex items-center gap-1 font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> بث مباشر يتجدد كل دقيقة
             </span>
           </div>
         </div>
-        <button onclick="toggleNewsModal()" class="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center justify-center transition">
-          <i class="fas fa-xmark text-sm"></i>
-        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="fetchLiveNews(currentNewsCategory, null, true)" title="تحديث الأخبار الآن"
+                  class="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 text-yellow-400 flex items-center justify-center transition active:rotate-180 duration-300">
+            <i id="newsRefreshIcon" class="fas fa-rotate text-xs"></i>
+          </button>
+          <button onclick="toggleNewsModal()" class="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white flex items-center justify-center transition">
+            <i class="fas fa-xmark text-sm"></i>
+          </button>
+        </div>
       </div>
 
       <!-- Facebook Feed View -->
-      <div id="newsListView" class="flex-1 flex flex-col overflow-hidden">
+      <div id="newsListView" class="flex-1 flex flex-col overflow-hidden relative">
+        <!-- Category Tabs -->
         <div class="bg-[#111827]/90 px-3 py-2 border-b border-gray-800 flex gap-2 overflow-x-auto no-scrollbar shrink-0">
           <button onclick="fetchLiveNews('general', this)" data-i18n="newsCatGeneral" class="news-cat-btn px-3.5 py-1.5 bg-yellow-500 text-black font-bold rounded-full text-xs whitespace-nowrap transition">أخبار عامة</button>
           <button onclick="fetchLiveNews('algeria', this)" data-i18n="newsCatAlgeria" class="news-cat-btn px-3.5 py-1.5 bg-gray-800 text-gray-300 hover:bg-gray-700 font-semibold rounded-full text-xs whitespace-nowrap transition">أخبار الجزائر</button>
@@ -318,6 +325,14 @@
           <button onclick="fetchLiveNews('tech', this)" data-i18n="newsCatTech" class="news-cat-btn px-3.5 py-1.5 bg-gray-800 text-gray-300 hover:bg-gray-700 font-semibold rounded-full text-xs whitespace-nowrap transition">تكنولوجيا</button>
         </div>
 
+        <!-- New Posts Pill -->
+        <button id="newPostsPill" onclick="applyPendingNews()"
+                class="hidden absolute top-14 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs rounded-full shadow-xl shadow-black/60 flex items-center gap-1.5 animate-bounce cursor-pointer">
+          <i class="fas fa-arrow-up text-[10px]"></i>
+          <span>منشورات جديدة متوفرة</span>
+        </button>
+
+        <!-- Posts Container -->
         <div id="fullNewsContainer" class="flex-1 overflow-y-auto space-y-3 py-3 px-0 sm:px-3 no-scrollbar bg-[#070a12]">
           <div class="text-center py-20 text-gray-400 text-xs">
             <i class="fas fa-circle-notch fa-spin text-2xl text-yellow-500 mb-2 block"></i>
@@ -1409,7 +1424,7 @@
       updateCartUI();
       updateNotifUI();
       updateUserUI();
-      fetchLiveNews("general");
+      fetchLiveNews(currentNewsCategory || "general", null, true);
     }
 
     function money(n) {
@@ -3672,30 +3687,68 @@
       db.collection("products").doc(id).delete().then(() => toast("Deleted", "success")).catch(() => toast("Failed", "error"));
     }
 
-    // ================= Live News System (Facebook Feed Style) =================
+    // ================= Live News System (Updates Every 1 Minute & On Refresh) =================
     const NEWS_FALLBACK_IMG = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80";
     let currentNewsItems = [];
-    let currentNewsFeedTitle = "";
+    let pendingNewItems = [];
+    let currentNewsCategory = "general";
+    let newsAutoRefreshTimer = null;
     let likedNewsSet = new Set(JSON.parse(localStorage.getItem("vip_liked_news") || "[]"));
+    let seenNewsSet = new Set(JSON.parse(localStorage.getItem("vip_seen_news") || "[]"));
 
     const NEWS_FEEDS = {
       ar: {
-        general: "https://www.france24.com/ar/rss",
-        algeria: "https://www.france24.com/ar/%D8%A7%D9%84%D9%85%D8%BA%D8%A7%D8%B1%D8%A8%D8%A9/rss",
-        sports: "https://www.france24.com/ar/%D8%B1%D9%8A%D8%A7%D8%B6%D8%A9/rss",
-        tech: "https://aitnews.com/feed/"
+        general: [
+          "https://www.france24.com/ar/rss",
+          "https://www.aljazeera.net/aljazeerarss/a7c186be-1baa-4bd4-9d80-a84db769f779/73d0e1b4-532f-45ef-b135-bfdff8b8cab9",
+          "https://www.skynewsarabia.com/web/rss"
+        ],
+        algeria: [
+          "https://www.france24.com/ar/%D8%A7%D9%84%D9%85%D8%BA%D8%A7%D8%B1%D8%A8%D8%A9/rss",
+          "https://www.ennaharonline.com/feed/",
+          "https://www.echoroukonline.com/feed"
+        ],
+        sports: [
+          "https://www.france24.com/ar/%D8%B1%D9%8A%D8%A7%D8%B6%D8%A9/rss",
+          "https://www.aljazeera.net/aljazeerarss/be46a341-fe26-41f1-acab-b6ed9c198b19/e6aef64d-084c-42f0-8269-abe48e0cd154"
+        ],
+        tech: [
+          "https://aitnews.com/feed/",
+          "https://www.tech-wd.com/wd/feed/"
+        ]
       },
       fr: {
-        general: "https://www.france24.com/fr/rss",
-        algeria: "https://www.france24.com/fr/tag/alg%C3%A9rie/rss",
-        sports: "https://www.france24.com/fr/sports/rss",
-        tech: "https://www.01net.com/rss/info/flux-rss/flux-toutes-les-actualites/"
+        general: [
+          "https://www.france24.com/fr/rss",
+          "https://www.rfi.fr/fr/rss"
+        ],
+        algeria: [
+          "https://www.france24.com/fr/tag/alg%C3%A9rie/rss",
+          "https://www.tsa-algerie.com/feed/"
+        ],
+        sports: [
+          "https://www.france24.com/fr/sports/rss"
+        ],
+        tech: [
+          "https://www.01net.com/rss/info/flux-rss/flux-toutes-les-actualites/"
+        ]
       },
       en: {
-        general: "https://www.france24.com/en/rss",
-        algeria: "https://www.france24.com/en/tag/algeria/rss",
-        sports: "https://www.france24.com/en/sport/rss",
-        tech: "https://feeds.feedburner.com/TechCrunch/"
+        general: [
+          "https://www.france24.com/en/rss",
+          "https://feeds.bbci.co.uk/news/world/rss.xml"
+        ],
+        algeria: [
+          "https://www.france24.com/en/tag/algeria/rss",
+          "https://www.aljazeera.com/xml/rss/all.xml"
+        ],
+        sports: [
+          "https://www.france24.com/en/sport/rss",
+          "https://feeds.bbci.co.uk/sport/rss.xml"
+        ],
+        tech: [
+          "https://feeds.feedburner.com/TechCrunch/"
+        ]
       }
     };
 
@@ -3717,12 +3770,21 @@
       el.src = NEWS_FALLBACK_IMG;
     }
 
+    function markNewsAsSeen(items) {
+      items.slice(0, 6).forEach(it => {
+        if (it.link) seenNewsSet.add(it.link);
+      });
+      const arr = [...seenNewsSet].slice(-80);
+      seenNewsSet = new Set(arr);
+      localStorage.setItem("vip_seen_news", JSON.stringify(arr));
+    }
+
     function toggleNewsModal() {
       const modal = document.getElementById("newsModal");
       if (modal.classList.contains("hidden")) {
         backToNewsList();
         openModal("newsModal");
-        if (!currentNewsItems.length) fetchLiveNews("general");
+        fetchLiveNews(currentNewsCategory, null, true);
       } else {
         closeModal("newsModal");
       }
@@ -3773,6 +3835,11 @@
       const item = currentNewsItems[index];
       if (!item) return;
 
+      if (item.link) {
+        seenNewsSet.add(item.link);
+        localStorage.setItem("vip_seen_news", JSON.stringify([...seenNewsSet]));
+      }
+
       const modal = document.getElementById("newsModal");
       if (modal.classList.contains("hidden")) {
         openModal("newsModal");
@@ -3784,7 +3851,8 @@
       articleView.classList.add("flex");
 
       const thumb = extractNewsImage(item);
-      document.getElementById("articleSourceBadge").textContent = currentNewsFeedTitle || "VIP NEWS";
+      const sourceName = item._sourceTitle || "VIP NEWS";
+      document.getElementById("articleSourceBadge").textContent = sourceName;
 
       const rawContent = item.content || item.description || "";
       const tempDiv = document.createElement("div");
@@ -3808,7 +3876,7 @@
         </div>
         <div class="space-y-2 border-b border-gray-800 pb-3">
           <div class="flex items-center justify-between text-[11px] text-gray-400 font-mono">
-            <span class="bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 px-2.5 py-0.5 rounded-full font-bold">${esc(currentNewsFeedTitle)}</span>
+            <span class="bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 px-2.5 py-0.5 rounded-full font-bold">${esc(sourceName)}</span>
             <span><i class="fas fa-clock mx-1"></i>${esc(pubDate)}</span>
           </div>
           <h2 class="text-base md:text-lg font-black text-white leading-snug">${esc(item.title)}</h2>
@@ -3820,8 +3888,106 @@
       document.getElementById("articleReaderBody").scrollTop = 0;
     }
 
-    async function fetchLiveNews(category = "general", btnEl = null) {
-      backToNewsList();
+    function applyPendingNews() {
+      if (!pendingNewItems.length) return;
+      currentNewsItems = [...pendingNewItems];
+      pendingNewItems = [];
+      document.getElementById("newPostsPill")?.classList.add("hidden");
+      renderNewsUI(currentNewsItems, currentNewsCategory);
+      const fullBox = document.getElementById("fullNewsContainer");
+      if (fullBox) fullBox.scrollTo({ top: 0, behavior: "smooth" });
+      markNewsAsSeen(currentNewsItems);
+    }
+
+    function renderNewsUI(items, category) {
+      const fullBox = document.getElementById("fullNewsContainer");
+      const miniSlider = document.getElementById("miniNewsSlider");
+
+      if (miniSlider && category === "general") {
+        miniSlider.innerHTML = items.slice(0, 10).map((item, idx) => {
+          const thumb = extractNewsImage(item);
+          return `
+            <div onclick="openNewsArticle(${idx})"
+                 class="cursor-pointer min-w-[240px] max-w-[240px] bg-gray-950 border border-gray-800 hover:border-yellow-500/40 rounded-xl p-2 flex items-center gap-2.5 transition shrink-0 group">
+              <img src="${esc(thumb)}" onerror="newsImgFallback(this)" class="w-12 h-12 rounded-lg object-cover shrink-0 bg-gray-900">
+              <div class="overflow-hidden">
+                <p class="text-[11px] font-bold text-gray-200 group-hover:text-yellow-400 line-clamp-2 leading-snug transition">${esc(item.title)}</p>
+                <span class="text-[9px] text-gray-500 block mt-0.5 font-mono">${esc(item._sourceTitle || "News")}</span>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      if (fullBox) {
+        fullBox.innerHTML = items.map((item, idx) => {
+          const thumb = extractNewsImage(item);
+          const cleanDesc = (item.description || item.content || "").replace(/<[^>]*>?/gm, "").trim();
+          const pubTime = item.pubDate ? item.pubDate.split(" ")[1]?.slice(0, 5) || "" : "";
+          const key = item.link || item.title;
+          const isLiked = likedNewsSet.has(key);
+          const baseLikes = 14 + ((idx * 7) % 45);
+          const sourceName = item._sourceTitle || "VIP News";
+
+          return `
+            <article class="bg-[#111827] border-y sm:border border-gray-800/90 sm:rounded-2xl overflow-hidden shadow-md">
+              <div class="px-3.5 py-2.5 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-yellow-500 to-amber-600 p-[1.5px] shrink-0">
+                    <div class="w-full h-full rounded-full bg-gray-950 flex items-center justify-center text-yellow-400 text-xs font-black">
+                      <i class="fas fa-globe"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-extrabold text-white">${esc(sourceName)}</span>
+                      <i class="fas fa-circle-check text-blue-500 text-[10px]"></i>
+                    </div>
+                    <span class="text-[10px] text-gray-400 flex items-center gap-1 font-mono">
+                      ${pubTime} · <i class="fas fa-earth-africa text-[9px]"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div onclick="openNewsArticle(${idx})" class="px-3.5 pb-2.5 cursor-pointer space-y-1">
+                <h4 class="text-xs md:text-sm font-bold text-gray-100 leading-relaxed">${esc(item.title)}</h4>
+                ${cleanDesc ? `<p class="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">${esc(cleanDesc)}</p>` : ""}
+              </div>
+
+              <div onclick="openNewsArticle(${idx})" class="cursor-pointer bg-gray-950 border-y border-gray-800/80 relative overflow-hidden">
+                <img src="${esc(thumb)}" loading="lazy" onerror="newsImgFallback(this)"
+                     class="w-full max-h-72 object-cover hover:scale-[1.01] transition duration-300">
+              </div>
+
+              <div class="px-2 py-1.5 flex items-center justify-around text-xs border-t border-gray-800/60">
+                <button onclick="toggleNewsLike(${idx}, this)" data-base="${baseLikes}"
+                        class="flex-1 py-1.5 rounded-xl hover:bg-gray-800/70 flex items-center justify-center gap-1.5 font-bold transition ${isLiked ? 'text-rose-500' : 'text-gray-400'}">
+                  <i class="${isLiked ? 'fas' : 'far'} fa-heart text-sm"></i>
+                  <span class="like-count font-mono text-[11px]">${isLiked ? baseLikes + 1 : baseLikes}</span>
+                </button>
+
+                <button onclick="openNewsArticle(${idx})"
+                        class="flex-1 py-1.5 rounded-xl hover:bg-gray-800/70 text-gray-300 hover:text-yellow-400 flex items-center justify-center gap-1.5 font-bold transition">
+                  <i class="far fa-newspaper text-sm"></i>
+                  <span>${t("readMore")}</span>
+                </button>
+
+                <button onclick="shareNewsInApp(${idx})"
+                        class="flex-1 py-1.5 rounded-xl hover:bg-gray-800/70 text-gray-400 hover:text-white flex items-center justify-center gap-1.5 font-bold transition">
+                  <i class="fas fa-share text-xs"></i>
+                  <span>مشاركة</span>
+                </button>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+    }
+
+    async function fetchLiveNews(category = "general", btnEl = null, forceImmediate = false, isSilentBackground = false) {
+      currentNewsCategory = category;
+      if (!isSilentBackground) backToNewsList();
 
       if (btnEl) {
         document.querySelectorAll(".news-cat-btn").forEach(b => {
@@ -3830,110 +3996,88 @@
         btnEl.className = "news-cat-btn px-3.5 py-1.5 bg-yellow-500 text-black font-bold rounded-full text-xs whitespace-nowrap transition";
       }
 
-      const lang = state.currentLang || "ar";
-      const feedUrl = (NEWS_FEEDS[lang] && NEWS_FEEDS[lang][category]) || NEWS_FEEDS.ar.general;
-      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+      const refreshIcon = document.getElementById("newsRefreshIcon");
+      if (refreshIcon) refreshIcon.classList.add("fa-spin");
 
       const fullBox = document.getElementById("fullNewsContainer");
-      const miniSlider = document.getElementById("miniNewsSlider");
-
-      if (fullBox) {
+      if (fullBox && !isSilentBackground && (!currentNewsItems.length || forceImmediate)) {
         fullBox.innerHTML = `<div class="text-center py-16 text-gray-400 text-xs"><i class="fas fa-circle-notch fa-spin text-2xl text-yellow-500 mb-2 block"></i>${t("loadingNews")}</div>`;
       }
 
+      const lang = state.currentLang || "ar";
+      const feedUrls = (NEWS_FEEDS[lang] && NEWS_FEEDS[lang][category]) || NEWS_FEEDS.ar.general;
+      // كسر التخزين المؤقت في كل ثانية عند تحديث الصفحة أو كل دقيقة
+      const cacheBuster = Date.now();
+
       try {
-        const res = await fetch(apiUrl);
-        const data = await res.json();
+        const requests = feedUrls.map(url => {
+          const sep = url.includes("?") ? "&" : "?";
+          const freshRssUrl = `${url}${sep}_t=${cacheBuster}`;
+          const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(freshRssUrl)}`;
+          return fetch(apiUrl, { cache: "no-store" }).then(r => r.json()).catch(() => null);
+        });
 
-        if (data.status !== "ok" || !data.items || !data.items.length) {
-          throw new Error("No items");
+        const results = await Promise.all(requests);
+        let mergedItems = [];
+
+        results.forEach(data => {
+          if (data && data.status === "ok" && Array.isArray(data.items)) {
+            const sourceTitle = (data.feed?.title || "VIP News").split("-")[0].split("|")[0].trim();
+            data.items.forEach(it => {
+              mergedItems.push({ ...it, _sourceTitle: sourceTitle });
+            });
+          }
+        });
+
+        if (!mergedItems.length) throw new Error("No news fetched");
+
+        const uniqueMap = new Map();
+        mergedItems.forEach(it => {
+          const id = it.link || it.title;
+          if (!uniqueMap.has(id)) uniqueMap.set(id, it);
+        });
+
+        let sortedItems = Array.from(uniqueMap.values()).sort((a, b) => {
+          return new Date(b.pubDate || 0) - new Date(a.pubDate || 0);
+        });
+
+        // عند تحديث الصفحة: إظهار الأخبار الجديدة التي لم يقرأها الزبون في الأعلى أولاً
+        if (!isSilentBackground) {
+          const unseen = sortedItems.filter(it => !seenNewsSet.has(it.link));
+          const seen = sortedItems.filter(it => seenNewsSet.has(it.link));
+          sortedItems = [...unseen, ...seen];
         }
 
-        currentNewsItems = data.items.slice(0, 15);
-        currentNewsFeedTitle = (data.feed?.title || "VIP News").split("-")[0].trim();
+        const finalItems = sortedItems.slice(0, 20);
 
-        if (miniSlider && category === "general") {
-          miniSlider.innerHTML = currentNewsItems.slice(0, 8).map((item, idx) => {
-            const thumb = extractNewsImage(item);
-            return `
-              <div onclick="openNewsArticle(${idx})"
-                   class="cursor-pointer min-w-[240px] max-w-[240px] bg-gray-950 border border-gray-800 hover:border-yellow-500/40 rounded-xl p-2 flex items-center gap-2.5 transition shrink-0 group">
-                <img src="${esc(thumb)}" onerror="newsImgFallback(this)" class="w-12 h-12 rounded-lg object-cover shrink-0 bg-gray-900">
-                <div class="overflow-hidden">
-                  <p class="text-[11px] font-bold text-gray-200 group-hover:text-yellow-400 line-clamp-2 leading-snug transition">${esc(item.title)}</p>
-                  <span class="text-[9px] text-gray-500 block mt-0.5 font-mono">${esc(currentNewsFeedTitle)}</span>
-                </div>
-              </div>
-            `;
-          }).join("");
+        const modalOpen = !document.getElementById("newsModal")?.classList.contains("hidden");
+        if (isSilentBackground && modalOpen && currentNewsItems.length > 0 && finalItems[0]?.link !== currentNewsItems[0]?.link) {
+          pendingNewItems = finalItems;
+          document.getElementById("newPostsPill")?.classList.remove("hidden");
+        } else {
+          currentNewsItems = finalItems;
+          renderNewsUI(currentNewsItems, category);
+          markNewsAsSeen(currentNewsItems);
         }
 
-        if (fullBox) {
-          fullBox.innerHTML = currentNewsItems.map((item, idx) => {
-            const thumb = extractNewsImage(item);
-            const cleanDesc = (item.description || item.content || "").replace(/<[^>]*>?/gm, "").trim();
-            const pubTime = item.pubDate ? item.pubDate.split(" ")[1]?.slice(0, 5) || "" : "";
-            const key = item.link || item.title;
-            const isLiked = likedNewsSet.has(key);
-            const baseLikes = 14 + ((idx * 7) % 45);
-
-            return `
-              <article class="bg-[#111827] border-y sm:border border-gray-800/90 sm:rounded-2xl overflow-hidden shadow-md">
-                <div class="px-3.5 py-2.5 flex items-center justify-between">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-yellow-500 to-amber-600 p-[1.5px] shrink-0">
-                      <div class="w-full h-full rounded-full bg-gray-950 flex items-center justify-center text-yellow-400 text-xs font-black">
-                        <i class="fas fa-globe"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <div class="flex items-center gap-1">
-                        <span class="text-xs font-extrabold text-white">${esc(currentNewsFeedTitle)}</span>
-                        <i class="fas fa-circle-check text-blue-500 text-[10px]"></i>
-                      </div>
-                      <span class="text-[10px] text-gray-400 flex items-center gap-1 font-mono">
-                        ${pubTime} · <i class="fas fa-earth-africa text-[9px]"></i>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div onclick="openNewsArticle(${idx})" class="px-3.5 pb-2.5 cursor-pointer space-y-1">
-                  <h4 class="text-xs md:text-sm font-bold text-gray-100 leading-relaxed">${esc(item.title)}</h4>
-                  ${cleanDesc ? `<p class="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">${esc(cleanDesc)}</p>` : ""}
-                </div>
-
-                <div onclick="openNewsArticle(${idx})" class="cursor-pointer bg-gray-950 border-y border-gray-800/80 relative overflow-hidden">
-                  <img src="${esc(thumb)}" loading="lazy" onerror="newsImgFallback(this)"
-                       class="w-full max-h-72 object-cover hover:scale-[1.01] transition duration-300">
-                </div>
-
-                <div class="px-2 py-1.5 flex items-center justify-around text-xs border-t border-gray-800/60">
-                  <button onclick="toggleNewsLike(${idx}, this)" data-base="${baseLikes}"
-                          class="flex-1 py-1.5 rounded-xl hover:bg-gray-800/70 flex items-center justify-center gap-1.5 font-bold transition ${isLiked ? 'text-rose-500' : 'text-gray-400'}">
-                    <i class="${isLiked ? 'fas' : 'far'} fa-heart text-sm"></i>
-                    <span class="like-count font-mono text-[11px]">${isLiked ? baseLikes + 1 : baseLikes}</span>
-                  </button>
-
-                  <button onclick="openNewsArticle(${idx})"
-                          class="flex-1 py-1.5 rounded-xl hover:bg-gray-800/70 text-gray-300 hover:text-yellow-400 flex items-center justify-center gap-1.5 font-bold transition">
-                    <i class="far fa-newspaper text-sm"></i>
-                    <span>${t("readMore")}</span>
-                  </button>
-
-                  <button onclick="shareNewsInApp(${idx})"
-                          class="flex-1 py-1.5 rounded-xl hover:bg-gray-800/70 text-gray-400 hover:text-white flex items-center justify-center gap-1.5 font-bold transition">
-                    <i class="fas fa-share text-xs"></i>
-                    <span>مشاركة</span>
-                  </button>
-                </div>
-              </article>
-            `;
-          }).join("");
+        const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const statusEl = document.getElementById("newsLastUpdateText");
+        if (statusEl) {
+          statusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> محدّث الآن (${nowTime})`;
         }
       } catch (err) {
-        if (fullBox) fullBox.innerHTML = `<p class="text-center text-gray-400 text-xs py-10">تعذر جلب الأخبار حالياً، حاول لاحقاً.</p>`;
-        if (miniSlider && category === "general") miniSlider.innerHTML = "";
+        if (fullBox && !currentNewsItems.length) {
+          fullBox.innerHTML = `<p class="text-center text-gray-400 text-xs py-10">تعذر جلب الأخبار حالياً، اضغط على زر التحديث بالأعلى.</p>`;
+        }
+      } finally {
+        if (refreshIcon) setTimeout(() => refreshIcon.classList.remove("fa-spin"), 400);
+      }
+
+      // تحديث تلقائي للأخبار كل دقيقة واحدة (60 ثانية)
+      if (!newsAutoRefreshTimer) {
+        newsAutoRefreshTimer = setInterval(() => {
+          fetchLiveNews(currentNewsCategory, null, false, true);
+        }, 60 * 1000);
       }
     }
 
